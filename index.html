@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Plataforma de Estudos · Advogado Transpetro</title>
+<title>Plataforma de Estudos para Concursos da Petrobras e Transpetro</title>
 <meta name="theme-color" content="#022A1E">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2300693E'/%3E%3Cpath d='M18 44V20h16a9 9 0 0 1 0 18h-9v6z' fill='%23FFCC29'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -81,6 +81,12 @@ body { min-height: 100vh; }
 .ad-acts .ac-btn { padding: 7px 11px; font-size: .8rem; }
 .ad-arq { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 8px 0; border-top: 1px solid var(--linha); font-size: .88rem; }
 .ad-arq span { color: var(--tinta2); } .ad-arq.falta span { color: #FBBF24; }
+.topo-cargo { font-size: .8rem; color: var(--amarelo); margin-left: 6px; }
+.cg-emp { font-size: 1rem; margin: 22px 0 10px; color: var(--tinta2); letter-spacing: .06em; text-transform: uppercase; }
+.cg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr)); gap: 12px; }
+.cg-card { font: inherit; text-align: left; cursor: pointer; display: flex; flex-direction: column; gap: 6px; padding: 18px; border-radius: 16px; border: 1px solid var(--linha); background: rgba(255,255,255,.05); color: var(--tinta); transition: transform .15s, background .15s, border-color .15s; }
+.cg-card:hover { transform: translateY(-2px); background: rgba(255,255,255,.09); border-color: var(--amarelo); }
+.cg-card b { font-size: 1.05rem; } .cg-card span { font-size: .85rem; color: var(--tinta2); }
 .ad-up { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 12px; }
 .ad-up input[type=file] { font: inherit; font-size: .85rem; color: var(--tinta2); max-width: 100%; }
 @media (max-width: 760px) {
@@ -108,8 +114,8 @@ body { min-height: 100vh; }
 <!-- login -->
 <section class="ac-wrap" data-view="login" hidden>
   <form class="ac-card" id="form-login">
-    <div class="ac-marca">CESGRANRIO · ADVOGADO TRANSPETRO</div>
-    <h1>Plataforma de estudos</h1>
+    <div class="ac-marca">CESGRANRIO · PETROBRAS E TRANSPETRO</div>
+    <h1>Plataforma de Estudos para Concursos da Petrobras e Transpetro</h1>
     <p>Entre com o e-mail e a senha do seu cadastro.</p>
     <label for="login-email">E-mail</label>
     <input id="login-email" type="email" autocomplete="email" required>
@@ -181,11 +187,22 @@ body { min-height: 100vh; }
 
 <!-- barra superior -->
 <nav class="topo" id="topo" hidden>
-  <span class="ola">Olá, <b id="topo-nome"></b></span>
+  <span class="ola">Olá, <b id="topo-nome"></b> <span class="topo-cargo" id="topo-cargo"></span></span>
+  <button class="ac-btn" id="btn-cargo" type="button" hidden>Trocar cargo</button>
   <button class="ac-btn" id="btn-admin" type="button" hidden>Administração</button>
   <button class="ac-btn" id="btn-app" type="button" hidden>Voltar à plataforma</button>
   <button class="ac-btn ghost" type="button" data-sair>Sair</button>
 </nav>
+
+<!-- escolha do cargo -->
+<section data-view="cargos" hidden>
+  <div class="ad">
+    <div class="ac-marca">PETROBRAS E TRANSPETRO</div>
+    <h1>Escolha o cargo</h1>
+    <p class="ac-nota">Cada cargo tem as suas disciplinas, questões, diagnóstico, cronograma e progresso. Você pode trocar de cargo quando quiser pelo botão “Trocar cargo”, sem perder o que já estudou.</p>
+    <div id="cg-lista"></div>
+  </div>
+</section>
 
 <!-- administração -->
 <section data-view="admin" hidden>
@@ -208,14 +225,25 @@ body { min-height: 100vh; }
       <div id="ad-lista"></div>
     </div>
     <div class="ad-box">
-      <h2>Conteúdo da plataforma</h2>
-      <p class="ac-nota">Banco de questões, sinopses, material de lei seca, trilhas de estudo, discursivas e pesos da prova. Envie os arquivos da pasta “conteudo” do pacote (pode selecionar os 6 de uma vez). Para atualizar, envie o arquivo novo com o mesmo nome.</p>
+      <h2>Conteúdo por cargo</h2>
+      <p class="ac-nota">Escolha o cargo e envie os arquivos da pasta “conteudo” dele (pode selecionar todos de uma vez). Para atualizar, envie o arquivo novo com o mesmo nome. Discursivas e pesos da prova são opcionais: sem eles, a aba Discursivas não aparece e o cronograma usa só o diagnóstico.</p>
+      <div class="ad-ctrl"><select id="ad-cargo" aria-label="Cargo"></select></div>
       <div id="ad-arquivos"></div>
       <div class="ad-up">
         <input id="ad-files" type="file" accept=".json,application/json" multiple>
         <button class="ac-btn ok" id="ad-enviar" type="button">Enviar arquivos</button>
       </div>
       <div class="ac-msg" id="ad-up-msg" role="status"></div>
+    </div>
+    <div class="ad-box">
+      <h2>Novo cargo</h2>
+      <p class="ac-nota">Crie o cargo, depois escolha-o acima e envie os arquivos dele. Ele aparece para os alunos assim que tiver conteúdo.</p>
+      <div class="ad-ctrl">
+        <input id="ad-novo-nome" type="text" placeholder="Nome do cargo, ex.: Engenharia de Petróleo" aria-label="Nome do cargo">
+        <select id="ad-novo-emp" aria-label="Empresa"><option>Petrobras</option><option>Transpetro</option></select>
+        <button class="ac-btn ok" id="ad-novo" type="button">Criar cargo</button>
+      </div>
+      <div class="ac-msg" id="ad-novo-msg" role="status"></div>
     </div>
   </div>
 </section>
@@ -352,7 +380,7 @@ body { min-height: 100vh; }
 }
 .pe-head { background: var(--grad); border-radius: 16px; padding: clamp(16px, 3vw, 28px); position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(255,204,41,.28); }
 .pe-head::after { content: ""; position: absolute; right: -40px; top: -40px; width: 200px; height: 200px; border-radius: 50%; border: 18px solid rgba(255,255,255,.12); }
-.pe-head::before { content: "CESGRANRIO · ADVOGADO TRANSPETRO"; font-size: 11px; letter-spacing: .14em; font-weight: 600; color: rgba(255,255,255,.85); }
+.pe-head::before { content: attr(data-kicker); font-size: 11px; letter-spacing: .14em; font-weight: 600; color: rgba(255,255,255,.85); }
 .pe-title { color: #fff; font-size: clamp(1.6rem, 3.4vw, 2.4rem); }
 .pe-take { color: rgba(255,255,255,.92); }
 .pe-tabs { border-bottom: 0; gap: 8px; }
@@ -604,7 +632,7 @@ body { min-height: 100vh; }
 
 
 <div class="pe" id="plataforma">
-  <header class="pe-head">
+  <header class="pe-head" id="pe-head" data-kicker="CESGRANRIO · ADVOGADO(A) JÚNIOR · TRANSPETRO">
     <h1 class="pe-title" id="titulo">Plataforma de estudos · Advogado Transpetro</h1>
     <button class="pe-mini-timer" id="mini-timer" hidden></button>
     <div class="pe-save" aria-live="polite"></div>
@@ -629,7 +657,7 @@ body { min-height: 100vh; }
     <div class="pe-card pe-dg-hero" id="dg-intro">
       <div class="pe-kpi-label">Comece por aqui</div>
       <h2 class="pe-dir" id="dg-title">Diagnóstico inicial</h2>
-      <p class="pe-note">100 questões, 10 de cada disciplina, com assuntos e níveis de dificuldade variados. Durante o diagnóstico não aparece o gabarito: a correção e a análise vêm no final. Reserve cerca de 5 horas (3 minutos por questão, como na Cesgranrio). Você pode pausar e continuar depois. O resultado mostra seus pontos fortes e fracos, os erros mais comuns e gera o seu cronograma de estudo.</p>
+      <p class="pe-note" id="dg-intro-txt">100 questões, 10 de cada disciplina, com assuntos e níveis de dificuldade variados. Durante o diagnóstico não aparece o gabarito: a correção e a análise vêm no final. Reserve cerca de 5 horas (3 minutos por questão, como na Cesgranrio). Você pode pausar e continuar depois. O resultado mostra seus pontos fortes e fracos, os erros mais comuns e gera o seu cronograma de estudo.</p>
       <div class="pe-dg-blocks" id="dg-blocks"></div>
       <div class="pe-actions">
         <button class="pe-btn primary" id="dg-start">Iniciar diagnóstico</button>
@@ -776,9 +804,9 @@ body { min-height: 100vh; }
   <section class="pe-page" id="discursivas" hidden data-source="discursivas">
     <div id="ds-home">
       <div class="pe-card pe-dg-hero">
-        <div class="pe-kpi-label">Prova discursiva · 20 dos 90 pontos</div>
+        <div class="pe-kpi-label">Prova discursiva</div>
         <h2 class="pe-dir">Discursivas no padrão Cesgranrio</h2>
-        <p class="pe-note">Na prova de 2023 foram 2 questões discursivas de 10 pontos cada: um caso concreto, o comando “elabore um texto de 30 a 40 linhas, no qual sejam avaliados fundamentadamente” e quatro tópicos obrigatórios. Escreva sua resposta no tempo sugerido, depois compare com o espelho de correção e atribua sua nota em cada tópico (2,5 pontos cada). O modelo de resposta fica disponível ao final.</p>
+        <p class="pe-note">Casos no formato da banca: uma situação concreta, o comando “elabore um texto de 30 a 40 linhas, no qual sejam avaliados fundamentadamente” (a faixa de linhas varia por caso) e quatro tópicos obrigatórios. Escreva sua resposta no tempo sugerido, depois compare com o espelho de correção e atribua sua nota em cada tópico (2,5 pontos cada). O modelo de resposta fica disponível ao final.</p>
         <div class="pe-kpis" id="ds-kpis"></div>
         <div class="pe-controls" style="margin-bottom:var(--cds-gap-md)">
           <label class="pe-field">Disciplina<select id="ds-disc"></select></label>
@@ -976,7 +1004,7 @@ body { min-height: 100vh; }
     }
     document.getElementById('k-dom').textContent = `${dom} de ${DISCS.length}`;
     const ru = document.getElementById('resumo-user');
-    ru.textContent = all.n ? `Você respondeu ${nf.format(all.n)} (${pf(all.n / Q.length)}), com ${pf(all.acc)} de acerto e proficiência ${all.prof}.` : 'Comece pelo Diagnóstico: 100 questões que mapeiam seus pontos fortes e fracos e geram o seu cronograma de estudo.';
+    ru.textContent = all.n ? `Você respondeu ${nf.format(all.n)} (${pf(all.n / Q.length)}), com ${pf(all.acc)} de acerto e proficiência ${all.prof}.` : `Comece pelo Diagnóstico: ${DISCS.length * 10} questões que mapeiam seus pontos fortes e fracos e geram o seu cronograma de estudo.`;
   }
 
   // ---------- bússola ----------
@@ -1417,6 +1445,8 @@ body { min-height: 100vh; }
   }
   function renderDiag() {
     if (!DISCS.length) return;
+    { const nq = DISCS.length * 10, h = Math.max(1, Math.round(nq * 3 / 60)); const it = document.getElementById('dg-intro-txt');
+      it.textContent = `${nq} questões, 10 de cada disciplina, com assuntos e níveis de dificuldade variados. Durante o diagnóstico não aparece o gabarito: a correção e a análise vêm no final. Reserve cerca de ${h} hora${h > 1 ? 's' : ''} (3 minutos por questão, como na Cesgranrio). Você pode pausar e continuar depois. O resultado mostra seus pontos fortes e fracos, os erros mais comuns e gera o seu cronograma de estudo.`; }
     renderDiagBlocks();
     const n = dgAnswered(), tot = diag.ids.length;
     const btn = document.getElementById('dg-start');
@@ -1550,7 +1580,7 @@ body { min-height: 100vh; }
       order[d.disc] = [...errA, ...all.filter((a) => !errA.includes(a))];
     });
     const temProva = DISCS.some((d) => provaPeso(d.disc) != null);
-    return {w, order, base: (temProva ? 'peso de cada disciplina na prova de 2023 combinado com o ' : '') + (hasDiag ? 'diagnóstico' : 'desempenho atual'), disc: 1};
+    return {w, order, base: (temProva ? `peso de cada disciplina na prova de ${provaAno()} combinado com o ` : '') + (hasDiag ? 'diagnóstico' : 'desempenho atual'), disc: 1};
   }
   document.getElementById('cr-gen').addEventListener('click', () => {
     const exam = document.getElementById('cr-exam').value, gm = document.getElementById('cr-gmsg');
@@ -1626,8 +1656,8 @@ body { min-height: 100vh; }
     drawDayButtons();
     const st = diagStats(); const hasDiag = st.some((s) => s.n);
     document.getElementById('cr-base').textContent = hasDiag
-      ? `Base: peso de cada disciplina na prova de 2023 (Civil e Marítimo/Internacional 10 questões; Ambiental 7; Empresarial e Administrativo 6; demais 1 a 3) combinado com o seu diagnóstico (${dgAnswered()} de ${diag.ids.length} questões): mais horas para o que mais cai e para o que você mais erra. Cerca de 1 dia em cada 6 é de discursiva, e a reta final alterna simulados objetivos e discursivos. Mínimo de 2 horas por dia.`
-      : 'Ainda não há diagnóstico: o cronograma usará o peso de cada disciplina na prova de 2023 (e o seu desempenho no Treino, se houver). Para personalizar, faça antes o Diagnóstico. Cerca de 1 dia em cada 6 é de discursiva. Mínimo de 2 horas por dia.';
+      ? `Base: ${provaResumo() ? `peso de cada disciplina na prova de ${provaAno()} (${provaResumo()}) combinado com o ` : ''}seu diagnóstico (${dgAnswered()} de ${diag.ids.length} questões): mais horas para o que mais cai e para o que você mais erra.${temDisc() ? ' Cerca de 1 dia em cada 6 é de discursiva, e a reta final alterna simulados objetivos e discursivos.' : ''} Mínimo de 2 horas por dia.`
+      : `Ainda não há diagnóstico: o cronograma usará ${provaResumo() ? `o peso de cada disciplina na prova de ${provaAno()}` : 'pesos iguais'} (e o seu desempenho no Treino, se houver). Para personalizar, faça antes o Diagnóstico.${temDisc() ? ' Cerca de 1 dia em cada 6 é de discursiva.' : ''} Mínimo de 2 horas por dia.`;
     const box = document.getElementById('cr-plan'); box.replaceChildren();
     if (!plan) { box.append(el('div', 'pe-empty', 'Defina a data da prova, os dias e o horário, e clique em “Gerar cronograma”.')); drawTimer(); return; }
     const days = buildPlan(plan);
@@ -1643,7 +1673,7 @@ body { min-height: 100vh; }
       c('Dias concluídos', `${nf.format(days.filter((d) => d.slots.every((s, i) => done.has(d.key + '#' + i))).length)}`, `de ${nf.format(days.length)} no cronograma`), c('Dias com meta de tempo', nf.format(goalDays), `cronômetro ≥ ${fmtMin(plan.min)}`));
     box.append(sum);
     const dist = el('div', 'pe-card'); dist.id = 'cr-dist';
-    dist.append(el('h2', 'pe-h2', 'Distribuição das horas'), el('p', 'pe-note', `Calculada a partir do ${plan.base}: quanto mais a disciplina cai e quanto mais fraca ela está, mais horas.` + (plan.disc ? '' : ' Este cronograma foi gerado antes do módulo de discursivas: clique em “Gerar cronograma” para incluí-las.')));
+    dist.append(el('h2', 'pe-h2', 'Distribuição das horas'), el('p', 'pe-note', `Calculada a partir do ${plan.base}: ${/prova/.test(plan.base) ? 'quanto mais a disciplina cai e quanto mais fraca ela está' : 'quanto mais fraca a disciplina'}, mais horas.` + (plan.disc ? '' : ' Este cronograma foi gerado antes do módulo de discursivas: clique em “Gerar cronograma” para incluí-las.')));
     const bar = el('div', 'pe-share'), leg = el('div', 'pe-share-leg');
     Object.entries(hours).sort((a, b) => b[1] - a[1]).forEach(([k, m]) => {
       const col = k === '_rev' ? '#FFFFFF' : k === '_disc' ? '#D9A6FF' : DC[k]; const i = el('i'); i.style.width = (m / totMin * 100) + '%'; i.style.background = col; bar.append(i);
@@ -1944,6 +1974,9 @@ body { min-height: 100vh; }
   let dsCur = null;           // {id, fase: 'escrever'|'corrigir', t: [notas], ini, el}
   let dsTimer = null;
   const discRows = () => { const d = dash.data('discursivas'); return d.status === 'ok' ? d.data : []; };
+  const provaAno = () => { const d = dash.data('prova2023'); return d.status === 'ok' && d.data[0] && d.data[0].ano ? String(d.data[0].ano) : '2023'; };
+  const provaResumo = () => { const d = dash.data('prova2023'); if (d.status !== 'ok' || !d.data.length) return ''; const r = d.data.map((x) => ({k: x.disc, n: Number(x.questoes_2023)})).sort((a, b) => b.n - a.n); return r.slice(0, 4).map((x) => `${SHORT[x.k] || x.k} ${x.n}`).join('; ') + (r.length > 4 ? '; demais ' + d3.min(r.slice(4), (x) => x.n) + ' a ' + d3.max(r.slice(4), (x) => x.n) : '') + ' questões'; };
+  const temDisc = () => discRows().length > 0;
   const provaPeso = (disc) => { const d = dash.data('prova2023'); if (d.status !== 'ok') return null; const r = d.data.find((x) => x.disc === disc); return r ? Number(r.questoes_2023) : null; };
   function discQueue(w) {
     const rows = discRows(); if (!rows.length) return [];
@@ -1978,7 +2011,7 @@ body { min-height: 100vh; }
     const c = (lab, val, note) => { const x = el('div', 'pe-card'); x.append(el('div', 'pe-kpi-label', lab), el('div', 'pe-kpi-value', val), el('div', 'pe-kpi-note', note)); return x; };
     kp.replaceChildren(c('Casos respondidos', `${nf.format(feitos.length)} de ${nf.format(rows.length)}`, 'banco de discursivas no padrão da banca'),
       c('Média da última tentativa', ult.length ? fmt1(Math.round(d3.mean(ult) * 100) / 100) : '—', 'de 10 pontos por questão'),
-      c('Na prova', '2 × 10', 'pontos · cerca de 22% da nota total'));
+      c('Disciplinas', nf.format(new Set(rows.map((r) => r.disc)).size), 'com casos discursivos neste cargo'));
     const fd = sel.value, fs = document.getElementById('ds-sit').value;
     list.replaceChildren();
     const vis = rows.filter((r) => (fd === 'all' || r.disc === fd) && (fs === 'all' || (fs === 'sim') === !!dsLast(r.id)));
@@ -2233,12 +2266,15 @@ body { min-height: 100vh; }
       const order = [...new Set(Q.map((q) => q.disc))];
       const names = new Map(Q.map((q) => [q.disciplina, q.disc]));
       DISCS = b.data.map((r) => ({disciplina: r.disciplina, questoes: Number(r.questoes), disc: names.get(r.disciplina)})).sort((x, y) => order.indexOf(x.disc) - order.indexOf(y.disc));
+      const PAL = ['#FFCC29', '#FF9F1C', '#C6E33B', '#7ED957', '#2FD18B', '#14B8A6', '#38BDF8', '#5B8DEF', '#B7C9A8', '#FF7A7A', '#F472B6', '#A78BFA', '#FDE68A', '#67E8F9'];
+      DISCS.forEach((d, i) => { if (!DC[d.disc]) DC[d.disc] = PAL[i % PAL.length]; if (!SHORT[d.disc]) SHORT[d.disc] = d.disciplina.length <= 20 ? d.disciplina : d.disciplina.replace(/^(Direito|Noções de|Conhecimentos)\s+(do |da |de |dos |das |em )?/i, '').slice(0, 22); });
     }
     if (tot.status === 'ok' && tot.data[0]) {
       const [t1, t2] = ROOT.querySelectorAll('#resumo .pe-bank');
       t1.textContent = nf.format(tot.data[0].questoes); t2.textContent = nf.format(tot.data[0].disciplinas);
     }
     if (!DISCS.length) return;
+    { const dr = dash.data('discursivas'); const tb = tabs.find((t) => t.dataset.page === 'discursivas'); if (tb) tb.hidden = dr.status !== 'ok' || !dr.data.length; }
     if (!fDisc.options.length) fillSelects();
     render();
     if (!linked) {

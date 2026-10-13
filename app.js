@@ -5,11 +5,19 @@
   var $ = function (id) { return document.getElementById(id); };
   var ARQS = ['questoes.json', 'materiais.json', 'trilhas.json', 'sinopses.json', 'discursivas.json', 'prova2023.json'];
   var BUCKET = 'conteudo';
+  var NOME_PLAT = 'Plataforma de Estudos para Concursos da Petrobras e Transpetro';
+  // cargo "Advogado(a) – Transpetro": o primeiro, cujos arquivos ficam na raiz do depósito
+  var CARGO_LEGADO = {id: 'advogado-transpetro', nome: 'Advogado(a) Júnior', empresa: 'Transpetro', pasta: ''};
+  var cargos = [], cargo = null;
+  function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function lsSet(k, v) { try { if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) { /* ignora */ } }
+  function caminho(c, nome) { return (c && c.pasta ? c.pasta + '/' : '') + nome; }
+  function rotulo(c) { return c.nome + (c.empresa ? ' · ' + c.empresa : ''); }
 
   function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
   function views(name) {
     document.querySelectorAll('[data-view]').forEach(function (v) { v.hidden = v.dataset.view !== name; });
-    $('topo').hidden = !(name === 'app' || name === 'admin');
+    $('topo').hidden = !(name === 'app' || name === 'admin' || name === 'cargos');
   }
   function msg(id, text, ok) { var m = $(id); m.textContent = text || ''; m.className = 'ac-msg' + (text ? (ok ? ' ok' : ' bad') : ''); }
   function contato() {
@@ -127,10 +135,53 @@
     $('topo-nome').textContent = perfil.nome || session.user.email;
     $('btn-admin').hidden = !perfil.admin;
     $('btn-app').hidden = true;
+    if (perfil.admin) contarPendentes();
+    await carregarCargos();
+    var salvo = lsGet('pet-cargo-' + session.user.id);
+    var esc = cargos.find(function (c) { return c.id === salvo; }) || (cargos.length === 1 ? cargos[0] : null);
+    if (esc) abrirCargo(esc); else mostrarCargos();
+  }
+
+  // ---------- cargos ----------
+  async function carregarCargos() {
+    cargos = [];
+    try {
+      var r = await sb.storage.from(BUCKET).download('cargos.json');
+      if (!r.error) { var l = JSON.parse(await r.data.text()); if (Array.isArray(l)) cargos = l.filter(function (c) { return c && c.id && c.nome; }); }
+    } catch (e) { /* sem catálogo: usa o cargo original */ }
+    if (!cargos.length) cargos = [Object.assign({}, CARGO_LEGADO)];
+    if (!perfil.admin) cargos = cargos.filter(function (c) { return c.ativo !== false; }); // cargo sem conteúdo fica oculto para alunos
+    cargos.forEach(function (c) { if (c.pasta == null) c.pasta = c.id === CARGO_LEGADO.id ? '' : c.id; });
+  }
+  function mostrarCargos() {
+    var box = $('cg-lista'); box.replaceChildren();
+    var por = {};
+    cargos.forEach(function (c) { var e = c.empresa || 'Outros'; (por[e] = por[e] || []).push(c); });
+    Object.keys(por).sort().forEach(function (emp) {
+      box.append(el('h2', 'cg-emp', emp));
+      var g = el('div', 'cg-grid');
+      por[emp].sort(function (a, b) { return a.nome.localeCompare(b.nome); }).forEach(function (c) {
+        var b = el('button', 'cg-card'); b.type = 'button';
+        b.append(el('b', null, c.nome));
+        if (c.descricao) b.append(el('span', null, c.descricao));
+        b.addEventListener('click', function () { lsSet('pet-cargo-' + window.PET_UID, c.id); if (appIniciado) location.reload(); else abrirCargo(c); });
+        g.append(b);
+      });
+      box.append(g);
+    });
+    views('cargos'); $('btn-cargo').hidden = true;
+  }
+  function abrirCargo(c) {
+    cargo = c; window.PET_CARGO = c.id;
+    $('btn-cargo').hidden = cargos.length < 2 && !perfil.admin;
+    $('topo-cargo').textContent = rotulo(c);
+    var t = document.getElementById('titulo'); if (t) t.textContent = NOME_PLAT;
+    var h = document.getElementById('pe-head'); if (h) h.setAttribute('data-kicker', ((c.banca || 'Cesgranrio') + ' · ' + rotulo(c)).toUpperCase());
+    document.title = c.nome + ' · ' + NOME_PLAT;
     views('app');
     iniciarApp();
-    if (perfil.admin) contarPendentes();
   }
+  $('btn-cargo').addEventListener('click', function () { mostrarCargos(); });
 
   // ---------- conteúdo ----------
   async function baixar(nome, versao) {
@@ -144,7 +195,7 @@
     if (cache) {
       try {
         var velhas = await cache.keys();
-        await Promise.all(velhas.filter(function (k) { return k.url.indexOf('/' + nome + '?') > -1; }).map(function (k) { return cache.delete(k); }));
+        await Promise.all(velhas.filter(function (k) { return k.url.indexOf('.local/' + nome + '?') > -1; }).map(function (k) { return cache.delete(k); }));
         await cache.put(chave, new Response(txt, {headers: {'Content-Type': 'application/json'}}));
       } catch (e) { /* cache é só conveniência */ }
     }
@@ -154,26 +205,27 @@
     if (appIniciado) return; appIniciado = true;
     var versoes = {};
     try {
-      var l = await sb.storage.from(BUCKET).list('', {limit: 100});
+      var l = await sb.storage.from(BUCKET).list(cargo.pasta || '', {limit: 100});
       (l.data || []).forEach(function (f) { versoes[f.name] = f.updated_at || f.created_at || ''; });
     } catch (e) { /* segue sem versão */ }
     var faltando = ARQS.filter(function (n) { return !versoes[n]; });
     if (faltando.length === ARQS.length) {
       $('aviso-conteudo').hidden = false;
       $('aviso-conteudo').textContent = perfil && perfil.admin
-        ? 'O conteúdo ainda não foi publicado. Abra “Administração” e envie os 6 arquivos da pasta “conteudo”.'
-        : 'O conteúdo da plataforma ainda não foi publicado.' + contato();
+        ? 'O conteúdo deste cargo ainda não foi publicado. Abra “Administração”, escolha o cargo “' + rotulo(cargo) + '” e envie os arquivos.'
+        : 'O conteúdo deste cargo ainda não foi publicado. Escolha outro cargo em “Trocar cargo”.' + contato();
     }
     for (var i = 0; i < ARQS.length; i++) {
       var nome = ARQS[i], id = nome.replace('.json', '');
-      try { window.__pet.set(id, await baixar(nome, versoes[nome])); }
+      if (!versoes[nome] && (id === 'discursivas' || id === 'prova2023') && faltando.length < ARQS.length) { window.__pet.set(id, []); continue; } // opcionais
+      try { window.__pet.set(id, await baixar(caminho(cargo, nome), versoes[nome])); }
       catch (e) { console.error(nome, e); window.__pet.fail(id); }
     }
   }
 
   // ---------- administração ----------
-  $('btn-admin').addEventListener('click', function () { views('admin'); $('btn-admin').hidden = true; $('btn-app').hidden = false; carregarAlunos(); listarConteudo(); });
-  $('btn-app').addEventListener('click', function () { views('app'); $('btn-admin').hidden = false; $('btn-app').hidden = true; });
+  $('btn-admin').addEventListener('click', function () { views('admin'); $('btn-admin').hidden = true; $('btn-app').hidden = false; $('btn-cargo').hidden = true; carregarAlunos(); desenharSelCargo(); listarConteudo(); });
+  $('btn-app').addEventListener('click', function () { $('btn-admin').hidden = false; $('btn-app').hidden = true; if (cargo) { views('app'); $('btn-cargo').hidden = false; } else mostrarCargos(); });
   $('ad-filtro').addEventListener('change', desenharAlunos);
   $('ad-busca').addEventListener('input', desenharAlunos);
   var alunos = [];
@@ -230,9 +282,37 @@
     });
   }
 
+  var adCargo = null;
+  function desenharSelCargo() {
+    var sel = $('ad-cargo'); var atual = adCargo ? adCargo.id : (cargo ? cargo.id : '');
+    sel.replaceChildren();
+    cargos.slice().sort(function (a, b) { return rotulo(a).localeCompare(rotulo(b)); }).forEach(function (c) { var o = new Option(rotulo(c) + (c.ativo === false ? ' (sem conteúdo, oculto para alunos)' : ''), c.id); sel.append(o); });
+    sel.value = cargos.some(function (c) { return c.id === atual; }) ? atual : (cargos[0] || {}).id;
+    adCargo = cargos.find(function (c) { return c.id === sel.value; }) || null;
+  }
+  $('ad-cargo').addEventListener('change', function () { adCargo = cargos.find(function (c) { return c.id === $('ad-cargo').value; }) || null; listarConteudo(); });
+  function slug(t) { return t.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 50); }
+  async function salvarCatalogo() {
+    var lista = cargos.map(function (c) { return {id: c.id, nome: c.nome, empresa: c.empresa || '', banca: c.banca || 'Cesgranrio', descricao: c.descricao || '', pasta: c.pasta, ativo: c.ativo !== false}; });
+    var blob = new Blob([JSON.stringify(lista, null, 1)], {type: 'application/json'});
+    return sb.storage.from(BUCKET).upload('cargos.json', blob, {upsert: true, contentType: 'application/json', cacheControl: '30'});
+  }
+  $('ad-novo').addEventListener('click', async function () {
+    var nome = $('ad-novo-nome').value.trim(), emp = $('ad-novo-emp').value;
+    if (nome.length < 3) { msg('ad-novo-msg', 'Informe o nome do cargo, por exemplo “Engenharia de Petróleo”.'); return; }
+    var id = slug(nome + '-' + emp);
+    if (cargos.some(function (c) { return c.id === id; })) { msg('ad-novo-msg', 'Esse cargo já existe.'); return; }
+    var antes = cargos.slice();
+    cargos.push({id: id, nome: nome, empresa: emp, banca: 'Cesgranrio', pasta: id, ativo: false});
+    this.disabled = true; var r = await salvarCatalogo(); this.disabled = false;
+    if (r.error) { cargos = antes; msg('ad-novo-msg', traduz(r.error)); return; }
+    $('ad-novo-nome').value = ''; msg('ad-novo-msg', 'Cargo criado. Agora envie os arquivos dele abaixo.', true);
+    adCargo = cargos[cargos.length - 1]; desenharSelCargo(); listarConteudo();
+  });
   async function listarConteudo() {
+    if (!adCargo) desenharSelCargo();
     var box = $('ad-arquivos'); box.replaceChildren(el('p', 'ac-nota', 'Verificando arquivos…'));
-    var r = await sb.storage.from(BUCKET).list('', {limit: 100});
+    var r = await sb.storage.from(BUCKET).list(adCargo ? adCargo.pasta : '', {limit: 100});
     if (r.error) { box.replaceChildren(el('p', 'ac-msg bad', traduz(r.error))); return; }
     var m = {}; (r.data || []).forEach(function (f) { m[f.name] = f; });
     box.replaceChildren();
@@ -244,7 +324,8 @@
   }
   $('ad-enviar').addEventListener('click', async function () {
     var files = [].slice.call($('ad-files').files || []);
-    if (!files.length) { msg('ad-up-msg', 'Selecione os arquivos da pasta “conteudo”.'); return; }
+    if (!adCargo) { msg('ad-up-msg', 'Escolha o cargo.'); return; }
+    if (!files.length) { msg('ad-up-msg', 'Selecione os arquivos da pasta “conteudo” do cargo.'); return; }
     var ruins = files.filter(function (f) { return ARQS.indexOf(f.name) < 0; });
     if (ruins.length) { msg('ad-up-msg', 'Arquivo não reconhecido: ' + ruins.map(function (f) { return f.name; }).join(', ') + '. Envie apenas ' + ARQS.join(', ') + '.'); return; }
     this.disabled = true;
@@ -252,11 +333,13 @@
       var f = files[i];
       msg('ad-up-msg', 'Enviando ' + f.name + ' (' + (i + 1) + ' de ' + files.length + ')…', true);
       try { JSON.parse(await f.text()); } catch (e) { msg('ad-up-msg', f.name + ' não é um arquivo válido.'); this.disabled = false; return; }
-      var r = await sb.storage.from(BUCKET).upload(f.name, f, {upsert: true, contentType: 'application/json', cacheControl: '60'});
+      var r = await sb.storage.from(BUCKET).upload(caminho(adCargo, f.name), f, {upsert: true, contentType: 'application/json', cacheControl: '60'});
       if (r.error) { msg('ad-up-msg', f.name + ': ' + traduz(r.error)); this.disabled = false; return; }
     }
     this.disabled = false;
-    msg('ad-up-msg', 'Conteúdo publicado. Recarregue a página para ver a plataforma atualizada.', true);
+    if (files.some(function (f) { return f.name === 'questoes.json'; })) adCargo.ativo = true;
+    var rc = await salvarCatalogo(); if (rc.error) console.error(rc.error); // mantém o catálogo de cargos gravado
+    msg('ad-up-msg', 'Conteúdo de “' + rotulo(adCargo) + '” publicado. Recarregue a página para ver a plataforma atualizada.', true);
     listarConteudo();
   });
 

@@ -41,16 +41,27 @@
       if (!sb || !uid) return null;
       if (cap === 'user') return {id: async function () { return uid; }};
       if (cap === 'db') {
+        // progresso guardado por cargo: estado = {cargos: {<id do cargo>: {v, at, state}}}
+        // formato antigo ({v, at, state} direto) pertence ao cargo original (advogado-transpetro)
+        var LEG = 'advogado-transpetro';
+        var ler = async function () {
+          var r = await sb.from('progresso').select('estado').eq('user_id', uid).maybeSingle();
+          if (r.error) throw r.error;
+          var e = r.data ? r.data.estado : null;
+          if (e && !e.cargos) { var leg = {}; if (e.state) leg[LEG] = e; e = {cargos: leg}; }
+          return {existe: !!r.data, estado: e || {cargos: {}}};
+        };
         return {
           doc: function () {
+            var c = window.PET_CARGO || LEG;
             return {
               get: async function () {
-                var r = await sb.from('progresso').select('estado').eq('user_id', uid).maybeSingle();
-                if (r.error) throw r.error;
-                return {exists: !!r.data, data: function () { return r.data ? r.data.estado : null; }};
+                var x = await ler(); var d = x.estado.cargos[c] || null;
+                return {exists: !!d, data: function () { return d; }};
               },
               set: async function (obj) {
-                var r = await sb.from('progresso').upsert({user_id: uid, estado: obj, atualizado_em: new Date().toISOString()});
+                var x = await ler(); x.estado.cargos[c] = obj;
+                var r = await sb.from('progresso').upsert({user_id: uid, estado: {cargos: x.estado.cargos}, atualizado_em: new Date().toISOString()});
                 if (r.error) throw r.error;
               }
             };
