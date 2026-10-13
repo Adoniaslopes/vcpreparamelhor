@@ -106,12 +106,23 @@
     var hoje = new Date().toISOString().slice(0, 10);
     var vencido = perfil.expira_em && perfil.expira_em < hoje;
     if (!perfil.admin && (perfil.status !== 'aprovado' || vencido)) {
-      var t = {pendente: ['Cadastro recebido', 'Seu acesso está aguardando liberação. Assim que for aprovado, basta entrar de novo com seu e-mail e senha.'],
+      var t = {pendente: ['Cadastro recebido', 'Seu acesso está aguardando liberação. Pode deixar esta página aberta: assim que o acesso for aprovado, a plataforma abre sozinha. Se fechar, basta entrar de novo com seu e-mail e senha.'],
                bloqueado: ['Acesso suspenso', 'Seu acesso à plataforma está suspenso.']}[perfil.status] || ['Acesso indisponível', ''];
       if (perfil.status === 'aprovado' && vencido) t = ['Acesso expirado', 'O prazo do seu acesso terminou em ' + new Date(perfil.expira_em + 'T12:00').toLocaleDateString('pt-BR') + '.'];
       $('espera-titulo').textContent = t[0];
       $('espera-texto').textContent = t[1] + contato();
-      views('espera'); return;
+      views('espera');
+      // aguardando liberação: verifica a cada 15 s e entra sozinho assim que for aprovado
+      if (perfil.status === 'pendente' && !window.__petEspera) {
+        window.__petEspera = setInterval(async function () {
+          var q = await sb.from('perfis').select('status, expira_em, admin').eq('id', session.user.id).maybeSingle();
+          if (q.data && (q.data.admin || q.data.status === 'aprovado')) {
+            clearInterval(window.__petEspera); window.__petEspera = null; entrando = false;
+            var s = await sb.auth.getSession(); entrar(s.data.session || session);
+          }
+        }, 15000);
+      }
+      entrando = false; return;
     }
     $('topo-nome').textContent = perfil.nome || session.user.email;
     $('btn-admin').hidden = !perfil.admin;
