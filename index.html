@@ -1,0 +1,2259 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Plataforma de Estudos · Advogado Transpetro</title>
+<meta name="theme-color" content="#022A1E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2300693E'/%3E%3Cpath d='M18 44V20h16a9 9 0 0 1 0 18h-9v6z' fill='%23FFCC29'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --font-anthropic-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-anthropic-serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --cds-font-size-caption: 0.8125rem; --cds-font-size-body: 0.9375rem; --cds-font-size-heading: 1.125rem; --cds-font-size-title: 1.75rem;
+  --cds-font-weight-medium: 600;
+  --cds-gap-xs: 4px; --cds-gap-sm: 8px; --cds-gap-md: 16px; --cds-gap-lg: 24px;
+  --cds-pad-xs: 6px; --cds-pad-sm: 8px; --cds-pad-md: 14px; --cds-pad-lg: 20px;
+  --cds-radius: 10px; --cds-shadow-popover: 0 8px 24px rgba(0,0,0,.35);
+  --cds-dur-slow: 400ms; --cds-ease-out: cubic-bezier(.2,.8,.2,1);
+  --verde: #00693E; --verde2: #00A859; --amarelo: #FFCC29; --fundo: #021F17; --tinta: #F2FBF6; --tinta2: #A7CBB9; --linha: rgba(255,255,255,.14);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--fundo); color: var(--tinta); font-family: var(--font-anthropic-sans); }
+body { min-height: 100vh; }
+[hidden] { display: none !important; }
+#dash-root { --dash-gutter: clamp(12px, 3vw, 40px); padding: var(--dash-gutter); }
+.dash-skeleton { color: transparent !important; background: linear-gradient(90deg, rgba(255,255,255,.06), rgba(255,255,255,.14), rgba(255,255,255,.06)); background-size: 200% 100%; animation: sk 1.4s ease-in-out infinite; border-radius: 8px; }
+@keyframes sk { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+/* ----- acesso ----- */
+.ac-wrap { min-height: 100vh; display: grid; place-items: center; padding: 24px 16px;
+  background: radial-gradient(50rem 28rem at 0% 0%, rgba(0,168,89,.35), transparent 60%), radial-gradient(40rem 26rem at 100% 100%, rgba(255,204,41,.12), transparent 60%), linear-gradient(180deg, #022A1E, #00442F); }
+.ac-card { width: 100%; max-width: 420px; background: rgba(255,255,255,.06); border: 1px solid var(--linha); border-radius: 18px; padding: 28px; box-shadow: 0 20px 60px rgba(0,0,0,.35); }
+.ac-marca { font-size: 11px; letter-spacing: .14em; font-weight: 600; color: var(--amarelo); margin-bottom: 6px; }
+.ac-card h1 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: 1.6rem; line-height: 1.2; margin: 0 0 6px; }
+.ac-card p { color: var(--tinta2); font-size: .9rem; line-height: 1.5; margin: 0 0 18px; }
+.ac-card label { display: block; font-size: .8rem; color: var(--tinta2); margin: 12px 0 4px; }
+.ac-card input { width: 100%; font: inherit; font-size: 1rem; padding: 11px 12px; border-radius: 10px; border: 1px solid var(--linha); background: rgba(0,0,0,.25); color: var(--tinta); }
+.ac-card input:focus { outline: 2px solid var(--amarelo); outline-offset: 1px; }
+.ac-btn { font: inherit; font-size: .9rem; font-weight: 600; border-radius: 10px; padding: 10px 16px; cursor: pointer; border: 1px solid var(--linha); background: rgba(255,255,255,.06); color: var(--tinta); }
+.ac-btn.pri { width: 100%; margin-top: 20px; background: var(--amarelo); color: #1d1a05; border-color: var(--amarelo); padding: 12px 16px; }
+.ac-btn.ok { background: #00A859; border-color: #00A859; color: #fff; }
+.ac-btn.bad { background: transparent; border-color: #FB7185; color: #FB7185; }
+.ac-btn.ghost { background: transparent; }
+.ac-btn:disabled { opacity: .5; cursor: default; }
+.ac-links { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 16px; font-size: .85rem; }
+.ac-links a { color: var(--amarelo); text-decoration: none; }
+.ac-links a:hover { text-decoration: underline; }
+.ac-msg { font-size: .85rem; line-height: 1.45; margin-top: 12px; min-height: 1em; }
+.ac-msg.ok { color: #86EFAC; } .ac-msg.bad { color: #FDA4AF; }
+.ac-nota { color: var(--tinta2); font-size: .85rem; }
+.ac-card code { background: rgba(0,0,0,.3); padding: 2px 6px; border-radius: 6px; font-size: .85rem; }
+
+/* ----- barra superior ----- */
+.topo { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 10px clamp(12px, 3vw, 40px); background: rgba(2,31,23,.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--linha); font-size: .85rem; }
+.topo .ola { color: var(--tinta2); margin-right: auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 60vw; }
+.topo .ola b { color: var(--tinta); font-weight: 600; }
+.topo .ac-btn { padding: 7px 12px; font-size: .8rem; }
+.aviso { margin: 0 auto 16px; max-width: 1240px; padding: 12px 16px; border-radius: 12px; background: rgba(255,204,41,.12); border: 1px solid rgba(255,204,41,.4); color: #FFE58A; font-size: .9rem; }
+
+/* ----- administração ----- */
+.ad { max-width: 1100px; margin: 0 auto; padding: clamp(12px, 3vw, 32px); }
+.ad h1 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: 1.7rem; margin: 6px 0 4px; }
+.ad h2 { font-size: 1.05rem; margin: 0 0 6px; }
+.ad-box { background: rgba(255,255,255,.05); border: 1px solid var(--linha); border-radius: 16px; padding: 20px; margin-top: 18px; }
+.ad-ctrl { display: flex; gap: 10px; flex-wrap: wrap; margin: 12px 0; }
+.ad-ctrl select, .ad-ctrl input, .ad-val input { font: inherit; font-size: .9rem; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--linha); background: rgba(0,0,0,.25); color: var(--tinta); }
+.ad-ctrl input { flex: 1; min-width: 12rem; }
+.ad-row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto auto; gap: 12px; align-items: center; padding: 12px 0; border-top: 1px solid var(--linha); }
+.ad-nome { font-weight: 600; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.ad-email { color: var(--tinta2); font-size: .85rem; overflow-wrap: anywhere; }
+.ad-meta { color: var(--tinta2); font-size: .75rem; margin-top: 2px; }
+.ad-tag { font-size: .72rem; font-weight: 600; padding: 3px 9px; border-radius: 999px; border: 1px solid currentColor; white-space: nowrap; }
+.ad-tag.pendente { color: #FBBF24; } .ad-tag.aprovado { color: #34D399; } .ad-tag.bloqueado { color: #FB7185; } .ad-tag.adm { color: var(--amarelo); }
+.ad-val { font-size: .78rem; color: var(--tinta2); display: flex; flex-direction: column; gap: 3px; }
+.ad-acts { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.ad-acts .ac-btn { padding: 7px 11px; font-size: .8rem; }
+.ad-arq { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 8px 0; border-top: 1px solid var(--linha); font-size: .88rem; }
+.ad-arq span { color: var(--tinta2); } .ad-arq.falta span { color: #FBBF24; }
+.ad-up { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 12px; }
+.ad-up input[type=file] { font: inherit; font-size: .85rem; color: var(--tinta2); max-width: 100%; }
+@media (max-width: 760px) {
+  .ad-row { grid-template-columns: 1fr auto; }
+  .ad-val, .ad-acts { grid-column: 1 / -1; }
+  .ad-acts { justify-content: flex-start; }
+}
+</style>
+<script src="config.js"></script>
+<script src="vendor/supabase.js"></script>
+<script src="vendor/d3.min.js"></script>
+<script src="shim.js"></script>
+</head>
+<body>
+
+<!-- configuração ausente -->
+<section class="ac-wrap" data-view="semconfig" hidden>
+  <div class="ac-card">
+    <div class="ac-marca">CONFIGURAÇÃO PENDENTE</div>
+    <h1>Falta ligar a plataforma ao Supabase</h1>
+    <p>Abra o arquivo <code>config.js</code> e cole o endereço (Project URL) e a chave pública (anon key) do seu projeto Supabase. Depois publique a pasta de novo.</p>
+  </div>
+</section>
+
+<!-- login -->
+<section class="ac-wrap" data-view="login" hidden>
+  <form class="ac-card" id="form-login">
+    <div class="ac-marca">CESGRANRIO · ADVOGADO TRANSPETRO</div>
+    <h1>Plataforma de estudos</h1>
+    <p>Entre com o e-mail e a senha do seu cadastro.</p>
+    <label for="login-email">E-mail</label>
+    <input id="login-email" type="email" autocomplete="email" required>
+    <label for="login-senha">Senha</label>
+    <input id="login-senha" type="password" autocomplete="current-password" required>
+    <button class="ac-btn pri" type="submit">Entrar</button>
+    <div class="ac-msg" id="login-msg" role="status"></div>
+    <div class="ac-links"><a href="#" data-ir="cadastro">Criar cadastro</a><a href="#" data-ir="recuperar">Esqueci minha senha</a></div>
+  </form>
+</section>
+
+<!-- cadastro -->
+<section class="ac-wrap" data-view="cadastro" hidden>
+  <form class="ac-card" id="form-cad">
+    <div class="ac-marca">NOVO CADASTRO</div>
+    <h1>Criar cadastro</h1>
+    <p>Depois do cadastro, o acesso é liberado pelo administrador da plataforma.</p>
+    <label for="cad-nome">Nome completo</label>
+    <input id="cad-nome" type="text" autocomplete="name" required>
+    <label for="cad-email">E-mail</label>
+    <input id="cad-email" type="email" autocomplete="email" required>
+    <label for="cad-senha">Senha (mínimo de 8 caracteres)</label>
+    <input id="cad-senha" type="password" autocomplete="new-password" minlength="8" required>
+    <label for="cad-senha2">Repita a senha</label>
+    <input id="cad-senha2" type="password" autocomplete="new-password" minlength="8" required>
+    <button class="ac-btn pri" type="submit">Criar cadastro</button>
+    <div class="ac-msg" id="cad-msg" role="status"></div>
+    <div class="ac-links"><a href="#" data-ir="login">Já tenho cadastro</a></div>
+  </form>
+</section>
+
+<!-- recuperar senha -->
+<section class="ac-wrap" data-view="recuperar" hidden>
+  <form class="ac-card" id="form-rec">
+    <div class="ac-marca">RECUPERAR SENHA</div>
+    <h1>Esqueci minha senha</h1>
+    <p>Informe o e-mail do cadastro. Enviaremos um link para você criar uma nova senha.</p>
+    <label for="rec-email">E-mail</label>
+    <input id="rec-email" type="email" autocomplete="email" required>
+    <button class="ac-btn pri" type="submit">Enviar link</button>
+    <div class="ac-msg" id="rec-msg" role="status"></div>
+    <div class="ac-links"><a href="#" data-ir="login">Voltar ao login</a></div>
+  </form>
+</section>
+
+<!-- nova senha (link do e-mail) -->
+<section class="ac-wrap" data-view="nova" hidden>
+  <form class="ac-card" id="form-nova">
+    <div class="ac-marca">NOVA SENHA</div>
+    <h1>Crie uma nova senha</h1>
+    <label for="nova-senha">Nova senha (mínimo de 8 caracteres)</label>
+    <input id="nova-senha" type="password" autocomplete="new-password" minlength="8" required>
+    <label for="nova-senha2">Repita a nova senha</label>
+    <input id="nova-senha2" type="password" autocomplete="new-password" minlength="8" required>
+    <button class="ac-btn pri" type="submit">Salvar e entrar</button>
+    <div class="ac-msg" id="nova-msg" role="status"></div>
+  </form>
+</section>
+
+<!-- aguardando aprovação / bloqueado -->
+<section class="ac-wrap" data-view="espera" hidden>
+  <div class="ac-card">
+    <div class="ac-marca">ACESSO</div>
+    <h1 id="espera-titulo">Cadastro recebido</h1>
+    <p id="espera-texto"></p>
+    <button class="ac-btn pri" type="button" data-sair>Sair</button>
+  </div>
+</section>
+
+<!-- barra superior -->
+<nav class="topo" id="topo" hidden>
+  <span class="ola">Olá, <b id="topo-nome"></b></span>
+  <button class="ac-btn" id="btn-admin" type="button" hidden>Administração</button>
+  <button class="ac-btn" id="btn-app" type="button" hidden>Voltar à plataforma</button>
+  <button class="ac-btn ghost" type="button" data-sair>Sair</button>
+</nav>
+
+<!-- administração -->
+<section data-view="admin" hidden>
+  <div class="ad">
+    <div class="ac-marca">ADMINISTRAÇÃO</div>
+    <h1>Alunos e conteúdo</h1>
+    <p class="ac-nota">Aprove ou bloqueie cadastros e, se quiser, defina até quando cada aluno terá acesso (em branco = sem prazo).</p>
+    <div class="ad-box">
+      <h2>Cadastros</h2>
+      <p class="ac-nota" id="ad-resumo"></p>
+      <div class="ad-ctrl">
+        <select id="ad-filtro" aria-label="Filtrar por situação">
+          <option value="pendente">Pendentes</option>
+          <option value="aprovado">Aprovados</option>
+          <option value="bloqueado">Bloqueados</option>
+          <option value="todos">Todos</option>
+        </select>
+        <input id="ad-busca" type="search" placeholder="Buscar por nome ou e-mail" aria-label="Buscar">
+      </div>
+      <div id="ad-lista"></div>
+    </div>
+    <div class="ad-box">
+      <h2>Conteúdo da plataforma</h2>
+      <p class="ac-nota">Banco de questões, sinopses, material de lei seca e trilhas de estudo. Envie os arquivos da pasta “conteudo” do pacote (pode selecionar os 4 de uma vez). Para atualizar, envie o arquivo novo com o mesmo nome.</p>
+      <div id="ad-arquivos"></div>
+      <div class="ad-up">
+        <input id="ad-files" type="file" accept=".json,application/json" multiple>
+        <button class="ac-btn ok" id="ad-enviar" type="button">Enviar arquivos</button>
+      </div>
+      <div class="ac-msg" id="ad-up-msg" role="status"></div>
+    </div>
+  </div>
+</section>
+
+<!-- plataforma -->
+<section data-view="app" hidden>
+<div id="dash-root">
+<div class="aviso" id="aviso-conteudo" hidden></div>
+<style>
+#dash-root { --dash-gutter: clamp(12px, 3vw, 40px); }
+.pe { font-family: var(--font-anthropic-sans); color: var(--color-fg); max-width: 1180px; margin-inline: auto; }
+.pe * { box-sizing: border-box; }
+.pe-head { display: flex; flex-direction: column; gap: var(--cds-gap-xs); margin-bottom: var(--cds-gap-lg); }
+.pe-title { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0; line-height: 1.2; }
+.pe-take { color: var(--color-fg-muted); font-size: var(--cds-font-size-body); margin: 0; }
+.pe-tabs { display: flex; gap: var(--cds-gap-xs); flex-wrap: wrap; border-bottom: 1px solid var(--color-border-line); margin-bottom: var(--cds-gap-lg); }
+.pe-tab { font: inherit; font-size: var(--cds-font-size-body); background: none; border: 0; border-bottom: 2px solid transparent; color: var(--color-fg-muted); padding: var(--cds-pad-sm) var(--cds-pad-md); cursor: pointer; margin-bottom: -1px; }
+.pe-tab[aria-selected="true"] { color: var(--color-fg); border-bottom-color: var(--color-fg); font-weight: var(--cds-font-weight-medium); }
+.pe-page[hidden] { display: none; }
+.pe-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: var(--cds-gap-md); margin-bottom: var(--cds-gap-lg); }
+.pe-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); }
+.pe-kpi-label { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.pe-kpi-value { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); line-height: 1.2; margin-top: var(--cds-gap-xs); font-variant-numeric: tabular-nums; }
+.pe-kpi-note { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-top: var(--cds-gap-xs); }
+.pe-h2 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0 0 var(--cds-gap-xs); }
+.pe-note { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin: 0 0 var(--cds-gap-md); }
+.pe-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr)); gap: var(--cds-gap-md); }
+.pe-disc { display: flex; flex-direction: column; gap: var(--cds-gap-sm); }
+.pe-disc-top { display: flex; justify-content: space-between; align-items: baseline; gap: var(--cds-gap-sm); }
+.pe-disc-name { font-weight: var(--cds-font-weight-medium); }
+.pe-badge { font-size: var(--cds-font-size-caption); padding: 2px 8px; border-radius: 999px; border: 1px solid var(--color-border-line); color: var(--color-fg-muted); white-space: nowrap; }
+.pe-badge.lv-4, .pe-badge.lv-3 { color: var(--color-ok); border-color: currentColor; }
+.pe-badge.lv-2 { color: var(--color-warn); border-color: currentColor; }
+.pe-badge.lv-1, .pe-badge.lv-0 { color: var(--color-bad); border-color: currentColor; }
+.pe-meter-row { display: grid; grid-template-columns: 7.5rem 1fr 3.5rem; align-items: center; gap: var(--cds-gap-sm); font-size: var(--cds-font-size-caption); }
+.pe-meter-row span:first-child { color: var(--color-fg-muted); }
+.pe-meter-row span:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+.pe-bar { height: 8px; border-radius: 999px; background: var(--cds-chart-grid); overflow: hidden; }
+.pe-bar > i { display: block; height: 100%; border-radius: 999px; width: 0; transition: width var(--cds-dur-slow) var(--cds-ease-out); }
+.pe-disc-foot { display: flex; justify-content: space-between; align-items: center; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); gap: var(--cds-gap-sm); }
+.pe-btn { font: inherit; font-size: var(--cds-font-size-caption); border: 1px solid var(--color-border-line); background: var(--color-bg); color: var(--color-fg); border-radius: var(--cds-radius); padding: var(--cds-pad-xs) var(--cds-pad-md); cursor: pointer; }
+.pe-btn:hover { border-color: var(--color-fg-muted); }
+.pe-btn.primary { background: var(--color-fg); color: var(--color-bg); border-color: var(--color-fg); }
+.pe-btn:disabled { opacity: .45; cursor: default; }
+.pe-compass { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); gap: var(--cds-gap-md); }
+.pe-radar { position: relative; min-height: 360px; }
+.pe-tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); display: none; z-index: 2; min-width: 11rem; }
+.pe-tip b { display: block; color: var(--cds-text-secondary); font-weight: var(--cds-font-weight-medium); margin-bottom: 2px; }
+.pe-legend { display: flex; gap: var(--cds-gap-md); flex-wrap: wrap; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-top: var(--cds-gap-sm); }
+.pe-legend i { display: inline-block; width: 14px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
+.pe-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--cds-gap-sm); }
+.pe-list li { display: flex; justify-content: space-between; gap: var(--cds-gap-sm); font-size: var(--cds-font-size-body); border-bottom: 1px solid var(--color-border-line); padding-bottom: var(--cds-gap-xs); }
+.pe-list li span:last-child { font-variant-numeric: tabular-nums; color: var(--color-fg-muted); white-space: nowrap; }
+.pe-dir { font-family: var(--font-anthropic-serif); font-size: var(--cds-font-size-heading); margin: var(--cds-gap-xs) 0 var(--cds-gap-sm); }
+.pe-controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr)); gap: var(--cds-gap-md); align-items: end; }
+.pe-field { display: flex; flex-direction: column; gap: 4px; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.pe-field select { font: inherit; font-size: var(--cds-font-size-body); color: var(--color-fg); background: var(--color-bg); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-xs) var(--cds-pad-sm); }
+.pe-q { margin-top: var(--cds-gap-lg); }
+.pe-q-meta { display: flex; justify-content: space-between; flex-wrap: wrap; gap: var(--cds-gap-sm); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-bottom: var(--cds-gap-md); }
+.pe-q-stem { font-size: var(--cds-font-size-body); line-height: 1.6; margin: 0 0 var(--cds-gap-md); white-space: pre-line; }
+.pe-alts { display: flex; flex-direction: column; gap: var(--cds-gap-sm); }
+.pe-alt { font: inherit; font-size: var(--cds-font-size-body); text-align: left; display: grid; grid-template-columns: 2rem 1fr; gap: var(--cds-gap-sm); align-items: start; background: var(--color-bg); color: var(--color-fg); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-sm) var(--cds-pad-md); cursor: pointer; line-height: 1.5; }
+.pe-alt:hover:not(:disabled) { border-color: var(--color-fg-muted); }
+.pe-alt .l { font-weight: var(--cds-font-weight-medium); width: 1.6rem; height: 1.6rem; border-radius: 999px; border: 1px solid var(--color-border-line); display: inline-flex; align-items: center; justify-content: center; font-size: var(--cds-font-size-caption); }
+.pe-alt.sel { border-color: var(--color-fg); }
+.pe-alt.sel .l { background: var(--color-fg); color: var(--color-bg); border-color: var(--color-fg); }
+.pe-alt.ok { border-color: var(--color-ok); background: color-mix(in srgb, var(--color-ok) 10%, transparent); }
+.pe-alt.ok .l { background: var(--color-ok); border-color: var(--color-ok); color: var(--color-bg); }
+.pe-alt.bad { border-color: var(--color-bad); background: color-mix(in srgb, var(--color-bad) 10%, transparent); }
+.pe-alt.bad .l { background: var(--color-bad); border-color: var(--color-bad); color: var(--color-bg); }
+.pe-alt:disabled { cursor: default; }
+.pe-actions { display: flex; gap: var(--cds-gap-sm); flex-wrap: wrap; margin-top: var(--cds-gap-md); align-items: center; }
+.pe-fb { margin-top: var(--cds-gap-md); border-left: 3px solid var(--color-border-line); padding: var(--cds-pad-sm) var(--cds-pad-md); font-size: var(--cds-font-size-body); line-height: 1.55; }
+.pe-fb.ok { border-left-color: var(--color-ok); }
+.pe-fb.bad { border-left-color: var(--color-bad); }
+.pe-fb strong { display: block; margin-bottom: 4px; }
+.pe-fb.ok strong { color: var(--color-ok); }
+.pe-fb.bad strong { color: var(--color-bad); }
+.pe-dots { display: flex; flex-wrap: wrap; gap: 4px; margin-top: var(--cds-gap-sm); }
+.pe-dots i { width: 10px; height: 10px; border-radius: 3px; background: var(--cds-chart-grid); }
+.pe-dots i.ok { background: var(--color-ok); }
+.pe-dots i.bad { background: var(--color-bad); }
+.pe-dots i.cur { outline: 2px solid var(--color-fg); outline-offset: 1px; }
+.pe-ds-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); gap: var(--cds-gap-md); }
+.pe-ds-item { border: 1px solid rgba(255,255,255,.14); border-left: 4px solid var(--dc); border-radius: 14px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; background: rgba(255,255,255,.03); }
+.pe-ds-item .d { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.pe-ds-item .t { font-weight: 600; line-height: 1.35; }
+.pe-ds-item .s { font-size: var(--cds-font-size-caption); }
+.pe-ds-item .s.ok { color: var(--color-ok, #2FD18B); }
+.pe-ds-case p { line-height: 1.65; margin: 0 0 10px; }
+.pe-ds-cmd { font-weight: 600; margin: 14px 0 6px; line-height: 1.5; }
+.pe-ds-top { margin: 0 0 14px 1.2rem; padding: 0; line-height: 1.6; }
+.pe-ds-txt { width: 100%; min-height: 26rem; font: inherit; font-size: var(--cds-font-size-body); line-height: 1.7; background: #04261C; color: #fff; border: 1px solid rgba(255,255,255,.2); border-radius: 12px; padding: 12px 14px; resize: vertical; box-sizing: border-box; }
+.pe-ds-count { display: flex; flex-wrap: wrap; gap: 14px; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin: 6px 0 10px; }
+.pe-ds-count .bad { color: #FF7A7A; font-weight: 600; } .pe-ds-count .ok { color: #2FD18B; font-weight: 600; }
+.pe-ds-esp { border: 1px solid rgba(255,255,255,.14); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; }
+.pe-ds-esp h4 { margin: 0 0 6px; font-size: var(--cds-font-size-body); }
+.pe-ds-esp p { margin: 0 0 8px; line-height: 1.6; }
+.pe-ds-sc { display: flex; flex-wrap: wrap; gap: 6px; }
+.pe-ds-sc button[aria-pressed="true"] { background: var(--accent, #FFCC29); color: #0B3B2A; border-color: transparent; font-weight: 600; }
+.pe-ds-modelo p { line-height: 1.65; margin: 0 0 10px; }
+.pe-ds-hist { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.pe-empty { color: var(--color-fg-muted); font-size: var(--cds-font-size-body); padding: var(--cds-pad-lg) 0; }
+.pe-rev { display: flex; flex-direction: column; gap: var(--cds-gap-md); max-height: 70vh; overflow: auto; }
+.pe-rev-item { border-bottom: 1px solid var(--color-border-line); padding-bottom: var(--cds-gap-md); font-size: var(--cds-font-size-body); line-height: 1.55; }
+.pe-rev-item .m { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-bottom: 4px; }
+.pe-rev-item .yours { color: var(--color-bad); }
+.pe-rev-item .right { color: var(--color-ok); }
+.pe-rev-item .c { color: var(--color-fg-muted); margin-top: 4px; }
+.pe-code { width: 100%; min-height: 8rem; font-family: ui-monospace, monospace; font-size: var(--cds-font-size-caption); background: var(--color-bg); color: var(--color-fg); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-sm); resize: vertical; word-break: break-all; }
+.pe-msg { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); min-height: 1.2em; }
+.pe-warn { font-size: var(--cds-font-size-caption); color: var(--color-warn); margin: 0 0 var(--cds-gap-md); }
+.pe-bank { font-variant-numeric: tabular-nums; }
+.pe-fail { display: flex; align-items: center; justify-content: center; gap: 8px; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); min-height: 8rem; }
+.pe-fail::before { content: ""; width: .375rem; height: .375rem; border-radius: 999px; background: var(--color-bad); }
+[data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+[data-dash-source-state=empty] { color: transparent; }
+
+/* ===== tema vivo ===== */
+.pe {
+  --color-fg: #F2FBF6; --color-fg-muted: #A7CBB9; --color-bg: #04291F; --color-panel: rgba(255,255,255,.055);
+  --color-border-line: rgba(255,255,255,.13); --color-ok: #34D399; --color-warn: #FBBF24; --color-bad: #FB7185;
+  --cds-chart-grid: rgba(255,255,255,.12); --cds-chart-axis: rgba(255,255,255,.28); --cds-chart-reference: #FBBF24; --cds-chart-muted: rgba(255,255,255,.25);
+  --cds-surface-popover: #063B2C; --cds-border: rgba(255,255,255,.2); --cds-text-secondary: #FFE58A;
+  --grad: linear-gradient(120deg, #00693E 0%, #00A859 55%, #3CC46B 100%);
+  background:
+    radial-gradient(60rem 30rem at 0% 0%, rgba(0,168,89,.38), transparent 60%),
+    radial-gradient(50rem 30rem at 100% 10%, rgba(255,204,41,.12), transparent 60%),
+    radial-gradient(50rem 40rem at 50% 100%, rgba(0,133,66,.25), transparent 60%),
+    linear-gradient(180deg, #022A1E, #00442F);
+  color: var(--color-fg);
+  border-radius: 20px; padding: clamp(14px, 3vw, 32px); max-width: 1240px;
+  box-shadow: 0 20px 60px rgba(0,40,25,.35);
+}
+.pe-head { background: var(--grad); border-radius: 16px; padding: clamp(16px, 3vw, 28px); position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(255,204,41,.28); }
+.pe-head::after { content: ""; position: absolute; right: -40px; top: -40px; width: 200px; height: 200px; border-radius: 50%; border: 18px solid rgba(255,255,255,.12); }
+.pe-head::before { content: "CESGRANRIO · ADVOGADO TRANSPETRO"; font-size: 11px; letter-spacing: .14em; font-weight: 600; color: rgba(255,255,255,.85); }
+.pe-title { color: #fff; font-size: clamp(1.6rem, 3.4vw, 2.4rem); }
+.pe-take { color: rgba(255,255,255,.92); }
+.pe-tabs { border-bottom: 0; gap: 8px; }
+.pe-tab { border: 1px solid rgba(255,255,255,.14); border-radius: 999px; padding: 8px 18px; background: rgba(255,255,255,.05); color: var(--color-fg-muted); margin-bottom: 0; transition: transform .15s, background .15s; }
+.pe-tab:hover { color: #fff; transform: translateY(-1px); background: rgba(255,255,255,.1); }
+.pe-tab[aria-selected="true"] { background: var(--grad); color: #fff; border-color: transparent; box-shadow: 0 6px 18px rgba(255,204,41,.28); }
+.pe-card { border-radius: 16px; backdrop-filter: blur(4px); }
+.pe-kpis .pe-card { border: 0; color: #fff; position: relative; overflow: hidden; }
+.pe-kpis .pe-card::after { content: ""; position: absolute; right: -26px; bottom: -26px; width: 110px; height: 110px; border-radius: 50%; background: rgba(255,255,255,.14); }
+#kpi-resp, #dkpi-resp { background: linear-gradient(135deg, #00693E, #00A859); box-shadow: 0 10px 26px rgba(0,133,66,.45); }
+#kpi-acerto, #dkpi-acerto { background: linear-gradient(135deg, #00594A, #0EA5A0); box-shadow: 0 10px 26px rgba(14,165,160,.35); }
+#kpi-prof, #dkpi-prof { background: linear-gradient(135deg, #FFCC29, #F5A400); box-shadow: 0 10px 26px rgba(255,204,41,.35); }
+#kpi-prof .pe-kpi-label, #kpi-prof .pe-kpi-note, #kpi-prof .pe-kpi-value, #dkpi-prof .pe-kpi-label, #dkpi-prof .pe-kpi-note, #dkpi-prof .pe-kpi-value { color: #0B3B2A; }
+#kpi-dom, #dkpi-dom { background: linear-gradient(135deg, #0B4F3A, #2F855A); box-shadow: 0 10px 26px rgba(47,133,90,.35); }
+.pe-kpis .pe-kpi-label, .pe-kpis .pe-kpi-note { color: rgba(255,255,255,.88); }
+.pe-kpis .pe-kpi-value { font-size: clamp(2rem, 4vw, 2.6rem); }
+.pe-h2 { color: #fff; }
+.pe-disc { border-top: 4px solid var(--dc, #FFCC29); background: linear-gradient(180deg, color-mix(in srgb, var(--dc, #FFCC29) 16%, transparent), rgba(255,255,255,.04) 70%); transition: transform .15s, box-shadow .15s; }
+.pe-disc:hover { transform: translateY(-3px); box-shadow: 0 12px 28px color-mix(in srgb, var(--dc, #FFCC29) 35%, transparent); }
+.pe-disc-name { color: #fff; display: flex; align-items: center; gap: 8px; }
+.pe-disc-name::before { content: ""; width: 10px; height: 10px; border-radius: 3px; background: var(--dc, #FFCC29); box-shadow: 0 0 10px var(--dc, #FFCC29); flex: none; }
+.pe-bar { height: 10px; background: rgba(255,255,255,.1); }
+.pe-bar > i { box-shadow: 0 0 10px currentColor; }
+.pe-badge { background: rgba(255,255,255,.06); }
+.pe-btn { background: rgba(255,255,255,.08); color: #fff; border-color: rgba(255,255,255,.18); border-radius: 999px; padding: 6px 16px; transition: transform .15s, background .15s; }
+.pe-btn:hover { background: rgba(255,255,255,.16); transform: translateY(-1px); border-color: rgba(255,255,255,.3); }
+.pe-btn.primary { background: var(--grad); border-color: transparent; color: #fff; font-weight: 600; box-shadow: 0 6px 18px rgba(255,204,41,.28); }
+.pe-disc .pe-btn { background: var(--dc, #FFCC29); color: #0B3B2A; border-color: transparent; font-weight: 600; }
+.pe-field select { background: #0A3D2E; color: #fff; border-color: rgba(255,255,255,.2); border-radius: 10px; }
+#rumo { background: linear-gradient(135deg, rgba(255,204,41,.20), rgba(0,168,89,.22)); border-color: rgba(255,204,41,.45); }
+.pe-dir { color: #fff; font-size: clamp(1.4rem, 3vw, 1.9rem); }
+#fortes { border-top: 4px solid #34D399; }
+#fracos { border-top: 4px solid #FB7185; }
+.pe-q { border-top: 4px solid var(--dc, #FFCC29); }
+.pe-alt { background: rgba(255,255,255,.04); border-color: rgba(255,255,255,.14); color: #F2FBF6; border-radius: 12px; transition: transform .12s, border-color .12s, background .12s; }
+.pe-alt:hover:not(:disabled) { transform: translateX(3px); border-color: #FFCC29; background: rgba(255,204,41,.10); }
+.pe-alt .l { border-color: rgba(255,255,255,.3); }
+.pe-alt.sel { border-color: #FFCC29; background: rgba(255,204,41,.16); }
+.pe-alt.sel .l { background: var(--grad); border-color: transparent; color: #fff; }
+.pe-alt.ok { background: rgba(52,211,153,.16); }
+.pe-alt.bad { background: rgba(251,113,133,.16); }
+.pe-alt.ok .l, .pe-alt.bad .l { color: #022A1E; }
+.pe-fb { background: rgba(255,255,255,.05); border-radius: 0 12px 12px 0; }
+.pe-dots i { width: 12px; height: 12px; border-radius: 4px; background: rgba(255,255,255,.14); }
+.pe-dots i.ok { background: #34D399; box-shadow: 0 0 8px #34D399; }
+.pe-dots i.bad { background: #FB7185; box-shadow: 0 0 8px #FB7185; }
+.pe-dots i.cur { outline-color: #fff; }
+#resultado { background: linear-gradient(135deg, rgba(0,133,66,.35), rgba(255,204,41,.16)); }
+#resultado .pe-kpi-value { background: linear-gradient(90deg, #FDE68A, #7ED957); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.pe-code { background: #04261C; border-color: rgba(255,255,255,.2); }
+.pe-warn { background: rgba(251,191,36,.12); border: 1px solid rgba(251,191,36,.35); border-radius: 12px; padding: 10px 14px; color: #FDE68A; }
+.pe-rev-item { border-left: 4px solid var(--dc, #FB7185); padding-left: 12px; border-bottom-color: rgba(255,255,255,.08); }
+.pe-tip { color: #fff; }
+@media (prefers-reduced-motion: reduce) { .pe * { transition: none !important; } }
+.pe-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: var(--cds-gap-md); }
+.pe-chip { font: inherit; font-size: var(--cds-font-size-caption); border-radius: 999px; padding: 6px 14px; cursor: pointer; border: 1px solid color-mix(in srgb, var(--dc) 55%, transparent); background: color-mix(in srgb, var(--dc) 12%, transparent); color: #fff; }
+.pe-chip[aria-selected="true"] { background: var(--dc); color: #0B3B2A; font-weight: 600; box-shadow: 0 0 14px color-mix(in srgb, var(--dc) 60%, transparent); }
+.pe-mt { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: var(--cds-gap-md); align-items: start; }
+.pe-mt-pdf { border-top: 4px solid var(--dc, #FFCC29); background: linear-gradient(160deg, color-mix(in srgb, var(--dc, #FFCC29) 26%, transparent), rgba(255,255,255,.04) 75%); display: flex; flex-direction: column; gap: var(--cds-gap-sm); }
+.pe-pdf-icon { width: 54px; height: 66px; border-radius: 8px; background: linear-gradient(160deg, #FFCC29, #F5A400); color: #0B3B2A; font-weight: 800; font-size: 13px; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 8px; box-shadow: 0 8px 20px rgba(255,204,41,.35); position: relative; }
+.pe-pdf-icon::before { content: ""; position: absolute; top: 0; right: 0; border-style: solid; border-width: 0 16px 16px 0; border-color: transparent #04291F transparent transparent; }
+.pe-pdf-title { font-family: var(--font-anthropic-serif); font-size: var(--cds-font-size-heading); color: #fff; }
+.pe-link { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; font-size: var(--cds-font-size-caption); border-radius: 999px; padding: 7px 16px; font-weight: 600; }
+.pe-link.primary { background: var(--grad); color: #fff; box-shadow: 0 6px 18px rgba(255,204,41,.28); }
+.pe-link.ghost { background: rgba(255,255,255,.08); color: #fff; border: 1px solid rgba(255,255,255,.2); }
+.pe-link:hover { filter: brightness(1.12); }
+.pe-lei-list { display: flex; flex-direction: column; gap: var(--cds-gap-sm); max-height: 75vh; overflow: auto; padding-right: 4px; }
+.pe-lei { border: 1px solid rgba(255,255,255,.12); border-left: 4px solid var(--dc, #FFCC29); border-radius: 12px; padding: 10px 14px; background: rgba(255,255,255,.035); display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; align-items: start; }
+.pe-lei-t { font-weight: 600; color: #fff; }
+.pe-lei-f { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); grid-column: 1; }
+.pe-lei-d { font-size: var(--cds-font-size-caption); color: var(--dc, #FFE58A); grid-column: 1; line-height: 1.5; }
+.pe-lei-n { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); white-space: nowrap; text-align: right; }
+.pe-lei .pe-link { grid-column: 2; grid-row: 2 / span 2; align-self: end; }
+.pe-before { margin-top: var(--cds-gap-md); padding: 12px 14px; border-radius: 12px; background: rgba(251,191,36,.1); border: 1px solid rgba(251,191,36,.35); display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; font-size: var(--cds-font-size-caption); color: #FDE68A; }
+.pe-disc-links { display: flex; gap: 6px; flex-wrap: wrap; }
+.pe-disc .pe-btn.ghost { background: rgba(255,255,255,.08); color: #fff; border-color: rgba(255,255,255,.2); font-weight: 500; }
+
+.pe-mt { grid-template-columns: minmax(0, 1fr); }
+#mt-pdf { grid-column: 1 / -1; }
+@media (min-width: 1000px) { .pe-mt { grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr); } }
+.pe-nav { font: inherit; font-size: var(--cds-font-size-caption); background: #0A3D2E; color: #fff; border: 1px solid rgba(255,255,255,.2); border-radius: 999px; padding: 7px 12px; max-width: 100%; }
+.pe-reader { position: relative; max-height: 80vh; overflow: auto; padding: clamp(16px, 3vw, 32px); background: #FCFEFB; color: #10261D; border-top: 4px solid var(--dc, #FFCC29); line-height: 1.65; font-size: 15px; }
+.pe-rd-capa { background: linear-gradient(135deg, color-mix(in srgb, var(--dc) 85%, #003D2B), #003D2B); color: #fff; border-radius: 12px; padding: 20px 22px; margin-bottom: 18px; }
+.pe-rd-capa-t { font-family: var(--font-anthropic-serif); font-size: 1.6rem; line-height: 1.2; margin-bottom: 6px; }
+.pe-rd-capa-s { font-size: 13px; opacity: .9; }
+.pe-rd-h1 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: 1.45rem; color: #003D2B; margin: 28px 0 10px; padding-bottom: 6px; border-bottom: 3px solid var(--dc); }
+.pe-rd-h2 { font-size: 1.08rem; font-weight: 700; color: #00693E; margin: 20px 0 8px; }
+.pe-rd-h3 { font-size: .98rem; font-weight: 700; color: #2F855A; margin: 14px 0 6px; }
+.pe-rd-p { margin: 0 0 10px; text-align: justify; }
+.pe-rd-ul { margin: 0 0 12px; padding-left: 22px; }
+.pe-rd-ul li { margin-bottom: 4px; }
+.pe-rd-box { background: color-mix(in srgb, var(--dc) 12%, #fff); border-left: 5px solid var(--dc); border-radius: 0 10px 10px 0; padding: 10px 14px; margin: 12px 0; }
+.pe-rd-box p { margin: 0 0 4px; }
+.pe-rd-box-l { font-size: 12px; font-weight: 800; letter-spacing: .08em; color: #003D2B; margin-bottom: 4px; }
+.pe-rd-tw { overflow-x: auto; margin: 10px 0 16px; border-radius: 10px; border: 1px solid #CDE9D9; }
+.pe-rd-t { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+.pe-rd-t th { background: #00573A; color: #fff; text-align: left; padding: 8px 10px; font-weight: 600; vertical-align: top; }
+.pe-rd-t td { padding: 7px 10px; border-top: 1px solid #DCEFE4; vertical-align: top; }
+.pe-rd-t tr:nth-child(even) td { background: #F0FAF4; }
+.pe-reader .pe-fail, .pe-reader .pe-empty { color: #2F855A; }
+
+/* ===== paleta Petrobras: verde e amarelo ===== */
+.pe { --accent: #FFCC29; --grad: linear-gradient(120deg, #00693E 0%, #008542 55%, #00A859 100%); }
+.pe-head { background: linear-gradient(120deg, #00573A 0%, #008542 60%, #00A859 100%); box-shadow: 0 10px 30px rgba(0,133,66,.35); border-bottom: 6px solid var(--accent); }
+.pe-head::after { border-color: rgba(255,204,41,.35); }
+.pe-head::before { color: var(--accent); }
+.pe-tab[aria-selected="true"] { background: var(--accent); color: #0B3B2A; box-shadow: 0 6px 18px rgba(255,204,41,.3); font-weight: 600; }
+.pe-btn.primary, .pe-link.primary { background: var(--accent); color: #0B3B2A; box-shadow: 0 6px 18px rgba(255,204,41,.28); }
+.pe-alt.sel .l { background: var(--accent); color: #0B3B2A; }
+.pe-alt:hover:not(:disabled), .pe-alt.sel { border-color: var(--accent); }
+.pe-compass { grid-template-columns: minmax(0, 1fr); }
+.pe-side { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); gap: var(--cds-gap-md); }
+.pe-rings { display: flex; flex-direction: column; gap: var(--cds-gap-lg); }
+.pe-ring-top { display: flex; flex-wrap: wrap; gap: var(--cds-gap-lg); align-items: center; }
+.pe-ring-big { flex: 0 1 220px; min-width: 180px; }
+.pe-ring-info { flex: 1 1 16rem; }
+.pe-ring-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: var(--cds-gap-md); }
+.pe-ring-card { font: inherit; color: inherit; cursor: pointer; text-align: center; background: linear-gradient(180deg, color-mix(in srgb, var(--dc) 14%, transparent), rgba(255,255,255,.03)); border: 1px solid rgba(255,255,255,.12); border-top: 3px solid var(--dc); border-radius: 14px; padding: 12px 10px; display: flex; flex-direction: column; gap: 6px; transition: transform .15s, box-shadow .15s; }
+.pe-ring-card:hover { transform: translateY(-3px); box-shadow: 0 10px 24px color-mix(in srgb, var(--dc) 35%, transparent); }
+.pe-ring-name { font-weight: 600; font-size: var(--cds-font-size-caption); color: #fff; line-height: 1.3; }
+.pe-ring-sub { font-size: 11px; color: var(--color-fg-muted); }
+
+/* ===== diagnóstico, cronograma e cronômetro ===== */
+.pe-tab.pe-tab-start { position: relative; }
+.pe-tab.pe-tab-start::after { content: "comece aqui"; position: absolute; top: -9px; right: -6px; font-size: 9px; letter-spacing: .06em; text-transform: uppercase; background: #FF7A7A; color: #fff; border-radius: 999px; padding: 1px 6px; font-weight: 700; }
+.pe-mini-timer { font: inherit; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; background: var(--accent); color: #0B3B2A; border: 0; border-radius: 999px; padding: 6px 14px; font-weight: 700; cursor: pointer; align-self: flex-start; margin-top: 6px; box-shadow: 0 6px 18px rgba(255,204,41,.35); }
+.pe-dg-hero { background: linear-gradient(135deg, rgba(255,204,41,.20), rgba(0,168,89,.25)); border-color: rgba(255,204,41,.45); border-top: 4px solid var(--accent); }
+.pe-dg-blocks { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; margin: var(--cds-gap-md) 0; }
+.pe-dg-chip { border-radius: 10px; padding: 8px 10px; background: rgba(255,255,255,.06); border-left: 4px solid var(--dc); font-size: var(--cds-font-size-caption); display: flex; justify-content: space-between; gap: 6px; }
+.pe-dg-chip b { font-variant-numeric: tabular-nums; color: #fff; }
+.pe-dg-chip.full { background: color-mix(in srgb, var(--dc) 22%, transparent); }
+.pe-dg-bar { height: 6px; border-radius: 999px; background: rgba(255,255,255,.1); overflow: hidden; }
+.pe-dg-bar i { display: block; height: 100%; background: var(--accent); border-radius: 999px; transition: width .3s; }
+.pe-res { display: flex; flex-direction: column; gap: var(--cds-gap-md); margin-top: var(--cds-gap-md); }
+.pe-res-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: var(--cds-gap-md); align-items: start; }
+.pe-map-row { display: grid; grid-template-columns: minmax(8rem, 13rem) 1fr 3rem 5.5rem; align-items: center; gap: 10px; font-size: var(--cds-font-size-caption); padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,.07); }
+.pe-map-row .nm { color: #fff; font-weight: 600; display: flex; gap: 8px; align-items: center; }
+.pe-map-row .nm::before { content: ""; width: 9px; height: 9px; border-radius: 3px; background: var(--dc); flex: none; }
+.pe-map-row .bar { height: 12px; background: rgba(255,255,255,.08); border-radius: 999px; position: relative; overflow: visible; }
+.pe-map-row .bar i { display: block; height: 100%; border-radius: 999px; }
+.pe-map-row .bar s { position: absolute; left: 70%; top: -3px; bottom: -3px; width: 2px; background: #fff; opacity: .8; text-decoration: none; }
+.pe-map-row .v { text-align: right; font-variant-numeric: tabular-nums; color: #fff; font-weight: 700; }
+.pe-tag { font-size: 11px; font-weight: 700; border-radius: 999px; padding: 3px 9px; text-align: center; }
+.pe-tag.forte { background: rgba(74,222,128,.18); color: #4ADE80; }
+.pe-tag.regular { background: rgba(255,204,41,.18); color: #FFCC29; }
+.pe-tag.fraco { background: rgba(255,122,122,.18); color: #FF7A7A; }
+.pe-tag.na { background: rgba(255,255,255,.08); color: var(--color-fg-muted); }
+.pe-insights { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.pe-insights li { padding: 10px 12px; border-radius: 10px; background: rgba(255,255,255,.05); border-left: 4px solid #FF7A7A; font-size: var(--cds-font-size-body); line-height: 1.5; }
+.pe-insights li.ok { border-left-color: #4ADE80; }
+.pe-insights li.warn { border-left-color: #FFCC29; }
+.pe-focus { display: flex; flex-direction: column; gap: 10px; }
+.pe-focus-item { border-radius: 12px; padding: 10px 12px; background: color-mix(in srgb, var(--dc) 14%, transparent); border-left: 4px solid var(--dc); }
+.pe-focus-item .t { font-weight: 700; color: #fff; display: flex; justify-content: space-between; gap: 8px; }
+.pe-focus-item .a { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-top: 4px; }
+.pe-errs details { border-radius: 10px; background: rgba(255,255,255,.04); margin-bottom: 8px; border-left: 4px solid var(--dc); }
+.pe-errs summary { cursor: pointer; padding: 10px 12px; font-weight: 600; color: #fff; }
+.pe-errs .pe-rev-item { margin: 0 12px 10px; }
+.pe-crono-top { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: var(--cds-gap-md); align-items: start; margin-bottom: var(--cds-gap-md); }
+.pe-timer { border-top: 4px solid var(--accent); background: linear-gradient(160deg, rgba(255,204,41,.14), rgba(0,168,89,.12)); }
+.pe-timer-main { display: flex; align-items: center; gap: 18px; margin: 8px 0; }
+.pe-timer-ring { width: 120px; height: 120px; flex: none; transform: rotate(-90deg); }
+.pe-timer-ring circle { fill: none; stroke-width: 10; }
+.pe-timer-ring .bg { stroke: rgba(255,255,255,.1); }
+.pe-timer-ring .fg { stroke: var(--accent); stroke-linecap: round; stroke-dasharray: 326.7; stroke-dashoffset: 326.7; transition: stroke-dashoffset .5s; filter: drop-shadow(0 0 6px rgba(255,204,41,.6)); }
+.pe-timer-clock { font-family: var(--font-anthropic-serif); font-size: clamp(2rem, 6vw, 2.8rem); color: #fff; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.pe-timer-label { color: var(--accent); font-weight: 600; font-size: var(--cds-font-size-caption); margin-top: 4px; }
+.pe-timer-today { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.pe-timer-steps { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.pe-timer-steps span { font-size: 11px; padding: 3px 9px; border-radius: 999px; background: rgba(255,255,255,.07); color: var(--color-fg-muted); }
+.pe-timer-steps span.cur { background: var(--accent); color: #0B3B2A; font-weight: 700; }
+.pe-timer-steps span.done { text-decoration: line-through; opacity: .6; }
+.pe-field input { font: inherit; font-size: var(--cds-font-size-body); color: #fff; background: #0A3D2E; border: 1px solid rgba(255,255,255,.2); border-radius: 10px; padding: var(--cds-pad-xs) var(--cds-pad-sm); color-scheme: dark; }
+.pe-days { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.pe-day { font: inherit; font-size: var(--cds-font-size-caption); border-radius: 999px; padding: 6px 12px; cursor: pointer; border: 1px solid rgba(255,255,255,.2); background: rgba(255,255,255,.05); color: var(--color-fg-muted); }
+.pe-day[aria-pressed="true"] { background: var(--accent); color: #0B3B2A; border-color: transparent; font-weight: 700; }
+.pe-plan-sum { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr)); gap: var(--cds-gap-md); margin-bottom: var(--cds-gap-md); }
+.pe-plan-sum .pe-card { padding: var(--cds-pad-md); }
+.pe-share { display: flex; height: 14px; border-radius: 999px; overflow: hidden; margin: 8px 0 6px; }
+.pe-share i { display: block; height: 100%; }
+.pe-share-leg { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 11px; color: var(--color-fg-muted); }
+.pe-share-leg span::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 2px; background: var(--dc); margin-right: 5px; }
+.pe-week-nav { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: var(--cds-gap-md) 0; flex-wrap: wrap; }
+.pe-week-nav strong { color: #fff; }
+.pe-days-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr)); gap: var(--cds-gap-md); }
+.pe-dcard { border-radius: 14px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
+.pe-dcard.today { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 8px 24px rgba(255,204,41,.18); }
+.pe-dcard.done { opacity: .62; }
+.pe-dcard .hd { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.pe-dcard .dt { font-weight: 700; color: #fff; text-transform: capitalize; }
+.pe-dcard .hr { font-size: var(--cds-font-size-caption); color: var(--accent); font-variant-numeric: tabular-nums; }
+.pe-slot { border-left: 4px solid var(--dc, var(--accent)); padding: 6px 10px; border-radius: 0 10px 10px 0; background: color-mix(in srgb, var(--dc, #FFCC29) 10%, transparent); }
+.pe-slot .st { font-weight: 700; color: #fff; font-size: var(--cds-font-size-body); }
+.pe-slot ul { margin: 4px 0 0; padding-left: 16px; font-size: var(--cds-font-size-caption); color: var(--color-fg); line-height: 1.5; }
+.pe-slot ul li span { color: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
+.pe-dcard .ft { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; justify-content: space-between; }
+.pe-dcard .ft label { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); display: flex; gap: 6px; align-items: center; cursor: pointer; }
+.pe-dcard .studied { font-size: 11px; color: var(--color-fg-muted); }
+
+.pe-save { font-size: var(--cds-font-size-caption); border-radius: 999px; padding: 4px 12px; align-self: flex-start; background: rgba(0,0,0,.18); color: #fff; }
+.pe-save:empty { display: none; }
+.pe-save.ok::before { content: "● "; color: #4ADE80; }
+.pe-save.warn::before { content: "● "; color: #FFCC29; }
+#progresso .pe-save { margin-bottom: 10px; display: inline-block; }
+.pe-tr-progress { margin: var(--cds-gap-sm) 0 var(--cds-gap-md); display: flex; flex-direction: column; gap: 4px; max-width: 26rem; }
+.pe-tr-group { margin-bottom: var(--cds-gap-md); }
+.pe-tr-gt { font-weight: 700; color: #fff; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+.pe-tr-gt::before { content: ""; width: 10px; height: 10px; border-radius: 3px; background: var(--dc); }
+.pe-tr-items { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr)); gap: 8px; }
+.pe-tr-item { font: inherit; text-align: left; cursor: pointer; display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,.14); border-left: 4px solid var(--dc); background: rgba(255,255,255,.05); color: #fff; transition: transform .12s; }
+.pe-tr-item:hover { transform: translateY(-2px); background: rgba(255,255,255,.09); }
+.pe-tr-item.cur { box-shadow: 0 0 0 2px var(--accent); }
+.pe-tr-item .n { font-weight: 700; }
+.pe-tr-item .e { font-size: 11px; color: var(--color-fg-muted); }
+.pe-tr-item .s { font-size: 11px; font-weight: 700; }
+.pe-tr-item.st-ok .s { color: #4ADE80; }
+.pe-tr-item.st-bad .s { color: #FF7A7A; }
+.pe-tr-item.st-mid .s { color: #FFCC29; }
+.pe-tr-item.st-todo .s { color: var(--color-fg-muted); }
+#tr-study { margin-top: var(--cds-gap-md); display: flex; flex-direction: column; gap: var(--cds-gap-md); }
+#tr-study[hidden] { display: none; }
+.pe-tr-head { border-top: 4px solid var(--dc); background: linear-gradient(160deg, color-mix(in srgb, var(--dc) 18%, transparent), rgba(255,255,255,.04) 70%); }
+.pe-tr-ht { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; }
+.pe-tr-ht .pe-kpi-label { width: 100%; }
+.pe-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr)); gap: 8px; margin: var(--cds-gap-md) 0; }
+.pe-step { display: flex; gap: 8px; align-items: center; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); background: rgba(255,255,255,.05); border-radius: 10px; padding: 8px 10px; }
+.pe-step b { width: 22px; height: 22px; flex: none; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; background: rgba(255,255,255,.12); color: #fff; }
+.pe-step.ok { color: #fff; }
+.pe-step.ok b { background: #4ADE80; color: #0B3B2A; }
+.pe-tr-focus { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 6px; }
+.pe-tr-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--cds-gap-md); align-items: start; }
+@media (min-width: 1000px) { .pe-tr-grid { grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); } }
+.pe-tr-side { max-height: 80vh; overflow: auto; display: flex; flex-direction: column; gap: var(--cds-gap-sm); border-top: 4px solid var(--dc); }
+.pe-arts { display: flex; flex-wrap: wrap; gap: 6px; grid-column: 1 / -1; margin-top: 4px; }
+.pe-art { font-size: 12px; font-weight: 700; text-decoration: none; padding: 4px 10px; border-radius: 999px; background: color-mix(in srgb, var(--dc) 22%, transparent); color: #fff; border: 1px solid color-mix(in srgb, var(--dc) 55%, transparent); }
+.pe-art:hover { background: var(--dc); color: #0B3B2A; }
+.pe-tr-err { border-radius: 10px; background: rgba(255,255,255,.04); border-left: 4px solid #FF7A7A; padding: 0 10px 8px; font-size: var(--cds-font-size-caption); line-height: 1.5; }
+.pe-tr-err summary { cursor: pointer; padding: 8px 0; color: #fff; font-weight: 600; }
+.pe-tr-err .yours { color: #FF7A7A; margin-bottom: 4px; }
+.pe-tr-err .right { color: #4ADE80; margin-bottom: 4px; }
+.pe-tr-err .c { color: var(--color-fg-muted); margin-bottom: 6px; }
+.pe-rd-focus { background: color-mix(in srgb, var(--dc) 30%, #fff); border-left: 6px solid var(--dc); padding: 6px 10px; border-radius: 0 8px 8px 0; }
+.pe-rd-focus::after { content: "  ← reler"; font-size: 12px; font-weight: 700; color: #B42318; }
+.pe-rd-focus-cap { border-bottom-width: 5px; }
+.flash { animation: peflash 1.2s ease-out; }
+@keyframes peflash { 0% { box-shadow: 0 0 0 0 rgba(255,204,41,.9); } 100% { box-shadow: 0 0 0 14px rgba(255,204,41,0); } }
+.pe-tr-actions { border-top: 4px solid var(--accent); }
+</style>
+
+
+<div class="pe" id="plataforma">
+  <header class="pe-head">
+    <h1 class="pe-title" id="titulo">Plataforma de estudos · Advogado Transpetro</h1>
+    <button class="pe-mini-timer" id="mini-timer" hidden></button>
+    <div class="pe-save" aria-live="polite"></div>
+    <p class="pe-take" id="resumo"><span class="pe-bank dash-skeleton" data-source="banco_total" data-field="questoes" data-row="0">—</span> questões no padrão Cesgranrio, em <span class="pe-bank dash-skeleton" data-source="banco_total" data-field="disciplinas" data-row="0">—</span> disciplinas. <span id="resumo-user"></span></p>
+  </header>
+
+  <nav class="pe-tabs" role="tablist" aria-label="Seções">
+    <button class="pe-tab pe-tab-start" role="tab" data-page="diagnostico" aria-selected="true">Diagnóstico</button>
+    <button class="pe-tab" role="tab" data-page="dirigido" aria-selected="false">Estudo dirigido</button>
+    <button class="pe-tab" role="tab" data-page="painel" aria-selected="false">Painel</button>
+    <button class="pe-tab" role="tab" data-page="bussola" aria-selected="false">Bússola</button>
+    <button class="pe-tab" role="tab" data-page="material" aria-selected="false">Material de estudo</button>
+    <button class="pe-tab" role="tab" data-page="treino" aria-selected="false">Treino</button>
+    <button class="pe-tab" role="tab" data-page="discursivas" aria-selected="false">Discursivas</button>
+    <button class="pe-tab" role="tab" data-page="revisao" aria-selected="false">Revisão de erros</button>
+    <button class="pe-tab" role="tab" data-page="cronograma" aria-selected="false">Cronograma</button>
+    <button class="pe-tab" role="tab" data-page="progresso" aria-selected="false">Salvar progresso</button>
+  </nav>
+
+  <!-- DIAGNOSTICO -->
+  <section class="pe-page" id="diagnostico">
+    <div class="pe-card pe-dg-hero" id="dg-intro">
+      <div class="pe-kpi-label">Comece por aqui</div>
+      <h2 class="pe-dir" id="dg-title">Diagnóstico inicial</h2>
+      <p class="pe-note">100 questões, 10 de cada disciplina, com assuntos e níveis de dificuldade variados. Durante o diagnóstico não aparece o gabarito: a correção e a análise vêm no final. Reserve cerca de 5 horas (3 minutos por questão, como na Cesgranrio). Você pode pausar e continuar depois. O resultado mostra seus pontos fortes e fracos, os erros mais comuns e gera o seu cronograma de estudo.</p>
+      <div class="pe-dg-blocks" id="dg-blocks"></div>
+      <div class="pe-actions">
+        <button class="pe-btn primary" id="dg-start">Iniciar diagnóstico</button>
+        <button class="pe-btn" id="dg-reset">Refazer do zero</button>
+        <span class="pe-msg" id="dg-msg"></span>
+      </div>
+    </div>
+    <div class="pe-card pe-q" id="dg-q" hidden>
+      <div class="pe-q-meta"><span id="dg-pos"></span><span id="dg-tempo"></span></div>
+      <div class="pe-dg-bar"><i id="dg-bar"></i></div>
+      <div class="pe-q-meta" style="margin-top:var(--cds-gap-sm)"><span id="dg-disc"></span><span>Sem gabarito até o final</span></div>
+      <p class="pe-q-stem" id="dg-stem"></p>
+      <div class="pe-alts" id="dg-alts"></div>
+      <div class="pe-actions">
+        <button class="pe-btn primary" id="dg-ok" disabled>Confirmar e avançar</button>
+        <button class="pe-btn" id="dg-pause">Pausar diagnóstico</button>
+      </div>
+    </div>
+    <div id="dg-res" hidden></div>
+  </section>
+
+  <!-- ESTUDO DIRIGIDO -->
+  <section class="pe-page" id="dirigido" hidden data-source="trilhas">
+    <div class="pe-card pe-dg-hero" id="tr-intro">
+      <div class="pe-kpi-label">Trilha de recuperação</div>
+      <h2 class="pe-dir">Estudo dirigido pelos seus erros</h2>
+      <p class="pe-note">Para cada assunto em que você errou no diagnóstico: 1) releia a teoria na Sinopse, que já abre na seção certa; 2) confira ao lado os artigos de lei do assunto; 3) faça a fixação com questões novas do assunto; 4) com 70% ou mais de acerto o assunto fica recuperado e você segue para o estudo integral do cronograma.</p>
+      <div id="tr-list"></div>
+    </div>
+    <div id="tr-study" hidden></div>
+  </section>
+
+  <!-- PAINEL -->
+  <section class="pe-page" id="painel" hidden>
+    <div class="pe-kpis">
+      <div class="pe-card" id="kpi-resp"><div class="pe-kpi-label">Questões respondidas</div><div class="pe-kpi-value" id="k-resp">0</div><div class="pe-kpi-note" id="k-resp-n">de — no banco</div></div>
+      <div class="pe-card" id="kpi-acerto"><div class="pe-kpi-label">Acerto geral</div><div class="pe-kpi-value" id="k-acerto">—</div><div class="pe-kpi-note">Última resposta de cada questão</div></div>
+      <div class="pe-card" id="kpi-prof"><div class="pe-kpi-label">Índice de proficiência</div><div class="pe-kpi-value" id="k-prof">—</div><div class="pe-kpi-note" id="k-prof-n">Acerto ponderado pela dificuldade</div></div>
+      <div class="pe-card" id="kpi-dom"><div class="pe-kpi-label">Disciplinas no nível avançado</div><div class="pe-kpi-value" id="k-dom">0</div><div class="pe-kpi-note">Proficiência ≥ 70 com ao menos 20 respondidas</div></div>
+    </div>
+    <h2 class="pe-h2" id="medidor">Medidor por disciplina</h2>
+    <p class="pe-note">Avanço = questões já respondidas sobre o banco da disciplina. Proficiência = acerto ponderado pela dificuldade (nível 1, 2 ou 3), de 0 a 100.</p>
+    <div class="pe-grid" id="disc-grid" data-source="banco"></div>
+  </section>
+
+  <!-- BUSSOLA -->
+  <section class="pe-page" id="bussola" hidden>
+    <div class="pe-compass">
+      <div class="pe-card">
+        <h2 class="pe-h2" id="radar-titulo">Bússola de desempenho</h2>
+        <p class="pe-note">Anel externo: proficiência (0 a 100), com a marca amarela na meta de 70. Anel interno: quanto do banco da disciplina já foi respondido. Clique numa disciplina para treinar.</p>
+        <div class="pe-rings" id="radar" data-source="banco"></div>
+        <div class="pe-legend"><span><i style="background: var(--accent)"></i>Proficiência</span><span><i style="background: rgba(255,255,255,.55)"></i>Avanço no banco</span><span><i style="background: #fff; height: 10px; width: 3px"></i>Meta 70</span></div>
+      </div>
+      <div class="pe-side">
+        <div class="pe-card" id="rumo">
+          <div class="pe-kpi-label">Rumo recomendado</div>
+          <div class="pe-dir" id="rumo-disc">Comece por qualquer disciplina</div>
+          <p class="pe-note" id="rumo-motivo">Responda ao menos 10 questões por disciplina para a bússola apontar a direção com segurança.</p>
+          <button class="pe-btn primary" id="rumo-btn">Treinar agora</button>
+        </div>
+        <div class="pe-card" id="fortes">
+          <h2 class="pe-h2">Pontos fortes</h2>
+          <ul class="pe-list" id="lista-fortes"></ul>
+        </div>
+        <div class="pe-card" id="fracos">
+          <h2 class="pe-h2">Assuntos a reforçar</h2>
+          <p class="pe-note">Assuntos com menor acerto (mínimo de 3 respondidas).</p>
+          <ul class="pe-list" id="lista-fracos"></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MATERIAL -->
+  <section class="pe-page" id="material" hidden>
+    <p class="pe-note" style="margin-bottom:var(--cds-gap-md)">Antes das questões: leia a Sinopse da disciplina aqui mesmo e confira a letra da lei nos dispositivos mais cobrados no banco. Os links “Ler a lei” abrem o texto oficial compilado no Planalto.</p>
+    <div class="pe-chips" id="mt-chips" role="tablist" aria-label="Disciplinas"></div>
+    <div class="pe-mt" id="mt-box" data-source="materiais">
+      <div class="pe-card pe-mt-pdf" id="mt-pdf"></div>
+      <div class="pe-card pe-reader" id="mt-reader" data-source="sinopses"></div>
+      <div class="pe-card" id="mt-lei">
+        <h2 class="pe-h2">Lei seca · dispositivos cobrados</h2>
+        <p class="pe-note">Ordenados pelo número de questões do banco que citam cada norma.</p>
+        <div class="pe-lei-list" id="mt-lista"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TREINO -->
+  <section class="pe-page" id="treino" hidden>
+    <div class="pe-card" id="treino-config">
+      <h2 class="pe-h2">Montar sessão</h2>
+      <p class="pe-note">Questões de múltipla escolha, cinco alternativas, uma correta. Na Cesgranrio, calcule cerca de 3 minutos por questão.</p>
+      <div class="pe-controls">
+        <label class="pe-field">Disciplina<select id="f-disc"></select></label>
+        <label class="pe-field">Assunto<select id="f-assunto"></select></label>
+        <label class="pe-field">Questões<select id="f-modo">
+          <option value="novas">Ainda não respondidas</option>
+          <option value="todas">Todas</option>
+          <option value="erradas">Só as que errei</option>
+        </select></label>
+        <label class="pe-field">Dificuldade<select id="f-nivel">
+          <option value="0">Todas</option>
+          <option value="1">Nível 1 · básico</option>
+          <option value="2">Nível 2 · intermediário</option>
+          <option value="3">Nível 3 · avançado</option>
+        </select></label>
+        <label class="pe-field">Quantidade<select id="f-qtd">
+          <option value="10">10</option><option value="20" selected>20</option><option value="30">30</option><option value="50">50</option><option value="100">100</option>
+        </select></label>
+        <button class="pe-btn primary" id="f-start">Iniciar</button>
+      </div>
+      <div class="pe-msg" id="f-msg"></div>
+      <div class="pe-before" id="f-before" hidden></div>
+    </div>
+    <div class="pe-card pe-q" id="questao" hidden>
+      <div class="pe-q-meta"><span id="q-pos"></span><span id="q-tempo"></span></div>
+      <div class="pe-q-meta" style="margin-top:calc(-1 * var(--cds-gap-sm))"><span id="q-disc"></span><span id="q-nivel"></span></div>
+      <p class="pe-q-stem" id="q-stem"></p>
+      <div class="pe-alts" id="q-alts"></div>
+      <div class="pe-actions">
+        <button class="pe-btn primary" id="q-responder" disabled>Responder</button>
+        <button class="pe-btn" id="q-prox" hidden>Próxima</button>
+        <button class="pe-btn" id="q-fim">Encerrar sessão</button>
+      </div>
+      <div id="q-fb"></div>
+      <div class="pe-dots" id="q-dots"></div>
+    </div>
+    <div class="pe-card pe-q" id="resultado" hidden>
+      <h2 class="pe-h2">Resultado da sessão</h2>
+      <div class="pe-kpis" style="margin:var(--cds-gap-md) 0">
+        <div><div class="pe-kpi-label">Acertos</div><div class="pe-kpi-value" id="r-acertos">—</div></div>
+        <div><div class="pe-kpi-label">Aproveitamento</div><div class="pe-kpi-value" id="r-pct">—</div></div>
+        <div><div class="pe-kpi-label">Proficiência da sessão</div><div class="pe-kpi-value" id="r-prof">—</div></div>
+        <div><div class="pe-kpi-label">Tempo médio por questão</div><div class="pe-kpi-value" id="r-tempo">—</div></div>
+      </div>
+      <p class="pe-note" id="r-diag"></p>
+      <div class="pe-actions"><button class="pe-btn primary" id="r-nova">Nova sessão</button><button class="pe-btn" id="r-rev">Ver erros</button><button class="pe-btn primary" id="r-trilha" hidden>Voltar ao estudo dirigido</button></div>
+    </div>
+  </section>
+
+  <!-- DISCURSIVAS -->
+  <section class="pe-page" id="discursivas" hidden data-source="discursivas">
+    <div id="ds-home">
+      <div class="pe-card pe-dg-hero">
+        <div class="pe-kpi-label">Prova discursiva · 20 dos 90 pontos</div>
+        <h2 class="pe-dir">Discursivas no padrão Cesgranrio</h2>
+        <p class="pe-note">Na prova de 2023 foram 2 questões discursivas de 10 pontos cada: um caso concreto, o comando “elabore um texto de 30 a 40 linhas, no qual sejam avaliados fundamentadamente” e quatro tópicos obrigatórios. Escreva sua resposta no tempo sugerido, depois compare com o espelho de correção e atribua sua nota em cada tópico (2,5 pontos cada). O modelo de resposta fica disponível ao final.</p>
+        <div class="pe-kpis" id="ds-kpis"></div>
+        <div class="pe-controls" style="margin-bottom:var(--cds-gap-md)">
+          <label class="pe-field">Disciplina<select id="ds-disc"></select></label>
+          <label class="pe-field">Situação<select id="ds-sit"><option value="all">Todas</option><option value="nao">Não respondidas</option><option value="sim">Já respondidas</option></select></label>
+        </div>
+        <div class="pe-ds-list" id="ds-list"></div>
+      </div>
+    </div>
+    <div id="ds-work" hidden></div>
+  </section>
+
+  <!-- REVISAO -->
+  <section class="pe-page" id="revisao" hidden>
+    <div class="pe-card">
+      <h2 class="pe-h2">Revisão de erros</h2>
+      <p class="pe-note">Questões cuja última resposta foi incorreta, com o gabarito comentado.</p>
+      <div class="pe-controls" style="margin-bottom:var(--cds-gap-md)">
+        <label class="pe-field">Disciplina<select id="rv-disc"></select></label>
+        <button class="pe-btn primary" id="rv-refazer">Refazer estas questões</button>
+      </div>
+      <div class="pe-rev" id="rv-lista"></div>
+    </div>
+  </section>
+
+  <!-- CRONOGRAMA -->
+  <section class="pe-page" id="cronograma" hidden>
+    <div class="pe-crono-top">
+      <div class="pe-card pe-timer" id="cr-timer">
+        <div class="pe-kpi-label">Cronômetro de estudo</div>
+        <div class="pe-timer-main">
+          <svg class="pe-timer-ring" viewBox="0 0 120 120" aria-hidden="true">
+            <circle cx="60" cy="60" r="52" class="bg"></circle>
+            <circle cx="60" cy="60" r="52" class="fg" id="cr-ring"></circle>
+          </svg>
+          <div class="pe-timer-txt">
+            <div class="pe-timer-clock" id="cr-clock">00:00:00</div>
+            <div class="pe-timer-label" id="cr-label">Estudo livre</div>
+          </div>
+        </div>
+        <div class="pe-timer-today" id="cr-today">Hoje: 0 min de 2h</div>
+        <div class="pe-timer-steps" id="cr-steps"></div>
+        <div class="pe-actions">
+          <button class="pe-btn primary" id="cr-play">Iniciar</button>
+          <button class="pe-btn" id="cr-next">Próxima etapa</button>
+          <button class="pe-btn" id="cr-reset">Encerrar sessão</button>
+        </div>
+        <div class="pe-msg" id="cr-msg"></div>
+      </div>
+      <div class="pe-card" id="cr-config">
+        <h2 class="pe-h2">Montar cronograma</h2>
+        <p class="pe-note" id="cr-base">O cronograma distribui mais horas para as disciplinas mais fracas no diagnóstico. Mínimo de 2 horas por dia de estudo.</p>
+        <div class="pe-controls">
+          <label class="pe-field">Data da prova<input type="date" id="cr-exam" min="2026-01-01" max="2030-12-31"></label>
+          <label class="pe-field">Início diário<input type="time" id="cr-hora" value="19:00"></label>
+          <label class="pe-field">Horas por dia<select id="cr-min">
+            <option value="120">2 horas</option><option value="150">2h30</option><option value="180">3 horas</option><option value="240">4 horas</option><option value="300">5 horas</option>
+          </select></label>
+        </div>
+        <div class="pe-field" style="margin-top:var(--cds-gap-md)">Dias de estudo
+          <div class="pe-days" id="cr-days"></div>
+        </div>
+        <div class="pe-actions"><button class="pe-btn primary" id="cr-gen">Gerar cronograma</button><span class="pe-msg" id="cr-gmsg"></span></div>
+      </div>
+    </div>
+    <div id="cr-plan"></div>
+  </section>
+
+  <!-- PROGRESSO -->
+  <section class="pe-page" id="progresso" hidden>
+    <div class="pe-card">
+      <h2 class="pe-h2">Salvar e restaurar progresso</h2>
+      <div class="pe-save" aria-live="polite"></div>
+      <p class="pe-note">Seu progresso (respostas, diagnóstico pela metade, cronograma, sessões concluídas e tempo do cronômetro) é salvo automaticamente na sua conta e recuperado quando você abre a plataforma de novo, no computador ou no celular. O código abaixo é uma cópia de segurança: útil para levar o progresso para outra conta ou se o salvamento automático estiver indisponível.</p>
+      <textarea class="pe-code" id="pg-code" spellcheck="false" aria-label="Código de progresso" placeholder="O código de progresso aparece aqui — ou cole aqui um código salvo."></textarea>
+      <div class="pe-actions">
+        <button class="pe-btn primary" id="pg-gerar">Gerar código</button>
+        <button class="pe-btn" id="pg-copiar">Copiar</button>
+        <button class="pe-btn" id="pg-restaurar">Restaurar</button>
+        <button class="pe-btn" id="pg-zerar">Zerar progresso</button>
+      </div>
+      <div class="pe-msg" id="pg-msg"></div>
+    </div>
+  </section>
+</div>
+
+<script>
+(() => {
+  const ROOT = document.getElementById('plataforma');
+  const nf = new Intl.NumberFormat('pt-BR');
+  const pf = (x) => (x == null || isNaN(x)) ? '—' : new Intl.NumberFormat('pt-BR', {style: 'percent', maximumFractionDigits: 0}).format(x);
+  const SHORT = {civ: 'Civil', mar: 'Marítimo', adm: 'Administrativo', emp: 'Empresarial', pc: 'Proc. Civil', amb: 'Ambiental', con: 'Constitucional', trib: 'Tributário', trab: 'Trabalho', set: 'Setorial'};
+  const LETTERS = ['a', 'b', 'c', 'd', 'e'];
+  const META = 70;
+  const DC = {civ: '#FFCC29', trab: '#FF9F1C', emp: '#C6E33B', con: '#7ED957', set: '#2FD18B', amb: '#14B8A6', trib: '#38BDF8', mar: '#5B8DEF', adm: '#B7C9A8', pc: '#FF7A7A'};
+  
+  // ---------- banco (cálculos citáveis) ----------
+  dash.calc('banco', {
+    inputs: ['questoes'],
+    title: 'Questões por disciplina',
+    description: 'Contagem de questões do banco em cada disciplina.',
+    fn: (questoes) => {
+      const m = new Map();
+      for (const q of questoes) m.set(q.disciplina, (m.get(q.disciplina) || 0) + 1);
+      return [...m].map(([disciplina, questoes]) => ({disciplina, questoes}));
+    },
+  });
+  dash.calc('banco_total', {
+    inputs: ['questoes'],
+    title: 'Total do banco',
+    description: 'Total de questões e de disciplinas do banco.',
+    fn: (questoes) => [{questoes: questoes.length, disciplinas: new Set(questoes.map((q) => q.disc)).size}],
+  });
+
+  // ---------- estado (somente em memória) ----------
+  // ans[id] = {r: letra da última resposta, n: tentativas, h: acertos}
+  let ans = {};
+  let Q = [], byId = new Map(), DISCS = [];
+  let sess = null;
+  const assunto = (t) => String(t || '').split(' — ')[0].split(' - ')[0].trim();
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+
+  const levelOf = (p, n) => {
+    if (!n) return {k: -1, t: 'Não iniciado'};
+    if (p >= 85) return {k: 4, t: 'Domínio'};
+    if (p >= 70) return {k: 3, t: 'Avançado'};
+    if (p >= 55) return {k: 2, t: 'Intermediário'};
+    if (p >= 40) return {k: 1, t: 'Básico'};
+    return {k: 0, t: 'Inicial'};
+  };
+  const statsFor = (qs) => {
+    let n = 0, h = 0, wn = 0, wh = 0;
+    for (const q of qs) {
+      const a = ans[q.id]; if (!a) continue;
+      const ok = a.r === q.gabarito; const w = Number(q.nivel) || 2;
+      n++; wn += w; if (ok) { h++; wh += w; }
+    }
+    return {n, h, acc: n ? h / n : null, prof: wn ? Math.round(100 * wh / wn) : null};
+  };
+
+  // ---------- abas ----------
+  const tabs = [...ROOT.querySelectorAll('.pe-tab')];
+  const show = (id) => {
+    tabs.forEach((t) => t.setAttribute('aria-selected', String(t.dataset.page === id)));
+    ROOT.querySelectorAll('.pe-page').forEach((p) => { p.hidden = p.id !== id; });
+    dash.setLink(id);
+    render();
+  };
+  tabs.forEach((t) => t.addEventListener('click', () => show(t.dataset.page)));
+
+  // ---------- painel ----------
+  function renderPainel() {
+    const all = statsFor(Q);
+    document.getElementById('k-resp').textContent = nf.format(all.n);
+    document.getElementById('k-resp-n').textContent = Q.length ? `de ${nf.format(Q.length)} no banco (${pf(all.n / Q.length)})` : 'de — no banco';
+    document.getElementById('k-acerto').textContent = all.n ? pf(all.acc) : '—';
+    document.getElementById('k-prof').textContent = all.prof == null ? '—' : String(all.prof);
+    const lv = levelOf(all.prof, all.n);
+    document.getElementById('k-prof-n').textContent = all.n ? `Nível ${lv.t.toLowerCase()} · acerto ponderado pela dificuldade` : 'Acerto ponderado pela dificuldade';
+    let dom = 0;
+    const grid = document.getElementById('disc-grid');
+    grid.replaceChildren();
+    for (const d of DISCS) {
+      const qs = Q.filter((q) => q.disc === d.disc);
+      const s = statsFor(qs);
+      if (s.prof != null && s.prof >= META && s.n >= 20) dom++;
+      const l = levelOf(s.prof, s.n);
+      const card = el('div', 'pe-card pe-disc'); card.id = 'disc-' + d.disc; card.style.setProperty('--dc', DC[d.disc]);
+      const top = el('div', 'pe-disc-top');
+      top.append(el('span', 'pe-disc-name', d.disciplina), el('span', 'pe-badge lv-' + Math.max(l.k, 0), l.t + (s.n && s.n < 10 ? ' (preliminar)' : '')));
+      if (!s.n) top.lastChild.className = 'pe-badge';
+      const row = (label, frac, color, txt) => {
+        const r = el('div', 'pe-meter-row');
+        const b = el('div', 'pe-bar'); const i = el('i'); i.style.width = (Math.max(0, Math.min(1, frac || 0)) * 100) + '%'; i.style.background = color; b.append(i);
+        r.append(el('span', null, label), b, el('span', null, txt));
+        return r;
+      };
+      const profColor = s.prof == null ? 'var(--cds-chart-muted)' : s.prof >= META ? 'var(--color-ok)' : s.prof >= 55 ? 'var(--color-warn)' : 'var(--color-bad)';
+      const foot = el('div', 'pe-disc-foot');
+      const bankTxt = el('span');
+      const bank = el('span', 'pe-bank'); bank.dataset.source = 'banco'; bank.dataset.field = 'questoes'; bank.dataset.where = 'disciplina=' + d.disciplina;
+      bank.textContent = nf.format(d.questoes);
+      bankTxt.append(nf.format(s.n) + ' de ', bank, ' respondidas · ' + (s.n ? pf(s.acc) + ' de acerto' : 'sem respostas'));
+      const links = el('div', 'pe-disc-links');
+      const study = el('button', 'pe-btn ghost', 'Estudar');
+      study.addEventListener('click', () => openMaterial(d.disc));
+      const btn = el('button', 'pe-btn', 'Treinar');
+      btn.addEventListener('click', () => startFrom(d.disc));
+      links.append(study, btn);
+      foot.append(bankTxt, links);
+      card.append(top,
+        row('Avanço no banco', s.n / d.questoes, DC[d.disc], pf(s.n / d.questoes)),
+        row('Proficiência', (s.prof || 0) / 100, profColor, s.prof == null ? '—' : String(s.prof)),
+        foot);
+      grid.append(card);
+    }
+    document.getElementById('k-dom').textContent = `${dom} de ${DISCS.length}`;
+    const ru = document.getElementById('resumo-user');
+    ru.textContent = all.n ? `Você respondeu ${nf.format(all.n)} (${pf(all.n / Q.length)}), com ${pf(all.acc)} de acerto e proficiência ${all.prof}.` : 'Comece pelo Diagnóstico: 100 questões que mapeiam seus pontos fortes e fracos e geram o seu cronograma de estudo.';
+  }
+
+  // ---------- bússola ----------
+  const ringDrawn = new Set();
+  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function renderBussola() {
+    const box = document.getElementById('radar');
+    box.replaceChildren();
+    const data = DISCS.map((d) => {
+      const qs = Q.filter((q) => q.disc === d.disc); const s = statsFor(qs);
+      return {...d, ...s, cov: s.n / d.questoes};
+    });
+    if (!data.length) return;
+    const all = statsFor(Q);
+    const ring = (parent, o) => {
+      const size = o.size, R = size / 2 - 4, w1 = Math.max(8, size * .085), w2 = Math.max(5, size * .05);
+      const svg = d3.select(parent).append('svg').attr('viewBox', `0 0 ${size} ${size}`).attr('width', '100%').style('max-width', size + 'px').style('display', 'block').style('margin', '0 auto');
+      const g = svg.append('g').attr('transform', `translate(${size / 2},${size / 2})`);
+      const arc = (r0, r1) => d3.arc().innerRadius(r0).outerRadius(r1).cornerRadius((r1 - r0) / 2).startAngle(0);
+      const a1 = arc(R - w1, R), a2 = arc(R - w1 - 6 - w2, R - w1 - 6);
+      g.append('path').attr('d', a1({endAngle: 2 * Math.PI})).attr('fill', 'rgba(255,255,255,.10)');
+      g.append('path').attr('d', a2({endAngle: 2 * Math.PI})).attr('fill', 'rgba(255,255,255,.07)');
+      const pa = g.append('path').attr('fill', o.color).style('filter', `drop-shadow(0 0 6px ${o.color})`);
+      const pb = g.append('path').attr('fill', 'rgba(255,255,255,.6)');
+      const endP = 2 * Math.PI * Math.max(0, Math.min(1, (o.prof || 0) / 100)), endC = 2 * Math.PI * Math.max(0, Math.min(1, o.cov || 0));
+      const key = o.key; const first = !ringDrawn.has(key); ringDrawn.add(key);
+      if (first && !reduceMotion) {
+        pa.transition().duration(900).ease(d3.easeCubicOut).attrTween('d', () => (t) => a1({endAngle: endP * t}));
+        pb.transition().duration(900).ease(d3.easeCubicOut).attrTween('d', () => (t) => a2({endAngle: endC * t}));
+      } else { pa.attr('d', a1({endAngle: endP})); pb.attr('d', a2({endAngle: endC})); }
+      const ma = 2 * Math.PI * META / 100 - Math.PI / 2;
+      g.append('line').attr('x1', Math.cos(ma) * (R - w1 - 2)).attr('y1', Math.sin(ma) * (R - w1 - 2)).attr('x2', Math.cos(ma) * (R + 2)).attr('y2', Math.sin(ma) * (R + 2)).attr('stroke', '#fff').attr('stroke-width', 2.5).attr('stroke-linecap', 'round');
+      g.append('text').attr('text-anchor', 'middle').attr('dy', o.big ? '0.1em' : '0.25em').attr('fill', '#fff').attr('font-family', 'var(--font-anthropic-serif)').attr('font-size', size * (o.big ? .24 : .25)).text(o.prof == null ? '—' : o.prof);
+      g.append('text').attr('text-anchor', 'middle').attr('dy', o.big ? '1.9em' : '2.3em').attr('fill', 'var(--color-fg-muted)').attr('font-size', Math.max(10, size * (o.big ? .065 : .08))).text(o.big ? 'proficiência geral' : (o.prof == null ? 'sem respostas' : 'proficiência'));
+    };
+    const top = el('div', 'pe-ring-top');
+    const big = el('div', 'pe-ring-big'); top.append(big);
+    ring(big, {size: 220, prof: all.prof, cov: all.n / Q.length, color: '#FFCC29', big: true, key: 'all'});
+    const info = el('div', 'pe-ring-info');
+    const lv = levelOf(all.prof, all.n);
+    info.append(el('div', 'pe-kpi-label', 'Situação geral'), el('div', 'pe-dir', all.n ? lv.t : 'Ainda sem respostas'),
+      el('p', 'pe-note', all.n ? `${nf.format(all.n)} de ${nf.format(Q.length)} questões respondidas (${pf(all.n / Q.length)}), ${pf(all.acc)} de acerto. Meta: proficiência 70 em todas as disciplinas.` : 'Resolva questões no Treino: cada anel se preenche conforme você avança e acerta.'));
+    top.append(info); box.append(top);
+    const grid = el('div', 'pe-ring-grid'); box.append(grid);
+    data.forEach((d) => {
+      const c = el('button', 'pe-ring-card'); c.style.setProperty('--dc', DC[d.disc]); c.title = `Treinar ${d.disciplina}`;
+      c.addEventListener('click', () => startFrom(d.disc));
+      grid.append(c);
+      ring(c, {size: 130, prof: d.prof, cov: d.cov, color: DC[d.disc], key: d.disc});
+      c.append(el('div', 'pe-ring-name', d.disciplina), el('div', 'pe-ring-sub', `${nf.format(d.n)} de ${nf.format(d.questoes)} · ${d.n ? pf(d.acc) + ' acerto' : 'não iniciada'}`));
+    });
+
+    // rumo
+    const started = data.filter((d) => d.n >= 10);
+    const notStarted = data.filter((d) => d.n === 0);
+    let target = null, why = '';
+    if (started.length) {
+      const weak = started.slice().sort((a, b) => a.prof - b.prof)[0];
+      if (weak.prof < META) { target = weak; why = `Menor proficiência entre as disciplinas com 10 ou mais respostas (${weak.prof}, meta ${META}).`; }
+    }
+    if (!target && notStarted.length) { target = notStarted[0]; why = 'Disciplina ainda não iniciada — a bússola precisa de dados dela.'; }
+    if (!target) {
+      const low = data.slice().sort((a, b) => a.cov - b.cov)[0];
+      target = low; why = low.n < 10 ? 'Poucas respostas ainda: amplie a amostra para a estimativa ficar confiável.' : `Todas acima da meta onde há dados; amplie a cobertura (${pf(low.cov)} respondido).`;
+    }
+    document.getElementById('rumo-disc').textContent = target.disciplina;
+    document.getElementById('rumo-motivo').textContent = why;
+    document.getElementById('rumo-btn').onclick = () => startFrom(target.disc);
+
+    const fortes = document.getElementById('lista-fortes'); fortes.replaceChildren();
+    const fs = started.filter((d) => d.prof >= META).sort((a, b) => b.prof - a.prof).slice(0, 4);
+    if (!fs.length) fortes.append(el('li', null, 'Nenhuma disciplina acima de 70 com 10 ou mais respostas, por enquanto.'));
+    fs.forEach((d) => { const li = el('li'); li.append(el('span', null, d.disciplina), el('span', null, 'proficiência ' + d.prof)); fortes.append(li); });
+
+    const groups = new Map();
+    for (const q of Q) {
+      const a = ans[q.id]; if (!a) continue;
+      const k = q.disc + '|' + assunto(q.tema);
+      const g2 = groups.get(k) || {disc: q.disc, nome: assunto(q.tema), n: 0, h: 0};
+      g2.n++; if (a.r === q.gabarito) g2.h++; groups.set(k, g2);
+    }
+    const fr = [...groups.values()].filter((g2) => g2.n >= 3 && g2.h / g2.n < .7).sort((a, b) => a.h / a.n - b.h / b.n || b.n - a.n).slice(0, 8);
+    const fracos = document.getElementById('lista-fracos'); fracos.replaceChildren();
+    if (!fr.length) fracos.append(el('li', null, 'Sem assuntos abaixo de 70% de acerto (com 3 ou mais respostas).'));
+    fr.forEach((g2) => { const li = el('li'); li.append(el('span', null, `${SHORT[g2.disc]} · ${g2.nome}`), el('span', null, `${g2.h}/${g2.n} · ${pf(g2.h / g2.n)}`)); fracos.append(li); });
+  }
+
+  // ---------- material ----------
+  let mtDisc = null;
+  const matRows = () => { const m = dash.data('materiais'); return m.status === 'ok' ? m.data.map((r) => ({...r, ordem: Number(r.ordem), questoes: Number(r.questoes)})) : []; };
+  const anchor = (cls, text, href, dl) => { const a = el('a', 'pe-link ' + cls, text); a.href = href; a.target = '_blank'; a.rel = 'noopener'; if (dl) a.setAttribute('download', dl); return a; };
+  const sinRows = (disc) => { const d = dash.data('sinopses'); return d.status === 'ok' ? d.data.filter((r) => r.disc === disc).map((r) => ({...r, ordem: Number(r.ordem), tabela: Number(r.tabela)})).sort((x, y) => x.ordem - y.ordem) : []; };
+  let readerKey = '';
+  function renderReader() {
+    const rd = document.getElementById('mt-reader');
+    const st = dash.data('sinopses').status;
+    if (st !== 'ok') { readerKey = ''; rd.replaceChildren(el('div', st === 'loading' ? 'pe-card dash-skeleton' : 'pe-fail', st === 'loading' ? '' : 'Failed to load')); return; }
+    if (readerKey === mtDisc) return;
+    readerKey = mtDisc; rd.replaceChildren(); rd.scrollTop = 0;
+    const rows = sinRows(mtDisc);
+    let ul = null, table = null, tabId = -1, capa = null;
+    for (const r of rows) {
+      if (r.tipo !== 'li') ul = null;
+      if (r.tipo !== 'th' && r.tipo !== 'td') { table = null; tabId = -1; }
+      if (r.tipo === 'capa') {
+        if (!capa) { capa = el('div', 'pe-rd-capa'); rd.append(capa); capa.append(el('div', 'pe-rd-capa-t', r.texto)); }
+        else capa.append(el('div', 'pe-rd-capa-s', r.texto));
+      } else if (r.tipo === 'h1') { const h = el('h3', 'pe-rd-h1', r.texto); h.id = 'cap-' + r.ordem; rd.append(h); }
+      else if (r.tipo === 'h2') rd.append(el('h4', 'pe-rd-h2', r.texto));
+      else if (r.tipo === 'h3') rd.append(el('h5', 'pe-rd-h3', r.texto));
+      else if (r.tipo === 'li') { if (!ul) { ul = el('ul', 'pe-rd-ul'); rd.append(ul); } ul.append(el('li', null, r.texto)); }
+      else if (r.tipo === 'caixa') {
+        const lines = r.texto.split('\n').flatMap((x) => x.split(' // ')).map((x) => x.trim()).filter(Boolean);
+        const bx = el('div', 'pe-rd-box');
+        const label = lines.length > 1 && lines[0].length < 60 && lines[0] === lines[0].toUpperCase() ? lines.shift() : null;
+        if (label) bx.append(el('div', 'pe-rd-box-l', label));
+        lines.forEach((ln) => bx.append(el('p', null, ln.replace(/^- /, '• '))));
+        rd.append(bx);
+      } else if (r.tipo === 'th' || r.tipo === 'td') {
+        if (!table || tabId !== r.tabela) { const wrap = el('div', 'pe-rd-tw'); table = el('table', 'pe-rd-t'); wrap.append(table); rd.append(wrap); tabId = r.tabela; }
+        const tr = el('tr');
+        r.texto.split(' ¦ ').forEach((c) => { const cell = el(r.tipo, null); c.split('\n').forEach((ln, i) => { if (i) cell.append(el('br')); cell.append(ln); }); tr.append(cell); });
+        table.append(tr);
+      } else rd.append(el('p', 'pe-rd-p', r.texto));
+    }
+    if (!rows.length) rd.append(el('div', 'pe-empty', 'Sinopse não encontrada para esta disciplina.'));
+  }
+  function openMaterial(disc) { mtDisc = disc; show('material'); document.getElementById('material').scrollIntoView({block: 'start'}); }
+  function renderMaterial() {
+    if (!mtDisc) mtDisc = DISCS[0] && DISCS[0].disc;
+    const chips = document.getElementById('mt-chips'); chips.replaceChildren();
+    DISCS.forEach((d) => { const c = el('button', 'pe-chip', SHORT[d.disc] || d.disciplina); c.setAttribute('role', 'tab'); c.setAttribute('aria-selected', String(d.disc === mtDisc)); c.style.setProperty('--dc', DC[d.disc]); c.addEventListener('click', () => { mtDisc = d.disc; renderMaterial(); }); chips.append(c); });
+    const rows = matRows().filter((r) => r.disc === mtDisc);
+    const box = document.getElementById('mt-box'); box.style.setProperty('--dc', DC[mtDisc]);
+    const pdfBox = document.getElementById('mt-pdf'), list = document.getElementById('mt-lista');
+    const st = dash.data('materiais').status;
+    if (st !== 'ok') { pdfBox.replaceChildren(el('div', st === 'loading' ? 'dash-skeleton' : 'pe-fail', st === 'loading' ? '' : 'Failed to load')); list.replaceChildren(); return; }
+    const disc = DISCS.find((d) => d.disc === mtDisc);
+    const pdf = rows.find((r) => r.tipo === 'pdf');
+    pdfBox.replaceChildren();
+    const head = el('div'); head.style.cssText = 'display:flex;gap:16px;align-items:center';
+    const info = el('div'); info.append(el('div', 'pe-kpi-label', 'Material de leitura · Sinopse Jurídica'), el('div', 'pe-pdf-title', pdf ? pdf.titulo : disc.disciplina));
+    head.append(el('div', 'pe-pdf-icon', 'LER'), info);
+    const s = statsFor(Q.filter((q) => q.disc === mtDisc));
+    const nq = el('span'); nq.dataset.source = 'materiais'; nq.dataset.field = 'questoes'; nq.dataset.where = 'disc=' + mtDisc + '&tipo=pdf'; nq.textContent = pdf ? nf.format(pdf.questoes) : '—';
+    const p = el('p', 'pe-note'); p.append('Resumo doutrinário, jurisprudência e quadros da disciplina. Depois da leitura, resolva as ', nq, ` questões do banco (${nf.format(s.n)} já respondidas).`);
+    const acts = el('div', 'pe-actions');
+    const caps = sinRows(mtDisc).filter((r) => r.tipo === 'h1');
+    const nav = el('select'); nav.setAttribute('aria-label', 'Ir para o capítulo'); nav.className = 'pe-nav';
+    nav.append(new Option('Ir para o capítulo…', ''), ...caps.map((r) => new Option(r.texto, 'cap-' + r.ordem)));
+    nav.disabled = !caps.length;
+    nav.addEventListener('change', () => { const t = document.getElementById(nav.value); const rd = document.getElementById('mt-reader'); if (t) rd.scrollTop = t.offsetTop - 8; });
+    const go = el('button', 'pe-btn primary', 'Já li — ir para as questões'); go.addEventListener('click', () => startFrom(mtDisc));
+    acts.append(nav, go);
+    pdfBox.append(head, p, acts);
+    renderReader();
+    list.replaceChildren();
+    rows.filter((r) => r.tipo === 'lei').sort((a, b) => a.ordem - b.ordem).forEach((r) => {
+      const it = el('div', 'pe-lei');
+      const n = el('span', 'pe-lei-n');
+      if (r.questoes > 0) { const v = el('span'); v.dataset.source = 'materiais'; v.dataset.field = 'questoes'; v.dataset.where = 'disc=' + r.disc + '&titulo=' + r.titulo.replace(/%/g, '%25').replace(/&/g, '%26').replace(/=/g, '%3D'); v.textContent = nf.format(r.questoes); n.append(v, r.questoes === 1 ? ' questão' : ' questões'); }
+      else n.textContent = 'leitura complementar';
+      it.append(el('div', 'pe-lei-t', r.titulo), n, el('div', 'pe-lei-f', r.foco), el('div', 'pe-lei-d', r.dispositivos), anchor('ghost', 'Ler a lei', r.url));
+      list.append(it);
+    });
+  }
+
+  // ---------- treino ----------
+  const fDisc = document.getElementById('f-disc'), fModo = document.getElementById('f-modo'), fNivel = document.getElementById('f-nivel'), fQtd = document.getElementById('f-qtd');
+  const fMsg = document.getElementById('f-msg');
+  const shuffle = (a) => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  function fillSelects() {
+    const keep1 = fDisc.value, keep2 = document.getElementById('rv-disc').value;
+    fDisc.replaceChildren(new Option('Todas (simulado misto)', 'all'), ...DISCS.map((d) => new Option(d.disciplina, d.disc)));
+    const rv = document.getElementById('rv-disc');
+    rv.replaceChildren(new Option('Todas', 'all'), ...DISCS.map((d) => new Option(d.disciplina, d.disc)));
+    if (keep1) fDisc.value = keep1; if (keep2) rv.value = keep2;
+  }
+  function renderBefore() {
+    const b = document.getElementById('f-before');
+    const d = fDisc.value;
+    const pdf = matRows().find((r) => r.disc === d && r.tipo === 'pdf');
+    if (!d || d === 'all' || !pdf) { b.hidden = true; return; }
+    b.hidden = false; b.replaceChildren(el('span', null, 'Antes de começar, revise a Sinopse (PDF) e a lei seca da disciplina:'));
+    const lei = el('button', 'pe-btn ghost', 'Abrir material de estudo'); lei.addEventListener('click', () => openMaterial(d)); b.append(lei);
+  }
+  const fAss = document.getElementById('f-assunto');
+  function fillAssuntos() {
+    const keep = fAss.value; const d = fDisc.value;
+    const groups = d3.rollups(Q.filter((q) => d === 'all' || q.disc === d), (v) => ({n: v.length, r: v.filter((q) => ans[q.id]).length}), (q) => q.disc, (q) => assunto(q.tema));
+    const opts = [new Option('Todos os assuntos', '')];
+    const mk = (disc, a, c) => new Option(`${a} · ${c.n} ${c.n === 1 ? 'questão' : 'questões'}${c.r ? ` (${c.r} feitas)` : ''}`, disc + '|' + a);
+    fAss.replaceChildren(...opts);
+    for (const [disc, list] of groups) {
+      list.sort((x, y) => x[0].localeCompare(y[0], 'pt-BR'));
+      if (d === 'all') { const og = document.createElement('optgroup'); og.label = (DISCS.find((x) => x.disc === disc) || {}).disciplina || disc; list.forEach(([a, c]) => og.append(mk(disc, a, c))); fAss.append(og); }
+      else list.forEach(([a, c]) => fAss.append(mk(disc, a, c)));
+    }
+    if (keep && [...fAss.options].some((o) => o.value === keep)) fAss.value = keep;
+  }
+  fDisc.addEventListener('change', () => { fAss.value = ''; fillAssuntos(); renderBefore(); });
+  function startFrom(disc) {
+    show('treino');
+    fDisc.value = disc; fModo.value = 'novas'; fNivel.value = '0'; fillAssuntos(); fAss.value = ''; renderBefore();
+    document.getElementById('treino-config').scrollIntoView({block: 'start'});
+  }
+  function begin(pool, label) {
+    if (!pool.length) { fMsg.textContent = 'Nenhuma questão com esses filtros. Troque o tipo de questões ou a dificuldade.'; return; }
+    const qtd = Number(fQtd.value);
+    let picked;
+    if (fDisc.value === 'all' && label !== 'revisao') {
+      // simulado misto: distribui entre as disciplinas
+      const by = d3.group(shuffle(pool.slice()), (q) => q.disc);
+      picked = []; const keys = shuffle([...by.keys()]);
+      while (picked.length < qtd && keys.some((k) => by.get(k).length)) for (const k of keys) { const arr = by.get(k); if (arr.length && picked.length < qtd) picked.push(arr.pop()); }
+      shuffle(picked);
+    } else picked = shuffle(pool.slice()).slice(0, qtd);
+    sess = {ids: picked.map((q) => q.id), i: 0, sel: null, done: [], t0: Date.now(), tq: Date.now()};
+    fMsg.textContent = picked.length < qtd ? `Disponíveis ${picked.length} questões com esses filtros.` : '';
+    document.getElementById('resultado').hidden = true;
+    document.getElementById('questao').hidden = false;
+    drawQ();
+    document.getElementById('questao').scrollIntoView({block: 'start'});
+  }
+  document.getElementById('f-start').addEventListener('click', () => {
+    let pool = Q.filter((q) => (fDisc.value === 'all' || q.disc === fDisc.value) && (fNivel.value === '0' || String(q.nivel) === fNivel.value) && (!fAss.value || q.disc + '|' + assunto(q.tema) === fAss.value));
+    if (fModo.value === 'novas') pool = pool.filter((q) => !ans[q.id]);
+    if (fModo.value === 'erradas') pool = pool.filter((q) => ans[q.id] && ans[q.id].r !== q.gabarito);
+    begin(pool, 'treino');
+  });
+  const qAlts = document.getElementById('q-alts'), qResp = document.getElementById('q-responder'), qProx = document.getElementById('q-prox'), qFb = document.getElementById('q-fb');
+  function drawQ() {
+    const q = byId.get(sess.ids[sess.i]);
+    sess.sel = null; sess.answered = false; sess.tq = Date.now();
+    document.getElementById('q-pos').textContent = `Questão ${sess.i + 1} de ${sess.ids.length}`;
+    document.getElementById('q-disc').textContent = `${q.disciplina} · ${q.tema}`;
+    document.getElementById('questao').style.setProperty('--dc', DC[q.disc]);
+    document.getElementById('q-disc').style.color = DC[q.disc];
+    document.getElementById('q-nivel').textContent = ['', 'Nível 1 · básico', 'Nível 2 · intermediário', 'Nível 3 · avançado'][Number(q.nivel)] || '';
+    document.getElementById('q-stem').textContent = q.enunciado;
+    qAlts.replaceChildren();
+    LETTERS.forEach((k) => {
+      const b = el('button', 'pe-alt'); b.dataset.k = k.toUpperCase();
+      b.append(el('span', 'l', k.toUpperCase()), el('span', null, q[k]));
+      b.addEventListener('click', () => { if (sess.answered) return; sess.sel = b.dataset.k; qAlts.querySelectorAll('.pe-alt').forEach((x) => x.classList.toggle('sel', x === b)); qResp.disabled = false; });
+      qAlts.append(b);
+    });
+    qResp.disabled = true; qResp.hidden = false; qProx.hidden = true; qFb.replaceChildren();
+    drawDots();
+  }
+  function drawDots() {
+    const dots = document.getElementById('q-dots'); dots.replaceChildren();
+    sess.ids.forEach((id, i) => { const d = el('i'); const r = sess.done[i]; if (r != null) d.className = r ? 'ok' : 'bad'; if (i === sess.i) d.classList.add('cur'); dots.append(d); });
+  }
+  qResp.addEventListener('click', () => {
+    if (!sess || !sess.sel || sess.answered) return;
+    const q = byId.get(sess.ids[sess.i]);
+    const ok = sess.sel === q.gabarito;
+    sess.answered = true; sess.done[sess.i] = ok;
+    (sess.times = sess.times || []).push(Date.now() - sess.tq);
+    const a = ans[q.id] || {r: null, n: 0, h: 0}; a.r = sess.sel; a.n++; if (ok) a.h++; ans[q.id] = a;
+    qAlts.querySelectorAll('.pe-alt').forEach((b) => { b.disabled = true; b.classList.remove('sel'); if (b.dataset.k === q.gabarito) b.classList.add('ok'); else if (b.dataset.k === sess.sel) b.classList.add('bad'); });
+    const fb = el('div', 'pe-fb ' + (ok ? 'ok' : 'bad'));
+    fb.append(el('strong', null, ok ? 'Correto.' : `Incorreto — gabarito: ${q.gabarito}.`), el('span', null, q.comentario));
+    qFb.replaceChildren(fb);
+    qResp.hidden = true; qProx.hidden = false;
+    qProx.textContent = sess.i + 1 < sess.ids.length ? 'Próxima' : 'Ver resultado';
+    drawDots(); renderPainel();
+  });
+  qProx.addEventListener('click', () => { if (sess.i + 1 < sess.ids.length) { sess.i++; drawQ(); document.getElementById('questao').scrollIntoView({block: 'start'}); } else finish(); });
+  document.getElementById('q-fim').addEventListener('click', finish);
+  function finish() {
+    if (!sess) return;
+    const idx = sess.done.map((v, i) => v == null ? -1 : i).filter((i) => i >= 0);
+    const qs = idx.map((i) => byId.get(sess.ids[i]));
+    const h = idx.filter((i) => sess.done[i]).length;
+    let wn = 0, wh = 0; idx.forEach((i) => { const w = Number(byId.get(sess.ids[i]).nivel) || 2; wn += w; if (sess.done[i]) wh += w; });
+    const prof = wn ? Math.round(100 * wh / wn) : null;
+    document.getElementById('r-acertos').textContent = `${h} de ${idx.length}`;
+    document.getElementById('r-pct').textContent = idx.length ? pf(h / idx.length) : '—';
+    document.getElementById('r-prof').textContent = prof == null ? '—' : String(prof);
+    const tm = sess.times && sess.times.length ? d3.mean(sess.times) / 1000 : null;
+    document.getElementById('r-tempo').textContent = tm == null ? '—' : `${Math.floor(tm / 60)}min ${String(Math.round(tm % 60)).padStart(2, '0')}s`;
+    const lv = levelOf(prof, idx.length);
+    const errs = d3.rollups(qs.filter((q, j) => !sess.done[idx[j]]), (v) => v.length, (q) => q.disciplina).sort((a, b) => b[1] - a[1]);
+    document.getElementById('r-diag').textContent = idx.length
+      ? `Nível da sessão: ${lv.t.toLowerCase()}.` + (errs.length ? ' Mais erros em: ' + errs.slice(0, 3).map(([d, c]) => `${d} (${c})`).join(', ') + '.' : ' Nenhum erro nesta sessão.') + (tm != null && tm > 180 ? ' Atenção ao tempo: acima de 3 minutos por questão.' : '')
+      : 'Nenhuma questão respondida nesta sessão.';
+    const trk = sess.trilha;
+    document.getElementById('r-trilha').hidden = !trk;
+    if (trk && idx.length) {
+      trilha[trk] = {...(trilha[trk] || {}), lido: true, fix: {n: idx.length, h, at: Date.now()}};
+      const okT = h / idx.length >= 0.7;
+      document.getElementById('r-diag').textContent += okT ? ' Assunto recuperado na trilha: siga para o próximo assunto ou volte ao estudo integral.' : ' Abaixo de 70% na fixação: releia as seções destacadas no estudo dirigido e refaça a fixação.';
+    }
+    document.getElementById('questao').hidden = true;
+    document.getElementById('resultado').hidden = false;
+    sess = null;
+    render();
+  }
+  document.getElementById('r-nova').addEventListener('click', () => { document.getElementById('resultado').hidden = true; document.getElementById('treino-config').scrollIntoView({block: 'start'}); });
+  document.getElementById('r-rev').addEventListener('click', () => show('revisao'));
+  setInterval(() => {
+    if (!sess) return;
+    const s = Math.floor((Date.now() - sess.t0) / 1000);
+    document.getElementById('q-tempo').textContent = `Tempo de sessão ${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+  }, 1000);
+
+  // ---------- revisão ----------
+  const rvDisc = document.getElementById('rv-disc');
+  rvDisc.addEventListener('change', renderRevisao);
+  const wrongList = () => Q.filter((q) => ans[q.id] && ans[q.id].r !== q.gabarito && (rvDisc.value === 'all' || !rvDisc.value || q.disc === rvDisc.value));
+  function renderRevisao() {
+    const box = document.getElementById('rv-lista'); box.replaceChildren();
+    const ws = wrongList();
+    document.getElementById('rv-refazer').disabled = !ws.length;
+    if (!ws.length) { box.append(el('div', 'pe-empty', 'Nenhum erro registrado aqui. Erros aparecem nesta lista assim que você responder no Treino.')); return; }
+    ws.forEach((q) => {
+      const it = el('div', 'pe-rev-item'); it.style.setProperty('--dc', DC[q.disc]);
+      it.append(el('div', 'm', `${q.disciplina} · ${q.tema} · ${ans[q.id].n} tentativa(s)`), el('div', null, q.enunciado));
+      const y = el('div', 'yours', `Sua resposta: ${ans[q.id].r}) ${q[ans[q.id].r.toLowerCase()]}`);
+      const r = el('div', 'right', `Correta: ${q.gabarito}) ${q[q.gabarito.toLowerCase()]}`);
+      it.append(y, r, el('div', 'c', q.comentario));
+      box.append(it);
+    });
+  }
+  document.getElementById('rv-refazer').addEventListener('click', () => {
+    const ws = wrongList(); if (!ws.length) return;
+    show('treino'); fQtd.value = '100'; begin(ws, 'revisao');
+  });
+
+  // ---------- utilidades de data ----------
+  const pad2 = (n) => String(n).padStart(2, '0');
+  const dkey = (d) => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+  const pdate = (s) => { const [y, m, d] = String(s).split('-').map(Number); return new Date(y, (m || 1) - 1, d || 1); };
+  const fmtMin = (m) => { m = Math.round(m); const h = Math.floor(m / 60), r = m % 60; return h ? (r ? `${h}h${pad2(r)}` : `${h}h`) : `${r} min`; };
+  const fmtClock = (s) => { s = Math.max(0, Math.round(s)); return `${pad2(Math.floor(s / 3600))}:${pad2(Math.floor(s / 60) % 60)}:${pad2(s % 60)}`; };
+  const addMin = (hhmm, m) => { const [h, mm] = String(hhmm || '19:00').split(':').map(Number); const t = h * 60 + mm + m; return `${pad2(Math.floor(t / 60) % 24)}:${pad2(t % 60)}`; };
+  const WD = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+
+  // ---------- diagnóstico ----------
+  const DIAG_N = [1, 2, 2, 3, 2, 1, 2, 3, 2, 2];
+  const hsh = (s) => { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; };
+  let diag = {ids: [], ans: {}, times: {}, s: null, f: null};
+  function pickDiag() {
+    const ids = [];
+    for (const d of DISCS) {
+      const groups = d3.groups(Q.filter((q) => q.disc === d.disc), (q) => assunto(q.tema)).sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]));
+      groups.forEach((g) => g[1].sort((x, y) => hsh(x.id) - hsh(y.id)));
+      const used = new Set(); let gi = 0, k = 0, guard = 0;
+      while (k < 10 && guard < 1000 && groups.length) {
+        const g = groups[gi % groups.length][1]; gi++; guard++;
+        const free = g.filter((q) => !used.has(q.id)); if (!free.length) continue;
+        const q = free.find((x) => x.nivel === DIAG_N[k]) || free[0];
+        used.add(q.id); ids.push(q.id); k++;
+      }
+    }
+    return ids;
+  }
+  const dgValid = () => diag.ids.length && diag.ids.every((id) => byId.has(id));
+  const dgAnswered = () => diag.ids.filter((id) => diag.ans[id]).length;
+  const dgPending = () => diag.ids.filter((id) => !diag.ans[id]);
+  let dgCur = null, dgSel = null, dgT = 0;
+  const dgOk = document.getElementById('dg-ok'), dgMsg = document.getElementById('dg-msg');
+  function diagStart() {
+    if (!dgValid()) diag = {ids: pickDiag(), ans: {}, times: {}, s: null, f: null};
+    if (!dgPending().length) { renderDiag(); document.getElementById('dg-res').scrollIntoView({block: 'start'}); return; }
+    if (!diag.s) diag.s = Date.now();
+    document.getElementById('dg-res').hidden = true;
+    diagNext();
+    document.getElementById('dg-q').scrollIntoView({block: 'start'});
+  }
+  function diagNext() {
+    const p = dgPending();
+    if (!p.length) {
+      diag.f = diag.f || Date.now(); dgCur = null;
+      document.getElementById('dg-q').hidden = true;
+      renderDiag(); render();
+      document.getElementById('dg-res').scrollIntoView({block: 'start'});
+      return;
+    }
+    dgCur = p[0]; dgSel = null; dgT = Date.now();
+    const q = byId.get(dgCur), pos = diag.ids.indexOf(dgCur);
+    const box = document.getElementById('dg-q'); box.hidden = false; box.style.setProperty('--dc', DC[q.disc]);
+    document.getElementById('dg-pos').textContent = `Questão ${dgAnswered() + 1} de ${diag.ids.length} · Bloco ${Math.floor(pos / 10) + 1} de ${Math.ceil(diag.ids.length / 10)}`;
+    const dd = document.getElementById('dg-disc'); dd.textContent = `${q.disciplina} · nível ${q.nivel}`; dd.style.color = DC[q.disc];
+    document.getElementById('dg-stem').textContent = q.enunciado;
+    const alts = document.getElementById('dg-alts'); alts.replaceChildren();
+    LETTERS.forEach((k) => {
+      const b = el('button', 'pe-alt'); b.dataset.k = k.toUpperCase();
+      b.append(el('span', 'l', k.toUpperCase()), el('span', null, q[k]));
+      b.addEventListener('click', () => { dgSel = b.dataset.k; alts.querySelectorAll('.pe-alt').forEach((x) => x.classList.toggle('sel', x === b)); dgOk.disabled = false; });
+      alts.append(b);
+    });
+    dgOk.disabled = true;
+    document.getElementById('dg-bar').style.width = (dgAnswered() / diag.ids.length * 100) + '%';
+  }
+  dgOk.addEventListener('click', () => {
+    if (!dgCur || !dgSel) return;
+    const q = byId.get(dgCur);
+    diag.ans[dgCur] = dgSel; diag.times[dgCur] = Date.now() - dgT;
+    const a = ans[q.id] || {r: null, n: 0, h: 0}; a.r = dgSel; a.n++; if (dgSel === q.gabarito) a.h++; ans[q.id] = a;
+    renderPainel(); renderDiagBlocks(); diagNext();
+    if (dgCur) document.getElementById('dg-q').scrollIntoView({block: 'start'});
+  });
+  document.getElementById('dg-pause').addEventListener('click', () => { dgCur = null; document.getElementById('dg-q').hidden = true; renderDiag(); dgMsg.textContent = 'Diagnóstico pausado. Seu avanço fica salvo: ao voltar, clique em “Continuar diagnóstico”.'; });
+  document.getElementById('dg-start').addEventListener('click', diagStart);
+  document.getElementById('dg-reset').addEventListener('click', () => {
+    if (dgMsg.dataset.confirm !== '1') { dgMsg.dataset.confirm = '1'; dgMsg.textContent = 'Clique de novo para confirmar: as respostas do diagnóstico serão apagadas (o restante do progresso é mantido).'; return; }
+    dgMsg.dataset.confirm = ''; diag = {ids: pickDiag(), ans: {}, times: {}, s: null, f: null}; dgCur = null;
+    document.getElementById('dg-q').hidden = true; dgMsg.textContent = 'Diagnóstico zerado.'; renderDiag();
+  });
+  setInterval(() => {
+    if (!dgCur || !diag.s) return;
+    const spent = d3.sum(Object.values(diag.times)) / 1000 + (Date.now() - dgT) / 1000;
+    document.getElementById('dg-tempo').textContent = `Tempo no diagnóstico ${fmtClock(spent)}`;
+  }, 1000);
+
+  const cls = (p) => p == null ? {k: 'na', t: 'Sem dados'} : p >= 70 ? {k: 'forte', t: 'Forte'} : p >= 50 ? {k: 'regular', t: 'Regular'} : {k: 'fraco', t: 'Fraco'};
+  const CLS_COLOR = {forte: '#4ADE80', regular: '#FFCC29', fraco: '#FF7A7A', na: 'rgba(255,255,255,.25)'};
+  function diagStats() {
+    return DISCS.map((d) => {
+      const ids = diag.ids.filter((id) => byId.has(id) && byId.get(id).disc === d.disc && diag.ans[id]);
+      let h = 0, wn = 0, wh = 0;
+      ids.forEach((id) => { const q = byId.get(id); const w = q.nivel || 2; wn += w; if (diag.ans[id] === q.gabarito) { h++; wh += w; } });
+      return {...d, n: ids.length, h, prof: wn ? Math.round(100 * wh / wn) : null};
+    });
+  }
+  function renderDiagBlocks() {
+    const box = document.getElementById('dg-blocks'); box.replaceChildren();
+    if (!dgValid()) diag.ids = pickDiag();
+    DISCS.forEach((d) => {
+      const tot = diag.ids.filter((id) => byId.get(id).disc === d.disc).length;
+      const n = diag.ids.filter((id) => byId.get(id).disc === d.disc && diag.ans[id]).length;
+      const c = el('div', 'pe-dg-chip' + (n === tot && tot ? ' full' : '')); c.style.setProperty('--dc', DC[d.disc]);
+      c.append(el('span', null, SHORT[d.disc] || d.disciplina), el('b', null, `${n}/${tot}`)); box.append(c);
+    });
+  }
+  function renderDiag() {
+    if (!DISCS.length) return;
+    renderDiagBlocks();
+    const n = dgAnswered(), tot = diag.ids.length;
+    const btn = document.getElementById('dg-start');
+    btn.textContent = !n ? 'Iniciar diagnóstico' : n < tot ? `Continuar diagnóstico (${n} de ${tot})` : 'Ver resultado';
+    document.getElementById('dg-title').textContent = n >= tot && tot ? 'Diagnóstico concluído' : 'Diagnóstico inicial';
+    const res = document.getElementById('dg-res');
+    if (!n || dgCur) { res.hidden = true; return; }
+    res.hidden = false; res.replaceChildren(buildDiagResult(n < tot));
+  }
+  function buildDiagResult(partial) {
+    const wrap = el('div', 'pe-res');
+    const st = diagStats();
+    const ids = diag.ids.filter((id) => diag.ans[id]);
+    const qs = ids.map((id) => byId.get(id));
+    const wrong = qs.filter((q) => diag.ans[q.id] !== q.gabarito);
+    let wn = 0, wh = 0; qs.forEach((q) => { const w = q.nivel || 2; wn += w; if (diag.ans[q.id] === q.gabarito) wh += w; });
+    const prof = wn ? Math.round(100 * wh / wn) : null;
+    const tmean = ids.length ? d3.mean(ids, (id) => diag.times[id] || 0) / 1000 : 0;
+    if (partial) wrap.append(el('p', 'pe-warn', `Resultado parcial: ${ids.length} de ${diag.ids.length} questões respondidas. Conclua o diagnóstico para uma análise completa.`));
+    // KPIs
+    const k = el('div', 'pe-kpis'); k.style.marginBottom = '0';
+    const kpi = (id, lab, val, note) => { const c = el('div', 'pe-card'); c.id = id; c.append(el('div', 'pe-kpi-label', lab), el('div', 'pe-kpi-value', val), el('div', 'pe-kpi-note', note)); return c; };
+    const lv = cls(prof);
+    k.append(kpi('dkpi-resp', 'Acertos no diagnóstico', `${qs.length - wrong.length}/${qs.length}`, pf((qs.length - wrong.length) / (qs.length || 1)) + ' de acerto'),
+      kpi('dkpi-prof', 'Proficiência inicial', prof == null ? '—' : String(prof), 'Ponderada pela dificuldade · meta 70'),
+      kpi('dkpi-acerto', 'Situação geral', lv.t, levelOf(prof, qs.length).t),
+      kpi('dkpi-dom', 'Tempo médio por questão', `${Math.floor(tmean / 60)}min ${pad2(Math.round(tmean % 60))}s`, tmean > 180 ? 'Acima dos 3 min da prova' : 'Dentro dos 3 min da prova'));
+    wrap.append(k);
+    // mapa
+    const grid = el('div', 'pe-res-grid');
+    const map = el('div', 'pe-card'); map.id = 'dg-mapa';
+    map.append(el('h2', 'pe-h2', 'Mapa de desempenho por disciplina'), el('p', 'pe-note', 'Proficiência de 0 a 100 em cada disciplina. A linha branca marca a meta de 70.'));
+    st.slice().sort((a, b) => (b.prof ?? -1) - (a.prof ?? -1)).forEach((s) => {
+      const c = cls(s.prof); const r = el('div', 'pe-map-row'); r.style.setProperty('--dc', DC[s.disc]);
+      const bar = el('div', 'bar'); const i = el('i'); i.style.width = (s.prof || 0) + '%'; i.style.background = CLS_COLOR[c.k]; bar.append(i, el('s'));
+      r.append(el('span', 'nm', s.disciplina), bar, el('span', 'v', s.prof == null ? '—' : String(s.prof)), el('span', 'pe-tag ' + c.k, `${c.t} · ${s.h}/${s.n}`));
+      map.append(r);
+    });
+    // foco
+    const foco = el('div', 'pe-card'); foco.id = 'dg-foco';
+    foco.append(el('h2', 'pe-h2', 'Onde focar primeiro'), el('p', 'pe-note', 'As três disciplinas com menor proficiência e os assuntos em que você errou.'));
+    const fl = el('div', 'pe-focus');
+    const weak = st.filter((s) => s.n).sort((a, b) => a.prof - b.prof).slice(0, 3);
+    weak.forEach((s) => {
+      const it = el('div', 'pe-focus-item'); it.style.setProperty('--dc', DC[s.disc]);
+      const t = el('div', 't'); t.append(el('span', null, s.disciplina), el('span', 'pe-tag ' + cls(s.prof).k, `${s.prof}`));
+      const as = d3.rollups(wrong.filter((q) => q.disc === s.disc), (v) => v.length, (q) => assunto(q.tema)).sort((x, y) => y[1] - x[1]);
+      it.append(t, el('div', 'a', as.length ? 'Clique num assunto para o estudo dirigido (Sinopse na seção certa + artigos de lei):' : 'Sem erros registrados nesta disciplina.'));
+      if (as.length) { const cw = el('div', 'pe-tr-focus'); as.forEach(([an, c]) => { const b = el('button', 'pe-chip', `${an} · ${c}`); b.style.setProperty('--dc', DC[s.disc]); b.addEventListener('click', () => openDirigido(s.disc, an)); cw.append(b); }); it.append(cw); }
+      const acts = el('div', 'pe-actions'); acts.style.marginTop = '6px';
+      const b1 = el('button', 'pe-btn ghost', 'Estudar'); b1.addEventListener('click', () => openMaterial(s.disc));
+      const b2 = el('button', 'pe-btn', 'Treinar'); b2.addEventListener('click', () => startFrom(s.disc));
+      acts.append(b1, b2); it.append(acts); fl.append(it);
+    });
+    const strong = st.filter((s) => s.n && s.prof >= 70).sort((a, b) => b.prof - a.prof);
+    fl.append(el('p', 'pe-note', strong.length ? 'Pontos fortes: ' + strong.map((s) => `${SHORT[s.disc]} (${s.prof})`).join(', ') + '. Mantenha com revisões e simulados.' : 'Nenhuma disciplina atingiu a meta de 70 ainda. Normal no início: o cronograma prioriza as mais fracas.'));
+    foco.append(fl);
+    grid.append(map, foco); wrap.append(grid);
+    // erros mais cometidos
+    const er = el('div', 'pe-card'); er.id = 'dg-erros';
+    er.append(el('h2', 'pe-h2', 'Erros mais cometidos e como evitá-los'));
+    const ul = el('ul', 'pe-insights');
+    const add = (txt, c) => ul.append(el('li', c || '', txt));
+    [1, 2, 3].forEach((nv) => {
+      const t = qs.filter((q) => q.nivel === nv), w = t.filter((q) => diag.ans[q.id] !== q.gabarito);
+      if (t.length) add(`Nível ${nv} (${['', 'básico', 'intermediário', 'avançado'][nv]}): errou ${w.length} de ${t.length} (${pf(w.length / t.length)}).` + (nv === 1 && w.length / t.length > .3 ? ' Erros em questões básicas indicam lacuna de letra de lei: priorize a leitura da lei seca.' : nv === 3 && w.length / t.length > .5 ? ' As questões avançadas cobram jurisprudência e detalhes: reforce com a Sinopse e os comentários.' : ''), w.length / t.length > .4 ? '' : w.length / t.length > .2 ? 'warn' : 'ok');
+    });
+    const neg = qs.filter((q) => /\bNÃO\b|EXCETO|incorret/i.test(q.enunciado)); const negW = neg.filter((q) => diag.ans[q.id] !== q.gabarito);
+    if (neg.length) add(`Enunciados com negação (NÃO, EXCETO, incorreta): errou ${negW.length} de ${neg.length}. Sublinhe mentalmente a negação e confira se procura a alternativa certa ou a errada.`, negW.length / neg.length > .3 ? '' : 'ok');
+    const caso = qs.filter((q) => String(q.enunciado).split('\n')[0].length > 260); const casoW = caso.filter((q) => diag.ans[q.id] !== q.gabarito);
+    if (caso.length) add(`Casos extensos (situação concreta com mais detalhes): errou ${casoW.length} de ${caso.length}. Identifique primeiro o instituto jurídico em jogo e só depois leia as alternativas.`, casoW.length / caso.length > .4 ? '' : casoW.length / caso.length > .2 ? 'warn' : 'ok');
+    const fast = wrong.filter((q) => (diag.times[q.id] || 0) < 45000);
+    if (fast.length) add(`${fast.length} erro(s) em respostas dadas em menos de 45 segundos. Pressa: leia todas as alternativas antes de marcar — a Cesgranrio coloca alternativas muito parecidas com a correta.`, 'warn');
+    const slow = qs.filter((q) => (diag.times[q.id] || 0) > 240000);
+    if (slow.length) add(`${slow.length} questão(ões) levaram mais de 4 minutos. Na prova, marque e volte depois para não comprometer o tempo.`, 'warn');
+    const topA = d3.rollups(wrong, (v) => v.length, (q) => `${SHORT[q.disc]} · ${assunto(q.tema)}`).sort((a, b) => b[1] - a[1]).slice(0, 6);
+    if (topA.length) add('Assuntos com mais erros: ' + topA.map(([a, c]) => `${a} (${c})`).join('; ') + '.');
+    if (!wrong.length) add('Nenhum erro no diagnóstico. Excelente ponto de partida: use o cronograma para manter o ritmo e ampliar a cobertura.', 'ok');
+    er.append(ul);
+    // lista de erros por disciplina
+    if (wrong.length) {
+      er.append(el('h2', 'pe-h2', 'Revise cada erro'));
+      const box = el('div', 'pe-errs');
+      d3.groups(wrong, (q) => q.disc).forEach(([disc, list]) => {
+        const det = document.createElement('details'); det.style.setProperty('--dc', DC[disc]);
+        const sm = document.createElement('summary'); sm.textContent = `${(DISCS.find((x) => x.disc === disc) || {}).disciplina} — ${list.length} erro(s)`; det.append(sm);
+        list.forEach((q) => {
+          const it = el('div', 'pe-rev-item'); it.style.setProperty('--dc', DC[disc]);
+          const r = diag.ans[q.id];
+          it.append(el('div', 'm', q.tema), el('div', null, q.enunciado), el('div', 'yours', `Você marcou ${r}) ${q[r.toLowerCase()]}`), el('div', 'right', `Correta ${q.gabarito}) ${q[q.gabarito.toLowerCase()]}`), el('div', 'c', q.comentario));
+          det.append(it);
+        });
+        box.append(det);
+      });
+      er.append(box);
+    }
+    wrap.append(er);
+    const go = el('div', 'pe-card pe-dg-hero');
+    go.append(el('h2', 'pe-h2', 'Próximos passos'), el('p', 'pe-note', '1) Trilha de recuperação: para cada assunto errado, releia a seção certa da Sinopse com os artigos de lei ao lado e faça a fixação. 2) Depois, siga o cronograma de estudo integral, que dá mais horas às disciplinas mais fracas (mínimo de 2 horas por dia), com cronômetro para cada etapa.'));
+    const b0 = el('button', 'pe-btn primary', 'Começar a trilha de recuperação'); b0.addEventListener('click', () => { trCur = null; show('dirigido'); });
+    const b = el('button', 'pe-btn', 'Montar meu cronograma'); b.addEventListener('click', () => { show('cronograma'); document.getElementById('cr-config').scrollIntoView({block: 'start'}); });
+    const ar = el('div', 'pe-actions'); ar.append(b0, b); go.append(ar); wrap.append(go);
+    return wrap;
+  }
+
+  // ---------- cronograma ----------
+  let plan = null; // {exam, days, start, min, gen, w, order, base}
+  let done = new Set();
+  let timeLog = {};
+  let crWeek = null;
+  const crDays = document.getElementById('cr-days');
+  let selDays = [1, 2, 3, 4, 5, 6];
+  function drawDayButtons() {
+    crDays.replaceChildren();
+    [1, 2, 3, 4, 5, 6, 0].forEach((d) => {
+      const b = el('button', 'pe-day', WD[d]); b.setAttribute('aria-pressed', String(selDays.includes(d)));
+      b.addEventListener('click', () => { selDays = selDays.includes(d) ? selDays.filter((x) => x !== d) : [...selDays, d]; drawDayButtons(); });
+      crDays.append(b);
+    });
+  }
+  function weightsNow() {
+    const st = diagStats(); const hasDiag = st.some((s) => s.n);
+    const w = {}, order = {};
+    DISCS.forEach((d) => {
+      const s = st.find((x) => x.disc === d.disc);
+      const p = hasDiag && s && s.n ? s.prof : (statsFor(Q.filter((q) => q.disc === d.disc)).prof ?? 50);
+      const pr = provaPeso(d.disc);
+      w[d.disc] = pr != null ? Math.max(1.5, Math.round(pr * (0.5 + (100 - p) / 100) * 100) / 100) : Math.max(15, 100 - p) + 10;
+      const errA = [...new Set(diag.ids.filter((id) => diag.ans[id] && byId.get(id).disc === d.disc && diag.ans[id] !== byId.get(id).gabarito).map((id) => assunto(byId.get(id).tema)))];
+      const all = d3.groups(Q.filter((q) => q.disc === d.disc), (q) => assunto(q.tema)).sort((a, b) => b[1].length - a[1].length).map((g) => g[0]);
+      order[d.disc] = [...errA, ...all.filter((a) => !errA.includes(a))];
+    });
+    const temProva = DISCS.some((d) => provaPeso(d.disc) != null);
+    return {w, order, base: (temProva ? 'peso de cada disciplina na prova de 2023 combinado com o ' : '') + (hasDiag ? 'diagnóstico' : 'desempenho atual'), disc: 1};
+  }
+  document.getElementById('cr-gen').addEventListener('click', () => {
+    const exam = document.getElementById('cr-exam').value, gm = document.getElementById('cr-gmsg');
+    if (!exam) { gm.textContent = 'Informe a data da prova.'; return; }
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    if (pdate(exam) <= today) { gm.textContent = 'A data da prova deve ser futura.'; return; }
+    if (!selDays.length) { gm.textContent = 'Escolha ao menos um dia de estudo.'; return; }
+    const min = Math.max(120, Number(document.getElementById('cr-min').value) || 120);
+    const wo = weightsNow();
+    plan = {exam, days: selDays.slice(), start: document.getElementById('cr-hora').value || '19:00', min, gen: dkey(new Date()), ...wo};
+    done = new Set(); crWeek = null; gm.textContent = 'Cronograma gerado.';
+    renderCrono(); document.getElementById('cr-plan').scrollIntoView({block: 'start'});
+  });
+  function buildPlan(p) {
+    const out = []; const start = pdate(p.gen); const end = pdate(p.exam);
+    const days = [];
+    for (let d = new Date(start); d < end && days.length < 500; d.setDate(d.getDate() + 1)) if (p.days.includes(d.getDay())) days.push(new Date(d));
+    const discs = DISCS.map((d) => d.disc).filter((k) => p.w[k] != null);
+    const total = d3.sum(discs, (k) => p.w[k]); const cur = Object.fromEntries(discs.map((k) => [k, 0])); const ptr = Object.fromEntries(discs.map((k) => [k, 0]));
+    const nextDisc = (avoid) => { discs.forEach((k) => { cur[k] += p.w[k]; }); let k = discs.reduce((a, b) => (cur[b] > cur[a] ? b : a)); if (k === avoid && discs.length > 1) { const alt = discs.filter((x) => x !== avoid).reduce((a, b) => (cur[b] > cur[a] ? b : a)); k = alt; } cur[k] -= total; return k; };
+    const finalStart = days.length > 28 ? days.length - 6 : days.length;
+    const dq = p.disc ? discQueue(p.w) : []; let dqi = 0;
+    days.forEach((day, i) => {
+      const slots = [];
+      if (i >= finalStart) slots.push({tipo: dq.length && (i - finalStart) % 2 === 1 ? 'final_disc' : 'final'});
+      else if ((i + 1) % 6 === 0) slots.push({tipo: 'revisao'});
+      else if (dq.length && (i + 1) % 6 === 3) { const c = dq[dqi++ % dq.length]; slots.push({tipo: 'discursiva', disc: c.disc, caso: c.id, titulo: c.titulo, lmin: c.linhas_min, lmax: c.linhas_max}); }
+      else {
+        const n = p.min >= 180 ? 2 : 1;
+        for (let j = 0; j < n; j++) { const k = nextDisc(j ? slots[0].disc : null); const list = p.order[k] || []; slots.push({tipo: 'disc', disc: k, assunto: list.length ? list[ptr[k]++ % list.length] : ''}); }
+      }
+      const S = p.min / slots.length;
+      slots.forEach((s) => {
+        if (s.tipo === 'disc') {
+          const lei = (matRows().find((r) => r.disc === s.disc && r.tipo === 'lei' && r.questoes > 0) || {}).titulo || 'lei seca da disciplina';
+          const a = Math.round(S * .35), b = Math.round(S * .1), c = Math.round(S * .45), dd = Math.round(S - a - b - c);
+          s.blocks = [{label: `Leitura: Sinopse — ${s.assunto}`, min: a}, {label: `Lei seca: ${lei}`, min: b}, {label: `Questões: ${Math.floor(c / 3)} de ${s.assunto}`, min: c}, {label: 'Revisão dos erros do dia', min: dd}];
+        } else if (s.tipo === 'discursiva') {
+          const a = 15, b = 45, c = 20, dd = Math.max(0, Math.round(S - a - b - c));
+          s.blocks = [{label: `Leitura do caso e esquema dos 4 tópicos — ${s.titulo}`, min: a}, {label: `Redação: ${s.lmin} a ${s.lmax} linhas, sem consulta`, min: b}, {label: 'Autocorreção pelo espelho e nota por tópico', min: c}];
+          if (dd) s.blocks.push({label: 'Revisão teórica dos pontos do espelho que você não abordou (Sinopse e lei seca)', min: dd});
+        } else if (s.tipo === 'final_disc') {
+          const a = Math.min(90, Math.round(S * .7)), b = Math.round(S - a);
+          s.blocks = [{label: 'Simulado discursivo: 2 casos, 30 a 40 linhas cada, sem consulta', min: a}, {label: 'Autocorreção pelos espelhos e revisão dos tópicos perdidos', min: b}];
+        } else if (s.tipo === 'revisao') {
+          const a = Math.round(S * .4), b = Math.round(S - a);
+          s.blocks = [{label: 'Refazer os erros da semana (Revisão de erros)', min: a}, {label: `Simulado misto: ${Math.floor(b / 3)} questões`, min: b}];
+        } else {
+          const a = Math.round(S * .7), b = Math.round(S - a);
+          s.blocks = [{label: `Simulado de prova: ${Math.floor(a / 3)} questões, 3 min cada`, min: a}, {label: 'Revisão de erros e lei seca dos pontos fracos', min: b}];
+        }
+      });
+      out.push({key: dkey(day), date: day, slots});
+    });
+    return out;
+  }
+  function slotTitle(s) {
+    if (s.tipo === 'disc') return (DISCS.find((d) => d.disc === s.disc) || {}).disciplina || s.disc;
+    if (s.tipo === 'discursiva') return 'Discursiva · ' + ((DISCS.find((d) => d.disc === s.disc) || {}).disciplina || s.disc);
+    if (s.tipo === 'final_disc') return 'Reta final: simulado discursivo';
+    return s.tipo === 'revisao' ? 'Revisão semanal + simulado' : 'Reta final: simulado de prova';
+  }
+  function startSlot(key, i, s) {
+    timer.blocks = s.blocks.map((b) => ({...b})); timer.bi = 0; timer.left = timer.blocks[0].min * 60; timer.sessKey = key + '#' + i;
+    timer.label = slotTitle(s); timer.run = true; timer.last = Date.now(); timer.msg = 'Sessão iniciada: ' + timer.blocks[0].label;
+    drawTimer(); document.getElementById('cr-timer').scrollIntoView({block: 'start'});
+  }
+  function renderCrono() {
+    if (!DISCS.length) return;
+    const ex = document.getElementById('cr-exam');
+    if (!ex.value) { const d = new Date(); d.setDate(d.getDate() + 90); ex.value = plan ? plan.exam : dkey(d); }
+    if (plan) { document.getElementById('cr-hora').value = plan.start; document.getElementById('cr-min').value = String(plan.min); }
+    drawDayButtons();
+    const st = diagStats(); const hasDiag = st.some((s) => s.n);
+    document.getElementById('cr-base').textContent = hasDiag
+      ? `Base: peso de cada disciplina na prova de 2023 (Civil e Marítimo/Internacional 10 questões; Ambiental 7; Empresarial e Administrativo 6; demais 1 a 3) combinado com o seu diagnóstico (${dgAnswered()} de ${diag.ids.length} questões): mais horas para o que mais cai e para o que você mais erra. Cerca de 1 dia em cada 6 é de discursiva, e a reta final alterna simulados objetivos e discursivos. Mínimo de 2 horas por dia.`
+      : 'Ainda não há diagnóstico: o cronograma usará o peso de cada disciplina na prova de 2023 (e o seu desempenho no Treino, se houver). Para personalizar, faça antes o Diagnóstico. Cerca de 1 dia em cada 6 é de discursiva. Mínimo de 2 horas por dia.';
+    const box = document.getElementById('cr-plan'); box.replaceChildren();
+    if (!plan) { box.append(el('div', 'pe-empty', 'Defina a data da prova, os dias e o horário, e clique em “Gerar cronograma”.')); drawTimer(); return; }
+    const days = buildPlan(plan);
+    if (!days.length) { box.append(el('div', 'pe-empty', 'Não há dias de estudo entre hoje e a data da prova com os dias escolhidos.')); return; }
+    // resumo
+    const hours = {}; days.forEach((d) => d.slots.forEach((s) => { const k = s.tipo === 'disc' ? s.disc : (s.tipo === 'discursiva' || s.tipo === 'final_disc') ? '_disc' : '_rev'; hours[k] = (hours[k] || 0) + d3.sum(s.blocks, (b) => b.min); }));
+    const totMin = d3.sum(Object.values(hours));
+    const sum = el('div', 'pe-plan-sum');
+    const c = (lab, val, note) => { const x = el('div', 'pe-card'); x.append(el('div', 'pe-kpi-label', lab), el('div', 'pe-kpi-value', val), el('div', 'pe-kpi-note', note)); return x; };
+    const weeks = Math.ceil((pdate(plan.exam) - pdate(plan.gen)) / (7 * 864e5));
+    const goalDays = Object.entries(timeLog).filter(([, s]) => s >= plan.min * 60).length;
+    sum.append(c('Dias de estudo', nf.format(days.length), `${weeks} semanas até ${pdate(plan.exam).toLocaleDateString('pt-BR')}`), c('Horas planejadas', fmtMin(totMin), `${fmtMin(plan.min)} por dia · início ${plan.start}`),
+      c('Dias concluídos', `${nf.format(days.filter((d) => d.slots.every((s, i) => done.has(d.key + '#' + i))).length)}`, `de ${nf.format(days.length)} no cronograma`), c('Dias com meta de tempo', nf.format(goalDays), `cronômetro ≥ ${fmtMin(plan.min)}`));
+    box.append(sum);
+    const dist = el('div', 'pe-card'); dist.id = 'cr-dist';
+    dist.append(el('h2', 'pe-h2', 'Distribuição das horas'), el('p', 'pe-note', `Calculada a partir do ${plan.base}: quanto mais a disciplina cai e quanto mais fraca ela está, mais horas.` + (plan.disc ? '' : ' Este cronograma foi gerado antes do módulo de discursivas: clique em “Gerar cronograma” para incluí-las.')));
+    const bar = el('div', 'pe-share'), leg = el('div', 'pe-share-leg');
+    Object.entries(hours).sort((a, b) => b[1] - a[1]).forEach(([k, m]) => {
+      const col = k === '_rev' ? '#FFFFFF' : k === '_disc' ? '#D9A6FF' : DC[k]; const i = el('i'); i.style.width = (m / totMin * 100) + '%'; i.style.background = col; bar.append(i);
+      const s = el('span', null, `${k === '_rev' ? 'Revisões e simulados' : k === '_disc' ? 'Discursivas' : SHORT[k]} ${fmtMin(m)}`); s.style.setProperty('--dc', col); leg.append(s);
+    });
+    dist.append(bar, leg); box.append(dist);
+    // semanas
+    const wk = (d) => Math.floor((d - pdate(plan.gen)) / (7 * 864e5));
+    const nW = wk(days[days.length - 1].date) + 1;
+    const todayK = dkey(new Date());
+    if (crWeek == null) { const t = days.find((d) => d.key >= todayK); crWeek = t ? wk(t.date) : 0; }
+    crWeek = Math.max(0, Math.min(nW - 1, crWeek));
+    const list = days.filter((d) => wk(d.date) === crWeek);
+    const nav = el('div', 'pe-week-nav');
+    const prev = el('button', 'pe-btn', '‹ Semana anterior'); prev.disabled = crWeek === 0; prev.addEventListener('click', () => { crWeek--; renderCrono(); });
+    const next = el('button', 'pe-btn', 'Próxima semana ›'); next.disabled = crWeek >= nW - 1; next.addEventListener('click', () => { crWeek++; renderCrono(); });
+    const lbl = el('strong', null, list.length ? `Semana ${crWeek + 1} de ${nW} · ${list[0].date.toLocaleDateString('pt-BR')} a ${list[list.length - 1].date.toLocaleDateString('pt-BR')}` : `Semana ${crWeek + 1} de ${nW}`);
+    nav.append(prev, lbl, next); box.append(nav);
+    const grid = el('div', 'pe-days-list'); grid.id = 'cr-semana';
+    list.forEach((d) => {
+      const allDone = d.slots.every((s, i) => done.has(d.key + '#' + i));
+      const card = el('div', 'pe-dcard' + (d.key === todayK ? ' today' : '') + (allDone ? ' done' : ''));
+      const hd = el('div', 'hd'); hd.append(el('span', 'dt', d.date.toLocaleDateString('pt-BR', {weekday: 'long', day: '2-digit', month: '2-digit'}) + (d.key === todayK ? ' · hoje' : '')), el('span', 'hr', `${plan.start}–${addMin(plan.start, plan.min)}`));
+      card.append(hd);
+      let t = 0;
+      d.slots.forEach((s, i) => {
+        const sl = el('div', 'pe-slot'); if (s.disc) sl.style.setProperty('--dc', s.tipo === 'discursiva' ? '#D9A6FF' : DC[s.disc]); else if (s.tipo === 'final_disc') sl.style.setProperty('--dc', '#D9A6FF');
+        const ini = addMin(plan.start, t); const dur = d3.sum(s.blocks, (b) => b.min); t += dur;
+        sl.append(el('div', 'st', `${slotTitle(s)} · ${ini}–${addMin(plan.start, t)}`));
+        const ul = el('ul'); s.blocks.forEach((b) => { const li = el('li'); li.append(b.label + ' ', el('span', null, `(${b.min} min)`)); ul.append(li); }); sl.append(ul);
+        const ft = el('div', 'ft');
+        const acts = el('div', 'pe-actions'); acts.style.marginTop = '6px';
+        const bt = el('button', 'pe-btn primary', '▶ Cronômetro'); bt.addEventListener('click', () => startSlot(d.key, i, s)); acts.append(bt);
+        if (s.tipo === 'disc') {
+          const bl = el('button', 'pe-btn ghost', 'Estudo dirigido'); bl.addEventListener('click', () => openDirigido(s.disc, s.assunto));
+          const bq = el('button', 'pe-btn ghost', 'Questões'); bq.addEventListener('click', () => { startFrom(s.disc); fAss.value = s.disc + '|' + s.assunto; });
+          acts.append(bl, bq);
+        } else if (s.tipo === 'discursiva' || s.tipo === 'final_disc') {
+          const bq = el('button', 'pe-btn ghost', s.tipo === 'discursiva' ? 'Abrir o caso' : 'Discursivas'); bq.addEventListener('click', () => { if (s.tipo === 'discursiva') openDisc(s.caso); else { dsCur = null; show('discursivas'); } });
+          acts.append(bq);
+        } else {
+          const bq = el('button', 'pe-btn ghost', s.tipo === 'revisao' ? 'Revisar erros' : 'Simulado'); bq.addEventListener('click', () => { if (s.tipo === 'revisao') show('revisao'); else { show('treino'); fDisc.value = 'all'; fModo.value = 'todas'; fNivel.value = '0'; fQtd.value = '50'; fillAssuntos(); fAss.value = ''; renderBefore(); } });
+          acts.append(bq);
+        }
+        const lab = document.createElement('label'); const cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = done.has(d.key + '#' + i);
+        cb.addEventListener('change', () => { if (cb.checked) done.add(d.key + '#' + i); else done.delete(d.key + '#' + i); renderCrono(); });
+        lab.append(cb, 'Concluído');
+        ft.append(acts, lab); sl.append(ft); card.append(sl);
+      });
+      const studied = timeLog[d.key] || 0;
+      if (studied) card.append(el('div', 'studied', `Cronômetro neste dia: ${fmtMin(studied / 60)}`));
+      grid.append(card);
+    });
+    box.append(grid);
+    drawTimer();
+  }
+
+  // ---------- cronômetro ----------
+  const timer = {run: false, last: 0, blocks: [], bi: 0, left: 0, label: 'Estudo livre', sessKey: null, msg: ''};
+  const crPlay = document.getElementById('cr-play');
+  function drawTimer() {
+    const goal = (plan ? plan.min : 120) * 60;
+    const today = timeLog[dkey(new Date())] || 0;
+    const blk = timer.blocks[timer.bi];
+    document.getElementById('cr-clock').textContent = blk ? fmtClock(timer.left) : fmtClock(today);
+    document.getElementById('cr-label').textContent = blk ? `${timer.label} — ${blk.label}` : (timer.run ? 'Estudo livre em andamento' : 'Estudo livre');
+    document.getElementById('cr-today').textContent = `Hoje: ${fmtMin(today / 60)} de ${fmtMin(goal / 60)}` + (today >= goal ? ' — meta do dia cumprida!' : '');
+    document.getElementById('cr-ring').style.strokeDashoffset = String(326.7 * (1 - Math.min(1, today / goal)));
+    const steps = document.getElementById('cr-steps'); steps.replaceChildren();
+    timer.blocks.forEach((b, i) => steps.append(el('span', i === timer.bi ? 'cur' : i < timer.bi ? 'done' : '', `${i + 1}. ${b.label.split(':')[0]} · ${b.min} min`)));
+    crPlay.textContent = timer.run ? 'Pausar' : (timer.blocks.length || today ? 'Retomar' : 'Iniciar');
+    document.getElementById('cr-next').disabled = !timer.blocks.length;
+    document.getElementById('cr-msg').textContent = timer.msg || '';
+    const mini = document.getElementById('mini-timer');
+    mini.hidden = !timer.run;
+    if (timer.run) mini.textContent = `⏱ ${blk ? fmtClock(timer.left) + ' · ' + blk.label.split(':')[0] : fmtClock(today)}`;
+  }
+  function advanceBlock(msgDone) {
+    timer.bi++;
+    if (timer.bi >= timer.blocks.length) {
+      if (timer.sessKey) done.add(timer.sessKey);
+      timer.run = false; timer.blocks = []; timer.bi = 0; timer.sessKey = null; timer.label = 'Estudo livre';
+      timer.msg = msgDone || 'Sessão concluída! Ela foi marcada como feita no cronograma.';
+      if (current() === 'cronograma') renderCrono();
+    } else { timer.left = timer.blocks[timer.bi].min * 60; timer.msg = 'Próxima etapa: ' + timer.blocks[timer.bi].label; }
+  }
+  setInterval(() => {
+    if (!timer.run) return;
+    const now = Date.now(); const dt = Math.floor((now - timer.last) / 1000); if (dt <= 0) return;
+    timer.last += dt * 1000;
+    const k = dkey(new Date()); timeLog[k] = (timeLog[k] || 0) + dt;
+    if (timer.blocks.length) { timer.left -= dt; if (timer.left <= 0) advanceBlock(); }
+    drawTimer();
+  }, 1000);
+  crPlay.addEventListener('click', () => { timer.run = !timer.run; timer.last = Date.now(); if (timer.run && !timer.blocks.length) timer.msg = 'Estudo livre: o tempo conta para a meta diária.'; drawTimer(); });
+  document.getElementById('cr-next').addEventListener('click', () => { if (timer.blocks.length) { advanceBlock(); drawTimer(); } });
+  document.getElementById('cr-reset').addEventListener('click', () => { timer.run = false; timer.blocks = []; timer.bi = 0; timer.sessKey = null; timer.label = 'Estudo livre'; timer.msg = 'Sessão encerrada. O tempo já estudado continua contando para hoje.'; drawTimer(); });
+  document.getElementById('mini-timer').addEventListener('click', () => show('cronograma'));
+
+  // ---------- estudo dirigido (trilha de recuperação) ----------
+  let trilha = {};            // 'disc|assunto' -> {lido: bool, fix: {n, h, at}}
+  let trCur = null;           // {disc, a}
+  let trSig = '';
+  const tkey = (disc, a) => disc + '|' + a;
+  const trRows = () => { const d = dash.data('trilhas'); return d.status === 'ok' ? d.data : []; };
+  const artLabel = (n) => { n = Number(n); return 'Art. ' + (n < 10 ? n + 'º' : nf.format(n)); };
+  function weakAssuntos() {
+    const st = diagStats();
+    const wrong = diag.ids.filter((id) => diag.ans[id] && byId.has(id) && diag.ans[id] !== byId.get(id).gabarito).map((id) => byId.get(id));
+    const out = [];
+    d3.groups(wrong, (q) => q.disc)
+      .sort((a, b) => ((st.find((s) => s.disc === a[0]) || {}).prof ?? 0) - ((st.find((s) => s.disc === b[0]) || {}).prof ?? 0))
+      .forEach(([disc, qs]) => d3.groups(qs, (q) => assunto(q.tema)).sort((a, b) => b[1].length - a[1].length)
+        .forEach(([a, l]) => out.push({disc, a, erros: l.length, qs: l})));
+    return out;
+  }
+  function trStatus(k) {
+    const t = trilha[k] || {};
+    if (t.fix && t.fix.n && t.fix.h / t.fix.n >= 0.7) return {k: 'ok', t: `Recuperado · fixação ${t.fix.h}/${t.fix.n}`};
+    if (t.fix && t.fix.n) return {k: 'bad', t: `Fixação ${t.fix.h}/${t.fix.n} · refazer`};
+    if (t.lido) return {k: 'mid', t: 'Teoria lida · falta fixar'};
+    return {k: 'todo', t: 'A estudar'};
+  }
+  function openDirigido(disc, a) { trCur = {disc, a}; show('dirigido'); const s = document.getElementById('tr-study'); if (s) s.scrollIntoView({block: 'start'}); }
+  function fillReader(rd, disc, prefix) {
+    rd.replaceChildren();
+    const rows = sinRows(disc);
+    let ul = null, table = null, tabId = -1, capa = null;
+    for (const r of rows) {
+      if (r.tipo !== 'li') ul = null;
+      if (r.tipo !== 'th' && r.tipo !== 'td') { table = null; tabId = -1; }
+      if (r.tipo === 'capa') {
+        if (!capa) { capa = el('div', 'pe-rd-capa'); rd.append(capa); capa.append(el('div', 'pe-rd-capa-t', r.texto)); }
+        else capa.append(el('div', 'pe-rd-capa-s', r.texto));
+      } else if (r.tipo === 'h1' || r.tipo === 'h2' || r.tipo === 'h3') {
+        const h = el({h1: 'h3', h2: 'h4', h3: 'h5'}[r.tipo], {h1: 'pe-rd-h1', h2: 'pe-rd-h2', h3: 'pe-rd-h3'}[r.tipo], r.texto);
+        h.id = prefix + r.ordem; rd.append(h);
+      } else if (r.tipo === 'li') { if (!ul) { ul = el('ul', 'pe-rd-ul'); rd.append(ul); } ul.append(el('li', null, r.texto)); }
+      else if (r.tipo === 'caixa') {
+        const lines = r.texto.split('\n').flatMap((x) => x.split(' // ')).map((x) => x.trim()).filter(Boolean);
+        const bx = el('div', 'pe-rd-box');
+        const label = lines.length > 1 && lines[0].length < 60 && lines[0] === lines[0].toUpperCase() ? lines.shift() : null;
+        if (label) bx.append(el('div', 'pe-rd-box-l', label));
+        lines.forEach((ln) => bx.append(el('p', null, ln.replace(/^- /, '• '))));
+        rd.append(bx);
+      } else if (r.tipo === 'th' || r.tipo === 'td') {
+        if (!table || tabId !== r.tabela) { const wrap = el('div', 'pe-rd-tw'); table = el('table', 'pe-rd-t'); wrap.append(table); rd.append(wrap); tabId = r.tabela; }
+        const tr = el('tr');
+        r.texto.split(' ¦ ').forEach((c) => { const cell = el(r.tipo, null); c.split('\n').forEach((ln, i) => { if (i) cell.append(el('br')); cell.append(ln); }); tr.append(cell); });
+        table.append(tr);
+      } else rd.append(el('p', 'pe-rd-p', r.texto));
+    }
+    if (!rows.length) rd.append(el('div', 'pe-empty', 'Sinopse não encontrada para esta disciplina.'));
+  }
+  function trList() {
+    const box = document.getElementById('tr-list'); box.replaceChildren();
+    const weak = weakAssuntos();
+    if (!weak.length) {
+      box.append(el('p', 'pe-note', dgAnswered() ? 'Nenhum erro registrado no diagnóstico até agora. Você pode escolher qualquer assunto abaixo para um estudo dirigido.' : 'Faça o Diagnóstico primeiro: os assuntos em que você errar aparecem aqui, em ordem de prioridade.'));
+    } else {
+      const done = weak.filter((w) => trStatus(tkey(w.disc, w.a)).k === 'ok').length;
+      const pr = el('div', 'pe-tr-progress');
+      const bar = el('div', 'pe-dg-bar'); const i = el('i'); i.style.width = (done / weak.length * 100) + '%'; bar.append(i);
+      pr.append(el('div', 'pe-kpi-note', `${done} de ${weak.length} assuntos recuperados`), bar);
+      box.append(pr);
+      d3.groups(weak, (w) => w.disc).forEach(([disc, list]) => {
+        const g = el('div', 'pe-tr-group'); g.style.setProperty('--dc', DC[disc]);
+        g.append(el('div', 'pe-tr-gt', (DISCS.find((d) => d.disc === disc) || {}).disciplina || disc));
+        const wrap = el('div', 'pe-tr-items');
+        list.forEach((w) => {
+          const k = tkey(w.disc, w.a), s = trStatus(k);
+          const b = el('button', 'pe-tr-item st-' + s.k + (trCur && tkey(trCur.disc, trCur.a) === k ? ' cur' : ''));
+          b.append(el('span', 'n', w.a), el('span', 'e', `${w.erros} erro${w.erros > 1 ? 's' : ''} no diagnóstico`), el('span', 's', s.t));
+          b.addEventListener('click', () => openDirigido(w.disc, w.a));
+          wrap.append(b);
+        });
+        g.append(wrap); box.append(g);
+      });
+    }
+    // escolher qualquer assunto
+    const pick = el('div', 'pe-controls'); pick.style.marginTop = 'var(--cds-gap-md)';
+    const l1 = el('label', 'pe-field', 'Ou escolha um assunto'); const sd = document.createElement('select');
+    DISCS.forEach((d) => sd.append(new Option(d.disciplina, d.disc)));
+    const l2 = el('label', 'pe-field', 'Assunto'); const sa = document.createElement('select');
+    const fillA = () => { sa.replaceChildren(...d3.groups(Q.filter((q) => q.disc === sd.value), (q) => assunto(q.tema)).map((g) => g[0]).sort((a, b) => a.localeCompare(b, 'pt-BR')).map((a) => new Option(a, a))); };
+    sd.addEventListener('change', fillA);
+    if (trCur) sd.value = trCur.disc; fillA(); if (trCur && trCur.disc === sd.value) sa.value = trCur.a;
+    l1.append(sd); l2.append(sa);
+    const go = el('button', 'pe-btn', 'Abrir estudo dirigido'); go.addEventListener('click', () => openDirigido(sd.value, sa.value));
+    pick.append(l1, l2, go); box.append(pick);
+  }
+  function renderDirigido() {
+    if (!DISCS.length) return;
+    trList();
+    const box = document.getElementById('tr-study');
+    if (!trCur) { const w = weakAssuntos().find((x) => trStatus(tkey(x.disc, x.a)).k !== 'ok'); if (w) trCur = {disc: w.disc, a: w.a}; }
+    if (!trCur) { box.hidden = true; trSig = ''; return; }
+    const sig = tkey(trCur.disc, trCur.a) + '|' + JSON.stringify(trilha[tkey(trCur.disc, trCur.a)] || {}) + '|' + dash.data('sinopses').status + '|' + dash.data('trilhas').status + '|' + dgAnswered();
+    if (sig === trSig && !box.hidden) return;
+    const sameTopic = trSig.split('|').slice(0, 2).join('|') === tkey(trCur.disc, trCur.a);
+    const keepScroll = sameTopic && document.getElementById('tr-reader') ? document.getElementById('tr-reader').scrollTop : null;
+    trSig = sig;
+    box.hidden = false; box.replaceChildren(); box.style.setProperty('--dc', DC[trCur.disc]);
+    const {disc, a} = trCur; const k = tkey(disc, a); const t = trilha[k] || {};
+    const rows = trRows().filter((r) => r.disc === disc && r.assunto === a);
+    const qsec = new Map(rows.filter((r) => r.tipo === 'q').map((r) => [r.artigos, r]));
+    const wrongQs = diag.ids.filter((id) => diag.ans[id] && byId.has(id) && byId.get(id).disc === disc && assunto(byId.get(id).tema) === a && diag.ans[id] !== byId.get(id).gabarito).map((id) => byId.get(id));
+    // seções a reler: as das questões erradas; sem erros, as mais cobradas do assunto
+    let focus = d3.rollups(wrongQs.map((q) => qsec.get(q.id)).filter(Boolean), (v) => v.length, (r) => Number(r.ordem) + '|' + r.titulo);
+    if (!focus.length) focus = d3.rollups(rows.filter((r) => r.tipo === 'q'), (v) => v.length, (r) => Number(r.ordem) + '|' + r.titulo).sort((x, y) => y[1] - x[1]).slice(0, 4);
+    focus = focus.map(([key, c]) => ({ordem: Number(key.split('|')[0]), titulo: key.split('|').slice(1).join('|'), c})).sort((x, y) => x.ordem - y.ordem);
+    const cap = rows.find((r) => r.tipo === 'cap');
+    // cabeçalho
+    const head = el('div', 'pe-card pe-tr-head');
+    const st = trStatus(k);
+    const ht = el('div', 'pe-tr-ht'); ht.append(el('div', 'pe-kpi-label', (DISCS.find((d) => d.disc === disc) || {}).disciplina), el('div', 'pe-dir', a), el('span', 'pe-tag ' + ({ok: 'forte', bad: 'fraco', mid: 'regular', todo: 'na'}[st.k]), st.t));
+    const steps = el('div', 'pe-steps');
+    [['1', 'Reler a teoria', t.lido || st.k === 'ok'], ['2', 'Conferir a letra da lei', t.lido || st.k === 'ok'], ['3', 'Fixação com questões', !!(t.fix && t.fix.n)], ['4', 'Voltar ao estudo integral', st.k === 'ok']]
+      .forEach(([n, lab, ok]) => { const s = el('div', 'pe-step' + (ok ? ' ok' : '')); s.append(el('b', null, ok ? '✓' : n), el('span', null, lab)); steps.append(s); });
+    head.append(ht, steps);
+    if (focus.length) {
+      const fl = el('div', 'pe-tr-focus'); fl.append(el('span', 'pe-kpi-note', wrongQs.length ? 'Seções para reler (onde estão seus erros):' : 'Seções principais do assunto:'));
+      focus.forEach((f) => { const b = el('button', 'pe-chip', f.titulo + (wrongQs.length ? ` · ${f.c} erro${f.c > 1 ? 's' : ''}` : '')); b.style.setProperty('--dc', DC[disc]); b.addEventListener('click', () => jump(f.ordem)); fl.append(b); });
+      head.append(fl);
+    }
+    box.append(head);
+    // leitor + letra da lei
+    const grid = el('div', 'pe-tr-grid');
+    const rdCard = el('div', 'pe-card pe-reader'); rdCard.id = 'tr-reader';
+    const side = el('div', 'pe-card pe-tr-side'); side.id = 'tr-lei';
+    grid.append(rdCard, side); box.append(grid);
+    const sinSt = dash.data('sinopses').status;
+    if (sinSt !== 'ok') rdCard.append(el('div', sinSt === 'loading' ? 'dash-skeleton' : 'pe-fail', sinSt === 'loading' ? '' : 'Failed to load'));
+    else {
+      fillReader(rdCard, disc, 'tr-');
+      const fo = new Set(focus.map((f) => f.ordem));
+      fo.forEach((o) => { const h = document.getElementById('tr-' + o); if (h) h.classList.add('pe-rd-focus'); });
+      if (cap) { const h = document.getElementById('tr-' + cap.ordem); if (h) h.classList.add('pe-rd-focus-cap'); }
+    }
+    function jump(o) { const h = document.getElementById('tr-' + o); if (h) { rdCard.scrollTop = h.offsetTop - 8; h.classList.remove('flash'); void h.offsetWidth; h.classList.add('flash'); } }
+    // lado: letra da lei
+    side.append(el('h2', 'pe-h2', 'Letra da lei deste assunto'), el('p', 'pe-note', 'Artigos cobrados nas questões do assunto. Cada botão abre o artigo no texto oficial do Planalto.'));
+    const leis = rows.filter((r) => r.tipo === 'lei');
+    if (!leis.length) side.append(el('p', 'pe-note', 'Este assunto é mais doutrinário/jurisprudencial: concentre-se na Sinopse e nos comentários das questões.'));
+    leis.forEach((r) => {
+      const it = el('div', 'pe-lei'); it.style.setProperty('--dc', DC[disc]);
+      it.append(el('div', 'pe-lei-t', r.titulo));
+      const arts = el('div', 'pe-arts');
+      String(r.artigos || '').split(',').filter(Boolean).forEach((n) => { const aEl = el('a', 'pe-art', artLabel(n)); aEl.href = r.url + '#art' + n; aEl.target = '_blank'; aEl.rel = 'noopener'; arts.append(aEl); });
+      it.append(arts); side.append(it);
+    });
+    if (wrongQs.length) {
+      side.append(el('h2', 'pe-h2', 'Por que você errou'));
+      wrongQs.forEach((q) => {
+        const det = document.createElement('details'); det.className = 'pe-tr-err';
+        const sm = document.createElement('summary'); sm.textContent = q.enunciado.slice(0, 110) + (q.enunciado.length > 110 ? '…' : ''); det.append(sm);
+        const r = diag.ans[q.id];
+        det.append(el('div', 'yours', `Você marcou ${r}) ${q[r.toLowerCase()]}`), el('div', 'right', `Correta ${q.gabarito}) ${q[q.gabarito.toLowerCase()]}`), el('div', 'c', q.comentario));
+        const s = qsec.get(q.id); if (s) { const b = el('button', 'pe-btn ghost', 'Ver na Sinopse: ' + s.titulo); b.addEventListener('click', () => jump(Number(s.ordem))); det.append(b); }
+        side.append(det);
+      });
+    }
+    // ações
+    const pool = fixPool(disc, a);
+    const act = el('div', 'pe-card pe-tr-actions');
+    const b1 = el('button', 'pe-btn' + (t.lido ? '' : ' primary'), t.lido ? '✓ Leitura concluída' : '✓ Terminei a leitura e a lei seca');
+    b1.addEventListener('click', () => { trilha[k] = {...(trilha[k] || {}), lido: !t.lido}; renderDirigido(); });
+    const b2 = el('button', 'pe-btn' + (t.lido ? ' primary' : ''), `Fazer fixação: ${Math.min(10, pool.length)} questões do assunto`);
+    b2.disabled = !pool.length; b2.addEventListener('click', () => startFixacao(disc, a));
+    const nxt = weakAssuntos().find((w) => tkey(w.disc, w.a) !== k && trStatus(tkey(w.disc, w.a)).k !== 'ok');
+    const b3 = el('button', 'pe-btn', nxt ? `Próximo da trilha: ${SHORT[nxt.disc]} · ${nxt.a}` : 'Trilha concluída'); b3.disabled = !nxt;
+    if (nxt) b3.addEventListener('click', () => openDirigido(nxt.disc, nxt.a));
+    const b4 = el('button', 'pe-btn ghost', 'Voltar ao estudo integral (cronograma)'); b4.addEventListener('click', () => show('cronograma'));
+    act.append(el('p', 'pe-note', 'Ordem recomendada: leia as seções destacadas e os artigos ao lado, marque a leitura como concluída, faça a fixação (questões que você ainda não viu no diagnóstico) e, com 70% de acerto ou mais, o assunto fica recuperado.'));
+    const row = el('div', 'pe-actions'); row.append(b1, b2, b3, b4); act.append(row);
+    box.append(act);
+    // posiciona o leitor na primeira seção a reler
+    const first = focus[0] ? focus[0].ordem : (cap ? Number(cap.ordem) : null);
+    if (keepScroll != null) requestAnimationFrame(() => { rdCard.scrollTop = keepScroll; });
+    else if (first != null && sinSt === 'ok') requestAnimationFrame(() => jump(first));
+  }
+  function fixPool(disc, a) {
+    const inDiag = new Set(diag.ids);
+    const all = Q.filter((q) => q.disc === disc && assunto(q.tema) === a && !inDiag.has(q.id));
+    const fresh = shuffle(all.filter((q) => !ans[q.id])), wrongP = shuffle(all.filter((q) => ans[q.id] && ans[q.id].r !== q.gabarito)), rest = shuffle(all.filter((q) => ans[q.id] && ans[q.id].r === q.gabarito));
+    return [...fresh, ...wrongP, ...rest];
+  }
+  function startFixacao(disc, a) {
+    const pool = fixPool(disc, a).slice(0, 10); if (!pool.length) return;
+    show('treino'); fDisc.value = disc; fillAssuntos(); fAss.value = disc + '|' + a; fQtd.value = '10';
+    begin(pool, 'trilha'); if (sess) sess.trilha = tkey(disc, a);
+  }
+  document.getElementById('r-trilha').addEventListener('click', () => show('dirigido'));
+
+  // ---------- discursivas ----------
+  let dsNotas = {};           // id -> {h: [{t:[4 notas], l: linhas, s: segundos, at}]}
+  let dsDraft = {};           // id -> texto em andamento
+  let dsCur = null;           // {id, fase: 'escrever'|'corrigir', t: [notas], ini, el}
+  let dsTimer = null;
+  const discRows = () => { const d = dash.data('discursivas'); return d.status === 'ok' ? d.data : []; };
+  const provaPeso = (disc) => { const d = dash.data('prova2023'); if (d.status !== 'ok') return null; const r = d.data.find((x) => x.disc === disc); return r ? Number(r.questoes_2023) : null; };
+  function discQueue(w) {
+    const rows = discRows(); if (!rows.length) return [];
+    const by = d3.group(rows, (r) => r.disc);
+    const ord = [...by.keys()].sort((a, b) => (w[b] || 0) - (w[a] || 0));
+    const out = []; let i = 0, more = true;
+    while (more) { more = false; ord.forEach((k) => { const l = by.get(k); if (l[i]) { out.push(l[i]); more = true; } }); i++; }
+    return out;
+  }
+  const dsLines = (t) => String(t || '').split('\n').reduce((n, p) => n + (p.trim() ? Math.ceil(p.trim().length / 72) : 0), 0);
+  const dsWords = (t) => (String(t || '').trim().match(/\S+/g) || []).length;
+  const fmt1 = (n) => n.toLocaleString('pt-BR', {minimumFractionDigits: n % 1 ? 1 : 0, maximumFractionDigits: 2});
+  const dsBest = (id) => { const h = (dsNotas[id] || {}).h || []; return h.length ? Math.max(...h.map((x) => d3.sum(x.t))) : null; };
+  const dsLast = (id) => { const h = (dsNotas[id] || {}).h || []; return h.length ? h[h.length - 1] : null; };
+  const dsNome = (r) => (DISCS.find((d) => d.disc === r.disc) || {}).disciplina || r.disciplina;
+  const paras = (box, txt) => String(txt || '').split('\n').filter((x) => x.trim()).forEach((x) => box.append(el('p', null, x)));
+  function renderDisc() {
+    const st = dash.data('discursivas').status;
+    const home = document.getElementById('ds-home'), work = document.getElementById('ds-work');
+    if (dsCur) { home.hidden = true; work.hidden = false; if (!work.childElementCount) drawDiscWork(); return; }
+    home.hidden = false; work.hidden = true; work.replaceChildren();
+    const list = document.getElementById('ds-list'), kp = document.getElementById('ds-kpis');
+    if (st !== 'ok') { list.replaceChildren(el('div', st === 'loading' ? 'pe-card dash-skeleton' : 'pe-fail', st === 'loading' ? '' : 'Failed to load')); kp.replaceChildren(); return; }
+    const rows = discRows();
+    const sel = document.getElementById('ds-disc');
+    if (!sel.options.length) {
+      const ds = [...new Set(rows.map((r) => r.disc))];
+      sel.replaceChildren(new Option('Todas', 'all'), ...DISCS.filter((d) => ds.includes(d.disc)).map((d) => new Option(d.disciplina, d.disc)));
+    }
+    const feitos = rows.filter((r) => dsLast(r.id));
+    const ult = feitos.map((r) => d3.sum(dsLast(r.id).t));
+    const c = (lab, val, note) => { const x = el('div', 'pe-card'); x.append(el('div', 'pe-kpi-label', lab), el('div', 'pe-kpi-value', val), el('div', 'pe-kpi-note', note)); return x; };
+    kp.replaceChildren(c('Casos respondidos', `${nf.format(feitos.length)} de ${nf.format(rows.length)}`, 'banco de discursivas no padrão da banca'),
+      c('Média da última tentativa', ult.length ? fmt1(Math.round(d3.mean(ult) * 100) / 100) : '—', 'de 10 pontos por questão'),
+      c('Na prova', '2 × 10', 'pontos · cerca de 22% da nota total'));
+    const fd = sel.value, fs = document.getElementById('ds-sit').value;
+    list.replaceChildren();
+    const vis = rows.filter((r) => (fd === 'all' || r.disc === fd) && (fs === 'all' || (fs === 'sim') === !!dsLast(r.id)));
+    if (!vis.length) { list.append(el('div', 'pe-empty', 'Nenhum caso com esses filtros.')); return; }
+    vis.forEach((r) => {
+      const it = el('div', 'pe-ds-item'); it.style.setProperty('--dc', DC[r.disc] || '#fff');
+      const last = dsLast(r.id);
+      it.append(el('div', 'd', `${dsNome(r)} · ${r.linhas_min} a ${r.linhas_max} linhas · 10 pontos`), el('div', 't', r.titulo));
+      it.append(el('div', 's' + (last ? ' ok' : ''), last ? `Última nota: ${fmt1(d3.sum(last.t))} · melhor: ${fmt1(dsBest(r.id))} · ${dsNotas[r.id].h.length} tentativa(s)` : dsDraft[r.id] ? 'Rascunho em andamento' : 'Não respondido'));
+      const b = el('button', 'pe-btn primary', last ? 'Refazer' : dsDraft[r.id] ? 'Continuar' : 'Responder'); b.addEventListener('click', () => openDisc(r.id));
+      const a = el('div', 'pe-actions'); a.append(b); it.append(a); list.append(it);
+    });
+  }
+  function openDisc(id) {
+    const r = discRows().find((x) => x.id === id); if (!r) { show('discursivas'); return; }
+    dsCur = {id, fase: 'escrever', t: [null, null, null, null], ini: Date.now(), left: 45 * 60, run: false};
+    document.getElementById('ds-work').replaceChildren();
+    show('discursivas'); window.scrollTo({top: 0});
+  }
+  function closeDisc() { if (dsTimer) { clearInterval(dsTimer); dsTimer = null; } dsCur = null; renderDisc(); }
+  function drawDiscWork() {
+    const r = discRows().find((x) => x.id === dsCur.id); const work = document.getElementById('ds-work'); work.replaceChildren();
+    if (!r) { closeDisc(); return; }
+    const card = el('div', 'pe-card'); card.style.setProperty('--dc', DC[r.disc] || '#fff');
+    const back = el('button', 'pe-btn', '‹ Voltar à lista'); back.addEventListener('click', closeDisc);
+    const top = el('div', 'pe-actions'); top.append(back); card.append(top);
+    card.append(el('div', 'pe-kpi-label', `${dsNome(r)} · Questão discursiva · valor 10 pontos`), el('h2', 'pe-h2', r.titulo));
+    const cs = el('div', 'pe-ds-case'); paras(cs, r.caso); card.append(cs);
+    card.append(el('p', 'pe-ds-cmd', r.comando));
+    const ul = el('ul', 'pe-ds-top'); r.topicos.forEach((t) => ul.append(el('li', null, t))); card.append(ul);
+    card.append(el('p', 'pe-note', `(valor: 10,0 pontos — cada tópico vale ${fmt1(r.pontos || 2.5)} pontos)`));
+    work.append(card);
+    const wc = el('div', 'pe-card');
+    if (dsCur.fase === 'escrever') {
+      wc.append(el('h2', 'pe-h2', 'Sua resposta'), el('p', 'pe-note', `Escreva sem consulta, como na prova. A contagem estima as linhas da folha de resposta (cerca de 72 caracteres por linha manuscrita). Faixa exigida: ${r.linhas_min} a ${r.linhas_max} linhas. Tempo sugerido: 45 minutos. O texto fica salvo como rascunho.`));
+      const tm = el('div', 'pe-actions'); const clk = el('strong', null, ''); const bt = el('button', 'pe-btn', '');
+      const drawT = () => { const m = Math.max(0, dsCur.left); clk.textContent = `⏱ ${pad2(Math.floor(m / 60))}:${pad2(m % 60)}` + (dsCur.left <= 0 ? ' · tempo esgotado' : ''); bt.textContent = dsCur.run ? 'Pausar' : (dsCur.left < 45 * 60 ? 'Retomar' : 'Iniciar 45 min'); };
+      bt.addEventListener('click', () => { dsCur.run = !dsCur.run; if (dsCur.run && !dsTimer) dsTimer = setInterval(() => { if (!dsCur || !dsCur.run) return; dsCur.left--; const k = dkey(new Date()); timeLog[k] = (timeLog[k] || 0) + 1; drawT(); }, 1000); drawT(); });
+      tm.append(clk, bt); wc.append(tm); drawT();
+      const ta = document.createElement('textarea'); ta.className = 'pe-ds-txt'; ta.id = 'ds-txt'; ta.setAttribute('aria-label', 'Resposta discursiva'); ta.value = dsDraft[r.id] || '';
+      const cnt = el('div', 'pe-ds-count');
+      const upd = () => { const l = dsLines(ta.value); cnt.replaceChildren(el('span', l < r.linhas_min || l > r.linhas_max ? 'bad' : 'ok', `${l} linha(s) estimada(s)`), el('span', null, `faixa: ${r.linhas_min} a ${r.linhas_max}`), el('span', null, `${dsWords(ta.value)} palavras`)); };
+      ta.addEventListener('input', () => { dsDraft[r.id] = ta.value.slice(0, 8000); upd(); });
+      wc.append(ta, cnt); upd();
+      const fin = el('button', 'pe-btn primary', 'Finalizar e ver o espelho'); const msg = el('span', 'pe-msg');
+      fin.addEventListener('click', () => {
+        const l = dsLines(ta.value);
+        if (l < 3) { msg.textContent = 'Escreva a resposta antes de finalizar.'; return; }
+        dsCur.fase = 'corrigir'; dsCur.run = false; dsCur.lin = l; dsCur.seg = Math.round((Date.now() - dsCur.ini) / 1000); drawDiscWork(); document.getElementById('ds-esp').scrollIntoView({block: 'start'});
+      });
+      const ac = el('div', 'pe-actions'); ac.append(fin, msg); wc.append(ac);
+      work.append(wc); return;
+    }
+    // fase de correção
+    wc.append(el('h2', 'pe-h2', 'Sua resposta'));
+    const mine = el('div', 'pe-ds-case'); paras(mine, dsDraft[r.id]); wc.append(mine);
+    const l = dsCur.lin || dsLines(dsDraft[r.id]);
+    wc.append(el('p', 'pe-note', `${l} linha(s) estimada(s) · faixa ${r.linhas_min} a ${r.linhas_max}.` + (l < r.linhas_min || l > r.linhas_max ? ' Fora da faixa: na prova, o texto fora dos limites de linhas costuma ser penalizado pelo edital. Ajuste a extensão.' : ' Dentro da faixa.')));
+    work.append(wc);
+    const ec = el('div', 'pe-card'); ec.id = 'ds-esp';
+    ec.append(el('h2', 'pe-h2', 'Espelho de correção'), el('p', 'pe-note', 'Compare cada tópico com a sua resposta e atribua a nota. Só conte como abordado o que estiver escrito e fundamentado (artigo, súmula ou tese).'));
+    const tot = el('strong'); const save = el('button', 'pe-btn primary', 'Registrar nota'); const sm = el('span', 'pe-msg');
+    const drawTot = () => { const ok = dsCur.t.every((x) => x != null); tot.textContent = ok ? `Nota: ${fmt1(d3.sum(dsCur.t))} de 10` : `Avalie os ${dsCur.t.filter((x) => x == null).length} tópico(s) restante(s)`; save.disabled = !ok; };
+    r.espelho.forEach((tx, i) => {
+      const b = el('div', 'pe-ds-esp'); b.append(el('h4', null, `Tópico ${i + 1}: ${r.topicos[i]}`), el('p', null, tx));
+      const sc = el('div', 'pe-ds-sc');
+      [[0, 'Não abordou (0)'], [1.25, 'Parcial (1,25)'], [2.5, 'Completo (2,5)']].forEach(([v, lab]) => {
+        const bb = el('button', 'pe-btn', lab); bb.setAttribute('aria-pressed', String(dsCur.t[i] === v));
+        bb.addEventListener('click', () => { dsCur.t[i] = v; sc.querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', String(x === bb))); drawTot(); });
+        sc.append(bb);
+      });
+      b.append(sc); ec.append(b);
+    });
+    save.addEventListener('click', () => {
+      if (!dsCur.t.every((x) => x != null)) return;
+      const h = (dsNotas[r.id] || {h: []}).h; h.push({t: dsCur.t.slice(), l, s: dsCur.seg || 0, at: Date.now()}); dsNotas[r.id] = {h: h.slice(-10)};
+      sm.textContent = 'Nota registrada.'; save.disabled = true; drawHist(); saveNow();
+    });
+    const ac = el('div', 'pe-actions'); ac.append(tot, save, sm); ec.append(ac);
+    const hist = el('div', 'pe-ds-hist');
+    const drawHist = () => { const hh = (dsNotas[r.id] || {}).h || []; hist.textContent = hh.length ? 'Histórico: ' + hh.map((x) => `${new Date(x.at).toLocaleDateString('pt-BR')} ${fmt1(d3.sum(x.t))}`).join(' · ') : ''; };
+    drawHist(); ec.append(hist); drawTot();
+    work.append(ec);
+    const mc = el('div', 'pe-card');
+    const det = document.createElement('details'); const smy = document.createElement('summary'); smy.textContent = 'Ver resposta-modelo'; det.append(smy);
+    const mm = el('div', 'pe-ds-modelo'); paras(mm, r.modelo); det.append(mm); mc.append(det);
+    const ac2 = el('div', 'pe-actions');
+    const again = el('button', 'pe-btn', 'Reescrever este caso'); again.addEventListener('click', () => { dsDraft[r.id] = ''; openDisc(r.id); });
+    const back2 = el('button', 'pe-btn', 'Voltar à lista'); back2.addEventListener('click', () => { dsDraft[r.id] = dsDraft[r.id] || ''; closeDisc(); });
+    ac2.append(again, back2); mc.append(ac2);
+    work.append(mc);
+  }
+  document.getElementById('ds-disc').addEventListener('change', () => renderDisc());
+  document.getElementById('ds-sit').addEventListener('change', () => renderDisc());
+
+  // ---------- progresso ----------
+  const pgCode = document.getElementById('pg-code'), pgMsg = document.getElementById('pg-msg');
+  const b64e = (t) => btoa(unescape(encodeURIComponent(t)));
+  const b64d = (t) => decodeURIComponent(escape(atob(t)));
+  const snapshotObj = (withDrafts = true) => {
+    const a = Object.entries(ans).map(([id, x]) => `${id}.${x.r}.${x.n}.${x.h}`).join(',');
+    const dg = {ids: diag.ids, ans: diag.ans, times: Object.fromEntries(Object.entries(diag.times).map(([k, v]) => [k, Math.round(v / 1000)])), s: diag.s, f: diag.f};
+    const o = {v: 2, a, d: dg, p: plan, t: timeLog, k: [...done], tr: trilha, ds: dsNotas};
+    if (withDrafts) o.dr = dsDraft;
+    return o;
+  };
+  const encode = () => 'PET2:' + b64e(JSON.stringify(snapshotObj(false)));
+  function applyObj(obj) {
+    const next = {};
+    for (const p of String(obj.a || '').split(',')) {
+      if (!p) continue;
+      const [id, r, n, h] = p.split('.');
+      if (byId.has(id) && /^[A-E]$/.test(r)) next[id] = {r, n: Number(n) || 1, h: Number(h) || 0};
+    }
+    ans = next;
+    const d = obj.d || {}; const ids = Array.isArray(d.ids) ? d.ids.filter((id) => byId.has(id)) : [];
+    const da = {}; Object.entries(d.ans || {}).forEach(([id, r]) => { if (ids.includes(id) && /^[A-E]$/.test(r)) da[id] = r; });
+    const dt = {}; Object.entries(d.times || {}).forEach(([id, v]) => { if (da[id]) dt[id] = (Number(v) || 0) * 1000; });
+    diag = ids.length ? {ids, ans: da, times: dt, s: d.s || null, f: d.f || null} : {ids: pickDiag(), ans: {}, times: {}, s: null, f: null};
+    const pl = obj.p;
+    plan = pl && pl.exam && Array.isArray(pl.days) && pl.w ? {exam: String(pl.exam), days: pl.days.map(Number), start: String(pl.start || '19:00'), min: Math.max(120, Number(pl.min) || 120), gen: String(pl.gen), w: pl.w, order: pl.order || {}, base: String(pl.base || 'diagnóstico'), disc: pl.disc ? 1 : 0} : null;
+    if (plan) selDays = plan.days.slice();
+    timeLog = {}; Object.entries(obj.t || {}).forEach(([k, v]) => { if (/^\d{4}-\d{2}-\d{2}$/.test(k)) timeLog[k] = Number(v) || 0; });
+    done = new Set((obj.k || []).map(String)); crWeek = null;
+    trilha = {}; if (obj.tr && typeof obj.tr === 'object') Object.entries(obj.tr).forEach(([k, v]) => { if (typeof k === 'string' && v && typeof v === 'object') trilha[k] = {lido: !!v.lido, fix: v.fix && Number(v.fix.n) ? {n: Number(v.fix.n), h: Number(v.fix.h) || 0, at: Number(v.fix.at) || 0} : null}; });
+    trCur = null;
+    dsNotas = {}; if (obj.ds && typeof obj.ds === 'object') Object.entries(obj.ds).forEach(([k, v]) => { if (v && Array.isArray(v.h)) dsNotas[k] = {h: v.h.filter((x) => x && Array.isArray(x.t)).slice(-10).map((x) => ({t: x.t.map((n) => Math.max(0, Math.min(2.5, Number(n) || 0))), l: Number(x.l) || 0, at: Number(x.at) || 0, s: Number(x.s) || 0}))}; });
+    if (obj.dr && typeof obj.dr === 'object') { dsDraft = {}; Object.entries(obj.dr).forEach(([k, v]) => { if (typeof v === 'string') dsDraft[k] = v.slice(0, 8000); }); }
+    else if (!('dr' in obj) && obj.v) { /* código manual: mantém rascunhos locais */ }
+    dsCur = null;
+  }
+  const hasProgress = () => Object.keys(ans).length || dgAnswered() || plan || Object.keys(timeLog).length || Object.keys(trilha).length || Object.keys(dsNotas).length;
+  document.getElementById('pg-gerar').addEventListener('click', () => {
+    const k = Object.keys(ans).length;
+    if (!hasProgress()) { pgMsg.textContent = 'Ainda não há progresso para salvar.'; return; }
+    pgCode.value = encode(); pgCode.select();
+    pgMsg.textContent = `Código gerado: ${nf.format(k)} questões respondidas, diagnóstico ${dgAnswered()}/${diag.ids.length}, ${plan ? 'cronograma salvo' : 'sem cronograma'}. Copie e guarde.`;
+  });
+  document.getElementById('pg-copiar').addEventListener('click', async () => {
+    if (!pgCode.value) { pgMsg.textContent = 'Gere o código primeiro.'; return; }
+    pgCode.select();
+    try { await navigator.clipboard.writeText(pgCode.value); pgMsg.textContent = 'Código copiado.'; }
+    catch (e) { try { document.execCommand('copy'); pgMsg.textContent = 'Código copiado.'; } catch (e2) { pgMsg.textContent = 'Selecione o texto e copie manualmente (Ctrl+C).'; } }
+  });
+  document.getElementById('pg-restaurar').addEventListener('click', () => {
+    const raw = pgCode.value.trim();
+    try {
+      let obj;
+      if (raw.startsWith('PET1:')) obj = {a: atob(raw.slice(5))};
+      else if (raw.startsWith('PET2:')) obj = JSON.parse(b64d(raw.slice(5)));
+      else throw new Error('formato');
+      applyObj(obj);
+      render();
+      pgMsg.textContent = `Progresso restaurado: ${nf.format(Object.keys(ans).length)} questões respondidas, diagnóstico ${dgAnswered()}/${diag.ids.length}.`;
+      saveNow();
+    } catch (e) { pgMsg.textContent = 'Código inválido. Cole o código completo, começando por PET2: (ou PET1:).'; }
+  });
+  document.getElementById('pg-zerar').addEventListener('click', () => {
+    if (!hasProgress()) { pgMsg.textContent = 'Não há progresso para zerar.'; return; }
+    if (pgMsg.dataset.confirm !== '1') { pgMsg.dataset.confirm = '1'; pgMsg.textContent = 'Clique de novo em “Zerar progresso” para confirmar. Isso apaga também o progresso salvo na sua conta.'; return; }
+    pgMsg.dataset.confirm = ''; ans = {}; diag = {ids: pickDiag(), ans: {}, times: {}, s: null, f: null}; plan = null; timeLog = {}; done = new Set(); crWeek = null; trilha = {}; trCur = null; dsNotas = {}; dsDraft = {}; dsCur = null;
+    timer.run = false; timer.blocks = []; render(); pgMsg.textContent = 'Progresso zerado.'; saveNow();
+  });
+
+  // ---------- salvamento automático (conta do usuário) ----------
+  let storeRef = null, loaded = false, saving = false, lastCore = '', lastTimeSave = 0, lastTimeJson = '';
+  function setSave(t, ok) {
+    document.querySelectorAll('.pe-save').forEach((e) => { e.textContent = t; e.classList.toggle('ok', !!ok); e.classList.toggle('warn', !ok); });
+  }
+  const hhmm = () => { const d = new Date(); return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`; };
+  async function initAutosave() {
+    setSave('Conectando ao salvamento automático…', true);
+    try {
+      const C = window.claude;
+      if (!C || typeof C.use !== 'function') throw new Error('sem runtime');
+      const [db, user] = await Promise.all([C.use('db'), C.use('user')]);
+      const uid = user ? await user.id() : null;
+      if (!db || !uid) throw new Error('sem db');
+      storeRef = db.doc('data/users/' + uid + '/progresso');
+      const snap = await storeRef.get();
+      if (snap.exists) {
+        const body = snap.data() || {};
+        if (body.state) {
+          const saved = JSON.parse(body.state);
+          // mescla: se o usuário já respondeu algo antes do carregamento, mantém o que tiver mais progresso
+          if (!hasProgress() || (String(saved.a || '').split(',').filter(Boolean).length >= Object.keys(ans).length)) { applyObj(saved); render(); }
+        }
+        setSave(`Progresso recuperado da sua conta${body.at ? ' (salvo em ' + new Date(body.at).toLocaleString('pt-BR') + ')' : ''}. Salvamento automático ativo.`, true);
+      } else setSave('Salvamento automático ativo: seu progresso fica guardado na sua conta.', true);
+      const o = snapshotObj(); lastTimeJson = JSON.stringify(o.t); delete o.t; lastCore = JSON.stringify(o); lastTimeSave = Date.now();
+      loaded = true;
+    } catch (e) {
+      storeRef = null;
+      setSave('Salvamento automático indisponível nesta visualização. Use o código em “Salvar progresso” antes de sair.', false);
+    }
+  }
+  async function saveNow() {
+    if (!storeRef || !loaded || saving) return;
+    const o = snapshotObj(); const tj = JSON.stringify(o.t); delete o.t; const core = JSON.stringify(o);
+    if (core === lastCore && tj === lastTimeJson) return;
+    saving = true;
+    try {
+      await storeRef.set({v: 2, at: new Date().toISOString(), state: JSON.stringify(snapshotObj())});
+      lastCore = core; lastTimeJson = tj; lastTimeSave = Date.now();
+      setSave(`Progresso salvo automaticamente às ${hhmm()}.`, true);
+    } catch (e) {
+      setSave(e && e.code === 'quota_exceeded' ? 'Limite de armazenamento atingido: gere o código em “Salvar progresso”.' : 'Não foi possível salvar agora; nova tentativa em instantes. Por segurança, gere o código.', false);
+    }
+    saving = false;
+  }
+  setInterval(() => {
+    if (!storeRef || !loaded || saving) return;
+    const o = snapshotObj(); const tj = JSON.stringify(o.t); delete o.t; const core = JSON.stringify(o);
+    if (core !== lastCore) saveNow();                                   // respostas, diagnóstico, cronograma: salva em até 4 s
+    else if (tj !== lastTimeJson && Date.now() - lastTimeSave > 60000) saveNow(); // cronômetro: no máximo 1 vez por minuto
+  }, 4000);
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') saveNow(); });
+  window.addEventListener('pagehide', () => { saveNow(); });
+
+  // ---------- render ----------
+  function current() { const t = tabs.find((x) => x.getAttribute('aria-selected') === 'true'); return t ? t.dataset.page : 'diagnostico'; }
+  function render() {
+    if (!Q.length) return;
+    renderPainel();
+    const c = current();
+    if (c === 'bussola') renderBussola();
+    if (c === 'revisao') renderRevisao();
+    if (c === 'material') renderMaterial();
+    if (c === 'treino') { if (!sess) fillAssuntos(); renderBefore(); }
+    if (c === 'diagnostico') renderDiag();
+    if (c === 'cronograma') renderCrono();
+    if (c === 'dirigido') renderDirigido();
+    if (c === 'discursivas') renderDisc();
+  }
+
+  let linked = false;
+  dash.onData(() => {
+    const src = dash.data('questoes');
+    const grid = document.getElementById('disc-grid');
+    ROOT.querySelectorAll('.pe-bank.dash-skeleton').forEach((e) => { if (src.status !== 'loading') e.classList.remove('dash-skeleton'); });
+    if (src.status !== 'ok') {
+      if (src.status === 'error' || src.status === 'connect' || src.status === 'missing') grid.replaceChildren(el('div', 'pe-fail', 'Failed to load'));
+      else { grid.replaceChildren(); const sk = el('div', 'pe-card dash-skeleton'); sk.style.minHeight = '10rem'; grid.append(sk); }
+      return;
+    }
+    if (!Q.length || Q.length !== src.data.length) {
+      Q = src.data.map((r) => ({...r, nivel: Number(r.nivel), ordem: Number(r.ordem), gabarito: String(r.gabarito).trim().toUpperCase()}));
+      byId = new Map(Q.map((q) => [q.id, q]));
+    }
+    const b = dash.data('banco'), tot = dash.data('banco_total');
+    if (b.status === 'ok') {
+      const order = [...new Set(Q.map((q) => q.disc))];
+      const names = new Map(Q.map((q) => [q.disciplina, q.disc]));
+      DISCS = b.data.map((r) => ({disciplina: r.disciplina, questoes: Number(r.questoes), disc: names.get(r.disciplina)})).sort((x, y) => order.indexOf(x.disc) - order.indexOf(y.disc));
+    }
+    if (tot.status === 'ok' && tot.data[0]) {
+      const [t1, t2] = ROOT.querySelectorAll('#resumo .pe-bank');
+      t1.textContent = nf.format(tot.data[0].questoes); t2.textContent = nf.format(tot.data[0].disciplinas);
+    }
+    if (!DISCS.length) return;
+    if (!fDisc.options.length) fillSelects();
+    render();
+    if (!linked) {
+      linked = true;
+      initAutosave();
+      const named = document.getElementById(location.hash.slice(1));
+      if (named && named.classList.contains('pe-page')) show(named.id);
+    }
+  });
+})();
+</script>
+
+</div>
+</section>
+
+<script src="app.js"></script>
+</body>
+</html>
