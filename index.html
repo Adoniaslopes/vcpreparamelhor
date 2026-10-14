@@ -653,6 +653,64 @@ body { min-height: 100vh; }
 /* barra de estudo do cronograma (aparece em todas as abas) */
 .pe-studybar { position: sticky; top: 60px; z-index: 20; margin: 0 0 var(--cds-gap-lg); padding: 12px 16px; border-radius: 16px; background: rgba(6,46,33,.96); border: 1px solid rgba(255,204,41,.5); box-shadow: 0 10px 30px rgba(0,0,0,.35); display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 16px; align-items: center; }
 .pe-studybar[hidden] { display: none; }
+/* ===== painel de voo e prontuário ===== */
+.pv-duo { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 26rem), 1fr)); gap: var(--cds-gap-md); margin: var(--cds-gap-md) 0; align-items: start; }
+#voo > .pe-card, #prontuario > .pe-card { margin-bottom: var(--cds-gap-md); }
+.pv-inst .pe-card { background: linear-gradient(135deg, #04402E, #0B5F45); box-shadow: 0 10px 26px rgba(0,0,0,.25); }
+.pv-inst .pe-card.ok { background: linear-gradient(135deg, #00693E, #00A859); }
+.pv-inst .pe-card.warn { background: linear-gradient(135deg, #8A5A00, #C98A00); }
+.pv-inst .pe-card.bad { background: linear-gradient(135deg, #7A1F2E, #B4384A); }
+.pv-inst .pe-card.sol { background: linear-gradient(135deg, #FFCC29, #F5A400); }
+.pv-inst .pe-card.sol .pe-kpi-label, .pv-inst .pe-card.sol .pe-kpi-note, .pv-inst .pe-card.sol .pe-kpi-value { color: #0B3B2A; }
+.pv-alerta { border-left: 5px solid var(--color-bad); background: rgba(251,113,133,.10); }
+.pv-alerta.ok { border-left-color: var(--color-ok); background: rgba(52,211,153,.10); }
+.pv-alerta ul { margin: 6px 0 0 1.1rem; padding: 0; line-height: 1.6; font-size: var(--cds-font-size-body); }
+.pv-strip { display: flex; gap: 2px; height: 34px; border-radius: 10px; overflow: hidden; margin: 10px 0 6px; }
+.pv-strip > div { position: relative; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #0B3B2A; min-width: 0; overflow: hidden; white-space: nowrap; cursor: default; }
+.pv-strip > div span { padding: 0 4px; overflow: hidden; text-overflow: ellipsis; }
+.pv-strip-leg { display: flex; justify-content: space-between; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-bottom: var(--cds-gap-md); }
+.pv-tab { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-caption); }
+.pv-tab th { text-align: left; font-weight: 600; color: var(--color-fg-muted); padding: 6px 8px; border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
+.pv-tab td { padding: 7px 8px; border-bottom: 1px solid rgba(255,255,255,.07); vertical-align: middle; }
+.pv-tab td.n, .pv-tab th.n { text-align: right; font-variant-numeric: tabular-nums; }
+.pv-tab tr.blk td { font-weight: 700; color: #fff; background: rgba(255,255,255,.05); }
+.pv-tab .dot { display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: 8px; vertical-align: middle; }
+.pv-wrap { overflow-x: auto; }
+.pv-st { font-size: 11px; font-weight: 700; border-radius: 999px; padding: 2px 9px; white-space: nowrap; }
+.pv-st.ok { background: rgba(52,211,153,.18); color: #34D399; } .pv-st.warn { background: rgba(251,191,36,.18); color: #FBBF24; }
+.pv-st.bad { background: rgba(251,113,133,.18); color: #FB7185; } .pv-st.na { background: rgba(255,255,255,.08); color: var(--color-fg-muted); }
+.pv-rank { display: flex; flex-direction: column; gap: 10px; }
+.pv-rank-it { display: grid; grid-template-columns: 1.6rem minmax(0, 1fr) auto; gap: 10px; align-items: center; }
+.pv-rank-it .pos { font-family: var(--font-anthropic-serif); font-size: 1.2rem; color: var(--amarelo); text-align: center; }
+.pv-rank-it .nm { font-weight: 600; color: #fff; }
+.pv-rank-it .sub { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.pv-rank-it .acts { display: flex; gap: 6px; }
+.pv-mini { height: 6px; border-radius: 999px; background: rgba(255,255,255,.1); margin-top: 5px; overflow: hidden; }
+.pv-mini i { display: block; height: 100%; border-radius: 999px; background: var(--amarelo); }
+.pv-bas { border: 1px solid var(--color-border-line); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; }
+.pv-bas-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+.pv-bas ul { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.pv-bas li { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: var(--cds-font-size-caption); }
+.pv-bas li span { color: var(--color-fg); }
+.pv-ed-tot { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.pv-ed-tot .pe-bar { flex: 1; }
+.pv-ed details { border: 1px solid rgba(255,255,255,.1); border-left: 4px solid var(--dc, #FFCC29); border-radius: 12px; margin-bottom: 8px; background: rgba(255,255,255,.03); }
+.pv-ed summary { cursor: pointer; padding: 10px 14px; display: grid; grid-template-columns: minmax(0, 1fr) 7rem 4.5rem; gap: 10px; align-items: center; color: #fff; font-weight: 600; }
+.pv-ed summary .pe-bar { height: 8px; }
+.pv-ed summary .c { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); text-align: right; font-weight: 400; }
+.pv-ed .body { padding: 0 14px 12px; }
+.pv-ed label { display: flex; gap: 10px; align-items: flex-start; padding: 6px 0; font-size: var(--cds-font-size-body); line-height: 1.45; border-top: 1px solid rgba(255,255,255,.06); cursor: pointer; }
+.pv-ed label input { margin-top: 3px; width: 17px; height: 17px; accent-color: #FFCC29; flex: none; }
+.pv-ed label.done span { color: var(--color-fg-muted); text-decoration: line-through; }
+.pv-ed .acts { display: flex; gap: 6px; flex-wrap: wrap; padding-top: 8px; }
+@media (max-width: 600px) { .pv-ed summary { grid-template-columns: minmax(0, 1fr) 3.5rem; } .pv-ed summary .pe-bar { display: none; } }
+.pr-delta { font-size: 11px; font-weight: 700; margin-left: 4px; }
+.pr-delta.up { color: #34D399; } .pr-delta.down { color: #FB7185; }
+.pr-chart { position: relative; }
+.pr-chart svg { display: block; width: 100%; height: auto; max-height: 300px; }
+.pr-boxes { display: flex; gap: 2px; height: 12px; border-radius: 999px; overflow: hidden; margin: 6px 0; }
+.pr-boxes i { display: block; height: 100%; }
+
 .pe-sb-top { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; }
 .pe-sb-top b { color: #fff; } .pe-sb-top span { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
 .pe-sb-clock { font-variant-numeric: tabular-nums; color: #FFCC29 !important; font-weight: 700; font-size: 1rem !important; }
@@ -692,7 +750,9 @@ body { min-height: 100vh; }
   </div>
 
   <nav class="pe-tabs" role="tablist" aria-label="Seções">
-    <button class="pe-tab pe-tab-start" role="tab" data-page="diagnostico" aria-selected="true">Diagnóstico</button>
+    <button class="pe-tab" role="tab" data-page="voo" aria-selected="true">Painel de voo</button>
+    <button class="pe-tab" role="tab" data-page="prontuario" aria-selected="false">Prontuário</button>
+    <button class="pe-tab pe-tab-start" role="tab" data-page="diagnostico" aria-selected="false">Diagnóstico</button>
     <button class="pe-tab" role="tab" data-page="dirigido" aria-selected="false">Estudo dirigido</button>
     <button class="pe-tab" role="tab" data-page="painel" aria-selected="false">Painel</button>
     <button class="pe-tab" role="tab" data-page="bussola" aria-selected="false">Bússola</button>
@@ -704,8 +764,32 @@ body { min-height: 100vh; }
     <button class="pe-tab" role="tab" data-page="progresso" aria-selected="false">Salvar progresso</button>
   </nav>
 
+  <!-- PAINEL DE VOO -->
+  <section class="pe-page" id="voo">
+    <div class="pe-kpis pv-inst" id="pv-inst"></div>
+    <div class="pe-card pv-alerta" id="pv-alerta" hidden></div>
+    <div class="pe-card" id="pv-estrutura"></div>
+    <div class="pv-duo">
+      <div class="pe-card" id="pv-investir"></div>
+      <div class="pe-card" id="pv-basicas"></div>
+    </div>
+    <div class="pv-duo">
+      <div class="pe-card" id="pv-disc"></div>
+      <div class="pe-card" id="pv-lei"></div>
+    </div>
+    <div class="pe-card" id="pv-edital"></div>
+  </section>
+
+  <!-- PRONTUARIO -->
+  <section class="pe-page" id="prontuario" hidden>
+    <div class="pe-kpis" id="pr-ficha"></div>
+    <div class="pe-card" id="pr-diag"></div>
+    <div class="pe-card" id="pr-evol"></div>
+    <div class="pe-card" id="pr-ret"></div>
+  </section>
+
   <!-- DIAGNOSTICO -->
-  <section class="pe-page" id="diagnostico">
+  <section class="pe-page" id="diagnostico" hidden>
     <div class="pe-card pe-dg-hero" id="dg-intro">
       <div class="pe-kpi-label">Comece por aqui</div>
       <h2 class="pe-dir" id="dg-title">Diagnóstico inicial</h2>
@@ -1268,21 +1352,23 @@ body { min-height: 100vh; }
     document.getElementById('treino-config').scrollIntoView({block: 'start'});
   }
   // questões repetidas: mesmo enunciado em ids diferentes contam como uma só
-  const normTxt = (t) => String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, ' ').trim().slice(0, 240);
+  const normTxt = (t) => String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, ' ').trim();
+  // chave da questão: final do enunciado (o comando) + alternativa A, para não confundir questões que compartilham o mesmo texto de leitura
+  const stemKey = (q) => normTxt(q.enunciado).slice(-300) + '|' + normTxt(q.a).slice(0, 80);
   let stemSeen = null, stemSig = '';
   function seenStems() {
     const sig = Q.length + ':' + Object.keys(ans).length;
     if (stemSeen && stemSig === sig) return stemSeen;
-    stemSeen = new Set(); Object.keys(ans).forEach((id) => { const q = byId.get(id); if (q) stemSeen.add(normTxt(q.enunciado)); });
+    stemSeen = new Set(); Object.keys(ans).forEach((id) => { const q = byId.get(id); if (q) stemSeen.add(stemKey(q)); });
     stemSig = sig; return stemSeen;
   }
-  const isFresh = (q) => !ans[q.id] && !seenStems().has(normTxt(q.enunciado));
+  const isFresh = (q) => !ans[q.id] && !seenStems().has(stemKey(q));
   // ordem: nunca vistas primeiro, depois as erradas, por último as já acertadas; sem enunciados repetidos
   function prioritize(pool) {
     const fresh = [], wrong = [], right = [];
     pool.forEach((q) => { if (isFresh(q)) fresh.push(q); else if (ans[q.id] && ans[q.id].r !== q.gabarito) wrong.push(q); else right.push(q); });
     const used = new Set(), out = [];
-    [shuffle(fresh), shuffle(wrong), shuffle(right)].forEach((arr) => arr.forEach((q) => { const k = normTxt(q.enunciado); if (used.has(k)) return; used.add(k); out.push(q); }));
+    [shuffle(fresh), shuffle(wrong), shuffle(right)].forEach((arr) => arr.forEach((q) => { const k = stemKey(q); if (used.has(k)) return; used.add(k); out.push(q); }));
     return out;
   }
   function begin(pool, label) {
@@ -1384,7 +1470,7 @@ body { min-height: 100vh; }
     if (sess.paused) return;
     sess.answered = true; sess.done[sess.i] = ok; sess.acc = sessElapsed(); sess.t0 = Date.now();
     (sess.times = sess.times || []).push(Date.now() - sess.tq);
-    const a = ans[q.id] || {r: null, n: 0, h: 0}; a.r = sess.sel; a.n++; if (ok) a.h++; ans[q.id] = a;
+    registra(q, sess.sel);
     qAlts.querySelectorAll('.pe-alt').forEach((b) => { b.disabled = true; b.classList.remove('sel'); if (b.dataset.k === q.gabarito) b.classList.add('ok'); else if (b.dataset.k === sess.sel) b.classList.add('bad'); });
     const fb = el('div', 'pe-fb ' + (ok ? 'ok' : 'bad'));
     fb.append(el('strong', null, ok ? 'Correto.' : `Incorreto — gabarito: ${q.gabarito}.`), el('span', null, q.comentario));
@@ -1413,6 +1499,13 @@ body { min-height: 100vh; }
     document.getElementById('r-diag').textContent = idx.length
       ? `Nível da sessão: ${lv.t.toLowerCase()}.` + (errs.length ? ' Mais erros em: ' + errs.slice(0, 3).map(([d, c]) => `${d} (${c})`).join(', ') + '.' : ' Nenhum erro nesta sessão.') + (tm != null && tm > 180 ? ' Atenção ao tempo: acima de 3 minutos por questão.' : '')
       : 'Nenhuma questão respondida nesta sessão.';
+    if (sess.label === 'simulado' && idx.length) {
+      const av = avaliaSimulado(sess);
+      if (av) {
+        simHist.push({at: av.at, b: av.b, ok: av.ok}); simHist = simHist.slice(-30);
+        document.getElementById('r-diag').textContent += ' Pelas regras do edital: ' + av.blocos.map((b) => `${b.nome} ${b.h}/${b.q} (mínimo ${fmt1(b.min)})${b.zer.length ? ' — zerou ' + b.zer.join(' e ') : ''}`).join('; ') + (av.ok ? '. Resultado: aprovado nos mínimos.' : '. Resultado: eliminado neste simulado.');
+      }
+    }
     const trk = sess.trilha;
     document.getElementById('r-trilha').hidden = !trk;
     if (trk && idx.length) {
@@ -1529,16 +1622,16 @@ body { min-height: 100vh; }
     if (!dgCur || !dgSel) return;
     const q = byId.get(dgCur);
     diag.ans[dgCur] = dgSel; diag.times[dgCur] = Date.now() - dgT;
-    const a = ans[q.id] || {r: null, n: 0, h: 0}; a.r = dgSel; a.n++; if (dgSel === q.gabarito) a.h++; ans[q.id] = a;
+    registra(q, dgSel);
     renderPainel(); renderDiagBlocks(); diagNext();
     if (dgCur) document.getElementById('dg-q').scrollIntoView({block: 'start'});
   });
   document.getElementById('dg-pause').addEventListener('click', () => { dgCur = null; document.getElementById('dg-q').hidden = true; renderDiag(); dgMsg.textContent = 'Diagnóstico pausado. Seu avanço fica salvo: ao voltar, clique em “Continuar diagnóstico”.'; });
   document.getElementById('dg-start').addEventListener('click', diagStart);
   document.getElementById('dg-reset').addEventListener('click', () => {
-    if (dgMsg.dataset.confirm !== '1') { dgMsg.dataset.confirm = '1'; dgMsg.textContent = 'Clique de novo para confirmar: as respostas do diagnóstico serão apagadas (o restante do progresso é mantido).'; return; }
-    dgMsg.dataset.confirm = ''; diag = {ids: pickDiag(), ans: {}, times: {}, s: null, f: null}; dgCur = null;
-    document.getElementById('dg-q').hidden = true; dgMsg.textContent = 'Diagnóstico zerado.'; renderDiag();
+    if (dgMsg.dataset.confirm !== '1') { dgMsg.dataset.confirm = '1'; dgMsg.textContent = 'Clique de novo para confirmar: o diagnóstico atual será arquivado no Prontuário (para comparação) e um novo começará do zero.'; return; }
+    dgMsg.dataset.confirm = ''; const arq = arquivaDiag(); diag = {ids: pickDiag(), ans: {}, times: {}, s: null, f: null}; dgCur = null;
+    document.getElementById('dg-q').hidden = true; dgMsg.textContent = arq ? `Diagnóstico arquivado no Prontuário (${diagHist.length}º). Novo diagnóstico pronto para começar.` : 'Diagnóstico zerado.'; renderDiag(); saveNow();
   });
   setInterval(() => {
     if (!dgCur || !diag.s) return;
@@ -2257,14 +2350,432 @@ body { min-height: 100vh; }
   document.getElementById('ds-disc').addEventListener('change', () => renderDisc());
   document.getElementById('ds-sit').addEventListener('change', () => renderDisc());
 
+  // ---------- memória de retenção (revisão espaçada) ----------
+  // cada questão respondida guarda o dia da última resposta (t) e a "caixa" (b, 0 a 5):
+  // acerto sobe uma caixa; erro volta à caixa 0. A questão volta para revisão após 1, 1, 3, 7, 15 ou 30 dias.
+  const INT = [1, 1, 3, 7, 15, 30];
+  const dayNum = (d = new Date()) => Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000);
+  const dayDate = (n) => new Date(Number(n) * 86400000).toLocaleDateString('pt-BR', {timeZone: 'UTC'});
+  function registra(q, r) {
+    const a = ans[q.id] || {r: null, n: 0, h: 0, b: 0};
+    const ok = r === q.gabarito;
+    a.r = r; a.n++; if (ok) a.h++;
+    a.b = ok ? Math.min(5, (a.b || 0) + 1) : 0; a.t = dayNum();
+    ans[q.id] = a;
+  }
+  const isDue = (q) => { const a = ans[q.id]; if (!a) return false; if (a.t == null) return a.r !== q.gabarito; return dayNum() - a.t >= INT[a.b || 0]; };
+  const dueList = () => Q.filter(isDue);
+  function reviewDue() {
+    const ds = dueList(); if (!ds.length) return;
+    ds.sort((x, y) => (ans[x.id].b || 0) - (ans[y.id].b || 0));
+    show('treino'); fDisc.value = 'all'; fQtd.value = '30'; begin(ds.slice(0, 30), 'revisao');
+  }
+
+  // ---------- prontuário: diagnósticos arquivados, fotos diárias, simulados ----------
+  let diagHist = [], snaps = {}, ev = {}, simHist = [];
+  function resumoDiag() {
+    const st = diagStats();
+    const ids = diag.ids.filter((id) => diag.ans[id] && byId.has(id));
+    let h = 0, wn = 0, wh = 0;
+    ids.forEach((id) => { const q = byId.get(id); const w = q.nivel || 2; wn += w; if (diag.ans[id] === q.gabarito) { h++; wh += w; } });
+    const d = {}; st.forEach((x) => { if (x.n) d[x.disc] = [x.n, x.h, x.prof]; });
+    return {at: diag.f || Date.now(), s: diag.s || null, n: ids.length, tot: diag.ids.length, h, p: wn ? Math.round(100 * wh / wn) : null, d};
+  }
+  function arquivaDiag() { if (!dgAnswered()) return false; diagHist.push(resumoDiag()); diagHist = diagHist.slice(-20); return true; }
+  let snapSig = '';
+  function fotografa() {
+    const keys = Object.keys(ans); if (!keys.length || !DISCS.length) return;
+    const today = String(dayNum());
+    const sig = today + ':' + keys.length + ':' + d3.sum(keys, (k) => ans[k].n);
+    if (sig === snapSig) return; snapSig = sig;
+    const all = statsFor(Q); const d = {};
+    DISCS.forEach((x) => { const s = statsFor(Q.filter((q) => q.disc === x.disc)); if (s.n) d[x.disc] = [s.n, s.h, s.prof]; });
+    snaps[today] = {n: all.n, h: all.h, p: all.prof, d};
+    const ks = Object.keys(snaps).map(Number).sort((a, b) => a - b); while (ks.length > 240) delete snaps[String(ks.shift())];
+  }
+
+  // ---------- painel de voo ----------
+  const ED = () => { const d = dash.data('edital'); return d.status === 'ok' && d.data && !Array.isArray(d.data) && d.data.prova ? d.data : null; };
+  function provaCfg() {
+    const e = ED(); if (e) return e.prova;
+    const pr = dash.data('prova2023'); if (pr.status !== 'ok' || !pr.data.length) return null;
+    const rows = pr.data.map((x) => ({disc: x.disc, q: Number(x.questoes_2023) || 0}));
+    const gerais = rows.filter((x) => x.disc === 'por' || x.disc === 'ing');
+    const tot = d3.sum(rows, (x) => x.q), g = d3.sum(gerais, (x) => x.q);
+    return {data: plan ? plan.exam : null, objetivas: tot, blocos: [
+      ...(gerais.length ? [{id: 'gerais', nome: 'Conhecimentos Gerais', minimo: 0.5, itens: gerais, naoZerar: true}] : []),
+      {id: 'especificos', nome: 'Conhecimentos Específicos', minimo: 0.5, q: tot - g}], discursiva: temDisc() ? {questoes: 2, pontos: 20, minimo: 0.5} : null, regras: []};
+  }
+  // distribui as questões específicas da prova pelas disciplinas do banco, na proporção da prova anterior
+  function distEsp(total, excl) {
+    const pr = dash.data('prova2023');
+    const rows = pr.status === 'ok' ? pr.data.map((x) => ({disc: x.disc, w: Number(x.questoes_2023) || 0})).filter((x) => !excl.has(x.disc) && DISCS.some((d) => d.disc === x.disc) && x.w > 0) : [];
+    const base = rows.length ? rows : DISCS.filter((d) => !excl.has(d.disc)).map((d) => ({disc: d.disc, w: 1}));
+    const W = d3.sum(base, (x) => x.w) || 1;
+    const out = base.map((x) => { const e = total * x.w / W; return {disc: x.disc, e, q: Math.floor(e)}; });
+    let rest = total - d3.sum(out, (x) => x.q);
+    out.slice().sort((a, b) => (b.e - b.q) - (a.e - a.q)).forEach((x) => { if (rest > 0) { x.q++; rest--; } });
+    return out.filter((x) => x.q > 0).sort((a, b) => b.q - a.q);
+  }
+  const CHUTE = 0.2;
+  function quadro() {
+    const cfg = provaCfg(); if (!cfg) return null;
+    const sd = new Map(DISCS.map((d) => [d.disc, statsFor(Q.filter((q) => q.disc === d.disc))]));
+    const est = (disc) => { const s = sd.get(disc); return s && s.n >= 5 ? s.acc : null; };
+    const blocos = cfg.blocos.map((b) => {
+      const itens = b.itens ? b.itens.map((x) => ({disc: x.disc, q: Number(x.q)})) : distEsp(Number(b.q), new Set(cfg.blocos.filter((o) => o.itens).flatMap((o) => o.itens.map((x) => x.disc))));
+      itens.forEach((x) => { x.s = sd.get(x.disc) || {n: 0}; x.est = est(x.disc); x.pts = x.q * (x.est == null ? CHUTE : x.est); });
+      const q = d3.sum(itens, (x) => x.q), pts = d3.sum(itens, (x) => x.pts);
+      return {...b, itens, q, pts, min: q * (b.minimo || 0.5), semDados: itens.some((x) => x.est == null)};
+    });
+    // discursiva: média da última nota de cada caso treinado (cada caso vale 10)
+    const notas = Object.values(dsNotas).map((v) => v.h && v.h.length ? d3.sum(v.h[v.h.length - 1].t) : null).filter((x) => x != null);
+    const dsc = cfg.discursiva ? {...cfg.discursiva, n: notas.length, media: notas.length ? d3.mean(notas) : null} : null;
+    if (dsc) { dsc.proj = dsc.media == null ? null : dsc.media * dsc.questoes; dsc.min = dsc.pontos * (dsc.minimo || 0.5); }
+    return {cfg, blocos, dsc, sd, est};
+  }
+  function riscos(qd) {
+    const out = [];
+    qd.blocos.forEach((b) => {
+      if (b.pts < b.min) out.push(`${b.nome}: projeção de ${fmt1(Math.round(b.pts * 10) / 10)} de ${b.q} questões, abaixo do mínimo de ${fmt1(b.min)} (50%).`);
+      if (b.naoZerar) b.itens.forEach((x) => {
+        const nm = (DISCS.find((d) => d.disc === x.disc) || {}).disciplina || x.disc;
+        if (x.est == null) out.push(`${nm}: ainda sem dados suficientes (mínimo de 5 questões respondidas). Zerar esta disciplina elimina.`);
+        else if (x.est * x.q < 2) out.push(`${nm}: risco de zerar — ${pf(x.est)} de acerto equivale a cerca de ${fmt1(Math.round(x.est * x.q * 10) / 10)} de ${x.q} questões.`);
+      });
+    });
+    if (qd.dsc) {
+      if (qd.dsc.proj == null) out.push('Discursiva: nenhum caso treinado ainda. Abaixo de 50% (10 de 20 pontos) elimina.');
+      else if (qd.dsc.proj < qd.dsc.min) out.push(`Discursiva: média de ${fmt1(Math.round(qd.dsc.media * 10) / 10)} por caso projeta ${fmt1(Math.round(qd.dsc.proj * 10) / 10)} de 20, abaixo do mínimo de 10.`);
+    }
+    return out;
+  }
+  const discNome = (disc) => (DISCS.find((d) => d.disc === disc) || {}).disciplina || disc;
+  function startAssunto(disc, a) {
+    startFrom(disc); fAss.value = disc + '|' + a;
+    if (fAss.value !== disc + '|' + a) fAss.value = '';
+  }
+  function simuladoProva() {
+    const qd = quadro(); if (!qd) return;
+    const ids = [];
+    qd.blocos.forEach((b) => b.itens.forEach((x) => { prioritize(Q.filter((q) => q.disc === x.disc)).slice(0, x.q).forEach((q) => ids.push(q.id)); }));
+    if (!ids.length) return;
+    show('treino');
+    sess = {ids, i: 0, sel: null, done: [], t0: Date.now(), acc: 0, tq: Date.now(), paused: false, label: 'simulado'};
+    fMsg.textContent = `Simulado no formato da prova: ${ids.length} questões, na ordem do caderno (Português, Inglês e específicas). Tempo de referência: ${(qd.cfg.duracao || '4h30')}.`;
+    document.getElementById('resultado').hidden = true; document.getElementById('questao').hidden = false;
+    drawQ(); document.getElementById('questao').scrollIntoView({block: 'start'});
+  }
+  // resultado do simulado pelas regras do edital
+  function avaliaSimulado(s) {
+    const qd = quadro(); if (!qd) return null;
+    const blocos = qd.blocos.map((b) => {
+      const discs = new Set(b.itens.map((x) => x.disc));
+      const idx = s.ids.map((id, i) => i).filter((i) => discs.has(byId.get(s.ids[i]).disc));
+      const h = idx.filter((i) => s.done[i]).length;
+      const zer = b.naoZerar ? b.itens.filter((x) => { const ii = idx.filter((i) => byId.get(s.ids[i]).disc === x.disc); return ii.length && !ii.some((i) => s.done[i]); }).map((x) => discNome(x.disc)) : [];
+      return {id: b.id, nome: b.nome, q: idx.length, h, min: idx.length * (b.minimo || 0.5), zer};
+    });
+    const ok = blocos.every((b) => b.h >= b.min && !b.zer.length);
+    return {at: Date.now(), b: blocos.map((b) => [b.id, b.h, b.q]), ok, blocos};
+  }
+
+  function kpiCard(cls, lab, val, note) { const c = el('div', 'pe-card ' + (cls || '')); c.append(el('div', 'pe-kpi-label', lab), el('div', 'pe-kpi-value', val), el('div', 'pe-kpi-note', note)); return c; }
+  function edStats() {
+    const e = ED(); if (!e || !Array.isArray(e.topicos)) return null;
+    let tot = 0, done = 0;
+    e.topicos.forEach((g) => g.itens.forEach((_, i) => { tot++; if (ev[g.id + ':' + i]) done++; }));
+    return {tot, done};
+  }
+  function renderVoo() {
+    const qd = quadro();
+    const inst = document.getElementById('pv-inst'); inst.replaceChildren();
+    const alerta = document.getElementById('pv-alerta');
+    const estr = document.getElementById('pv-estrutura');
+    if (!qd) {
+      inst.append(kpiCard('', 'Painel de voo', '—', 'A estrutura da prova deste cargo ainda não foi publicada.'));
+      alerta.hidden = true; estr.replaceChildren(el('p', 'pe-note', 'Envie o arquivo edital.json (ou prova2023.json) deste cargo para ativar o painel.'));
+      ['pv-investir', 'pv-basicas', 'pv-disc', 'pv-lei', 'pv-edital'].forEach((id) => document.getElementById(id).replaceChildren());
+      return;
+    }
+    const cfg = qd.cfg;
+    // 1. instrumentos
+    const dataProva = cfg.data || (plan && plan.exam) || null;
+    const dias = dataProva ? Math.ceil((pdate(dataProva) - pdate(dkey(new Date()))) / 86400000) : null;
+    inst.append(kpiCard('sol', 'Dias para a prova', dias == null ? '—' : dias > 0 ? nf.format(dias) : dias === 0 ? 'Hoje' : 'Encerrada', dataProva ? `${pdate(dataProva).toLocaleDateString('pt-BR')} · ${cfg.duracao || ''} de prova` : 'Defina a data no Cronograma'));
+    const totQ = d3.sum(qd.blocos, (b) => b.q), totP = d3.sum(qd.blocos, (b) => b.pts);
+    const passa = qd.blocos.every((b) => b.pts >= b.min);
+    const sem = qd.blocos.some((b) => b.semDados);
+    inst.append(kpiCard(passa && !sem ? 'ok' : passa ? 'warn' : 'bad', 'Nota projetada · objetivas', `${fmt1(Math.round(totP))} de ${totQ}`, qd.blocos.map((b) => `${b.nome.replace('Conhecimentos ', '')} ${fmt1(Math.round(b.pts))}/${b.q}`).join(' · ') + (sem ? ' · inclui chute (20%) onde faltam dados' : '')));
+    if (qd.dsc) inst.append(kpiCard(qd.dsc.proj == null ? 'bad' : qd.dsc.proj >= qd.dsc.min ? 'ok' : 'warn', 'Discursiva projetada', qd.dsc.proj == null ? '—' : `${fmt1(Math.round(qd.dsc.proj * 10) / 10)} de ${qd.dsc.pontos}`, qd.dsc.n ? `${qd.dsc.n} caso(s) treinado(s) · mínimo ${fmt1(qd.dsc.min)}` : 'Nenhum caso treinado · mínimo 10'));
+    const es = edStats();
+    if (es) { const k = kpiCard('', 'Edital estudado', pf(es.done / (es.tot || 1)), `${es.done} de ${es.tot} tópicos marcados`); k.id = 'pv-ed-kpi'; inst.append(k); }
+    const due = dueList().length;
+    const rc = kpiCard(due ? 'warn' : 'ok', 'Revisões para hoje', nf.format(due), due ? 'Questões no ponto de esquecer: revise agora' : 'Memória em dia');
+    if (due) { const b = el('button', 'pe-btn', 'Revisar agora'); b.style.marginTop = '8px'; b.addEventListener('click', reviewDue); rc.append(b); }
+    inst.append(rc);
+
+    // alerta das regras de eliminação
+    const rs = riscos(qd);
+    alerta.hidden = false; alerta.className = 'pe-card pv-alerta' + (rs.length ? '' : ' ok'); alerta.replaceChildren();
+    if (!Object.keys(ans).length) {
+      const f = el('div', 'pe-actions'); f.style.margin = '0 0 10px';
+      const b = el('button', 'pe-btn primary', 'Primeiro passo: fazer o diagnóstico'); b.addEventListener('click', () => show('diagnostico'));
+      f.append(b, el('span', 'pe-msg', 'Sem respostas ainda, o painel usa o chute (20%) em todas as disciplinas. O diagnóstico calibra todos os instrumentos.')); alerta.append(f);
+    }
+    alerta.append(el('h2', 'pe-h2', rs.length ? 'Alertas de eliminação' : 'Dentro das regras de aprovação'));
+    if (rs.length) { const ul = el('ul'); rs.forEach((t) => ul.append(el('li', null, t))); alerta.append(ul); }
+    else alerta.append(el('p', 'pe-note', 'Pela projeção atual, você passa nos mínimos de todos os blocos. Mantenha a margem: a nota de corte real costuma ficar acima do mínimo.'));
+    alerta.append(el('p', 'pe-note', 'Projeção = acerto atual em cada disciplina (última resposta de cada questão, mínimo de 5 respondidas) × número de questões da disciplina na prova.'));
+
+    // 2. estrutura da prova
+    estr.replaceChildren(el('h2', 'pe-h2', 'Estrutura da prova'), el('p', 'pe-note', `${totQ} questões objetivas${qd.dsc ? ` + ${qd.dsc.questoes} discursivas (${qd.dsc.pontos} pontos)` : ''}. As específicas estão distribuídas na proporção da última prova: é assim que o seu treino deve ser dividido.`));
+    const strip = el('div', 'pv-strip');
+    qd.blocos.forEach((b) => b.itens.forEach((x) => { const s = el('div'); s.style.flex = String(x.q); s.style.background = DC[x.disc] || '#FFCC29'; s.title = `${discNome(x.disc)}: ${x.q} questões (${pf(x.q / totQ)})`; s.append(el('span', null, `${SHORT[x.disc] || x.disc} ${x.q}`)); strip.append(s); }));
+    estr.append(strip);
+    const lg = el('div', 'pv-strip-leg'); lg.append(el('span', null, 'Questão 1'), el('span', null, `Questão ${totQ}`)); estr.append(lg);
+    const wrap = el('div', 'pv-wrap'); const tb = el('table', 'pv-tab');
+    const thr = el('tr'); ['Bloco / disciplina', 'Na prova', '% da prova', 'Seu acerto', 'Projeção', 'Situação', ''].forEach((t, i) => { const th = el('th', i && i < 5 ? 'n' : '', t); thr.append(th); });
+    const thead = el('thead'); thead.append(thr); tb.append(thead);
+    const tbody = el('tbody');
+    const st = (cls, t) => el('span', 'pv-st ' + cls, t);
+    qd.blocos.forEach((b) => {
+      const tr = el('tr', 'blk');
+      tr.append(el('td', null, b.nome), el('td', 'n', String(b.q)), el('td', 'n', pf(b.q / totQ)), el('td', 'n', ''), el('td', 'n', `${fmt1(Math.round(b.pts * 10) / 10)}`), el('td'), el('td'));
+      tr.children[5].append(b.pts >= b.min ? st('ok', `mínimo ${fmt1(b.min)} ✓`) : st('bad', `mínimo ${fmt1(b.min)} ✗`));
+      tbody.append(tr);
+      b.itens.forEach((x) => {
+        const r = el('tr'); const nm = el('td'); const dot = el('span', 'dot'); dot.style.background = DC[x.disc] || '#FFCC29'; nm.append(dot, discNome(x.disc));
+        const sit = el('td');
+        if (x.est == null) sit.append(st('na', x.s.n ? `${x.s.n} resp. · faça mais` : 'sem dados'));
+        else if (b.naoZerar && x.est * x.q < 2) sit.append(st('bad', 'risco de zerar'));
+        else if (x.est >= 0.7) sit.append(st('ok', 'forte'));
+        else if (x.est >= 0.5) sit.append(st('warn', 'regular'));
+        else sit.append(st('bad', 'fraco'));
+        const go = el('td'); const bt = el('button', 'pe-btn', 'Treinar'); bt.addEventListener('click', () => startFrom(x.disc)); go.append(bt);
+        r.append(nm, el('td', 'n', String(x.q)), el('td', 'n', pf(x.q / totQ)), el('td', 'n', x.s.n ? `${pf(x.s.acc)} (${x.s.n})` : '—'), el('td', 'n', fmt1(Math.round(x.pts * 10) / 10)), sit, go);
+        tbody.append(r);
+      });
+    });
+    if (qd.dsc) {
+      const tr = el('tr', 'blk'); tr.append(el('td', null, `Discursiva (${qd.dsc.questoes} casos)`), el('td', 'n', `${qd.dsc.pontos} pts`), el('td', 'n', '—'), el('td', 'n', qd.dsc.media == null ? '—' : `${fmt1(Math.round(qd.dsc.media * 10) / 10)}/10`), el('td', 'n', qd.dsc.proj == null ? '—' : fmt1(Math.round(qd.dsc.proj * 10) / 10)), el('td'), el('td'));
+      tr.children[5].append(qd.dsc.proj != null && qd.dsc.proj >= qd.dsc.min ? st('ok', `mínimo ${fmt1(qd.dsc.min)} ✓`) : st('bad', `mínimo ${fmt1(qd.dsc.min)} ✗`));
+      const bt = el('button', 'pe-btn', 'Treinar'); bt.addEventListener('click', () => show('discursivas')); tr.children[6].append(bt);
+      tbody.append(tr);
+    }
+    tb.append(tbody); wrap.append(tb); estr.append(wrap);
+    const acts = el('div', 'pe-actions');
+    const sim = el('button', 'pe-btn primary', `Fazer simulado no formato da prova (${totQ} questões)`); sim.addEventListener('click', simuladoProva);
+    const cr = el('button', 'pe-btn', 'Abrir cronograma'); cr.addEventListener('click', () => show('cronograma'));
+    acts.append(sim, cr);
+    if (simHist.length) { const u = simHist[simHist.length - 1]; acts.append(el('span', 'pe-msg', `Último simulado (${new Date(u.at).toLocaleDateString('pt-BR')}): ${u.b.map((x) => `${x[1]}/${x[2]}`).join(' + ')} · ${u.ok ? 'aprovado nos mínimos' : 'eliminado'}`)); }
+    estr.append(acts);
+
+    // 3. onde investir
+    const inv = document.getElementById('pv-investir'); inv.replaceChildren(el('h2', 'pe-h2', 'Onde investir agora'), el('p', 'pe-note', 'Ranking pelo ganho possível: questões que a disciplina tem na prova × o quanto falta para você chegar a 70% de acerto. Onde cai mais e você erra mais, mais horas.'));
+    const items = qd.blocos.flatMap((b) => b.itens.map((x) => ({...x, gain: x.q * Math.max(0, 0.7 - (x.est == null ? CHUTE : x.est))}))).filter((x) => x.gain > 0.05).sort((a, b) => b.gain - a.gain || b.q - a.q);
+    const maxG = d3.max(items, (x) => x.gain) || 1;
+    const rk = el('div', 'pv-rank');
+    if (!items.length) rk.append(el('p', 'pe-empty', 'Todas as disciplinas com dados estão acima de 70%. Amplie o banco respondido e faça simulados.'));
+    items.slice(0, 7).forEach((x, i) => {
+      const it = el('div', 'pv-rank-it'); const mid = el('div');
+      mid.append(el('div', 'nm', discNome(x.disc)), el('div', 'sub', `${x.q} questões na prova · ${x.est == null ? 'sem dados' : pf(x.est) + ' de acerto'} · ganho possível +${fmt1(Math.round(x.gain * 10) / 10)} questões`));
+      const mb = el('div', 'pv-mini'); const mi = el('i'); mi.style.width = (x.gain / maxG * 100) + '%'; mi.style.background = DC[x.disc] || '#FFCC29'; mb.append(mi); mid.append(mb);
+      const ac = el('div', 'acts'); const b1 = el('button', 'pe-btn ghost', 'Estudar'); b1.addEventListener('click', () => openMaterial(x.disc)); const b2 = el('button', 'pe-btn', 'Treinar'); b2.addEventListener('click', () => startFrom(x.disc)); ac.append(b1, b2);
+      it.append(el('div', 'pos', String(i + 1)), mid, ac); rk.append(it);
+    });
+    inv.append(rk);
+
+    // 4. básicas: não zerar
+    const bas = document.getElementById('pv-basicas'); bas.replaceChildren(el('h2', 'pe-h2', 'Básicas: não pode zerar'), el('p', 'pe-note', 'Zerar Português ou Inglês elimina, mesmo com nota alta no resto. Garanta primeiro os assuntos de entrada (mais fáceis e com mais questões no banco) e depois avance.'));
+    const g = qd.blocos.find((b) => b.naoZerar);
+    (g ? g.itens : []).forEach((x) => {
+      const box = el('div', 'pv-bas'); box.style.borderLeft = `4px solid ${DC[x.disc] || '#FFCC29'}`;
+      const top = el('div', 'pv-bas-top'); const t = el('div'); t.append(el('b', null, discNome(x.disc)), el('div', 'pe-kpi-note', `${x.q} questões na prova · ${x.s.n ? `${pf(x.s.acc)} de acerto em ${x.s.n}` : 'nenhuma respondida'} · meta: ao menos ${Math.ceil(x.q * 0.5)} acertos`));
+      const sit = x.est == null ? st('na', 'sem dados') : x.est * x.q < 2 ? st('bad', 'risco de zerar') : x.est >= 0.5 ? st('ok', 'seguro') : st('warn', 'atenção');
+      top.append(t, sit); box.append(top);
+      const grp = d3.rollups(Q.filter((q) => q.disc === x.disc), (v) => ({n: v.length, f: v.filter((q) => q.nivel === 1).length / v.length, s: statsFor(v)}), (q) => assunto(q.tema))
+        .map(([a, v]) => ({a, ...v})).sort((p, q) => (q.f - p.f) || (q.n - p.n)).slice(0, 4);
+      const ul = el('ul');
+      grp.forEach((r) => { const li = el('li'); const sp = el('span', null, `${r.a} · ${r.n} questões${r.s.n ? ` · ${pf(r.s.acc)} de acerto` : ''}`); const b = el('button', 'pe-btn', 'Treinar'); b.addEventListener('click', () => startAssunto(x.disc, r.a)); li.append(sp, b); ul.append(li); });
+      box.append(el('div', 'pe-kpi-note', 'Assuntos de entrada:'), ul); bas.append(box);
+    });
+    if (!g) bas.append(el('p', 'pe-empty', 'Esta prova não tem bloco de básicas.'));
+
+    // 5. discursiva
+    const dsb = document.getElementById('pv-disc'); dsb.replaceChildren(el('h2', 'pe-h2', 'Discursiva: formato que o corretor espera'));
+    if (!qd.dsc) dsb.append(el('p', 'pe-empty', 'Este cargo não tem prova discursiva.'));
+    else {
+      const rows = discRows();
+      dsb.append(el('p', 'pe-note', `${qd.dsc.questoes} casos de 10 pontos, ${qd.dsc.linhas || '30 a 40'} linhas cada. O espelho da Cesgranrio pontua tópico por tópico: responda na ordem dos tópicos pedidos, cite o dispositivo legal de cada conclusão e feche com a solução do caso. Mínimo de 10 de 20 pontos.`));
+      const ul = el('ul', 'pe-list');
+      const li = (a, b) => { const x = el('li'); x.append(el('span', null, a), el('span', null, b)); ul.append(x); };
+      li('Casos no banco', nf.format(rows.length)); li('Casos treinados', `${qd.dsc.n} de ${rows.length}`);
+      li('Média da última nota', qd.dsc.media == null ? '—' : `${fmt1(Math.round(qd.dsc.media * 10) / 10)} de 10`);
+      dsb.append(ul);
+      const nxt = rows.find((r) => !dsNotas[r.id]);
+      const ac = el('div', 'pe-actions'); const b = el('button', 'pe-btn primary', nxt ? 'Treinar próximo caso' : 'Abrir discursivas'); b.addEventListener('click', () => show('discursivas')); ac.append(b);
+      if (nxt) ac.append(el('span', 'pe-msg', `${nxt.disciplina || ''}${nxt.titulo ? ' · ' + nxt.titulo : ''}`));
+      dsb.append(ac);
+    }
+
+    // 6. letra de lei
+    const lei = document.getElementById('pv-lei'); lei.replaceChildren(el('h2', 'pe-h2', 'Letra de lei mais cobrada'), el('p', 'pe-note', 'Normas citadas no maior número de questões do banco, ponderadas pelo peso da disciplina na prova. A Cesgranrio cobra muito o texto literal: leia os dispositivos indicados.'));
+    const peso = new Map(qd.blocos.flatMap((b) => b.itens.map((x) => [x.disc, x.q])));
+    const lm = new Map(); matRows().filter((r) => r.tipo === 'lei' && r.url).forEach((r) => { const k = r.titulo.trim(); const sc = (r.questoes || 0) * (peso.get(r.disc) || 1); const o = lm.get(k); if (!o) lm.set(k, {...r, sc}); else { o.sc += sc; o.questoes = (o.questoes || 0) + (r.questoes || 0); } });
+    const curto = (t) => { t = String(t || ''); return t.length > 140 ? t.slice(0, 140).replace(/,[^,]*$/, '') + ' …' : t; };
+    const leis = [...lm.values()].sort((a, b) => b.sc - a.sc).slice(0, 8);
+    const ll = el('div', 'pe-lei-list'); ll.style.maxHeight = 'none';
+    if (!leis.length) ll.append(el('p', 'pe-empty', 'Sem normas cadastradas para este cargo.'));
+    leis.forEach((r) => { const it = el('div', 'pe-lei'); it.style.setProperty('--dc', DC[r.disc] || '#FFCC29'); it.append(el('div', 'pe-lei-t', r.titulo), el('span', 'pe-lei-n', `${nf.format(r.questoes)} questões`), el('div', 'pe-lei-d', curto(r.dispositivos || r.foco || '')), anchor('ghost', 'Ler a lei', r.url)); ll.append(it); });
+    lei.append(ll);
+
+    // 7. edital verticalizado
+    renderEdital();
+  }
+  const evOpen = new Set();
+  function renderEdital() {
+    const box = document.getElementById('pv-edital'); box.replaceChildren(el('h2', 'pe-h2', 'Edital verticalizado'));
+    const e = ED();
+    if (!e || !Array.isArray(e.topicos)) { box.append(el('p', 'pe-note', 'O edital verticalizado deste cargo ainda não foi publicado.')); return; }
+    box.append(el('p', 'pe-note', `${e.edital || 'Edital'} · marque cada tópico quando terminar teoria + lei seca + questões. A marcação fica salva na sua conta.`));
+    const es = edStats();
+    const tot = el('div', 'pv-ed-tot'); const bar = el('div', 'pe-bar'); const bi = el('i'); bi.style.width = (es.done / (es.tot || 1) * 100) + '%'; bi.style.background = '#FFCC29'; bar.append(bi);
+    const tA = el('span', null, `${es.done} de ${es.tot} tópicos`), tB = el('span', null, pf(es.done / (es.tot || 1)));
+    tot.append(tA, bar, tB); box.append(tot);
+    const atualiza = () => { const x = edStats(); tA.textContent = `${x.done} de ${x.tot} tópicos`; tB.textContent = pf(x.done / (x.tot || 1)); bi.style.width = (x.done / (x.tot || 1) * 100) + '%'; const k = document.getElementById('pv-ed-kpi'); if (k) { k.querySelector('.pe-kpi-value').textContent = pf(x.done / (x.tot || 1)); k.querySelector('.pe-kpi-note').textContent = `${x.done} de ${x.tot} tópicos marcados`; } };
+    const ed = el('div', 'pv-ed');
+    e.topicos.forEach((g) => {
+      const det = el('details'); det.style.setProperty('--dc', DC[g.disc] || '#A78BFA'); if (evOpen.has(g.id)) det.open = true;
+      det.addEventListener('toggle', () => { if (det.open) evOpen.add(g.id); else evOpen.delete(g.id); });
+      const n = g.itens.filter((_, i) => ev[g.id + ':' + i]).length;
+      const sm = el('summary'); const b2 = el('div', 'pe-bar'); const i2 = el('i'); i2.style.width = (n / g.itens.length * 100) + '%'; i2.style.background = DC[g.disc] || '#A78BFA'; b2.append(i2);
+      const cnt = el('span', 'c', `${n}/${g.itens.length}`); sm.append(el('span', null, g.titulo), b2, cnt); det.append(sm);
+      const body = el('div', 'body');
+      g.itens.forEach((t, i) => {
+        const k = g.id + ':' + i; const lb = el('label', ev[k] ? 'done' : ''); const cb = el('input'); cb.type = 'checkbox'; cb.checked = !!ev[k];
+        cb.addEventListener('change', () => { if (cb.checked) ev[k] = 1; else delete ev[k]; lb.classList.toggle('done', cb.checked); const m = g.itens.filter((_, j) => ev[g.id + ':' + j]).length; cnt.textContent = `${m}/${g.itens.length}`; i2.style.width = (m / g.itens.length * 100) + '%'; atualiza(); saveNow(); });
+        lb.append(cb, el('span', null, t)); body.append(lb);
+      });
+      const ac = el('div', 'acts');
+      if (g.disc && DISCS.some((d) => d.disc === g.disc)) {
+        const s = statsFor(Q.filter((q) => q.disc === g.disc));
+        const b1 = el('button', 'pe-btn ghost', 'Estudar'); b1.addEventListener('click', () => openMaterial(g.disc));
+        const b3 = el('button', 'pe-btn', 'Treinar'); b3.addEventListener('click', () => startFrom(g.disc));
+        ac.append(b1, b3, el('span', 'pe-msg', `${discNome(g.disc)}: ${s.n ? `${pf(s.acc)} de acerto em ${s.n} questões` : 'nenhuma questão respondida'}`));
+      } else ac.append(el('span', 'pe-msg', 'Conteúdo em preparação no banco de questões.'));
+      body.append(ac); det.append(body); ed.append(det);
+    });
+    box.append(ed);
+  }
+
+  // ---------- prontuário ----------
+  function renderProntuario() {
+    const fi = document.getElementById('pr-ficha'); fi.replaceChildren();
+    const all = statsFor(Q);
+    const sk = Object.keys(snaps).map(Number).sort((a, b) => a - b);
+    const inicios = [...sk.map((d) => d * 86400000 + 43200000 + new Date().getTimezoneOffset() * 60000), ...diagHist.map((d) => d.s || d.at), diag.s].filter(Boolean);
+    const ini = inicios.length ? Math.min(...inicios) : null;
+    const diasEst = new Set([...Object.keys(timeLog).filter((k) => timeLog[k] > 60), ...sk.map((d) => new Date(d * 86400000).toISOString().slice(0, 10))]).size;
+    const horas = d3.sum(Object.values(timeLog)) / 3600;
+    const prim = diagHist.length ? diagHist[0] : (dgAnswered() ? resumoDiag() : null);
+    fi.append(kpiCard('', 'Início da preparação', ini ? new Date(ini).toLocaleDateString('pt-BR') : '—', ini ? (() => { const j = Math.max(1, Math.ceil((Date.now() - ini) / 86400000)); return `${nf.format(j)} ${j === 1 ? 'dia' : 'dias'} de jornada · ${diasEst} ${diasEst === 1 ? 'dia' : 'dias'} com estudo`; })() : 'Comece pelo diagnóstico'));
+    fi.append(kpiCard('', 'Horas estudadas', fmtMin(horas * 60), 'Cronômetro do cronograma e das discursivas'));
+    fi.append(kpiCard('', 'Questões respondidas', nf.format(all.n), all.n ? `${pf(all.acc)} de acerto · ${nf.format(d3.sum(Object.values(ans), (a) => a.n))} tentativas` : 'Nenhuma ainda'));
+    fi.append(kpiCard(prim && all.prof != null && prim.p != null && all.prof > prim.p ? 'ok' : '', 'Proficiência: chegada → hoje', `${prim && prim.p != null ? prim.p : '—'} → ${all.prof == null ? '—' : all.prof}`, prim ? `Chegada = 1º diagnóstico (${new Date(prim.at).toLocaleDateString('pt-BR')})` : 'Faça o diagnóstico para registrar a chegada'));
+
+    // diagnósticos
+    const pd = document.getElementById('pr-diag'); pd.replaceChildren(el('h2', 'pe-h2', 'Histórico de diagnósticos'), el('p', 'pe-note', 'Cada diagnóstico fica guardado, mesmo quando você refaz do zero (o botão “Refazer do zero” arquiva o atual aqui antes de começar outro). Compare a chegada com cada nova medição.'));
+    const lista = diagHist.map((d, i) => ({...d, nome: `${i + 1}º diagnóstico`}));
+    if (dgAnswered()) lista.push({...resumoDiag(), nome: `${diagHist.length + 1}º diagnóstico${dgAnswered() < diag.ids.length ? ' (em andamento)' : ' (atual)'}`});
+    if (!lista.length) pd.append(el('p', 'pe-empty', 'Nenhum diagnóstico feito ainda.'));
+    else {
+      const delta = (v, p) => { if (v == null || p == null || v === p) return null; const s = el('span', 'pr-delta ' + (v > p ? 'up' : 'down'), (v > p ? '▲' : '▼') + Math.abs(v - p)); return s; };
+      const wrap = el('div', 'pv-wrap'); const tb = el('table', 'pv-tab');
+      const hr = el('tr'); hr.append(el('th', null, 'Disciplina')); lista.forEach((d) => { const th = el('th', 'n'); th.append(d.nome, el('div', 'pe-kpi-note', new Date(d.at).toLocaleDateString('pt-BR'))); hr.append(th); });
+      const th0 = el('thead'); th0.append(hr); tb.append(th0);
+      const body = el('tbody');
+      const geral = el('tr', 'blk'); geral.append(el('td', null, 'Geral (proficiência · acertos)'));
+      lista.forEach((d, i) => { const td = el('td', 'n'); td.append(`${d.p == null ? '—' : d.p} · ${d.h}/${d.n}`); const dl = i ? delta(d.p, lista[i - 1].p) : null; if (dl) td.append(dl); geral.append(td); });
+      body.append(geral);
+      DISCS.forEach((x) => {
+        const tr = el('tr'); const nm = el('td'); const dot = el('span', 'dot'); dot.style.background = DC[x.disc]; nm.append(dot, x.disciplina); tr.append(nm);
+        lista.forEach((d, i) => { const v = d.d[x.disc]; const td = el('td', 'n'); td.append(v ? String(v[2] == null ? '—' : v[2]) : '—'); const pv = i && lista[i - 1].d[x.disc]; const dl = v && pv ? delta(v[2], pv[2]) : null; if (dl) td.append(dl); tr.append(td); });
+        body.append(tr);
+      });
+      tb.append(body); wrap.append(tb); pd.append(wrap);
+    }
+    const ac = el('div', 'pe-actions'); const b = el('button', 'pe-btn primary', dgAnswered() && dgAnswered() < diag.ids.length ? 'Continuar diagnóstico' : 'Ir para o diagnóstico'); b.addEventListener('click', () => show('diagnostico')); ac.append(b);
+    if (simHist.length) ac.append(el('span', 'pe-msg', `Simulados no formato da prova: ${simHist.length} · ${simHist.map((s) => `${new Date(s.at).toLocaleDateString('pt-BR')} ${d3.sum(s.b, (x) => x[1])}/${d3.sum(s.b, (x) => x[2])}${s.ok ? ' ✓' : ' ✗'}`).join(' · ')}`));
+    pd.append(ac);
+
+    // evolução
+    const evb = document.getElementById('pr-evol'); evb.replaceChildren(el('h2', 'pe-h2', 'Evolução da proficiência'), el('p', 'pe-note', 'Uma foto por dia de estudo: proficiência geral (acerto ponderado pela dificuldade, última resposta de cada questão). A linha tracejada marca a meta de 70.'));
+    const pts = sk.map((d) => ({d, p: snaps[String(d)].p, n: snaps[String(d)].n})).filter((x) => x.p != null);
+    if (pts.length < 2) evb.append(el('p', 'pe-empty', pts.length ? 'A curva aparece a partir do segundo dia de estudo.' : 'Responda questões para começar o registro.'));
+    else drawEvol(evb, pts);
+
+    // retenção
+    const rt = document.getElementById('pr-ret'); rt.replaceChildren(el('h2', 'pe-h2', 'Memória de retenção'), el('p', 'pe-note', 'Cada acerto empurra a questão para uma revisão mais distante (1, 3, 7, 15 e 30 dias); cada erro a traz de volta para amanhã. Consolidada = acertada em 4 ou mais revisões seguidas.'));
+    const due = dueList().length;
+    const top = el('div', 'pe-actions'); top.style.marginTop = '0';
+    const rb = el('button', 'pe-btn primary', due ? `Revisar ${Math.min(due, 30)} de ${due} vencidas hoje` : 'Nenhuma revisão vencida hoje'); rb.disabled = !due; rb.addEventListener('click', reviewDue); top.append(rb); rt.append(top);
+    const BX = [{k: 'Em erro', f: (a) => (a.b || 0) === 0, c: '#FB7185'}, {k: 'Em fixação', f: (a) => a.b >= 1 && a.b <= 3, c: '#FBBF24'}, {k: 'Consolidada', f: (a) => a.b >= 4, c: '#34D399'}];
+    const wrap = el('div', 'pv-wrap'); const tb = el('table', 'pv-tab');
+    const hr = el('tr'); ['Disciplina', 'Respondidas', 'Em erro', 'Em fixação', 'Consolidadas', 'Revisar hoje'].forEach((t, i) => hr.append(el('th', i ? 'n' : '', t)));
+    const th = el('thead'); th.append(hr); tb.append(th); const bd = el('tbody');
+    DISCS.forEach((x) => {
+      const qs = Q.filter((q) => q.disc === x.disc && ans[q.id]); if (!qs.length) return;
+      const as = qs.map((q) => ({...ans[q.id], b: ans[q.id].b == null ? (ans[q.id].r === q.gabarito ? 1 : 0) : ans[q.id].b}));
+      const c = BX.map((B) => as.filter(B.f).length);
+      const tr = el('tr'); const nm = el('td'); const dot = el('span', 'dot'); dot.style.background = DC[x.disc]; nm.append(dot, x.disciplina);
+      const bxs = el('div', 'pr-boxes'); BX.forEach((B, i) => { const it = el('i'); it.style.flex = String(c[i]); it.style.background = B.c; it.title = `${B.k}: ${c[i]}`; bxs.append(it); }); nm.append(bxs);
+      tr.append(nm, el('td', 'n', nf.format(qs.length)), el('td', 'n', nf.format(c[0])), el('td', 'n', nf.format(c[1])), el('td', 'n', nf.format(c[2])), el('td', 'n', nf.format(qs.filter(isDue).length)));
+      bd.append(tr);
+    });
+    if (!bd.children.length) { const tr = el('tr'); const td = el('td', null, 'Nenhuma questão respondida ainda.'); td.colSpan = 6; tr.append(td); bd.append(tr); }
+    tb.append(bd); wrap.append(tb); rt.append(wrap);
+    const lg = el('div', 'pe-legend'); BX.forEach((B) => { const s = el('span'); const i = el('i'); i.style.background = B.c; i.style.height = '8px'; s.append(i, B.k); lg.append(s); }); rt.append(lg);
+  }
+  function drawEvol(box, pts) {
+    const W = 560, H = 220, m = {t: 12, r: 16, b: 28, l: 34};
+    const holder = el('div', 'pr-chart'); box.append(holder);
+    const x = d3.scaleLinear().domain(d3.extent(pts, (p) => p.d)).range([m.l, W - m.r]);
+    const y = d3.scaleLinear().domain([0, 100]).range([H - m.b, m.t]);
+    const svg = d3.select(holder).append('svg').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', 'Evolução da proficiência geral por dia');
+    svg.append('g').selectAll('line').data([0, 25, 50, 75, 100]).join('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y).attr('y2', y).attr('stroke', 'rgba(255,255,255,.08)');
+    svg.append('g').selectAll('text').data([0, 50, 100]).join('text').attr('x', m.l - 6).attr('y', (d) => y(d) + 4).attr('text-anchor', 'end').attr('font-size', 13).attr('fill', 'rgba(255,255,255,.55)').text((d) => d);
+    svg.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(META)).attr('y2', y(META)).attr('stroke', '#fff').attr('stroke-dasharray', '4 4').attr('opacity', .6);
+    svg.append('text').attr('x', W - m.r).attr('y', y(META) - 5).attr('text-anchor', 'end').attr('font-size', 13).attr('fill', 'rgba(255,255,255,.7)').text('meta 70');
+    const ticks = pts.length <= 6 ? pts.map((p) => p.d) : [pts[0].d, pts[Math.floor(pts.length / 2)].d, pts[pts.length - 1].d];
+    svg.append('g').selectAll('text').data(ticks).join('text').attr('x', x).attr('y', H - 8).attr('text-anchor', 'middle').attr('font-size', 13).attr('fill', 'rgba(255,255,255,.55)').text((d) => dayDate(d).slice(0, 5));
+    svg.append('path').datum(pts).attr('fill', 'none').attr('stroke', '#FFCC29').attr('stroke-width', 2).attr('stroke-linejoin', 'round').attr('d', d3.line().x((p) => x(p.d)).y((p) => y(p.p)));
+    const last = pts[pts.length - 1];
+    svg.append('circle').attr('cx', x(last.d)).attr('cy', y(last.p)).attr('r', 4).attr('fill', '#FFCC29').attr('stroke', '#04291F').attr('stroke-width', 2);
+    svg.append('text').attr('x', x(last.d) - 6).attr('y', y(last.p) - 8).attr('text-anchor', 'end').attr('font-size', 14).attr('font-weight', 700).attr('fill', '#fff').text(last.p);
+    const tip = el('div', 'pe-tip'); tip.hidden = true; holder.append(tip);
+    const cross = svg.append('line').attr('y1', m.t).attr('y2', H - m.b).attr('stroke', 'rgba(255,255,255,.35)').attr('opacity', 0);
+    const dotH = svg.append('circle').attr('r', 4).attr('fill', '#FFCC29').attr('stroke', '#04291F').attr('stroke-width', 2).attr('opacity', 0);
+    svg.append('rect').attr('x', m.l).attr('y', m.t).attr('width', W - m.l - m.r).attr('height', H - m.t - m.b).attr('fill', 'transparent')
+      .on('mousemove', (ev) => {
+        const [mx] = d3.pointer(ev); const d0 = x.invert(mx);
+        const p = pts.reduce((a, b) => Math.abs(b.d - d0) < Math.abs(a.d - d0) ? b : a);
+        cross.attr('x1', x(p.d)).attr('x2', x(p.d)).attr('opacity', 1); dotH.attr('cx', x(p.d)).attr('cy', y(p.p)).attr('opacity', 1);
+        tip.hidden = false; tip.replaceChildren(el('b', null, dayDate(p.d)), document.createTextNode(`Proficiência ${p.p} · ${nf.format(p.n)} respondidas`));
+        const r = holder.getBoundingClientRect(); const px = x(p.d) / W * r.width;
+        tip.style.left = Math.min(r.width - 170, Math.max(0, px + 10)) + 'px'; tip.style.top = (y(p.p) / H * r.height - 10) + 'px';
+      })
+      .on('mouseleave', () => { tip.hidden = true; cross.attr('opacity', 0); dotH.attr('opacity', 0); });
+  }
+
   // ---------- progresso ----------
   const pgCode = document.getElementById('pg-code'), pgMsg = document.getElementById('pg-msg');
   const b64e = (t) => btoa(unescape(encodeURIComponent(t)));
   const b64d = (t) => decodeURIComponent(escape(atob(t)));
   const snapshotObj = (withDrafts = true) => {
-    const a = Object.entries(ans).map(([id, x]) => `${id}.${x.r}.${x.n}.${x.h}`).join(',');
+    const a = Object.entries(ans).map(([id, x]) => `${id}.${x.r}.${x.n}.${x.h}` + (x.t != null ? `.${x.t}.${x.b || 0}` : '')).join(',');
     const dg = {ids: diag.ids, ans: diag.ans, times: Object.fromEntries(Object.entries(diag.times).map(([k, v]) => [k, Math.round(v / 1000)])), s: diag.s, f: diag.f};
-    const o = {v: 2, a, d: dg, p: plan, t: timeLog, k: [...done], tr: trilha, ds: dsNotas};
+    const o = {v: 2, a, d: dg, p: plan, t: timeLog, k: [...done], tr: trilha, ds: dsNotas, dh: diagHist, sn: snaps, ev, sh: simHist};
     if (sess) o.ss = {ids: sess.ids, i: sess.i, done: sess.done, acc: Math.round(sess.acc / 1000), times: sess.times || [], label: sess.label || 'treino', tr: sess.trilha || null};
     if (timer.blocks.length) o.tm = {b: timer.blocks, bi: timer.bi, left: Math.round(timer.left / 60) * 60, l: timer.label, k: timer.sessKey};
     if (withDrafts) o.dr = dsDraft;
@@ -2275,8 +2786,8 @@ body { min-height: 100vh; }
     const next = {};
     for (const p of String(obj.a || '').split(',')) {
       if (!p) continue;
-      const [id, r, n, h] = p.split('.');
-      if (byId.has(id) && /^[A-E]$/.test(r)) next[id] = {r, n: Number(n) || 1, h: Number(h) || 0};
+      const [id, r, n, h, t, b] = p.split('.');
+      if (byId.has(id) && /^[A-E]$/.test(r)) { next[id] = {r, n: Number(n) || 1, h: Number(h) || 0}; if (t && /^\d+$/.test(t)) { next[id].t = Number(t); next[id].b = Math.max(0, Math.min(5, Number(b) || 0)); } }
     }
     ans = next;
     const d = obj.d || {}; const ids = Array.isArray(d.ids) ? d.ids.filter((id) => byId.has(id)) : [];
@@ -2290,6 +2801,11 @@ body { min-height: 100vh; }
     done = new Set((obj.k || []).map(String)); crWeek = null;
     trilha = {}; if (obj.tr && typeof obj.tr === 'object') Object.entries(obj.tr).forEach(([k, v]) => { if (typeof k === 'string' && v && typeof v === 'object') trilha[k] = {lido: !!v.lido, fix: v.fix && Number(v.fix.n) ? {n: Number(v.fix.n), h: Number(v.fix.h) || 0, at: Number(v.fix.at) || 0} : null}; });
     trCur = null;
+    diagHist = Array.isArray(obj.dh) ? obj.dh.filter((x) => x && typeof x === 'object' && x.d).slice(-20) : [];
+    snaps = {}; if (obj.sn && typeof obj.sn === 'object') Object.entries(obj.sn).forEach(([k, v]) => { if (/^\d+$/.test(k) && v && typeof v === 'object') snaps[k] = {n: Number(v.n) || 0, h: Number(v.h) || 0, p: v.p == null ? null : Number(v.p), d: v.d && typeof v.d === 'object' ? v.d : {}}; });
+    ev = {}; if (obj.ev && typeof obj.ev === 'object') Object.keys(obj.ev).forEach((k) => { if (obj.ev[k]) ev[k] = 1; });
+    simHist = Array.isArray(obj.sh) ? obj.sh.filter((x) => x && Array.isArray(x.b)).slice(-30) : [];
+    snapSig = '';
     dsNotas = {}; if (obj.ds && typeof obj.ds === 'object') Object.entries(obj.ds).forEach(([k, v]) => { if (v && Array.isArray(v.h)) dsNotas[k] = {h: v.h.filter((x) => x && Array.isArray(x.t)).slice(-10).map((x) => ({t: x.t.map((n) => Math.max(0, Math.min(2.5, Number(n) || 0))), l: Number(x.l) || 0, at: Number(x.at) || 0, s: Number(x.s) || 0}))}; });
     if (obj.dr && typeof obj.dr === 'object') { dsDraft = {}; Object.entries(obj.dr).forEach(([k, v]) => { if (typeof v === 'string') dsDraft[k] = v.slice(0, 8000); }); }
     else if (!('dr' in obj) && obj.v) { /* código manual: mantém rascunhos locais */ }
@@ -2310,7 +2826,7 @@ body { min-height: 100vh; }
       drawTimer();
     }
   }
-  const hasProgress = () => Object.keys(ans).length || dgAnswered() || plan || Object.keys(timeLog).length || Object.keys(trilha).length || Object.keys(dsNotas).length;
+  const hasProgress = () => Object.keys(ans).length || dgAnswered() || plan || Object.keys(timeLog).length || Object.keys(trilha).length || Object.keys(dsNotas).length || diagHist.length || Object.keys(ev).length || simHist.length;
   document.getElementById('pg-gerar').addEventListener('click', () => {
     const k = Object.keys(ans).length;
     if (!hasProgress()) { pgMsg.textContent = 'Ainda não há progresso para salvar.'; return; }
@@ -2339,7 +2855,7 @@ body { min-height: 100vh; }
   document.getElementById('pg-zerar').addEventListener('click', () => {
     if (!hasProgress()) { pgMsg.textContent = 'Não há progresso para zerar.'; return; }
     if (pgMsg.dataset.confirm !== '1') { pgMsg.dataset.confirm = '1'; pgMsg.textContent = 'Clique de novo em “Zerar progresso” para confirmar. Isso apaga também o progresso salvo na sua conta.'; return; }
-    pgMsg.dataset.confirm = ''; ans = {}; diag = {ids: pickDiag(), ans: {}, times: {}, s: null, f: null}; plan = null; timeLog = {}; done = new Set(); crWeek = null; trilha = {}; trCur = null; dsNotas = {}; dsDraft = {}; dsCur = null;
+    pgMsg.dataset.confirm = ''; ans = {}; diag = {ids: pickDiag(), ans: {}, times: {}, s: null, f: null}; plan = null; timeLog = {}; done = new Set(); crWeek = null; trilha = {}; trCur = null; dsNotas = {}; dsDraft = {}; dsCur = null; diagHist = []; snaps = {}; ev = {}; simHist = []; snapSig = '';
     timer.run = false; timer.blocks = []; sess = null; document.getElementById('questao').hidden = true; document.getElementById('f-resume').hidden = true; drawTimer(); render(); pgMsg.textContent = 'Progresso zerado.'; saveNow();
   });
 
@@ -2376,6 +2892,7 @@ body { min-height: 100vh; }
     }
   }
   async function saveNow() {
+    try { fotografa(); } catch (e) { console.error(e); }
     if (!storeRef || !loaded || saving) return;
     const o = snapshotObj(); const tj = JSON.stringify(o.t); delete o.t; const core = JSON.stringify(o);
     if (core === lastCore && tj === lastTimeJson) return;
@@ -2391,6 +2908,7 @@ body { min-height: 100vh; }
   }
   setInterval(() => {
     if (!storeRef || !loaded || saving) return;
+    try { fotografa(); } catch (e) { console.error(e); }
     const o = snapshotObj(); const tj = JSON.stringify(o.t); delete o.t; const core = JSON.stringify(o);
     if (core !== lastCore) saveNow();                                   // respostas, diagnóstico, cronograma: salva em até 4 s
     else if (tj !== lastTimeJson && Date.now() - lastTimeSave > 60000) saveNow(); // cronômetro: no máximo 1 vez por minuto
@@ -2399,7 +2917,7 @@ body { min-height: 100vh; }
   window.addEventListener('pagehide', () => { saveNow(); });
 
   // ---------- render ----------
-  function current() { const t = tabs.find((x) => x.getAttribute('aria-selected') === 'true'); return t ? t.dataset.page : 'diagnostico'; }
+  function current() { const t = tabs.find((x) => x.getAttribute('aria-selected') === 'true'); return t ? t.dataset.page : 'voo'; }
   function render() {
     if (!Q.length) return;
     renderPainel();
@@ -2412,6 +2930,8 @@ body { min-height: 100vh; }
     if (c === 'cronograma') renderCrono();
     if (c === 'dirigido') renderDirigido();
     if (c === 'discursivas') renderDisc();
+    if (c === 'voo') renderVoo();
+    if (c === 'prontuario') renderProntuario();
   }
 
   let linked = false;

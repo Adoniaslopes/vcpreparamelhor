@@ -3,7 +3,8 @@
   'use strict';
   var cfg = window.PET_CONFIG || {};
   var $ = function (id) { return document.getElementById(id); };
-  var ARQS = ['questoes.json', 'materiais.json', 'trilhas.json', 'sinopses.json', 'discursivas.json', 'prova2023.json'];
+  var ARQS = ['questoes.json', 'materiais.json', 'trilhas.json', 'sinopses.json', 'discursivas.json', 'prova2023.json', 'edital.json'];
+  var OPCIONAIS = ['discursivas', 'prova2023', 'edital'];
   var BUCKET = 'conteudo';
   var NOME_PLAT = 'Plataforma de Estudos para Concursos da Petrobras e Transpetro';
   // cargo "Advogado(a) – Transpetro": o primeiro, cujos arquivos ficam na raiz do depósito
@@ -225,7 +226,7 @@
     }
     for (var i = 0; i < ARQS.length; i++) {
       var nome = ARQS[i], id = nome.replace('.json', '');
-      if (!versoes[nome] && (id === 'discursivas' || id === 'prova2023') && faltando.length < ARQS.length) { window.__pet.set(id, []); continue; } // opcionais
+      if (!versoes[nome] && OPCIONAIS.indexOf(id) > -1 && faltando.length < ARQS.length) { window.__pet.set(id, []); continue; } // opcionais
       try { window.__pet.set(id, await baixar(caminho(cargo, nome), versoes[nome])); }
       catch (e) { console.error(nome, e); window.__pet.fail(id); }
     }
