@@ -89,6 +89,10 @@ body { min-height: 100vh; }
 .cg-card b { font-size: 1.05rem; } .cg-card span { font-size: .85rem; color: var(--tinta2); }
 .ad-up { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 12px; }
 .ad-up input[type=file] { font: inherit; font-size: .85rem; color: var(--tinta2); max-width: 100%; }
+.pe-area { margin-bottom: var(--cds-gap-lg); }
+.cg-ctrl { align-items: flex-end; }
+.cg-lbl { display: flex; flex-direction: column; gap: 4px; font-size: .8rem; color: var(--tinta2); flex: 1; min-width: 12rem; }
+.cg-lbl select { width: 100%; }
 @media (max-width: 760px) {
   .ad-row { grid-template-columns: 1fr auto; }
   .ad-val, .ad-acts { grid-column: 1 / -1; }
@@ -188,7 +192,6 @@ body { min-height: 100vh; }
 <!-- barra superior -->
 <nav class="topo" id="topo" hidden>
   <span class="ola">Olá, <b id="topo-nome"></b> <span class="topo-cargo" id="topo-cargo"></span></span>
-  <button class="ac-btn" id="btn-cargo" type="button" hidden>Trocar cargo</button>
   <button class="ac-btn" id="btn-admin" type="button" hidden>Administração</button>
   <button class="ac-btn" id="btn-app" type="button" hidden>Voltar à plataforma</button>
   <button class="ac-btn ghost" type="button" data-sair>Sair</button>
@@ -199,8 +202,15 @@ body { min-height: 100vh; }
   <div class="ad">
     <div class="ac-marca">PETROBRAS E TRANSPETRO</div>
     <h1>Escolha o cargo</h1>
-    <p class="ac-nota">Cada cargo tem as suas disciplinas, questões, diagnóstico, cronograma e progresso. Você pode trocar de cargo quando quiser pelo botão “Trocar cargo”, sem perder o que já estudou.</p>
-    <div id="cg-lista"></div>
+    <p class="ac-nota">Cada cargo tem as suas disciplinas, questões, diagnóstico, cronograma e progresso. Você pode mudar de área quando quiser pelo quadro “Área de estudo” no início da plataforma, sem perder o que já estudou.</p>
+    <div class="ad-box">
+      <h2>Selecionar área</h2>
+      <div class="ad-ctrl cg-ctrl">
+        <label class="cg-lbl">Empresa<select id="cg-emp"></select></label>
+        <label class="cg-lbl">Cargo<select id="cg-cargo"></select></label>
+        <button class="ac-btn pri" id="cg-entrar" type="button">Entrar</button>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -638,6 +648,16 @@ body { min-height: 100vh; }
     <div class="pe-save" aria-live="polite"></div>
     <p class="pe-take" id="resumo"><span class="pe-bank dash-skeleton" data-source="banco_total" data-field="questoes" data-row="0">—</span> questões no padrão Cesgranrio, em <span class="pe-bank dash-skeleton" data-source="banco_total" data-field="disciplinas" data-row="0">—</span> disciplinas. <span id="resumo-user"></span></p>
   </header>
+
+  <div class="pe-card pe-area" id="area-card">
+    <h2 class="pe-h2">Área de estudo</h2>
+    <p class="pe-note">Escolha a empresa e o cargo. Cada área guarda o seu próprio diagnóstico, cronograma e progresso.</p>
+    <div class="pe-controls">
+      <label class="pe-field">Empresa<select id="a-emp"></select></label>
+      <label class="pe-field">Cargo<select id="a-cargo"></select></label>
+      <button class="pe-btn primary" id="a-abrir" type="button">Abrir área</button>
+    </div>
+  </div>
 
   <nav class="pe-tabs" role="tablist" aria-label="Seções">
     <button class="pe-tab pe-tab-start" role="tab" data-page="diagnostico" aria-selected="true">Diagnóstico</button>

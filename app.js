@@ -153,27 +153,40 @@
     if (!perfil.admin) cargos = cargos.filter(function (c) { return c.ativo !== false; }); // cargo sem conteúdo fica oculto para alunos
     cargos.forEach(function (c) { if (c.pasta == null) c.pasta = c.id === CARGO_LEGADO.id ? '' : c.id; });
   }
-  function mostrarCargos() {
-    var box = $('cg-lista'); box.replaceChildren();
-    var por = {};
-    cargos.forEach(function (c) { var e = c.empresa || 'Outros'; (por[e] = por[e] || []).push(c); });
-    Object.keys(por).sort().forEach(function (emp) {
-      box.append(el('h2', 'cg-emp', emp));
-      var g = el('div', 'cg-grid');
-      por[emp].sort(function (a, b) { return a.nome.localeCompare(b.nome); }).forEach(function (c) {
-        var b = el('button', 'cg-card'); b.type = 'button';
-        b.append(el('b', null, c.nome));
-        if (c.descricao) b.append(el('span', null, c.descricao));
-        b.addEventListener('click', function () { lsSet('pet-cargo-' + window.PET_UID, c.id); if (appIniciado) location.reload(); else abrirCargo(c); });
-        g.append(b);
-      });
-      box.append(g);
-    });
-    views('cargos'); $('btn-cargo').hidden = true;
+  // seletores Empresa / Cargo (tela inicial e quadro "Área de estudo")
+  function preencherArea(selEmp, selCargo, atualId) {
+    var emps = Array.from(new Set(cargos.map(function (c) { return c.empresa || 'Outros'; }))).sort();
+    var atual = cargos.find(function (c) { return c.id === atualId; }) || cargos[0];
+    selEmp.replaceChildren(); emps.forEach(function (e) { selEmp.append(new Option(e, e)); });
+    selEmp.value = atual ? (atual.empresa || 'Outros') : emps[0];
+    function cargosDaEmp() {
+      selCargo.replaceChildren();
+      cargos.filter(function (c) { return (c.empresa || 'Outros') === selEmp.value; })
+        .sort(function (a, b) { return a.nome.localeCompare(b.nome); })
+        .forEach(function (c) { selCargo.append(new Option(c.nome + (c.ativo === false ? ' (sem conteúdo)' : ''), c.id)); });
+    }
+    cargosDaEmp();
+    if (atual && selCargo.querySelector('option[value="' + atual.id + '"]')) selCargo.value = atual.id;
+    selEmp.onchange = cargosDaEmp;
   }
+  function escolherCargo(id) {
+    var c = cargos.find(function (x) { return x.id === id; }); if (!c) return;
+    lsSet('pet-cargo-' + window.PET_UID, c.id);
+    if (appIniciado) location.reload(); else abrirCargo(c);
+  }
+  function mostrarCargos() {
+    preencherArea($('cg-emp'), $('cg-cargo'), lsGet('pet-cargo-' + window.PET_UID));
+    views('cargos');
+  }
+  $('cg-entrar').addEventListener('click', function () { escolherCargo($('cg-cargo').value); });
+  $('a-abrir').addEventListener('click', function () {
+    var id = $('a-cargo').value;
+    if (cargo && id === cargo.id) return;
+    escolherCargo(id);
+  });
   function abrirCargo(c) {
     cargo = c; window.PET_CARGO = c.id;
-    $('btn-cargo').hidden = cargos.length < 2 && !perfil.admin;
+    preencherArea($('a-emp'), $('a-cargo'), c.id);
     $('topo-cargo').textContent = rotulo(c);
     var t = document.getElementById('titulo'); if (t) t.textContent = NOME_PLAT;
     var h = document.getElementById('pe-head'); if (h) h.setAttribute('data-kicker', ((c.banca || 'Cesgranrio') + ' · ' + rotulo(c)).toUpperCase());
@@ -181,7 +194,6 @@
     views('app');
     iniciarApp();
   }
-  $('btn-cargo').addEventListener('click', function () { mostrarCargos(); });
 
   // ---------- conteúdo ----------
   async function baixar(nome, versao) {
@@ -213,7 +225,7 @@
       $('aviso-conteudo').hidden = false;
       $('aviso-conteudo').textContent = perfil && perfil.admin
         ? 'O conteúdo deste cargo ainda não foi publicado. Abra “Administração”, escolha o cargo “' + rotulo(cargo) + '” e envie os arquivos.'
-        : 'O conteúdo deste cargo ainda não foi publicado. Escolha outro cargo em “Trocar cargo”.' + contato();
+        : 'O conteúdo deste cargo ainda não foi publicado. Escolha outra área no quadro “Área de estudo”.' + contato();
     }
     for (var i = 0; i < ARQS.length; i++) {
       var nome = ARQS[i], id = nome.replace('.json', '');
@@ -224,8 +236,8 @@
   }
 
   // ---------- administração ----------
-  $('btn-admin').addEventListener('click', function () { views('admin'); $('btn-admin').hidden = true; $('btn-app').hidden = false; $('btn-cargo').hidden = true; carregarAlunos(); desenharSelCargo(); listarConteudo(); });
-  $('btn-app').addEventListener('click', function () { $('btn-admin').hidden = false; $('btn-app').hidden = true; if (cargo) { views('app'); $('btn-cargo').hidden = false; } else mostrarCargos(); });
+  $('btn-admin').addEventListener('click', function () { views('admin'); $('btn-admin').hidden = true; $('btn-app').hidden = false; carregarAlunos(); desenharSelCargo(); listarConteudo(); });
+  $('btn-app').addEventListener('click', function () { $('btn-admin').hidden = false; $('btn-app').hidden = true; if (cargo) views('app'); else mostrarCargos(); });
   $('ad-filtro').addEventListener('change', desenharAlunos);
   $('ad-busca').addEventListener('input', desenharAlunos);
   var alunos = [];
