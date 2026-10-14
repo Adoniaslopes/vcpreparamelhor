@@ -153,21 +153,17 @@
     if (!perfil.admin) cargos = cargos.filter(function (c) { return c.ativo !== false; }); // cargo sem conteúdo fica oculto para alunos
     cargos.forEach(function (c) { if (c.pasta == null) c.pasta = c.id === CARGO_LEGADO.id ? '' : c.id; });
   }
-  // seletores Empresa / Cargo (tela inicial e quadro "Área de estudo")
-  function preencherArea(selEmp, selCargo, atualId) {
-    var emps = Array.from(new Set(cargos.map(function (c) { return c.empresa || 'Outros'; }))).sort();
-    var atual = cargos.find(function (c) { return c.id === atualId; }) || cargos[0];
-    selEmp.replaceChildren(); emps.forEach(function (e) { selEmp.append(new Option(e, e)); });
-    selEmp.value = atual ? (atual.empresa || 'Outros') : emps[0];
-    function cargosDaEmp() {
-      selCargo.replaceChildren();
-      cargos.filter(function (c) { return (c.empresa || 'Outros') === selEmp.value; })
-        .sort(function (a, b) { return a.nome.localeCompare(b.nome); })
-        .forEach(function (c) { selCargo.append(new Option(c.nome + (c.ativo === false ? ' (sem conteúdo)' : ''), c.id)); });
-    }
-    cargosDaEmp();
-    if (atual && selCargo.querySelector('option[value="' + atual.id + '"]')) selCargo.value = atual.id;
-    selEmp.onchange = cargosDaEmp;
+  // lista de áreas: Advogado(a) primeiro, as demais em ordem alfabética
+  function ordenarAreas() {
+    return cargos.slice().sort(function (x, y) {
+      if (x.id === CARGO_LEGADO.id) return -1; if (y.id === CARGO_LEGADO.id) return 1;
+      return rotulo(x).localeCompare(rotulo(y), 'pt-BR');
+    });
+  }
+  function preencherArea(sel, atualId) {
+    sel.replaceChildren();
+    ordenarAreas().forEach(function (c) { sel.append(new Option(rotulo(c) + (c.ativo === false ? ' (sem conteúdo)' : ''), c.id)); });
+    if (atualId && sel.querySelector('option[value="' + atualId + '"]')) sel.value = atualId;
   }
   function escolherCargo(id) {
     var c = cargos.find(function (x) { return x.id === id; }); if (!c) return;
@@ -175,7 +171,7 @@
     if (appIniciado) location.reload(); else abrirCargo(c);
   }
   function mostrarCargos() {
-    preencherArea($('cg-emp'), $('cg-cargo'), lsGet('pet-cargo-' + window.PET_UID));
+    preencherArea($('cg-cargo'), lsGet('pet-cargo-' + window.PET_UID));
     views('cargos');
   }
   $('cg-entrar').addEventListener('click', function () { escolherCargo($('cg-cargo').value); });
@@ -186,7 +182,7 @@
   });
   function abrirCargo(c) {
     cargo = c; window.PET_CARGO = c.id;
-    preencherArea($('a-emp'), $('a-cargo'), c.id);
+    preencherArea($('a-cargo'), c.id);
     $('topo-cargo').textContent = rotulo(c);
     var t = document.getElementById('titulo'); if (t) t.textContent = NOME_PLAT;
     var h = document.getElementById('pe-head'); if (h) h.setAttribute('data-kicker', ((c.banca || 'Cesgranrio') + ' · ' + rotulo(c)).toUpperCase());
