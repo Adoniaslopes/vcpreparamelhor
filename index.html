@@ -1202,11 +1202,11 @@ body { min-height: 100vh; }
     const pdf = rows.find((r) => r.tipo === 'pdf');
     pdfBox.replaceChildren();
     const head = el('div'); head.style.cssText = 'display:flex;gap:16px;align-items:center';
-    const info = el('div'); info.append(el('div', 'pe-kpi-label', 'Material de leitura · Sinopse Jurídica'), el('div', 'pe-pdf-title', pdf ? pdf.titulo : disc.disciplina));
+    const info = el('div'); info.append(el('div', 'pe-kpi-label', 'Material de leitura · Sinopse'), el('div', 'pe-pdf-title', pdf ? pdf.titulo : disc.disciplina));
     head.append(el('div', 'pe-pdf-icon', 'LER'), info);
     const s = statsFor(Q.filter((q) => q.disc === mtDisc));
     const nq = el('span'); nq.dataset.source = 'materiais'; nq.dataset.field = 'questoes'; nq.dataset.where = 'disc=' + mtDisc + '&tipo=pdf'; nq.textContent = pdf ? nf.format(pdf.questoes) : '—';
-    const p = el('p', 'pe-note'); p.append('Resumo doutrinário, jurisprudência e quadros da disciplina. Depois da leitura, resolva as ', nq, ` questões do banco (${nf.format(s.n)} já respondidas).`);
+    const p = el('p', 'pe-note'); p.append('Resumo teórico e quadros da disciplina. Depois da leitura, resolva as ', nq, ` questões do banco (${nf.format(s.n)} já respondidas).`);
     const acts = el('div', 'pe-actions');
     const caps = sinRows(mtDisc).filter((r) => r.tipo === 'h1');
     const nav = el('select'); nav.setAttribute('aria-label', 'Ir para o capítulo'); nav.className = 'pe-nav';
@@ -2434,7 +2434,7 @@ body { min-height: 100vh; }
       const names = new Map(Q.map((q) => [q.disciplina, q.disc]));
       DISCS = b.data.map((r) => ({disciplina: r.disciplina, questoes: Number(r.questoes), disc: names.get(r.disciplina)})).sort((x, y) => order.indexOf(x.disc) - order.indexOf(y.disc));
       const PAL = ['#FFCC29', '#FF9F1C', '#C6E33B', '#7ED957', '#2FD18B', '#14B8A6', '#38BDF8', '#5B8DEF', '#B7C9A8', '#FF7A7A', '#F472B6', '#A78BFA', '#FDE68A', '#67E8F9'];
-      DISCS.forEach((d, i) => { if (!DC[d.disc]) DC[d.disc] = PAL[i % PAL.length]; if (!SHORT[d.disc]) SHORT[d.disc] = d.disciplina.length <= 20 ? d.disciplina : d.disciplina.replace(/^(Direito|Noções de|Conhecimentos)\s+(do |da |de |dos |das |em )?/i, '').slice(0, 22); });
+      DISCS.forEach((d, i) => { if (!DC[d.disc]) DC[d.disc] = PAL[i % PAL.length]; if (!SHORT[d.disc]) SHORT[d.disc] = d.disciplina.length <= 24 ? d.disciplina : d.disciplina.split(/,| e /)[0].replace(/^(Direito|Noções de|Conhecimentos)\s+(do |da |de |dos |das |em )?/i, '').trim().slice(0, 24); });
     }
     if (tot.status === 'ok' && tot.data[0]) {
       const [t1, t2] = ROOT.querySelectorAll('#resumo .pe-bank');
