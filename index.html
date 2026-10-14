@@ -1779,7 +1779,7 @@ body { min-height: 100vh; }
     crDays.replaceChildren();
     [1, 2, 3, 4, 5, 6, 0].forEach((d) => {
       const b = el('button', 'pe-day', WD[d]); b.setAttribute('aria-pressed', String(selDays.includes(d)));
-      b.addEventListener('click', () => { selDays = selDays.includes(d) ? selDays.filter((x) => x !== d) : [...selDays, d]; drawDayButtons(); });
+      b.addEventListener('click', () => { selDays = selDays.includes(d) ? selDays.filter((x) => x !== d) : [...selDays, d]; drawDayButtons(); if (plan && selDays.length) gerarPlano(true); });
       crDays.append(b);
     });
   }
@@ -1798,7 +1798,8 @@ body { min-height: 100vh; }
     const temProva = DISCS.some((d) => provaPeso(d.disc) != null);
     return {w, order, base: (temProva ? `peso de cada disciplina na prova de ${provaAno()} combinado com o ` : '') + (hasDiag ? 'diagnóstico' : 'desempenho atual'), disc: 1};
   }
-  document.getElementById('cr-gen').addEventListener('click', () => {
+  // gera (ou recalcula) o cronograma com os valores do formulário; mantém os dias já concluídos
+  function gerarPlano(auto) {
     const exam = document.getElementById('cr-exam').value, gm = document.getElementById('cr-gmsg');
     if (!exam) { gm.textContent = 'Informe a data da prova.'; return; }
     const today = new Date(); today.setHours(0, 0, 0, 0);
@@ -1806,10 +1807,16 @@ body { min-height: 100vh; }
     if (!selDays.length) { gm.textContent = 'Escolha ao menos um dia de estudo.'; return; }
     const min = Math.max(120, Number(document.getElementById('cr-min').value) || 120);
     const wo = weightsNow();
-    plan = {exam, days: selDays.slice(), start: document.getElementById('cr-hora').value || '19:00', min, gen: dkey(new Date()), ...wo};
-    done = new Set(); crWeek = null; gm.textContent = 'Cronograma gerado.';
-    renderCrono(); document.getElementById('cr-plan').scrollIntoView({block: 'start'});
-  });
+    const hoje = dkey(new Date());
+    plan = {exam, days: selDays.slice(), start: document.getElementById('cr-hora').value || '19:00', min, gen: hoje, ...wo};
+    done = new Set([...done].filter((k) => k.slice(0, 10) < hoje)); crWeek = null;
+    gm.textContent = auto ? `Cronograma recalculado: ${fmtMin(min)} por dia até ${pdate(exam).toLocaleDateString('pt-BR')}.` : 'Cronograma gerado.';
+    renderCrono(); saveNow();
+    if (!auto) document.getElementById('cr-plan').scrollIntoView({block: 'start'});
+  }
+  document.getElementById('cr-gen').addEventListener('click', () => gerarPlano(false));
+  // com cronograma já criado, qualquer alteração no formulário recalcula na hora
+  ['cr-exam', 'cr-min', 'cr-hora'].forEach((id) => document.getElementById(id).addEventListener('change', () => { if (plan) gerarPlano(true); }));
   function buildPlan(p) {
     const out = []; const start = pdate(p.gen); const end = pdate(p.exam);
     const days = [];
@@ -1867,8 +1874,9 @@ body { min-height: 100vh; }
   function renderCrono() {
     if (!DISCS.length) return;
     const ex = document.getElementById('cr-exam');
-    if (!ex.value) { const d = new Date(); d.setDate(d.getDate() + 90); ex.value = plan ? plan.exam : dkey(d); }
-    if (plan) { document.getElementById('cr-hora').value = plan.start; document.getElementById('cr-min').value = String(plan.min); }
+    const edData = (ED() && ED().prova && ED().prova.data) || null;
+    if (plan) { ex.value = plan.exam; document.getElementById('cr-hora').value = plan.start; document.getElementById('cr-min').value = String(plan.min); }
+    else if (!ex.value) { const d = new Date(); d.setDate(d.getDate() + 90); ex.value = edData || dkey(d); }
     drawDayButtons();
     const st = diagStats(); const hasDiag = st.some((s) => s.n);
     document.getElementById('cr-base').textContent = hasDiag
@@ -1878,6 +1886,7 @@ body { min-height: 100vh; }
     if (!plan) { box.append(el('div', 'pe-empty', 'Defina a data da prova, os dias e o horário, e clique em “Gerar cronograma”.')); drawTimer(); return; }
     const days = buildPlan(plan);
     if (!days.length) { box.append(el('div', 'pe-empty', 'Não há dias de estudo entre hoje e a data da prova com os dias escolhidos.')); return; }
+    if (edData && plan.exam !== edData) { const w = el('p', 'pe-warn', `Atenção: a prova é em ${pdate(edData).toLocaleDateString('pt-BR')}, mas este cronograma vai até ${pdate(plan.exam).toLocaleDateString('pt-BR')}. `); const fx = el('button', 'pe-btn', 'Ajustar para a data oficial'); fx.addEventListener('click', () => { document.getElementById('cr-exam').value = edData; gerarPlano(true); }); w.append(fx); box.append(w); }
     // resumo
     const hours = {}; days.forEach((d) => d.slots.forEach((s) => { const k = s.tipo === 'disc' ? s.disc : (s.tipo === 'discursiva' || s.tipo === 'final_disc') ? '_disc' : '_rev'; hours[k] = (hours[k] || 0) + d3.sum(s.blocks, (b) => b.min); }));
     const totMin = d3.sum(Object.values(hours));
