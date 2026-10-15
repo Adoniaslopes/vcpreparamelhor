@@ -711,6 +711,97 @@ body { min-height: 100vh; }
 .pr-boxes { display: flex; gap: 2px; height: 12px; border-radius: 999px; overflow: hidden; margin: 6px 0; }
 .pr-boxes i { display: block; height: 100%; }
 
+/* ===== tema claro: verde só no cabeçalho; conteúdo em branco com texto preto ===== */
+section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
+.pe {
+  --color-fg: #14201B; --color-fg-muted: #55665E; --color-bg: #FFFFFF; --color-panel: #FFFFFF;
+  --color-border-line: #DCE3DF; --color-ok: #15803D; --color-warn: #B45309; --color-bad: #BE123C;
+  --cds-chart-grid: rgba(20,32,27,.08); --cds-chart-axis: rgba(20,32,27,.3); --cds-chart-muted: rgba(20,32,27,.25);
+  --cds-surface-popover: #FFFFFF; --cds-border: #CBD5D0; --cds-text-secondary: #0B3B2A;
+  background: #F7F9F8; color: var(--color-fg); box-shadow: 0 6px 24px rgba(20,32,27,.08); color-scheme: light;
+}
+.pe .pe-card { background: #FFFFFF; border: 1px solid var(--color-border-line); box-shadow: 0 1px 3px rgba(20,32,27,.06); backdrop-filter: none; }
+.pe .pe-h2, .pe .pe-dir, .pe .pe-disc-name, .pe .pe-pdf-title, .pe .pe-lei-t, .pe .pe-ring-name, .pe .pe-dg-chip b, .pe .pe-map-row .nm, .pe .pe-map-row .v,
+.pe .pe-focus-item .t, .pe .pe-errs summary, .pe .pe-timer-clock, .pe .pe-week-nav strong, .pe .pe-dcard .dt, .pe .pe-slot .st, .pe .pe-tr-gt, .pe .pe-step.ok,
+.pe .pe-tr-err summary, .pe .pe-prog b, .pe .pe-resume span, .pe .pv-tab tr.blk td, .pe .pv-rank-it .nm, .pe .pv-ed summary, .pe .pe-tip, .pe .pe-art { color: var(--color-fg); }
+.pe .pe-head .pe-save { background: rgba(0,0,0,.18); color: #fff; }
+/* abas e botões */
+.pe .pe-tab { background: #FFFFFF; border-color: var(--color-border-line); color: var(--color-fg-muted); }
+.pe .pe-tab:hover { background: #F1F5F3; color: var(--color-fg); }
+.pe .pe-tab[aria-selected="true"] { background: var(--accent); color: #14201B; }
+.pe .pe-btn { background: #FFFFFF; color: var(--color-fg); border-color: #C9D3CE; }
+.pe .pe-btn:hover { background: #F1F5F3; border-color: #9FB0A8; }
+.pe .pe-btn.primary, .pe .pe-link.primary { background: var(--accent); color: #14201B; border-color: transparent; }
+.pe .pe-disc .pe-btn.ghost, .pe .pe-link.ghost { background: #FFFFFF; color: var(--color-fg); border-color: #C9D3CE; }
+.pe .pe-field select, .pe .pe-field input, .pe .pe-nav { background: #FFFFFF; color: var(--color-fg); border-color: #C9D3CE; color-scheme: light; }
+.pe .pe-day { background: #FFFFFF; border-color: #C9D3CE; }
+/* indicadores (KPIs): brancos com faixa de cor */
+.pe .pe-kpis .pe-card, .pe #kpi-resp, .pe #kpi-acerto, .pe #kpi-prof, .pe #kpi-dom, .pe #dkpi-resp, .pe #dkpi-acerto, .pe #dkpi-prof, .pe #dkpi-dom { background: #FFFFFF; color: var(--color-fg); border: 1px solid var(--color-border-line); border-top: 4px solid #00A859; box-shadow: 0 1px 3px rgba(20,32,27,.06); }
+.pe .pe-kpis .pe-card::after { display: none; }
+.pe .pe-kpis .pe-kpi-label, .pe .pe-kpis .pe-kpi-note, .pe .pe-kpis .pe-kpi-value, .pe #kpi-prof .pe-kpi-label, .pe #kpi-prof .pe-kpi-note, .pe #kpi-prof .pe-kpi-value, .pe #dkpi-prof .pe-kpi-label, .pe #dkpi-prof .pe-kpi-note, .pe #dkpi-prof .pe-kpi-value { color: var(--color-fg); }
+.pe .pe-kpis .pe-kpi-label, .pe .pe-kpis .pe-kpi-note { color: var(--color-fg-muted); }
+.pe #kpi-prof, .pe #dkpi-prof { border-top-color: #F5A400; }
+.pe .pv-inst .pe-card { background: #FFFFFF; box-shadow: 0 1px 3px rgba(20,32,27,.06); }
+.pe .pv-inst .pe-card.ok { background: #F0FDF4; border-top-color: #15803D; }
+.pe .pv-inst .pe-card.warn { background: #FFFBEB; border-top-color: #D97706; }
+.pe .pv-inst .pe-card.bad { background: #FFF1F2; border-top-color: #BE123C; }
+.pe .pv-inst .pe-card.sol { background: #FFF8DB; border-top-color: #F5A400; }
+.pe .pv-inst .pe-card .pe-kpi-label, .pe .pv-inst .pe-card .pe-kpi-note, .pe .pv-inst .pe-card .pe-kpi-value { color: var(--color-fg); }
+.pe .pv-alerta { background: #FFF1F2; } .pe .pv-alerta.ok { background: #F0FDF4; }
+/* questões: fundo branco, letras pretas */
+.pe .pe-q-stem { color: #111; font-size: 1rem; line-height: 1.7; }
+.pe .pe-alt { background: #FFFFFF; border-color: #CBD5D0; color: #111; }
+.pe .pe-alt:hover:not(:disabled) { border-color: #6B7C74; background: #FAFBFA; }
+.pe .pe-alt .l { border-color: #9FB0A8; color: #14201B; }
+.pe .pe-alt.sel { border-color: #14201B; background: #FFFBEA; }
+.pe .pe-alt.sel .l { background: var(--accent); color: #14201B; border-color: transparent; }
+.pe .pe-alt.ok { border-color: #15803D; background: #ECFDF3; } .pe .pe-alt.ok .l { background: #15803D; color: #fff; }
+.pe .pe-alt.bad { border-color: #BE123C; background: #FFF1F2; } .pe .pe-alt.bad .l { background: #BE123C; color: #fff; }
+.pe .pe-fb { background: #F7F9F8; color: #111; }
+.pe #q-disc, .pe #dg-disc { color: var(--color-fg-muted) !important; font-weight: 600; }
+.pe .pe-dots i { background: #E2E8E5; } .pe .pe-dots i.cur { outline-color: #14201B; }
+.pe .pe-prog-bar, .pe .pe-dg-bar, .pe .pe-bar, .pe .pv-mini, .pe .pe-map-row .bar { background: #E6ECE9; }
+.pe .pe-map-row .bar s { background: #14201B; }
+.pe .pe-map-row { border-bottom-color: #EEF2F0; }
+/* blocos internos com fundo translúcido */
+.pe .pe-ds-item, .pe .pe-ds-esp, .pe .pe-lei, .pe .pe-dcard, .pe .pe-tr-item, .pe .pe-errs details, .pe .pe-tr-err, .pe .pe-insights li, .pe .pe-dg-chip, .pe .pe-step, .pe .pe-timer-steps span, .pe .pv-ed details, .pe .pv-bas, .pe .pe-ring-card { background: #FFFFFF; border-color: var(--color-border-line); }
+.pe .pe-tr-item:hover { background: #F7F9F8; }
+.pe .pe-ring-card { border-top-color: var(--dc); }
+.pe .pe-lei, .pe .pv-ed details { border-left-color: var(--dc, #FFCC29); }
+.pe .pe-ds-item, .pe .pe-tr-item, .pe .pe-errs details, .pe .pe-dg-chip { border-left-color: var(--dc); }
+.pe .pe-tr-err, .pe .pe-insights li { border-left-color: #E11D48; }
+.pe .pe-step b { background: #E6ECE9; color: #14201B; }
+.pe .pe-lei-d { color: var(--color-fg-muted); }
+.pe .pe-art { background: color-mix(in srgb, var(--dc) 14%, #fff); border-color: color-mix(in srgb, var(--dc) 55%, #fff); }
+.pe .pe-disc { background: linear-gradient(180deg, color-mix(in srgb, var(--dc, #FFCC29) 10%, #fff), #fff 70%); }
+.pe .pe-mt-pdf, .pe .pe-tr-head { background: linear-gradient(160deg, color-mix(in srgb, var(--dc, #FFCC29) 12%, #fff), #fff 75%); }
+.pe .pe-dg-hero { background: linear-gradient(135deg, #FFF8DB, #F0FDF4); }
+.pe .pe-chip { color: var(--color-fg); background: color-mix(in srgb, var(--dc) 10%, #fff); }
+.pe .pe-tag.na, .pe .pv-st.na, .pe .pe-badge { background: #F1F5F3; }
+.pe .pe-tag.forte { color: #15803D; background: #DCFCE7; } .pe .pe-tag.regular { color: #92400E; background: #FEF3C7; } .pe .pe-tag.fraco { color: #BE123C; background: #FFE4E6; }
+.pe .pv-st.ok { color: #15803D; background: #DCFCE7; } .pe .pv-st.warn { color: #92400E; background: #FEF3C7; } .pe .pv-st.bad { color: #BE123C; background: #FFE4E6; }
+.pe .pv-tab td { border-bottom-color: #EEF2F0; } .pe .pv-tab tr.blk td { background: #F3F6F4; }
+.pe .pv-ed label { border-top-color: #EEF2F0; }
+.pe .pe-ds-txt, .pe .pe-code { background: #FFFFFF; color: #111; border-color: #C9D3CE; }
+.pe .pe-studybar { background: #FFFFFF; border-color: #F5A400; box-shadow: 0 8px 24px rgba(20,32,27,.12); }
+.pe .pe-sb-top b { color: var(--color-fg); }
+.pe .pe-tip { background: #FFFFFF; border-color: #CBD5D0; }
+.pe .pe-timer-ring .bg { stroke: #E6ECE9; }
+.pe .pe-warn { color: #92400E; }
+.pe .pe-pdf-icon::before { border-color: transparent #FFFFFF transparent transparent; }
+/* leitura da sinopse em tela cheia */
+.pe-rd-bar { display: flex; gap: 8px; align-items: center; justify-content: flex-end; flex-wrap: wrap; margin: -6px 0 10px; }
+.pe-rd-bar .pe-btn { font-size: 13px; }
+.pe-reader.pe-reader-full { position: fixed; inset: 0; z-index: 1000; max-height: none; height: 100vh; border-radius: 0; border-top: 0; margin: 0; padding: 0 0 40px; overflow: auto; background: #FFFFFF; font-size: var(--rd-fs, 18px); }
+.pe-reader.pe-reader-full > * { max-width: 860px; margin-left: auto; margin-right: auto; padding-left: 24px; padding-right: 24px; }
+.pe-reader.pe-reader-full > .pe-rd-capa { margin-top: 12px; padding: 20px 24px; }
+.pe-reader.pe-reader-full .pe-rd-t { font-size: .9em; }
+.pe-rd-full-bar { position: sticky; top: 0; z-index: 2; display: flex; gap: 8px; align-items: center; justify-content: space-between; flex-wrap: wrap; padding: 10px 24px !important; max-width: none !important; background: #0B3B2A; color: #fff; }
+.pe-rd-full-bar b { font-size: 14px; }
+.pe-rd-full-bar .acts { display: flex; gap: 6px; flex-wrap: wrap; }
+.pe-rd-full-bar button { font: inherit; font-size: 13px; font-weight: 600; border-radius: 999px; padding: 6px 14px; cursor: pointer; border: 1px solid rgba(255,255,255,.35); background: rgba(255,255,255,.1); color: #fff; }
+.pe-rd-full-bar button.pri { background: #FFCC29; color: #14201B; border-color: transparent; }
+
 .pe-sb-top { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; }
 .pe-sb-top b { color: #fff; } .pe-sb-top span { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
 .pe-sb-clock { font-variant-numeric: tabular-nums; color: #FFCC29 !important; font-weight: 700; font-size: 1rem !important; }
@@ -846,7 +937,7 @@ body { min-height: 100vh; }
         <h2 class="pe-h2" id="radar-titulo">Bússola de desempenho</h2>
         <p class="pe-note">Anel externo: proficiência (0 a 100), com a marca amarela na meta de 70. Anel interno: quanto do banco da disciplina já foi respondido. Clique numa disciplina para treinar.</p>
         <div class="pe-rings" id="radar" data-source="banco"></div>
-        <div class="pe-legend"><span><i style="background: var(--accent)"></i>Proficiência</span><span><i style="background: rgba(255,255,255,.55)"></i>Avanço no banco</span><span><i style="background: #fff; height: 10px; width: 3px"></i>Meta 70</span></div>
+        <div class="pe-legend"><span><i style="background: var(--accent)"></i>Proficiência</span><span><i style="background: rgba(20,32,27,.45)"></i>Avanço no banco</span><span><i style="background: #14201B; height: 10px; width: 3px"></i>Meta 70</span></div>
       </div>
       <div class="pe-side">
         <div class="pe-card" id="rumo">
@@ -1165,10 +1256,10 @@ body { min-height: 100vh; }
       const g = svg.append('g').attr('transform', `translate(${size / 2},${size / 2})`);
       const arc = (r0, r1) => d3.arc().innerRadius(r0).outerRadius(r1).cornerRadius((r1 - r0) / 2).startAngle(0);
       const a1 = arc(R - w1, R), a2 = arc(R - w1 - 6 - w2, R - w1 - 6);
-      g.append('path').attr('d', a1({endAngle: 2 * Math.PI})).attr('fill', 'rgba(255,255,255,.10)');
-      g.append('path').attr('d', a2({endAngle: 2 * Math.PI})).attr('fill', 'rgba(255,255,255,.07)');
+      g.append('path').attr('d', a1({endAngle: 2 * Math.PI})).attr('fill', 'rgba(20,32,27,.08)');
+      g.append('path').attr('d', a2({endAngle: 2 * Math.PI})).attr('fill', 'rgba(20,32,27,.06)');
       const pa = g.append('path').attr('fill', o.color).style('filter', `drop-shadow(0 0 6px ${o.color})`);
-      const pb = g.append('path').attr('fill', 'rgba(255,255,255,.6)');
+      const pb = g.append('path').attr('fill', 'rgba(20,32,27,.45)');
       const endP = 2 * Math.PI * Math.max(0, Math.min(1, (o.prof || 0) / 100)), endC = 2 * Math.PI * Math.max(0, Math.min(1, o.cov || 0));
       const key = o.key; const first = !ringDrawn.has(key); ringDrawn.add(key);
       if (first && !reduceMotion) {
@@ -1176,8 +1267,8 @@ body { min-height: 100vh; }
         pb.transition().duration(900).ease(d3.easeCubicOut).attrTween('d', () => (t) => a2({endAngle: endC * t}));
       } else { pa.attr('d', a1({endAngle: endP})); pb.attr('d', a2({endAngle: endC})); }
       const ma = 2 * Math.PI * META / 100 - Math.PI / 2;
-      g.append('line').attr('x1', Math.cos(ma) * (R - w1 - 2)).attr('y1', Math.sin(ma) * (R - w1 - 2)).attr('x2', Math.cos(ma) * (R + 2)).attr('y2', Math.sin(ma) * (R + 2)).attr('stroke', '#fff').attr('stroke-width', 2.5).attr('stroke-linecap', 'round');
-      g.append('text').attr('text-anchor', 'middle').attr('dy', o.big ? '0.1em' : '0.25em').attr('fill', '#fff').attr('font-family', 'var(--font-anthropic-serif)').attr('font-size', size * (o.big ? .24 : .25)).text(o.prof == null ? '—' : o.prof);
+      g.append('line').attr('x1', Math.cos(ma) * (R - w1 - 2)).attr('y1', Math.sin(ma) * (R - w1 - 2)).attr('x2', Math.cos(ma) * (R + 2)).attr('y2', Math.sin(ma) * (R + 2)).attr('stroke', '#14201B').attr('stroke-width', 2.5).attr('stroke-linecap', 'round');
+      g.append('text').attr('text-anchor', 'middle').attr('dy', o.big ? '0.1em' : '0.25em').attr('fill', '#14201B').attr('font-family', 'var(--font-anthropic-serif)').attr('font-size', size * (o.big ? .24 : .25)).text(o.prof == null ? '—' : o.prof);
       g.append('text').attr('text-anchor', 'middle').attr('dy', o.big ? '1.9em' : '2.3em').attr('fill', 'var(--color-fg-muted)').attr('font-size', Math.max(10, size * (o.big ? .065 : .08))).text(o.big ? 'proficiência geral' : (o.prof == null ? 'sem respostas' : 'proficiência'));
     };
     const top = el('div', 'pe-ring-top');
@@ -1273,6 +1364,38 @@ body { min-height: 100vh; }
     if (!rows.length) rd.append(el('div', 'pe-empty', 'Sinopse não encontrada para esta disciplina.'));
   }
   function openMaterial(disc) { mtDisc = disc; show('material'); document.getElementById('material').scrollIntoView({block: 'start'}); }
+  // ---------- leitura em tela cheia (Sinopse) ----------
+  let rdFull = null;
+  function telaCheia(rd, titulo) {
+    if (rdFull) return;
+    const pos = rd.scrollTop;
+    let fs = 18; try { fs = Number(localStorage.getItem('pet-rd-fs')) || 18; } catch (e) { /* sem armazenamento */ }
+    const bar = el('div', 'pe-rd-full-bar');
+    const tt = el('b', null, titulo || 'Sinopse');
+    const acts = el('div', 'acts');
+    const aplica = () => { rd.style.setProperty('--rd-fs', fs + 'px'); try { localStorage.setItem('pet-rd-fs', String(fs)); } catch (e) { /* ignora */ } };
+    const menos = el('button', null, 'A−'); menos.title = 'Diminuir letra'; menos.addEventListener('click', () => { fs = Math.max(14, fs - 2); aplica(); });
+    const mais = el('button', null, 'A+'); mais.title = 'Aumentar letra'; mais.addEventListener('click', () => { fs = Math.min(28, fs + 2); aplica(); });
+    const sair = el('button', 'pri', 'Sair da tela cheia (Esc)'); sair.addEventListener('click', () => sairTelaCheia());
+    acts.append(menos, mais, sair); bar.append(tt, acts);
+    rd.prepend(bar); rd.classList.add('pe-reader-full'); aplica();
+    document.body.style.overflow = 'hidden';
+    rdFull = {rd, bar, pos};
+    try { if (rd.requestFullscreen) rd.requestFullscreen().catch(() => {}); } catch (e) { /* modo janela */ }
+    rd.scrollTop = pos;
+  }
+  function sairTelaCheia(doNavegador) {
+    if (!rdFull) return;
+    const {rd, bar} = rdFull; const pos = rd.scrollTop; rdFull = null;
+    bar.remove(); rd.classList.remove('pe-reader-full'); rd.style.removeProperty('--rd-fs');
+    document.body.style.overflow = '';
+    try { if (!doNavegador && document.fullscreenElement) document.exitFullscreen().catch(() => {}); } catch (e) { /* ignora */ }
+    rd.scrollTop = pos;
+  }
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && rdFull) sairTelaCheia(); });
+  document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && rdFull) sairTelaCheia(true); });
+  const btnTela = (rdId, titulo) => { const b = el('button', 'pe-btn', '⛶ Ler em tela cheia'); b.addEventListener('click', () => { const rd = document.getElementById(rdId); if (rd) telaCheia(rd, titulo); }); return b; };
+
   function renderMaterial() {
     if (!mtDisc) mtDisc = DISCS[0] && DISCS[0].disc;
     const chips = document.getElementById('mt-chips'); chips.replaceChildren();
@@ -1298,7 +1421,7 @@ body { min-height: 100vh; }
     nav.disabled = !caps.length;
     nav.addEventListener('change', () => { const t = document.getElementById(nav.value); const rd = document.getElementById('mt-reader'); if (t) rd.scrollTop = t.offsetTop - 8; });
     const go = el('button', 'pe-btn primary', 'Já li — ir para as questões'); go.addEventListener('click', () => startFrom(mtDisc));
-    acts.append(nav, go);
+    acts.append(nav, btnTela('mt-reader', pdf && /^sinopse/i.test(pdf.titulo) ? pdf.titulo : 'Sinopse · ' + (pdf ? pdf.titulo : disc.disciplina)), go);
     pdfBox.append(head, p, acts);
     renderReader();
     list.replaceChildren();
@@ -1640,7 +1763,7 @@ body { min-height: 100vh; }
   }, 1000);
 
   const cls = (p) => p == null ? {k: 'na', t: 'Sem dados'} : p >= 70 ? {k: 'forte', t: 'Forte'} : p >= 50 ? {k: 'regular', t: 'Regular'} : {k: 'fraco', t: 'Fraco'};
-  const CLS_COLOR = {forte: '#4ADE80', regular: '#FFCC29', fraco: '#FF7A7A', na: 'rgba(255,255,255,.25)'};
+  const CLS_COLOR = {forte: '#4ADE80', regular: '#FFCC29', fraco: '#FF7A7A', na: 'rgba(20,32,27,.2)'};
   function diagStats() {
     return DISCS.map((d) => {
       const ids = diag.ids.filter((id) => byId.has(id) && byId.get(id).disc === d.disc && diag.ans[id]);
@@ -2156,7 +2279,8 @@ body { min-height: 100vh; }
     const grid = el('div', 'pe-tr-grid');
     const rdCard = el('div', 'pe-card pe-reader'); rdCard.id = 'tr-reader';
     const side = el('div', 'pe-card pe-tr-side'); side.id = 'tr-lei';
-    grid.append(rdCard, side); box.append(grid);
+    grid.append(rdCard, side);
+    const rbar = el('div', 'pe-rd-bar'); rbar.append(btnTela('tr-reader', 'Sinopse · ' + discNome(disc))); box.append(rbar, grid);
     const sinSt = dash.data('sinopses').status;
     if (sinSt !== 'ok') rdCard.append(el('div', sinSt === 'loading' ? 'dash-skeleton' : 'pe-fail', sinSt === 'loading' ? '' : 'Failed to load'));
     else {
@@ -2752,19 +2876,19 @@ body { min-height: 100vh; }
     const x = d3.scaleLinear().domain(d3.extent(pts, (p) => p.d)).range([m.l, W - m.r]);
     const y = d3.scaleLinear().domain([0, 100]).range([H - m.b, m.t]);
     const svg = d3.select(holder).append('svg').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', 'Evolução da proficiência geral por dia');
-    svg.append('g').selectAll('line').data([0, 25, 50, 75, 100]).join('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y).attr('y2', y).attr('stroke', 'rgba(255,255,255,.08)');
-    svg.append('g').selectAll('text').data([0, 50, 100]).join('text').attr('x', m.l - 6).attr('y', (d) => y(d) + 4).attr('text-anchor', 'end').attr('font-size', 13).attr('fill', 'rgba(255,255,255,.55)').text((d) => d);
-    svg.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(META)).attr('y2', y(META)).attr('stroke', '#fff').attr('stroke-dasharray', '4 4').attr('opacity', .6);
-    svg.append('text').attr('x', W - m.r).attr('y', y(META) - 5).attr('text-anchor', 'end').attr('font-size', 13).attr('fill', 'rgba(255,255,255,.7)').text('meta 70');
+    svg.append('g').selectAll('line').data([0, 25, 50, 75, 100]).join('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y).attr('y2', y).attr('stroke', 'rgba(20,32,27,.08)');
+    svg.append('g').selectAll('text').data([0, 50, 100]).join('text').attr('x', m.l - 6).attr('y', (d) => y(d) + 4).attr('text-anchor', 'end').attr('font-size', 13).attr('fill', '#55665E').text((d) => d);
+    svg.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(META)).attr('y2', y(META)).attr('stroke', '#14201B').attr('stroke-dasharray', '4 4').attr('opacity', .5);
+    svg.append('text').attr('x', W - m.r).attr('y', y(META) - 5).attr('text-anchor', 'end').attr('font-size', 13).attr('fill', '#55665E').text('meta 70');
     const ticks = pts.length <= 6 ? pts.map((p) => p.d) : [pts[0].d, pts[Math.floor(pts.length / 2)].d, pts[pts.length - 1].d];
-    svg.append('g').selectAll('text').data(ticks).join('text').attr('x', x).attr('y', H - 8).attr('text-anchor', 'middle').attr('font-size', 13).attr('fill', 'rgba(255,255,255,.55)').text((d) => dayDate(d).slice(0, 5));
+    svg.append('g').selectAll('text').data(ticks).join('text').attr('x', x).attr('y', H - 8).attr('text-anchor', 'middle').attr('font-size', 13).attr('fill', '#55665E').text((d) => dayDate(d).slice(0, 5));
     svg.append('path').datum(pts).attr('fill', 'none').attr('stroke', '#FFCC29').attr('stroke-width', 2).attr('stroke-linejoin', 'round').attr('d', d3.line().x((p) => x(p.d)).y((p) => y(p.p)));
     const last = pts[pts.length - 1];
-    svg.append('circle').attr('cx', x(last.d)).attr('cy', y(last.p)).attr('r', 4).attr('fill', '#FFCC29').attr('stroke', '#04291F').attr('stroke-width', 2);
-    svg.append('text').attr('x', x(last.d) - 6).attr('y', y(last.p) - 8).attr('text-anchor', 'end').attr('font-size', 14).attr('font-weight', 700).attr('fill', '#fff').text(last.p);
+    svg.append('circle').attr('cx', x(last.d)).attr('cy', y(last.p)).attr('r', 4).attr('fill', '#FFCC29').attr('stroke', '#FFFFFF').attr('stroke-width', 2);
+    svg.append('text').attr('x', x(last.d) - 6).attr('y', y(last.p) - 8).attr('text-anchor', 'end').attr('font-size', 14).attr('font-weight', 700).attr('fill', '#14201B').text(last.p);
     const tip = el('div', 'pe-tip'); tip.hidden = true; holder.append(tip);
-    const cross = svg.append('line').attr('y1', m.t).attr('y2', H - m.b).attr('stroke', 'rgba(255,255,255,.35)').attr('opacity', 0);
-    const dotH = svg.append('circle').attr('r', 4).attr('fill', '#FFCC29').attr('stroke', '#04291F').attr('stroke-width', 2).attr('opacity', 0);
+    const cross = svg.append('line').attr('y1', m.t).attr('y2', H - m.b).attr('stroke', 'rgba(20,32,27,.3)').attr('opacity', 0);
+    const dotH = svg.append('circle').attr('r', 4).attr('fill', '#FFCC29').attr('stroke', '#FFFFFF').attr('stroke-width', 2).attr('opacity', 0);
     svg.append('rect').attr('x', m.l).attr('y', m.t).attr('width', W - m.l - m.r).attr('height', H - m.t - m.b).attr('fill', 'transparent')
       .on('mousemove', (ev) => {
         const [mx] = d3.pointer(ev); const d0 = x.invert(mx);
