@@ -811,6 +811,37 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
 .pe .pe-tab[data-page="progresso"]:hover { background: color-mix(in srgb, #5E6E78 35%, #fff); color: #14201B; }
 .pe .pe-tab[aria-selected="true"] { background: var(--accent); border-color: transparent; color: #14201B; font-weight: 600; box-shadow: 0 6px 18px rgba(245,164,0,.3); }
 
+/* ===== contraste: resultados e progresso em cores fortes ===== */
+.pe #resultado { background: #FFFFFF; border: 1px solid var(--color-border-line); border-top: 5px solid #15803D; }
+.pe #resultado .pe-kpi-value { background: none; -webkit-background-clip: initial; background-clip: initial; -webkit-text-fill-color: currentColor; color: #0B6B3A; font-weight: 600; }
+.pe #resultado .pe-kpis > div:nth-child(2) .pe-kpi-value { color: #1D4ED8; }
+.pe #resultado .pe-kpis > div:nth-child(3) .pe-kpi-value { color: #B45309; }
+.pe #resultado .pe-kpis > div:nth-child(4) .pe-kpi-value { color: #6D28D9; }
+.pe #resultado .pe-kpi-label { color: #33443C; font-weight: 600; }
+.pe #r-diag { color: #14201B; font-size: var(--cds-font-size-body); }
+.pe .pe-kpis .pe-kpi-value { font-weight: 600; }
+.pe #kpi-resp .pe-kpi-value, .pe #dkpi-resp .pe-kpi-value { color: #0B6B3A; }
+.pe #kpi-acerto .pe-kpi-value, .pe #dkpi-acerto .pe-kpi-value { color: #0A6E69; }
+.pe #kpi-prof .pe-kpi-value, .pe #dkpi-prof .pe-kpi-value { color: #A14A00; }
+.pe #kpi-dom .pe-kpi-value, .pe #dkpi-dom .pe-kpi-value { color: #1F5F35; }
+.pe .pv-inst .pe-card.ok .pe-kpi-value { color: #15803D; } .pe .pv-inst .pe-card.warn .pe-kpi-value { color: #B45309; }
+.pe .pv-inst .pe-card.bad .pe-kpi-value { color: #BE123C; } .pe .pv-inst .pe-card.sol .pe-kpi-value { color: #A14A00; }
+.pe .pe-before { color: #6B4200; font-weight: 500; background: #FFF4D6; border-color: #F2C14E; }
+.pe .pe-warn { background: #FFF4D6; border-color: #F2C14E; color: #6B4200; }
+.pe .pe-paused-msg { background: #FFF4D6; border-color: #F2C14E; color: #6B4200; }
+.pe .pe-ds-count .bad, .pe .pe-tr-err .yours { color: #BE123C; } .pe .pe-ds-count .ok, .pe .pe-tr-err .right { color: #15803D; }
+.pe .pe-timer-label, .pe .pe-dcard .hr, .pe .pv-rank-it .pos { color: #B45309; }
+.pe .pr-delta.up { color: #15803D; } .pe .pr-delta.down { color: #BE123C; }
+.pe .pe-sb-clock { color: #B45309 !important; }
+/* barras de progresso: trilho visível e preenchimento forte */
+.pe .pe-bar, .pe .pe-prog-bar, .pe .pe-dg-bar, .pe .pv-mini, .pe .pe-map-row .bar { background: #D9E2DD; }
+.pe .pe-bar > i, .pe .pv-mini i, .pe .pe-map-row .bar i, .pe .pv-strip > div, .pe .pr-boxes i { filter: saturate(1.35) brightness(.82); }
+.pe .pe-prog-bar i { background: linear-gradient(90deg, #E0A100, #15803D); }
+.pe .pe-dg-bar i { background: #E0A100; }
+.pe .pe-alt.ok { background: #DCFCE7; border-color: #15803D; border-width: 2px; } .pe .pe-alt.bad { background: #FFE4E6; border-color: #BE123C; border-width: 2px; }
+.pe .pe-fb.ok { background: #F0FDF4; } .pe .pe-fb.bad { background: #FFF1F2; }
+.pe .pe-dots i { background: #CFD8D3; } .pe .pe-dots i.ok { background: #15803D; } .pe .pe-dots i.bad { background: #BE123C; }
+
 .pe .pe-ring-card { border-top-color: var(--dc); }
 .pe .pe-lei, .pe .pv-ed details { border-left-color: var(--dc, #FFCC29); }
 .pe .pe-ds-item, .pe .pe-tr-item, .pe .pe-errs details, .pe .pe-dg-chip { border-left-color: var(--dc); }
@@ -1176,7 +1207,7 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
   const SHORT = {civ: 'Civil', mar: 'Marítimo', adm: 'Administrativo', emp: 'Empresarial', pc: 'Proc. Civil', amb: 'Ambiental', con: 'Constitucional', trib: 'Tributário', trab: 'Trabalho', set: 'Setorial'};
   const LETTERS = ['a', 'b', 'c', 'd', 'e'];
   const META = 70;
-  const DC = {civ: '#FFCC29', trab: '#FF9F1C', emp: '#C6E33B', con: '#7ED957', set: '#2FD18B', amb: '#14B8A6', trib: '#38BDF8', mar: '#5B8DEF', adm: '#B7C9A8', pc: '#FF7A7A'};
+  const DC = {civ: '#FFCC29', trab: '#FF9F1C', emp: '#C6E33B', con: '#7ED957', set: '#2FD18B', amb: '#14B8A6', trib: '#38BDF8', mar: '#5B8DEF', adm: '#7C9A3D', pc: '#FF7A7A'};
   
   // ---------- banco (cálculos citáveis) ----------
   dash.calc('banco', {
