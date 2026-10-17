@@ -884,6 +884,58 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
 .pe-studybar .pe-prog { margin: 6px 0 0; grid-column: 1; }
 .pe-sb-acts { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; grid-row: 1 / span 2; grid-column: 2; }
 @media (max-width: 760px) { .pe-studybar { grid-template-columns: 1fr; } .pe-sb-acts { grid-row: auto; grid-column: 1; justify-content: flex-start; } }
+
+/* painel geral: raio-x */
+.pe .pv-raio-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); gap: 12px; }
+.pe .pv-rp { border: 1px solid #DCE3DF; border-radius: 12px; padding: 12px 14px; background: #F7FAF8; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.pe .pv-rp h3 { margin: 0; font-size: var(--cds-font-size-body); font-weight: 700; color: #14201B; }
+.pe .pv-cap { font-size: var(--cds-font-size-caption); color: #55665E; margin: 0; line-height: 1.45; }
+.pe .pv-kv { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 5px; font-size: var(--cds-font-size-caption); }
+.pe .pv-kv li { display: flex; justify-content: space-between; gap: 8px; border-bottom: 1px dashed #DCE3DF; padding-bottom: 4px; color: #33443C; }
+.pe .pv-kv b { color: #14201B; font-variant-numeric: tabular-nums; text-align: right; }
+.pe b.up, .pe .pv-kv b.up { color: #15803D; } .pe b.down, .pe .pv-kv b.down { color: #BE123C; } .pe b.na { color: #55665E; }
+.pe .pv-spark { width: 100%; height: 70px; }
+.pe .pv-spark .ln { fill: none; stroke: #15803D; stroke-width: 2.5; stroke-linejoin: round; }
+.pe .pv-spark .pt { fill: #15803D; } .pe .pv-spark .meta { stroke: #B45309; stroke-dasharray: 4 4; stroke-width: 1.2; }
+.pe .pv-cols { display: flex; align-items: flex-end; gap: 4px; height: 84px; }
+.pe .pv-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 3px; font-size: 10px; color: #55665E; }
+.pe .pv-col i { width: 100%; background: #1D4ED8; border-radius: 4px 4px 0 0; min-height: 3px; }
+.pe .pv-col i.z { background: #D9E2DD; }
+.pe .pv-stack { display: flex; height: 14px; border-radius: 999px; overflow: hidden; background: #D9E2DD; gap: 2px; }
+.pe .pv-sw { display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: 6px; vertical-align: middle; }
+.pe .pv-weaks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; font-size: var(--cds-font-size-caption); }
+.pe .pv-weaks li { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 8px; align-items: center; color: #14201B; }
+.pe .pv-weaks li span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pe .pv-dd { display: flex; flex-direction: column; gap: 6px; font-size: var(--cds-font-size-caption); color: #33443C; border-top: 1px dashed color-mix(in srgb, var(--dc, #999) 50%, #DCE3DF); padding-top: 8px; }
+.pe .pv-niv { display: flex; flex-wrap: wrap; gap: 6px; }
+.pe .pv-weak { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.pe .pv-st.ok { background: #DCFCE7; color: #166534; } .pe .pv-st.warn { background: #FEF3C7; color: #92400E; } .pe .pv-st.bad { background: #FFE4E6; color: #9F1239; } .pe .pv-st.na { background: #EEF2F0; color: #55665E; }
+/* discursivas: correção automática */
+.pe .ds-nota { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 20px; align-items: center; border-top: 5px solid #15803D; margin-bottom: var(--cds-gap-md); }
+.pe .ds-nota.warn { border-top-color: #B45309; } .pe .ds-nota.bad { border-top-color: #BE123C; }
+.pe .ds-big { font-family: var(--font-anthropic-serif); line-height: 1; white-space: nowrap; }
+.pe .ds-big .v { font-size: 3.4rem; font-weight: 700; color: #0B6B3A; }
+.pe .ds-nota.warn .ds-big .v { color: #B45309; } .pe .ds-nota.bad .ds-big .v { color: #BE123C; }
+.pe .ds-big .m { font-size: 1.3rem; color: #55665E; }
+.pe .ds-sit { font-weight: 700; color: #14201B; margin: 4px 0; }
+.pe .ds-tbars { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+.pe .ds-tbar { display: grid; grid-template-columns: 5rem minmax(0, 1fr) 4.6rem; gap: 8px; align-items: center; font-size: var(--cds-font-size-caption); color: #33443C; }
+.pe .ds-tbar b { text-align: right; color: #14201B; }
+.pe .ds-tbar .pe-bar i.ok { background: #15803D; } .pe .ds-tbar .pe-bar i.warn { background: #D97706; } .pe .ds-tbar .pe-bar i.bad { background: #BE123C; }
+.pe .ds-top { border-left: 5px solid #15803D; } .pe .ds-top.warn { border-left-color: #D97706; } .pe .ds-top.bad { border-left-color: #BE123C; }
+.pe .ds-top-h { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.pe .ds-top-h .pv-st { font-size: 13px; }
+.pe .ds-sec { border-radius: 8px; padding: 8px 10px; margin-top: 8px; font-size: var(--cds-font-size-body); }
+.pe .ds-sec-t { font-weight: 700; margin-bottom: 4px; }
+.pe .ds-sec ul, .pe .ds-obs { margin: 0; padding-left: 1.2rem; line-height: 1.55; }
+.pe .ds-obs li { margin-bottom: 6px; }
+.pe .ds-sec.ok { background: #ECFDF3; } .pe .ds-sec.ok .ds-sec-t { color: #166534; }
+.pe .ds-sec.bad { background: #FFF1F2; } .pe .ds-sec.bad .ds-sec-t { color: #9F1239; }
+.pe .ds-sec.warn { background: #FFF7E6; } .pe .ds-sec.warn .ds-sec-t { color: #92400E; }
+.pe .ds-sec.tip { background: #EFF4FF; } .pe .ds-sec.tip .ds-sec-t { color: #1D4ED8; }
+.pe .pe-ds-modelo h4 { margin: 10px 0 4px; }
+.pe details > summary { cursor: pointer; font-weight: 600; padding: 6px 0; }
+@media (max-width: 520px) { .pe .ds-nota { grid-template-columns: 1fr; } .pe .ds-big .v { font-size: 2.8rem; } }
 </style>
 
 
@@ -917,11 +969,10 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
   </div>
 
   <nav class="pe-tabs" role="tablist" aria-label="Seções">
-    <button class="pe-tab" role="tab" data-page="voo" aria-selected="true">Painel de voo</button>
+    <button class="pe-tab" role="tab" data-page="voo" aria-selected="true">Painel geral</button>
     <button class="pe-tab" role="tab" data-page="prontuario" aria-selected="false">Prontuário</button>
     <button class="pe-tab pe-tab-start" role="tab" data-page="diagnostico" aria-selected="false">Diagnóstico</button>
     <button class="pe-tab" role="tab" data-page="dirigido" aria-selected="false">Estudo dirigido</button>
-    <button class="pe-tab" role="tab" data-page="painel" aria-selected="false">Painel</button>
     <button class="pe-tab" role="tab" data-page="bussola" aria-selected="false">Bússola</button>
     <button class="pe-tab" role="tab" data-page="material" aria-selected="false">Material de estudo</button>
     <button class="pe-tab" role="tab" data-page="treino" aria-selected="false">Treino</button>
@@ -940,6 +991,10 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
       <div class="pe-card" id="pv-investir"></div>
       <div class="pe-card" id="pv-basicas"></div>
     </div>
+    <div class="pe-card" id="pv-raio"></div>
+    <h2 class="pe-h2" id="medidor" style="margin-top:var(--cds-gap-lg)">Raio-X por disciplina</h2>
+    <p class="pe-note">Avanço = questões respondidas sobre o banco. Proficiência = acerto ponderado pela dificuldade (0 a 100, meta 70). Tendência = variação do acerto nos últimos 7 dias. Por nível = acerto nas questões fáceis, médias e difíceis.</p>
+    <div class="pe-grid" id="disc-grid" data-source="banco"></div>
     <div class="pv-duo">
       <div class="pe-card" id="pv-disc"></div>
       <div class="pe-card" id="pv-lei"></div>
@@ -991,19 +1046,6 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
       <div id="tr-list"></div>
     </div>
     <div id="tr-study" hidden></div>
-  </section>
-
-  <!-- PAINEL -->
-  <section class="pe-page" id="painel" hidden>
-    <div class="pe-kpis">
-      <div class="pe-card" id="kpi-resp"><div class="pe-kpi-label">Questões respondidas</div><div class="pe-kpi-value" id="k-resp">0</div><div class="pe-kpi-note" id="k-resp-n">de — no banco</div></div>
-      <div class="pe-card" id="kpi-acerto"><div class="pe-kpi-label">Acerto geral</div><div class="pe-kpi-value" id="k-acerto">—</div><div class="pe-kpi-note">Última resposta de cada questão</div></div>
-      <div class="pe-card" id="kpi-prof"><div class="pe-kpi-label">Índice de proficiência</div><div class="pe-kpi-value" id="k-prof">—</div><div class="pe-kpi-note" id="k-prof-n">Acerto ponderado pela dificuldade</div></div>
-      <div class="pe-card" id="kpi-dom"><div class="pe-kpi-label">Disciplinas no nível avançado</div><div class="pe-kpi-value" id="k-dom">0</div><div class="pe-kpi-note">Proficiência ≥ 70 com ao menos 20 respondidas</div></div>
-    </div>
-    <h2 class="pe-h2" id="medidor">Medidor por disciplina</h2>
-    <p class="pe-note">Avanço = questões já respondidas sobre o banco da disciplina. Proficiência = acerto ponderado pela dificuldade (nível 1, 2 ou 3), de 0 a 100.</p>
-    <div class="pe-grid" id="disc-grid" data-source="banco"></div>
   </section>
 
   <!-- BUSSOLA -->
@@ -1113,7 +1155,7 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
       <div class="pe-card pe-dg-hero">
         <div class="pe-kpi-label">Prova discursiva</div>
         <h2 class="pe-dir">Discursivas no padrão Cesgranrio</h2>
-        <p class="pe-note">Casos no formato da banca: uma situação concreta, o comando “elabore um texto de 30 a 40 linhas, no qual sejam avaliados fundamentadamente” (a faixa de linhas varia por caso) e quatro tópicos obrigatórios. Escreva sua resposta no tempo sugerido, depois compare com o espelho de correção e atribua sua nota em cada tópico (2,5 pontos cada). O modelo de resposta fica disponível ao final.</p>
+        <p class="pe-note">Casos no formato da banca: uma situação concreta, o comando “elabore um texto de 30 a 40 linhas, no qual sejam avaliados fundamentadamente” (a faixa de linhas varia por caso) e quatro tópicos obrigatórios. Escreva sua resposta no tempo sugerido e clique em “Finalizar e corrigir”: a plataforma corrige automaticamente pelo espelho da banca, tópico por tópico (2,5 pontos cada), mostra o que foi aproveitado, o que está errado e o que faltou, sugere melhorias e dá a nota. O modelo de resposta fica disponível ao final.</p>
         <div class="pe-kpis" id="ds-kpis"></div>
         <div class="pe-controls" style="margin-bottom:var(--cds-gap-md)">
           <label class="pe-field">Disciplina<select id="ds-disc"></select></label>
@@ -1264,17 +1306,35 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
   tabs.forEach((t) => t.addEventListener('click', () => show(t.dataset.page)));
 
   // ---------- painel ----------
+  // fotografia diária de N dias atrás (ou a mais antiga disponível, se for anterior a hoje)
+  function snapRef(n) {
+    const hoje = dayNum(); const ks = Object.keys(snaps).map(Number).filter((k) => k < hoje).sort((a, b) => a - b);
+    if (!ks.length) return null;
+    const alvo = ks.filter((k) => k <= hoje - n); const k = alvo.length ? alvo[alvo.length - 1] : ks[0];
+    return {dia: k, ...snaps[String(k)]};
+  }
+  function tendencia(ref, disc, s) {
+    if (!ref || !s.n) return null;
+    const o = disc ? (ref.d || {})[disc] : [ref.n, ref.h, ref.p];
+    if (!o || !o[0]) return null;
+    const dpp = Math.round((s.acc - o[1] / o[0]) * 100), dn = s.n - o[0];
+    if (!dn) return {cls: 'na', txt: 'sem questões novas', dpp: 0, dn};
+    return {cls: dpp > 0 ? 'up' : dpp < 0 ? 'down' : 'na', txt: `${dpp > 0 ? '▲ +' : dpp < 0 ? '▼ ' : '= '}${dpp} p.p. · +${dn} questões`, dpp, dn};
+  }
   function renderPainel() {
     const all = statsFor(Q);
-    document.getElementById('k-resp').textContent = nf.format(all.n);
-    document.getElementById('k-resp-n').textContent = Q.length ? `de ${nf.format(Q.length)} no banco (${pf(all.n / Q.length)})` : 'de — no banco';
-    document.getElementById('k-acerto').textContent = all.n ? pf(all.acc) : '—';
-    document.getElementById('k-prof').textContent = all.prof == null ? '—' : String(all.prof);
+    const setTxt = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+    setTxt('k-resp', nf.format(all.n));
+    setTxt('k-resp-n', Q.length ? `de ${nf.format(Q.length)} no banco (${pf(all.n / Q.length)})` : 'de — no banco');
+    setTxt('k-acerto', all.n ? pf(all.acc) : '—');
+    setTxt('k-prof', all.prof == null ? '—' : String(all.prof));
     const lv = levelOf(all.prof, all.n);
-    document.getElementById('k-prof-n').textContent = all.n ? `Nível ${lv.t.toLowerCase()} · acerto ponderado pela dificuldade` : 'Acerto ponderado pela dificuldade';
+    setTxt('k-prof-n', all.n ? `Nível ${lv.t.toLowerCase()} · acerto ponderado pela dificuldade` : 'Acerto ponderado pela dificuldade');
     let dom = 0;
     const grid = document.getElementById('disc-grid');
     grid.replaceChildren();
+    const qd0 = quadro(); const naProva = new Map(qd0 ? qd0.blocos.flatMap((b) => b.itens.map((x) => [x.disc, x])) : []);
+    const ref = snapRef(7);
     for (const d of DISCS) {
       const qs = Q.filter((q) => q.disc === d.disc);
       const s = statsFor(qs);
@@ -1305,11 +1365,25 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
       foot.append(bankTxt, links);
       card.append(top,
         row('Avanço no banco', s.n / d.questoes, DC[d.disc], pf(s.n / d.questoes)),
-        row('Proficiência', (s.prof || 0) / 100, profColor, s.prof == null ? '—' : String(s.prof)),
-        foot);
+        row('Proficiência', (s.prof || 0) / 100, profColor, s.prof == null ? '—' : String(s.prof)));
+      // detalhes: prova, tendência, acerto por nível e assunto mais fraco
+      const det = el('div', 'pv-dd');
+      const xp = naProva.get(d.disc);
+      if (xp) det.append(el('div', null, `Na prova: ${xp.q} questões · projeção ${xp.est == null ? '—' : fmt1(Math.round(xp.q * xp.est * 10) / 10) + ' acertos'}`));
+      const tdz = tendencia(ref, d.disc, s);
+      if (tdz) { const t = el('div'); t.append('Tendência 7 dias: ', el('b', tdz.cls, tdz.txt)); det.append(t); }
+      if (s.n) {
+        const nv = el('div', 'pv-niv');
+        [[1, 'Fácil'], [2, 'Médio'], [3, 'Difícil']].forEach(([k, lab]) => { const x = statsFor(qs.filter((q) => q.nivel === k)); const c = x.n ? (x.acc >= 0.7 ? 'ok' : x.acc >= 0.5 ? 'warn' : 'bad') : 'na'; nv.append(el('span', 'pv-st ' + c, `${lab} ${x.n ? pf(x.acc) : '—'}`)); });
+        det.append(nv);
+        const fr = d3.rollups(qs.filter((q) => ans[q.id]), (v) => statsFor(v), (q) => assunto(q.tema)).filter(([, v]) => v.n >= 3).sort((a, b) => a[1].acc - b[1].acc)[0];
+        if (fr && fr[1].acc < 0.7) { const w = el('div', 'pv-weak'); const b = el('button', 'pe-btn', 'Treinar'); b.addEventListener('click', () => startAssunto(d.disc, fr[0])); w.append(el('span', null, `Ponto fraco: ${fr[0]} (${fr[1].h}/${fr[1].n})`), b); det.append(w); }
+      }
+      if (det.childElementCount) card.append(det);
+      card.append(foot);
       grid.append(card);
     }
-    document.getElementById('k-dom').textContent = `${dom} de ${DISCS.length}`;
+    setTxt('k-dom', `${dom} de ${DISCS.length}`);
     const ru = document.getElementById('resumo-user');
     ru.textContent = all.n ? `Você respondeu ${nf.format(all.n)} (${pf(all.n / Q.length)}), com ${pf(all.acc)} de acerto e proficiência ${all.prof}.` : `Comece pelo Diagnóstico: ${DISCS.length * 10} questões que mapeiam seus pontos fortes e fracos e geram o seu cronograma de estudo.`;
   }
@@ -2420,7 +2494,127 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
   }
   document.getElementById('r-trilha').addEventListener('click', () => show('dirigido'));
 
+  // ---------- corretor automático das discursivas ----------
+  // Compara a resposta com o espelho, ideia por ideia: conceitos-chave (radicais das palavras
+  // relevantes, ponderados pela raridade no banco), dispositivos legais citados (artigos, súmulas,
+  // temas, leis, precedentes) e conclusões contrárias às do espelho. Gera a nota de cada tópico.
+  const DSC = (() => {
+    const STOP = new Set(('a o e as os um uma uns umas de da do das dos em na no nas nos por pela pelo pelas pelos para com sem sob sobre ' +
+      'que se ao aos à às ou nem mas como quando onde porque pois porém contudo todavia entretanto assim ainda também já ' +
+      'ser sera seria são sao foi foram é esta este estes estas isso isto esse essa esses essas aquele aquela seu sua seus suas ' +
+      'lhe lhes ele ela eles elas mesmo mesma tal tais qual quais cujo cuja sendo tendo ter tem têm havia haver há ' +
+      'deve devem pode podem poder deverá poderá caso casos forma modo termos nos_termos art arts artigo artigos inciso incisos ' +
+      'paragrafo lei leis cf cpc clt ctn caput alinea item itens nº n° sentido hipótese hipotese situação situacao questão questao ' +
+      'qualquer cada outro outra outros outras muito muita mais menos bem apenas somente inclusive conforme segundo entre ' +
+      'desde até ate após apos antes depois então entao logo portanto dessa desse deste desta nesse nessa neste nesta ' +
+      'fim parte partes ponto pontos regra regras previsto prevista prevê preve dispõe dispoe estabelece determina ' +
+      'vez vezes razão razao assim_como uso tipo').split(/\s+/));
+    const norm = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+    const SUF = ['amentos', 'imentos', 'amento', 'imento', 'idades', 'idade', 'mente', 'acoes', 'icoes', 'ncias', 'ncia', 'acao', 'icao', 'veis', 'avel', 'ivel', 'ismos', 'ismo', 'istas', 'ista', 'oes', 'ais', 'eis', 'ar', 'er', 'ir', 'os', 'as', 'es', 'is', 'o', 'a', 'e', 's'];
+    const stem = (w) => { for (const s of SUF) if (w.length - s.length >= 4 && w.endsWith(s)) { w = w.slice(0, -s.length); break; } return w.slice(0, 7); };
+    const words = (t) => norm(t).match(/[a-z]{4,}/g) || [];
+    const stems = (t) => words(t).filter((w) => !STOP.has(w)).map(stem);
+    // dispositivos legais citados
+    function cites(t) {
+      const s = String(t || ''), out = new Set();
+      const art = /\barts?\.?\s*((?:\d[\d.]*\s*[º°o]?(?:-[A-Z])?)(?:\s*(?:,|e)\s*(?:§\s*\d+[º°]?|[IVXL]+\b|\d[\d.]*\s*[º°]?(?:-[A-Z])?|par[aá]grafo [uú]nico|caput|inc(?:iso)?\.?\s*[IVXL]+|al[ií]nea\s*"?[a-z]"?))*)/gi;
+      let m;
+      while ((m = art.exec(s))) { const g = m[1].replace(/§\s*\d+[º°]?/g, '').replace(/\binc(?:iso)?\.?\s*[IVXL]+/gi, ''); (g.match(/\d[\d.]*/g) || []).forEach((n) => out.add('art ' + n.replace(/\./g, ''))); }
+      const pats = [[/s[uú]mula(?:\s+vinculante)?\s*(?:n[º°.o]*\s*)?(\d+)/gi, 'súmula '], [/\btema\s*(?:n[º°.o]*\s*)?(\d+)/gi, 'tema '],  [/\blei\s*(?:complementar\s*)?(?:n[º°.o]*\s*)?(\d{1,2}\.?\d{3})/gi, 'lei '], [/\bdecreto(?:-lei)?\s*(?:n[º°.o]*\s*)?(\d{1,2}\.?\d{3})/gi, 'decreto '], [/\bOJ\s*(?:n[º°.o]*\s*)?(\d+)/g, 'OJ ']];
+      pats.forEach(([re, p]) => { let x; while ((x = re.exec(s))) out.add(p + x[1].replace(/\./g, '')); });
+      { const re = /\b(RE|REsp|ADI|ADC|ADPF|ARE|RMS|MS)\s*(?:n[º°.o]*\s*)?(\d[\d.]*)/g; let x; while ((x = re.exec(s))) out.add('precedente ' + x[1] + ' ' + x[2].replace(/\./g, '')); }
+      return out;
+    }
+    const citeLabel = (k) => k.startsWith('art ') ? 'art. ' + k.slice(4) : k.startsWith('lei ') ? 'Lei ' + k.slice(4).replace(/(\d+)(\d{3})$/, '$1.$2') : k.startsWith('precedente ') ? k.slice(11).replace(/(\d+)(\d{3})$/, '$1.$2') : k.replace(/^súmula/, 'Súmula').replace(/^tema/, 'Tema');
+    // conclusões opostas: [termo do espelho, termos que contradizem]
+    const OPOS = [['relativ', ['absolut']], ['absolut', ['relativ']], ['objetiv', ['subjetiv']], ['subjetiv', ['objetiv']], ['solidari', ['subsidiari']], ['subsidiari', ['solidari']],
+      ['nul', ['anulave']], ['anulave', ['nul']], ['improced', ['proced']], ['ilegitim', ['legitim']], ['ilegal', ['legal']], ['inconstitucion', ['constitucional']], ['incabiv', ['cabiv', 'cabe']], ['vedad', ['permitid', 'possive']], ['invalid', ['valid']],
+      ['facultativ', ['obrigatori']], ['obrigatori', ['facultativ']], ['dolos', ['culpos']], ['prescri', ['decadenc']], ['decadenc', ['prescri']]];
+    const VEREDITO = new Set(['procede', 'merece', 'assiste', 'prospera', 'cabe', 'subsiste', 'configura', 'afasta', 'incide', 'existe', 'aplica', 'admite', 'responde', 'procedente'].map((w) => stem(w)));
+    const NEG = new Set(['nao', 'nem', 'jamais', 'nunca', 'sem', 'inexiste', 'inexistente', 'descabe']);
+    const DF = new Map(); let NDOC = 1;
+    function treina(rows) {
+      DF.clear(); NDOC = 0;
+      rows.forEach((r) => (r.espelho || []).forEach((t) => { NDOC++; new Set(stems(t)).forEach((s) => DF.set(s, (DF.get(s) || 0) + 1)); }));
+    }
+    const idf = (s) => Math.log(1 + NDOC / (1 + (DF.get(s) || 0)));
+    const frases = (t) => String(t).replace(/\b(arts?|n|nº|inc|al|p|fls|Min|Rel)\.\s/gi, '$1\u0001 ').split(/(?<=[.;:])\s+(?=[A-ZÁÉÍÓÚÂÊÔÃÕÇ"“(])/).map((x) => x.replace(/\u0001/g, '.').trim()).filter((x) => x.length > 12);
+    const r25 = (v) => Math.round(v * 4) / 4;
+    function corrige(r, txt) {
+      if (!NDOC || !DF.size) treina([r]);
+      // o que passa do limite máximo de linhas não é corrigido
+      let resp = '', acc = 0;
+      for (const p of String(txt || '').split('\n')) { const n = p.trim() ? Math.ceil(p.trim().length / 72) : 0; if (acc + n > r.linhas_max) { const sobra = r.linhas_max - acc; if (sobra > 0) resp += p.slice(0, sobra * 72) + '\n'; break; } resp += p + '\n'; acc += n; }
+      const linTot = dsLines(txt);
+      const rs = new Set(stems(resp)); const rc = cites(resp);
+      const rn = norm(resp); const rsent = rn.split(/[.;!?\n]+/).map((x) => { const w = x.match(/[a-z]+/g) || []; return {w, st: new Set(w.filter((y) => y.length >= 4 && !STOP.has(y)).map(stem))}; });
+      const tudo = cites((r.espelho || []).join(' ') + ' ' + (r.modelo || ''));
+      const vale = Number(r.pontos) || 2.5;
+      const topicos = (r.espelho || []).map((esp, i) => {
+        const ideias = frases(esp).map((f) => {
+          const ks = [...new Set(stems(f))]; const W = d3.sum(ks, idf) || 1;
+          const hit = ks.filter((k) => rs.has(k)); let cov = d3.sum(hit, idf) / W;
+          // negação: o espelho diz "não procede" e a resposta afirma "procede" (sem negar)
+          let neg = null;
+          const fn = norm(f).match(/[a-z]+/g) || [];
+          if (!/\bse\b[^,;]*\bnao\b/.test(norm(f))) fn.forEach((w, j) => {
+            if (neg || w !== 'nao' || !fn[j + 1] || !VEREDITO.has(stem(fn[j + 1]))) return;
+            const v = stem(fn[j + 1]), outros = ks.filter((k) => k !== v); let afirma = false, nega = false;
+            rsent.forEach((sw) => {
+              const viz = outros.filter((k) => sw.st.has(k)).length;
+              sw.w.forEach((x, k) => { if (x.length >= 4 && stem(x) === v) { if (sw.w.slice(Math.max(0, k - 3), k).some((y) => NEG.has(y))) { if (viz >= 1) nega = true; } else if (viz >= 2) afirma = true; } });
+            });
+            if (afirma && !nega) neg = `O espelho afirma “não ${fn[j + 1]}”, mas a sua resposta sustenta o contrário (“${fn[j + 1]}”). Revise essa conclusão.`;
+          });
+          if (neg) cov = 0;
+          return {f, cov, W, neg, c: [...cites(f)]};
+        }).filter((x) => x.W > 1);
+        const Wt = d3.sum(ideias, (x) => x.W) || 1;
+        const conteudo = Math.min(1, d3.sum(ideias, (x) => Math.min(1, x.cov / 0.6) * x.W) / Wt);
+        const tc = [...cites(esp)];
+        const citou = tc.filter((c) => rc.has(c)), faltaC = tc.filter((c) => !rc.has(c));
+        const fc = tc.length ? Math.min(1, citou.length / Math.min(tc.length, 3)) : null;
+        // contradições: termo oposto ao do espelho, sem o termo do espelho
+        const en = norm(esp); const erros = ideias.filter((x) => x.neg).map((x) => x.neg);
+        OPOS.forEach(([a, bs]) => {
+          if (!new RegExp('\\b' + a).test(en) || bs.some((b) => new RegExp('\\b' + b).test(en))) return;
+          if (new RegExp('\\b' + a).test(rn)) return;
+          const b = bs.find((x) => new RegExp('\\b' + x).test(rn));
+          if (b) { const m = rn.match(new RegExp('\\b' + b + '[a-z]*')); erros.push(`Você usou “${m ? m[0] : b}”, mas o espelho conclui pelo oposto (“${(en.match(new RegExp('\\b' + a + '[a-z]*')) || [a])[0]}”). Revise essa conclusão.`); }
+        });
+        let f = fc == null ? conteudo : 0.7 * conteudo + 0.3 * fc;
+        f = Math.max(0, f - 0.2 * Math.min(2, erros.length));
+        // curva: cobrir 85% do espelho já vale a nota cheia; abaixo de 15%, zero
+        const nota = r25(vale * Math.max(0, Math.min(1, (f - 0.15) / 0.7)));
+        return {i, nota, vale, f, conteudo, fc,
+          ok: ideias.filter((x) => x.cov >= 0.6 && !x.neg).map((x) => x.f), parcial: ideias.filter((x) => x.cov >= 0.3 && x.cov < 0.6).map((x) => x.f), falta: ideias.filter((x) => x.cov < 0.3 || x.neg).map((x) => x.f),
+          citou: citou.map(citeLabel), faltaC: faltaC.map(citeLabel), erros};
+      });
+      // dispositivos citados que não aparecem no espelho nem na resposta-modelo
+      const estranhas = [...rc].filter((c) => !tudo.has(c)).map(citeLabel);
+      // extensão e forma
+      const lin = linTot;
+      const forma = [];
+      const pars = resp.split(/\n+/).filter((p) => p.trim()).length;
+      if (pars < 3) forma.push('Organize o texto em parágrafos: introdução curta, um parágrafo por tópico pedido e uma conclusão com a solução do caso.');
+      if (/\b(eu|acho|creio|na minha opiniao|meu entendimento|a meu ver)\b/.test(rn)) forma.push('Evite a primeira pessoa e expressões de opinião (“acho”, “a meu ver”): a banca espera linguagem técnica e impessoal.');
+      if (/\b(vc|pq|tb|tbm|ne|tipo assim|blz)\b/.test(rn)) forma.push('Há abreviações ou marcas de linguagem informal. Use a norma-padrão.');
+      const longas = (resp.match(/[^.!?]+[.!?]?/g) || []).filter((s) => (s.match(/\S+/g) || []).length > 70).length;
+      if (longas) forma.push(`${longas} período(s) com mais de 70 palavras. Divida em frases mais curtas para não perder a clareza.`);
+      if (!/\b(conclui|conclusao|portanto|dessa forma|desse modo|assim sendo|ante o exposto|diante do exposto|em sintese|logo)\b/.test(rn)) forma.push('Feche com uma conclusão expressa (“Diante do exposto…”), respondendo diretamente ao que o caso pergunta.');
+      if (!rc.size) forma.push('Nenhum dispositivo legal foi citado. O espelho da Cesgranrio pontua a fundamentação: indique artigo, lei, súmula ou tese em cada conclusão.');
+      let bruta = d3.sum(topicos, (x) => x.nota); let desconto = 0, extensao = 'ok';
+      // a contagem de linhas é estimada: só desconta quando o texto fica claramente curto (abaixo de 80% do mínimo)
+      if (lin < r.linhas_min) { extensao = 'curta'; const piso = 0.8 * r.linhas_min; if (lin < piso) desconto = r25(bruta * (1 - lin / piso)); }
+      else if (lin > r.linhas_max) extensao = 'longa';
+      const nota = Math.max(0, r25(bruta - desconto));
+      return {v: 1, nota, bruta, desconto, extensao, lin, topicos, estranhas, forma};
+    }
+    return {treina, corrige, cites, stems};
+  })();
+
   // ---------- discursivas ----------
+  let dsTreino = -1;
   let dsNotas = {};           // id -> {h: [{t:[4 notas], l: linhas, s: segundos, at}]}
   let dsDraft = {};           // id -> texto em andamento
   let dsCur = null;           // {id, fase: 'escrever'|'corrigir', t: [notas], ini, el}
@@ -2441,7 +2635,8 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
   const dsLines = (t) => String(t || '').split('\n').reduce((n, p) => n + (p.trim() ? Math.ceil(p.trim().length / 72) : 0), 0);
   const dsWords = (t) => (String(t || '').trim().match(/\S+/g) || []).length;
   const fmt1 = (n) => n.toLocaleString('pt-BR', {minimumFractionDigits: n % 1 ? 1 : 0, maximumFractionDigits: 2});
-  const dsBest = (id) => { const h = (dsNotas[id] || {}).h || []; return h.length ? Math.max(...h.map((x) => d3.sum(x.t))) : null; };
+  const dsNota = (x) => x ? (x.n != null ? x.n : d3.sum(x.t)) : null;
+  const dsBest = (id) => { const h = (dsNotas[id] || {}).h || []; return h.length ? Math.max(...h.map(dsNota)) : null; };
   const dsLast = (id) => { const h = (dsNotas[id] || {}).h || []; return h.length ? h[h.length - 1] : null; };
   const dsNome = (r) => (DISCS.find((d) => d.disc === r.disc) || {}).disciplina || r.disciplina;
   const paras = (box, txt) => String(txt || '').split('\n').filter((x) => x.trim()).forEach((x) => box.append(el('p', null, x)));
@@ -2459,10 +2654,11 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
       sel.replaceChildren(new Option('Todas', 'all'), ...DISCS.filter((d) => ds.includes(d.disc)).map((d) => new Option(d.disciplina, d.disc)));
     }
     const feitos = rows.filter((r) => dsLast(r.id));
-    const ult = feitos.map((r) => d3.sum(dsLast(r.id).t));
+    const ult = feitos.map((r) => dsNota(dsLast(r.id)));
     const c = (lab, val, note) => { const x = el('div', 'pe-card'); x.append(el('div', 'pe-kpi-label', lab), el('div', 'pe-kpi-value', val), el('div', 'pe-kpi-note', note)); return x; };
     kp.replaceChildren(c('Casos respondidos', `${nf.format(feitos.length)} de ${nf.format(rows.length)}`, 'banco de discursivas no padrão da banca'),
-      c('Média da última tentativa', ult.length ? fmt1(Math.round(d3.mean(ult) * 100) / 100) : '—', 'de 10 pontos por questão'),
+      c('Média da última tentativa', ult.length ? fmt1(Math.round(d3.mean(ult) * 100) / 100) : '—', 'de 10 pontos por questão · correção automática'),
+      c('Projeção na prova', ult.length ? fmt1(Math.round(d3.mean(ult) * 2 * 10) / 10) + ' de 20' : '—', ult.length ? (d3.mean(ult) * 2 >= 10 ? 'acima do mínimo de 10 pontos' : 'abaixo do mínimo de 10 pontos: elimina') : '2 casos de 10 pontos · mínimo 10'),
       c('Disciplinas', nf.format(new Set(rows.map((r) => r.disc)).size), 'com casos discursivos neste cargo'));
     const fd = sel.value, fs = document.getElementById('ds-sit').value;
     list.replaceChildren();
@@ -2472,9 +2668,11 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
       const it = el('div', 'pe-ds-item'); it.style.setProperty('--dc', DC[r.disc] || '#fff');
       const last = dsLast(r.id);
       it.append(el('div', 'd', `${dsNome(r)} · ${r.linhas_min} a ${r.linhas_max} linhas · 10 pontos`), el('div', 't', r.titulo));
-      it.append(el('div', 's' + (last ? ' ok' : ''), last ? `Última nota: ${fmt1(d3.sum(last.t))} · melhor: ${fmt1(dsBest(r.id))} · ${dsNotas[r.id].h.length} tentativa(s)` : dsDraft[r.id] ? 'Rascunho em andamento' : 'Não respondido'));
+      it.append(el('div', 's' + (last ? ' ok' : ''), last ? `Última nota: ${fmt1(dsNota(last))} · melhor: ${fmt1(dsBest(r.id))} · ${dsNotas[r.id].h.length} tentativa(s)` : dsDraft[r.id] ? 'Rascunho em andamento' : 'Não respondido'));
       const b = el('button', 'pe-btn primary', last ? 'Refazer' : dsDraft[r.id] ? 'Continuar' : 'Responder'); b.addEventListener('click', () => openDisc(r.id));
-      const a = el('div', 'pe-actions'); a.append(b); it.append(a); list.append(it);
+      const a = el('div', 'pe-actions'); a.append(b);
+      if (last && dsNotas[r.id].x) { const v = el('button', 'pe-btn', 'Ver correção'); v.addEventListener('click', () => verCorrecao(r.id)); a.append(v); }
+      it.append(a); list.append(it);
     });
   }
   function openDisc(id) {
@@ -2482,6 +2680,11 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
     dsCur = {id, fase: 'escrever', t: [null, null, null, null], ini: Date.now(), left: 45 * 60, run: false};
     document.getElementById('ds-work').replaceChildren();
     show('discursivas'); window.scrollTo({top: 0});
+  }
+  function verCorrecao(id) {
+    const v = dsNotas[id]; if (!v || !v.x) return;
+    dsCur = {id, fase: 'corrigir', t: [null, null, null, null], ini: Date.now(), left: 0, run: false, txt: v.x, lin: dsLines(v.x), salvo: true, seg: (dsLast(id) || {}).s || 0};
+    document.getElementById('ds-work').replaceChildren(); show('discursivas'); window.scrollTo({top: 0});
   }
   function closeDisc() { if (dsTimer) { clearInterval(dsTimer); dsTimer = null; } dsCur = null; renderDisc(); }
   function drawDiscWork() {
@@ -2508,52 +2711,83 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
       const upd = () => { const l = dsLines(ta.value); cnt.replaceChildren(el('span', l < r.linhas_min || l > r.linhas_max ? 'bad' : 'ok', `${l} linha(s) estimada(s)`), el('span', null, `faixa: ${r.linhas_min} a ${r.linhas_max}`), el('span', null, `${dsWords(ta.value)} palavras`)); };
       ta.addEventListener('input', () => { dsDraft[r.id] = ta.value.slice(0, 8000); upd(); });
       wc.append(ta, cnt); upd();
-      const fin = el('button', 'pe-btn primary', 'Finalizar e ver o espelho'); const msg = el('span', 'pe-msg');
+      const fin = el('button', 'pe-btn primary', 'Finalizar e corrigir'); const msg = el('span', 'pe-msg');
       fin.addEventListener('click', () => {
         const l = dsLines(ta.value);
         if (l < 3) { msg.textContent = 'Escreva a resposta antes de finalizar.'; return; }
-        dsCur.fase = 'corrigir'; dsCur.run = false; dsCur.lin = l; dsCur.seg = Math.round((Date.now() - dsCur.ini) / 1000); drawDiscWork(); document.getElementById('ds-esp').scrollIntoView({block: 'start'});
+        dsCur.fase = 'corrigir'; dsCur.run = false; dsCur.lin = l; dsCur.txt = ta.value; dsCur.seg = Math.round((Date.now() - dsCur.ini) / 1000); drawDiscWork(); document.getElementById('ds-corr').scrollIntoView({block: 'start'});
       });
       const ac = el('div', 'pe-actions'); ac.append(fin, msg); wc.append(ac);
       work.append(wc); return;
     }
-    // fase de correção
-    wc.append(el('h2', 'pe-h2', 'Sua resposta'));
-    const mine = el('div', 'pe-ds-case'); paras(mine, dsDraft[r.id]); wc.append(mine);
-    const l = dsCur.lin || dsLines(dsDraft[r.id]);
-    wc.append(el('p', 'pe-note', `${l} linha(s) estimada(s) · faixa ${r.linhas_min} a ${r.linhas_max}.` + (l < r.linhas_min || l > r.linhas_max ? ' Fora da faixa: na prova, o texto fora dos limites de linhas costuma ser penalizado pelo edital. Ajuste a extensão.' : ' Dentro da faixa.')));
-    work.append(wc);
-    const ec = el('div', 'pe-card'); ec.id = 'ds-esp';
-    ec.append(el('h2', 'pe-h2', 'Espelho de correção'), el('p', 'pe-note', 'Compare cada tópico com a sua resposta e atribua a nota. Só conte como abordado o que estiver escrito e fundamentado (artigo, súmula ou tese).'));
-    const tot = el('strong'); const save = el('button', 'pe-btn primary', 'Registrar nota'); const sm = el('span', 'pe-msg');
-    const drawTot = () => { const ok = dsCur.t.every((x) => x != null); tot.textContent = ok ? `Nota: ${fmt1(d3.sum(dsCur.t))} de 10` : `Avalie os ${dsCur.t.filter((x) => x == null).length} tópico(s) restante(s)`; save.disabled = !ok; };
-    r.espelho.forEach((tx, i) => {
-      const b = el('div', 'pe-ds-esp'); b.append(el('h4', null, `Tópico ${i + 1}: ${r.topicos[i]}`), el('p', null, tx));
-      const sc = el('div', 'pe-ds-sc');
-      [[0, 'Não abordou (0)'], [1.25, 'Parcial (1,25)'], [2.5, 'Completo (2,5)']].forEach(([v, lab]) => {
-        const bb = el('button', 'pe-btn', lab); bb.setAttribute('aria-pressed', String(dsCur.t[i] === v));
-        bb.addEventListener('click', () => { dsCur.t[i] = v; sc.querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', String(x === bb))); drawTot(); });
-        sc.append(bb);
-      });
-      b.append(sc); ec.append(b);
+    // fase de correção automática
+    const txt = dsCur.txt != null ? dsCur.txt : (dsDraft[r.id] || '');
+    if (dsTreino !== discRows().length) { DSC.treina(discRows()); dsTreino = discRows().length; }
+    const cr = DSC.corrige(r, txt);
+    if (!dsCur.salvo) {
+      const h = (dsNotas[r.id] || {h: []}).h;
+      h.push({t: cr.topicos.map((x) => x.nota), n: cr.nota, a: 1, l: cr.lin, s: dsCur.seg || 0, at: Date.now()});
+      dsNotas[r.id] = {h: h.slice(-10), x: txt.slice(0, 8000)};
+      dsCur.salvo = true; saveNow();
+    }
+    const nc = (v, max) => v >= 0.7 * max ? 'ok' : v >= 0.5 * max ? 'warn' : 'bad';
+    // 1. nota
+    const nk = el('div', 'pe-card ds-nota ' + nc(cr.nota, 10)); nk.id = 'ds-corr';
+    const big = el('div', 'ds-big'); big.append(el('span', 'v', fmt1(cr.nota)), el('span', 'm', ' / 10'));
+    const info = el('div', 'ds-info');
+    info.append(el('div', 'pe-kpi-label', 'Correção automática · ' + r.titulo),
+      el('div', 'ds-sit', cr.nota >= 7 ? 'Boa resposta: dentro do padrão do espelho' : cr.nota >= 5 ? 'Acima do mínimo, mas com pontos a melhorar' : 'Abaixo de 5: na prova, essa nota elimina (mínimo de 50%)'),
+      el('div', 'pe-kpi-note', `Conteúdo ${fmt1(cr.bruta)}${cr.desconto ? ` − ${fmt1(cr.desconto)} por texto curto` : ''} · ${cr.lin} linha(s) estimada(s), faixa ${r.linhas_min} a ${r.linhas_max}`));
+    const bars = el('div', 'ds-tbars');
+    cr.topicos.forEach((t) => { const b = el('div', 'ds-tbar'); const bb = el('div', 'pe-bar'); const i = el('i'); i.style.width = (t.nota / t.vale * 100) + '%'; i.className = nc(t.nota, t.vale); bb.append(i); b.append(el('span', null, `Tópico ${t.i + 1}`), bb, el('b', null, `${fmt1(t.nota)} / ${fmt1(t.vale)}`)); bars.append(b); });
+    info.append(bars);
+    nk.append(big, info); work.append(nk);
+    // 2. tópico a tópico
+    const tc = el('div', 'pe-card');
+    tc.append(el('h2', 'pe-h2', 'Correção tópico a tópico'), el('p', 'pe-note', 'Sua resposta foi comparada com o espelho de correção, ideia por ideia, e com os dispositivos legais que fundamentam cada conclusão.'));
+    cr.topicos.forEach((t) => {
+      const b = el('div', 'pe-ds-esp ds-top ' + nc(t.nota, t.vale));
+      const hd = el('div', 'ds-top-h'); hd.append(el('h4', null, `Tópico ${t.i + 1}: ${r.topicos[t.i]}`), el('span', 'pv-st ' + nc(t.nota, t.vale), `${fmt1(t.nota)} / ${fmt1(t.vale)}`)); b.append(hd);
+      const sec = (cls, tit, itens) => { if (!itens.length) return; const d = el('div', 'ds-sec ' + cls); d.append(el('div', 'ds-sec-t', tit)); const ul = el('ul'); itens.forEach((x) => ul.append(el('li', null, x))); d.append(ul); b.append(d); };
+      sec('ok', '✓ O que pode ser aproveitado', [...t.ok, ...t.parcial.map((x) => 'Parcialmente: ' + x), ...(t.citou.length ? ['Fundamentação citada corretamente: ' + t.citou.join(', ')] : [])]);
+      sec('bad', '✗ O que está errado', t.erros);
+      sec('warn', '△ O que faltou', [...t.falta.filter((x) => !t.erros.length || !/^O espelho/.test(x)), ...(t.faltaC.length ? ['Dispositivos não citados: ' + t.faltaC.join(', ')] : [])]);
+      const sug = [];
+      if (t.erros.length) sug.push('Corrija a conclusão deste tópico: ela contraria o entendimento do espelho e anula a pontuação da ideia.');
+      if (t.falta.length) sug.push(`Acrescente ${t.falta.length === 1 ? 'a ideia indicada' : 'as ' + t.falta.length + ' ideias indicadas'} em “O que faltou”, cada uma com o seu fundamento e aplicada aos fatos do caso.`);
+      if (t.faltaC.length) sug.push(`Fundamente expressamente com ${t.faltaC.slice(0, 3).join(', ')}: a banca pontua a citação do dispositivo.`);
+      if (!sug.length && t.nota < t.vale) sug.push('Aprofunde a explicação das ideias marcadas como parciais, ligando cada uma ao fato do caso.');
+      if (!sug.length) sug.push('Tópico completo. Mantenha essa estrutura: conclusão + fundamento legal + aplicação ao caso.');
+      sec('tip', '→ Como melhorar', sug);
+      tc.append(b);
     });
-    save.addEventListener('click', () => {
-      if (!dsCur.t.every((x) => x != null)) return;
-      const h = (dsNotas[r.id] || {h: []}).h; h.push({t: dsCur.t.slice(), l, s: dsCur.seg || 0, at: Date.now()}); dsNotas[r.id] = {h: h.slice(-10)};
-      sm.textContent = 'Nota registrada.'; save.disabled = true; drawHist(); saveNow();
-    });
-    const ac = el('div', 'pe-actions'); ac.append(tot, save, sm); ec.append(ac);
-    const hist = el('div', 'pe-ds-hist');
-    const drawHist = () => { const hh = (dsNotas[r.id] || {}).h || []; hist.textContent = hh.length ? 'Histórico: ' + hh.map((x) => `${new Date(x.at).toLocaleDateString('pt-BR')} ${fmt1(d3.sum(x.t))}`).join(' · ') : ''; };
-    drawHist(); ec.append(hist); drawTot();
-    work.append(ec);
+    work.append(tc);
+    // 3. forma e extensão
+    const fc = el('div', 'pe-card');
+    fc.append(el('h2', 'pe-h2', 'Forma, extensão e fundamentação'));
+    const obs = [];
+    if (cr.extensao === 'curta') obs.push(`O texto tem cerca de ${cr.lin} linhas, abaixo do mínimo de ${r.linhas_min}. ${cr.desconto ? `Foram descontados ${fmt1(cr.desconto)} ponto(s).` : 'Ficou perto do limite, mas na prova o texto abaixo do mínimo pode ser penalizado.'} Amplie a fundamentação dos tópicos incompletos.`);
+    if (cr.extensao === 'longa') obs.push(`O texto tem cerca de ${cr.lin} linhas, acima do máximo de ${r.linhas_max}. O que passa do limite não é corrigido: só as primeiras ${r.linhas_max} linhas foram avaliadas. Seja mais objetivo.`);
+    if (cr.estranhas.length) obs.push(`Confira estes dispositivos: ${cr.estranhas.join(', ')}. Eles não fazem parte da fundamentação esperada para este caso; se a citação estiver errada, o corretor pode desconsiderar o argumento.`);
+    cr.forma.forEach((x) => obs.push(x));
+    if (!obs.length) obs.push('Extensão adequada, texto organizado e fundamentado. Nada a corrigir na forma.');
+    const ulObs = el('ul', 'ds-obs'); obs.forEach((x) => ulObs.append(el('li', null, x))); fc.append(ulObs);
+    fc.append(el('p', 'pe-note', 'Como a nota é calculada: em cada tópico (2,5 pontos), 70% vem das ideias do espelho presentes na resposta e 30% dos dispositivos legais citados; conclusões contrárias ao espelho tiram pontos. A correção é automática e serve de referência: use-a para melhorar a próxima versão.'));
+    const hist = el('div', 'pe-ds-hist'); const hh = (dsNotas[r.id] || {}).h || [];
+    hist.textContent = hh.length ? 'Histórico de notas: ' + hh.map((x) => `${new Date(x.at).toLocaleDateString('pt-BR')} ${fmt1(dsNota(x))}`).join(' · ') : '';
+    fc.append(hist);
+    work.append(fc);
+    // 4. resposta, espelho e modelo
     const mc = el('div', 'pe-card');
-    const det = document.createElement('details'); const smy = document.createElement('summary'); smy.textContent = 'Ver resposta-modelo'; det.append(smy);
-    const mm = el('div', 'pe-ds-modelo'); paras(mm, r.modelo); det.append(mm); mc.append(det);
+    const dd = (tit, fill, open) => { const det = document.createElement('details'); if (open) det.open = true; const sm = document.createElement('summary'); sm.textContent = tit; det.append(sm); const bx = el('div', 'pe-ds-modelo'); fill(bx); det.append(bx); mc.append(det); };
+    dd('Sua resposta', (bx) => paras(bx, txt));
+    dd('Espelho de correção completo', (bx) => r.espelho.forEach((tx, i) => { bx.append(el('h4', null, `Tópico ${i + 1}: ${r.topicos[i]}`)); bx.append(el('p', null, tx)); }));
+    dd('Resposta-modelo', (bx) => paras(bx, r.modelo));
     const ac2 = el('div', 'pe-actions');
-    const again = el('button', 'pe-btn', 'Reescrever este caso'); again.addEventListener('click', () => { dsDraft[r.id] = ''; openDisc(r.id); });
-    const back2 = el('button', 'pe-btn', 'Voltar à lista'); back2.addEventListener('click', () => { dsDraft[r.id] = dsDraft[r.id] || ''; closeDisc(); });
-    ac2.append(again, back2); mc.append(ac2);
+    const melhora = el('button', 'pe-btn primary', 'Reescrever a partir da minha resposta'); melhora.addEventListener('click', () => { dsDraft[r.id] = txt; openDisc(r.id); });
+    const again = el('button', 'pe-btn', 'Começar do zero'); again.addEventListener('click', () => { dsDraft[r.id] = ''; openDisc(r.id); });
+    const back2 = el('button', 'pe-btn', 'Voltar à lista'); back2.addEventListener('click', () => closeDisc());
+    ac2.append(melhora, again, back2); mc.append(ac2);
     work.append(mc);
   }
   document.getElementById('ds-disc').addEventListener('change', () => renderDisc());
@@ -2638,7 +2872,7 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
       return {...b, itens, q, pts, min: q * (b.minimo || 0.5), semDados: itens.some((x) => x.est == null)};
     });
     // discursiva: média da última nota de cada caso treinado (cada caso vale 10)
-    const notas = Object.values(dsNotas).map((v) => v.h && v.h.length ? d3.sum(v.h[v.h.length - 1].t) : null).filter((x) => x != null);
+    const notas = Object.values(dsNotas).map((v) => v.h && v.h.length ? dsNota(v.h[v.h.length - 1]) : null).filter((x) => x != null);
     const dsc = cfg.discursiva ? {...cfg.discursiva, n: notas.length, media: notas.length ? d3.mean(notas) : null} : null;
     if (dsc) { dsc.proj = dsc.media == null ? null : dsc.media * dsc.questoes; dsc.min = dsc.pontos * (dsc.minimo || 0.5); }
     return {cfg, blocos, dsc, sd, est};
@@ -2722,6 +2956,17 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
     const due = dueList().length;
     const rc = kpiCard(due ? 'warn' : 'ok', 'Revisões para hoje', nf.format(due), due ? 'Questões no ponto de esquecer: revise agora' : 'Memória em dia');
     if (due) { const b = el('button', 'pe-btn', 'Revisar agora'); b.style.marginTop = '8px'; b.addEventListener('click', reviewDue); rc.append(b); }
+    // desempenho geral do aluno
+    const all = statsFor(Q); const ref = snapRef(7); const tg = tendencia(ref, null, all);
+    const es2 = inst.querySelector('#pv-ed-kpi');
+    const kR = kpiCard('', 'Questões respondidas', nf.format(all.n), `${pf(all.n / (Q.length || 1))} do banco de ${nf.format(Q.length)} · ${all.n ? pf(all.acc) + ' de acerto' : 'nenhuma ainda'}`);
+    const lv = levelOf(all.prof, all.n);
+    const kP = kpiCard(all.prof == null ? '' : all.prof >= META ? 'ok' : all.prof >= 55 ? 'warn' : 'bad', 'Proficiência geral', all.prof == null ? '—' : String(all.prof), all.n ? `nível ${lv.t.toLowerCase()} · meta 70` + (tg ? ` · 7 dias: ${tg.txt}` : '') : 'acerto ponderado pela dificuldade');
+    const dias7 = ref ? Math.max(1, dayNum() - ref.dia) : null;
+    const seg7 = d3.sum([...Array(7).keys()].map((i) => timeLog[dkey(new Date(Date.now() - i * 86400000))] || 0));
+    const kM = kpiCard('', 'Ritmo · últimos 7 dias', ref ? `${fmt1(Math.round((all.n - ref.n) / dias7 * 10) / 10)}/dia` : '—', `questões novas por dia · ${Math.round(seg7 / 60)} min de estudo na semana`);
+    if (es2) inst.insertBefore(kR, es2); else inst.append(kR);
+    inst.insertBefore(kP, kR.nextSibling); inst.insertBefore(kM, kP.nextSibling);
     inst.append(rc);
 
     // alerta das regras de eliminação
@@ -2839,9 +3084,89 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
     leis.forEach((r) => { const it = el('div', 'pe-lei'); it.style.setProperty('--dc', DC[r.disc] || '#FFCC29'); it.append(el('div', 'pe-lei-t', r.titulo), el('span', 'pe-lei-n', `${nf.format(r.questoes)} questões`), el('div', 'pe-lei-d', curto(r.dispositivos || r.foco || '')), anchor('ghost', 'Ler a lei', r.url)); ll.append(it); });
     lei.append(ll);
 
-    // 7. edital verticalizado
+    // 7. raio-x do desempenho
+    renderRaio(qd);
+    // 8. edital verticalizado
     renderEdital();
   }
+  function renderRaio(qd) {
+    const box = document.getElementById('pv-raio'); box.replaceChildren(el('h2', 'pe-h2', 'Raio-X do desempenho'), el('p', 'pe-note', 'Como você está evoluindo, onde perde pontos e o quanto do que estudou já está fixado na memória.'));
+    const grid = el('div', 'pv-raio-grid'); box.append(grid);
+    const panel = (t) => { const p = el('div', 'pv-rp'); p.append(el('h3', null, t)); grid.append(p); return p; };
+    const all = statsFor(Q);
+    // evolução do acerto (fotos diárias)
+    const p1 = panel('Evolução do acerto');
+    const ks = Object.keys(snaps).map(Number).sort((a, b) => a - b).slice(-30);
+    if (ks.length >= 2) {
+      const pts = ks.map((k) => { const x = snaps[String(k)]; return x.n ? x.h / x.n : 0; });
+      const W = 260, H = 70, mn = Math.min(...pts, 0.4), mx = Math.max(...pts, 0.8);
+      const xy = pts.map((v, i) => `${(i / (pts.length - 1) * (W - 8) + 4).toFixed(1)},${(H - 6 - (v - mn) / (mx - mn || 1) * (H - 12)).toFixed(1)}`);
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.setAttribute('class', 'pv-spark');
+      const y70 = H - 6 - (0.7 - mn) / (mx - mn || 1) * (H - 12);
+      svg.innerHTML = `<line x1="0" x2="${W}" y1="${y70}" y2="${y70}" class="meta"/><polyline points="${xy.join(' ')}" class="ln"/><circle cx="${xy[xy.length - 1].split(',')[0]}" cy="${xy[xy.length - 1].split(',')[1]}" r="3.5" class="pt"/>`;
+      p1.append(svg, el('div', 'pv-cap', `Linha tracejada: meta de 70%. ${ks.length} dias com registro.`));
+    }
+    const ini = ks.length ? snaps[String(ks[0])] : null; const r7 = snapRef(7); const tg = tendencia(r7, null, all);
+    const ul1 = el('ul', 'pv-kv');
+    const kv = (ul, a, b, cls) => { const li = el('li'); li.append(el('span', null, a), el('b', cls || null, b)); ul.append(li); };
+    kv(ul1, 'Acerto atual', all.n ? pf(all.acc) : '—');
+    kv(ul1, 'Há 7 dias', r7 && r7.n ? pf(r7.h / r7.n) : '—');
+    kv(ul1, 'No primeiro registro', ini && ini.n ? pf(ini.h / ini.n) : '—');
+    if (tg) kv(ul1, 'Variação na semana', tg.txt, tg.cls);
+    p1.append(ul1);
+    if (ks.length < 2) p1.append(el('p', 'pv-cap', 'A curva aparece a partir do segundo dia de estudo.'));
+    // acerto por dificuldade
+    const p2 = panel('Acerto por dificuldade');
+    [[1, 'Fácil'], [2, 'Médio'], [3, 'Difícil']].forEach(([k, lab]) => {
+      const x = statsFor(Q.filter((q) => q.nivel === k)); const c = x.acc == null ? '#9AA8A1' : x.acc >= 0.7 ? '#15803D' : x.acc >= 0.5 ? '#B45309' : '#BE123C';
+      const r = el('div', 'pe-meter-row'); const b = el('div', 'pe-bar'); const i = el('i'); i.style.width = ((x.acc || 0) * 100) + '%'; i.style.background = c; b.append(i);
+      r.append(el('span', null, `${lab} (${nf.format(x.n)})`), b, el('span', null, x.n ? pf(x.acc) : '—')); p2.append(r);
+    });
+    const f1 = statsFor(Q.filter((q) => q.nivel === 1));
+    p2.append(el('p', 'pv-cap', f1.n >= 5 && f1.acc < 0.75 ? 'Erros em questões fáceis custam mais caro: revise a teoria básica e a letra da lei antes de avançar.' : 'Questões difíceis definem a classificação; as fáceis e médias garantem os mínimos do edital.'));
+    // atividade dos últimos 14 dias
+    const p3 = panel('Atividade · últimos 14 dias');
+    const dias = [...Array(14).keys()].reverse().map((i) => { const d = new Date(Date.now() - i * 86400000); const n = dayNum(d); const a = snaps[String(n)], b = snaps[String(n - 1)]; return {d, min: Math.round((timeLog[dkey(d)] || 0) / 60), q: a ? Math.max(0, a.n - (b ? b.n : (snapAntes(n) || {n: 0}).n)) : 0}; });
+    const mx = Math.max(30, ...dias.map((x) => x.min));
+    const cols = el('div', 'pv-cols');
+    dias.forEach((x) => { const c = el('div', 'pv-col'); const i = el('i'); i.style.height = (x.min / mx * 100) + '%'; if (!x.min) i.classList.add('z'); c.title = `${x.d.toLocaleDateString('pt-BR')}: ${x.min} min · ${x.q} questões novas`; c.append(i, el('span', null, x.d.toLocaleDateString('pt-BR', {weekday: 'narrow'}))); cols.append(c); });
+    p3.append(cols);
+    const ativos = dias.filter((x) => x.min >= 5).length;
+    const meta = plan ? plan.min : null;
+    p3.append(el('p', 'pv-cap', `Estudou em ${ativos} de 14 dias · média de ${Math.round(d3.sum(dias, (x) => x.min) / 14)} min/dia${meta ? ` (meta do cronograma: ${meta} min)` : ''}. Passe o mouse nas barras para ver as questões do dia.`));
+    // memória de longo prazo
+    const p4 = panel('Memória de longo prazo');
+    const resp = Q.filter((q) => ans[q.id]); const due = dueList().length;
+    const cx = (f) => resp.filter((q) => f(ans[q.id].b || 0)).length;
+    const reinc = resp.filter((q) => ans[q.id].n >= 2 && ans[q.id].r !== q.gabarito).length;
+    const tot = resp.length || 1;
+    const seg = [['Consolidadas', cx((b) => b >= 4), '#15803D'], ['Fixando', cx((b) => b >= 2 && b < 4), '#1D4ED8'], ['Recentes ou erradas', cx((b) => b < 2), '#B45309']];
+    const st = el('div', 'pv-stack'); seg.forEach(([a, n, c]) => { if (!n) return; const i = el('i'); i.style.flex = String(n); i.style.background = c; i.title = `${a}: ${n}`; st.append(i); }); p4.append(st);
+    const ul4 = el('ul', 'pv-kv'); seg.forEach(([a, n, c]) => { const li = el('li'); const sw = el('span'); const dt = el('i', 'pv-sw'); dt.style.background = c; sw.append(dt, a); li.append(sw, el('b', null, `${nf.format(n)} (${pf(n / tot)})`)); ul4.append(li); });
+    kv(ul4, 'Para revisar hoje', nf.format(due), due ? 'down' : 'up'); kv(ul4, 'Erros reincidentes', nf.format(reinc), reinc ? 'down' : null); p4.append(ul4);
+    if (due) { const b = el('button', 'pe-btn', 'Revisar agora'); b.addEventListener('click', reviewDue); p4.append(b); }
+    // assuntos que mais tiram pontos
+    const p5 = panel('Assuntos que mais tiram pontos');
+    const peso = new Map(qd ? qd.blocos.flatMap((b) => b.itens.map((x) => [x.disc, x.q])) : []);
+    const gs = d3.rollups(resp, (v) => statsFor(v), (q) => q.disc, (q) => assunto(q.tema)).flatMap(([dc, l]) => l.map(([a, v]) => ({dc, a, ...v, sc: (1 - v.acc) * (peso.get(dc) || 1) * Math.min(v.n, 10)})))
+      .filter((x) => x.n >= 3 && x.acc < 0.6).sort((a, b) => b.sc - a.sc).slice(0, 5);
+    if (!gs.length) p5.append(el('p', 'pv-cap', 'Nenhum assunto abaixo de 60% com 3 ou mais questões respondidas.'));
+    const ul5 = el('ul', 'pv-weaks');
+    gs.forEach((x) => { const li = el('li'); const t = el('span'); const dt = el('i', 'pv-sw'); dt.style.background = DC[x.dc] || '#999'; t.append(dt, `${SHORT[x.dc] || x.dc} · ${x.a}`); const b = el('button', 'pe-btn', 'Treinar'); b.addEventListener('click', () => startAssunto(x.dc, x.a)); li.append(t, el('b', 'down', `${x.h}/${x.n}`), b); ul5.append(li); });
+    p5.append(ul5);
+    // simulados e discursivas
+    const p6 = panel('Simulados e discursivas');
+    const ul6 = el('ul', 'pv-kv');
+    simHist.slice(-3).reverse().forEach((u) => kv(ul6, `Simulado ${new Date(u.at).toLocaleDateString('pt-BR')}`, `${u.b.map((x) => `${x[1]}/${x[2]}`).join(' + ')} · ${u.ok ? 'aprovado' : 'eliminado'}`, u.ok ? 'up' : 'down'));
+    if (!simHist.length) kv(ul6, 'Simulados feitos', 'nenhum');
+    const dn = Object.entries(dsNotas).filter(([, v]) => v.h && v.h.length);
+    const md = dn.length ? d3.mean(dn, ([, v]) => dsNota(v.h[v.h.length - 1])) : null;
+    kv(ul6, 'Discursivas corrigidas', `${dn.length} caso(s)`);
+    kv(ul6, 'Média das discursivas', md == null ? '—' : `${fmt1(Math.round(md * 100) / 100)} de 10`, md == null ? null : md >= 5 ? 'up' : 'down');
+    p6.append(ul6);
+    const ac = el('div', 'pe-actions'); const b1 = el('button', 'pe-btn primary', 'Fazer simulado'); b1.addEventListener('click', simuladoProva); const b2 = el('button', 'pe-btn', 'Treinar discursiva'); b2.addEventListener('click', () => show('discursivas')); ac.append(b1, b2); p6.append(ac);
+  }
+  function snapAntes(n) { const ks = Object.keys(snaps).map(Number).filter((k) => k < n).sort((a, b) => a - b); return ks.length ? snaps[String(ks[ks.length - 1])] : null; }
   const evOpen = new Set();
   function renderEdital() {
     const box = document.getElementById('pv-edital'); box.replaceChildren(el('h2', 'pe-h2', 'Edital verticalizado'));
@@ -3015,7 +3340,7 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
     ev = {}; if (obj.ev && typeof obj.ev === 'object') Object.keys(obj.ev).forEach((k) => { if (obj.ev[k]) ev[k] = 1; });
     simHist = Array.isArray(obj.sh) ? obj.sh.filter((x) => x && Array.isArray(x.b)).slice(-30) : [];
     snapSig = '';
-    dsNotas = {}; if (obj.ds && typeof obj.ds === 'object') Object.entries(obj.ds).forEach(([k, v]) => { if (v && Array.isArray(v.h)) dsNotas[k] = {h: v.h.filter((x) => x && Array.isArray(x.t)).slice(-10).map((x) => ({t: x.t.map((n) => Math.max(0, Math.min(2.5, Number(n) || 0))), l: Number(x.l) || 0, at: Number(x.at) || 0, s: Number(x.s) || 0}))}; });
+    dsNotas = {}; if (obj.ds && typeof obj.ds === 'object') Object.entries(obj.ds).forEach(([k, v]) => { if (v && Array.isArray(v.h)) { dsNotas[k] = {h: v.h.filter((x) => x && Array.isArray(x.t)).slice(-10).map((x) => ({t: x.t.map((n) => Math.max(0, Math.min(2.5, Number(n) || 0))), l: Number(x.l) || 0, at: Number(x.at) || 0, s: Number(x.s) || 0, ...(x.n != null ? {n: Math.max(0, Math.min(10, Number(x.n) || 0))} : {}), ...(x.a ? {a: 1} : {})}))}; if (typeof v.x === 'string') dsNotas[k].x = v.x.slice(0, 8000); } });
     if (obj.dr && typeof obj.dr === 'object') { dsDraft = {}; Object.entries(obj.dr).forEach(([k, v]) => { if (typeof v === 'string') dsDraft[k] = v.slice(0, 8000); }); }
     else if (!('dr' in obj) && obj.v) { /* código manual: mantém rascunhos locais */ }
     dsCur = null;
@@ -3176,7 +3501,7 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
     if (!linked) {
       linked = true;
       initAutosave();
-      const named = document.getElementById(location.hash.slice(1));
+      const named = document.getElementById(location.hash.slice(1) === 'painel' ? 'voo' : location.hash.slice(1));
       if (named && named.classList.contains('pe-page')) show(named.id);
     }
   });
