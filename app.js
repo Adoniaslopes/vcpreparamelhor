@@ -182,7 +182,7 @@
     escolherCargo(id);
   });
   function abrirCargo(c) {
-    cargo = c; window.PET_CARGO = c.id;
+    cargo = c; window.PET_CARGO = c.id; window.PET_PASTA = c.pasta || ''; window.PET_BANCA = c.banca || 'Cesgranrio';
     preencherArea($('a-cargo'), c.id);
     $('topo-cargo').textContent = rotulo(c);
     var t = document.getElementById('titulo'); if (t) t.textContent = NOME_PLAT;

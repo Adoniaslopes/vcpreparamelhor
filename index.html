@@ -936,6 +936,18 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
 .pe .pe-ds-modelo h4 { margin: 10px 0 4px; }
 .pe details > summary { cursor: pointer; font-weight: 600; padding: 6px 0; }
 @media (max-width: 520px) { .pe .ds-nota { grid-template-columns: 1fr; } .pe .ds-big .v { font-size: 2.8rem; } }
+
+/* examinador IA */
+.pe .ia-btn { background: #312E81; color: #fff; border-color: #312E81; font-weight: 600; margin-top: 10px; }
+.pe .ia-btn:hover { background: #3730A3; }
+.pe .ia-card { border: 1px solid #C7D2FE; border-left: 5px solid #4F46E5; background: #EEF2FF; border-radius: 10px; padding: 12px 14px; margin-top: 10px; margin-bottom: var(--cds-gap-md); }
+.pe .ia-tit { font-weight: 700; color: #3730A3; margin-bottom: 6px; }
+.pe .ia-card p { margin: 2px 0 8px; line-height: 1.6; color: #1E1B4B; }
+.pe .ia-sec b { color: #312E81; font-size: var(--cds-font-size-caption); text-transform: uppercase; letter-spacing: .03em; }
+.pe .ia-err { color: #9F1239; background: #FFF1F2; border: 1px solid #FECDD3; border-radius: 8px; padding: 8px 12px; margin-top: 8px; font-size: var(--cds-font-size-caption); }
+.pe .ia-load { grid-template-columns: auto minmax(0, 1fr); border-top-color: #4F46E5; }
+.pe .ia-spin { width: 42px; height: 42px; border-radius: 50%; border: 4px solid #C7D2FE; border-top-color: #4F46E5; animation: iaSpin 1s linear infinite; }
+@keyframes iaSpin { to { transform: rotate(360deg); } }
 </style>
 
 
@@ -1748,6 +1760,7 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
     const fb = el('div', 'pe-fb ' + (ok ? 'ok' : 'bad'));
     fb.append(el('strong', null, ok ? 'Correto.' : `Incorreto — gabarito: ${q.gabarito}.`), el('span', null, q.comentario));
     qFb.replaceChildren(fb);
+    if (!ok) qFb.append(explicaErro(q, sess.sel));
     qResp.hidden = true; qProx.hidden = false;
     qProx.textContent = sess.i + 1 < sess.ids.length ? 'Próxima' : 'Ver resultado';
     drawProg();
@@ -1816,7 +1829,7 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
       it.append(el('div', 'm', `${q.disciplina} · ${q.tema} · ${ans[q.id].n} tentativa(s)`), el('div', null, q.enunciado));
       const y = el('div', 'yours', `Sua resposta: ${ans[q.id].r}) ${q[ans[q.id].r.toLowerCase()]}`);
       const r = el('div', 'right', `Correta: ${q.gabarito}) ${q[q.gabarito.toLowerCase()]}`);
-      it.append(y, r, el('div', 'c', q.comentario));
+      it.append(y, r, el('div', 'c', q.comentario), explicaErro(q, ans[q.id].r));
       box.append(it);
     });
   }
@@ -2613,6 +2626,32 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
     return {treina, corrige, cites, stems};
   })();
 
+  // ---------- examinador IA (função no servidor; a chave da IA nunca fica no site) ----------
+  const IA = {
+    on: () => !!(window.PET_SB && window.PET_UID),
+    async chama(body) {
+      const r = await window.PET_SB.functions.invoke('examinador', {body: {...body, pasta: window.PET_PASTA || '', banca: window.PET_BANCA || ''}});
+      if (r.error) { let m = r.error.message || 'Falha na conexão com o examinador.'; try { const j = await r.error.context.json(); if (j && j.erro) m = j.erro; } catch (e) { /* sem corpo */ } throw new Error(m); }
+      if (!r.data || r.data.erro) throw new Error((r.data && r.data.erro) || 'Resposta vazia do examinador.');
+      return r.data;
+    }
+  };
+  function explicaErro(q, marcada) {
+    const box = el('div', 'ia-exp');
+    if (!IA.on()) return box;
+    const b = el('button', 'pe-btn ia-btn', '✦ Examinador: explique meu erro');
+    b.addEventListener('click', async () => {
+      b.disabled = true; b.textContent = 'O examinador está analisando…';
+      try {
+        const x = await IA.chama({tipo: 'questao', id: q.id, marcada});
+        const c = el('div', 'ia-card'); c.append(el('div', 'ia-tit', '✦ Examinador'));
+        [['Por que a sua resposta está errada', x.por_que_errou], ['Por que o gabarito é ' + q.gabarito, x.por_que_certa], ['A pegadinha', x.pegadinha], ['Fundamento', x.fundamento], ['Para não errar de novo', x.dica]].forEach(([t, v]) => { if (v) { const d = el('div', 'ia-sec'); d.append(el('b', null, t), el('p', null, v)); c.append(d); } });
+        box.replaceChildren(c);
+      } catch (e) { b.disabled = false; b.textContent = '✦ Examinador: explique meu erro'; box.querySelector('.ia-err')?.remove(); box.append(el('div', 'ia-err', e.message)); }
+    });
+    box.append(b); return box;
+  }
+
   // ---------- discursivas ----------
   let dsTreino = -1;
   let dsNotas = {};           // id -> {h: [{t:[4 notas], l: linhas, s: segundos, at}]}
@@ -2683,7 +2722,7 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
   }
   function verCorrecao(id) {
     const v = dsNotas[id]; if (!v || !v.x) return;
-    dsCur = {id, fase: 'corrigir', t: [null, null, null, null], ini: Date.now(), left: 0, run: false, txt: v.x, lin: dsLines(v.x), salvo: true, seg: (dsLast(id) || {}).s || 0};
+    dsCur = {id, fase: 'corrigir', t: [null, null, null, null], ini: Date.now(), left: 0, run: false, txt: v.x, lin: dsLines(v.x), salvo: true, seg: (dsLast(id) || {}).s || 0, ia: v.c || null};
     document.getElementById('ds-work').replaceChildren(); show('discursivas'); window.scrollTo({top: 0});
   }
   function closeDisc() { if (dsTimer) { clearInterval(dsTimer); dsTimer = null; } dsCur = null; renderDisc(); }
@@ -2723,11 +2762,30 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
     // fase de correção automática
     const txt = dsCur.txt != null ? dsCur.txt : (dsDraft[r.id] || '');
     if (dsTreino !== discRows().length) { DSC.treina(discRows()); dsTreino = discRows().length; }
-    const cr = DSC.corrige(r, txt);
+    let cr = DSC.corrige(r, txt);
+    // 1º: examinador IA no servidor; se indisponível, corretor automático local
+    if (dsCur.ia === undefined && !dsCur.salvo && IA.on()) {
+      dsCur.ia = 'carregando';
+      IA.chama({tipo: 'discursiva', id: r.id, resposta: txt}).then((x) => { if (dsCur && dsCur.id === r.id) { dsCur.ia = x; drawDiscWork(); } })
+        .catch((e) => { if (dsCur && dsCur.id === r.id) { dsCur.ia = {erro: e.message}; drawDiscWork(); } });
+    }
+    if (dsCur.ia === 'carregando') {
+      const ld = el('div', 'pe-card ds-nota ia-load'); ld.id = 'ds-corr';
+      const sp = el('div', 'ia-spin'); const tx = el('div'); tx.append(el('div', 'ds-sit', '✦ O examinador está corrigindo a sua resposta…'), el('div', 'pe-kpi-note', 'Ele lê o texto inteiro, compara com o espelho da banca tópico por tópico e prepara as orientações. Leva de 20 a 60 segundos.'));
+      ld.append(sp, tx); work.append(ld); return;
+    }
+    const viaIA = dsCur.ia && !dsCur.ia.erro;
+    if (viaIA) {
+      const x = dsCur.ia;
+      cr = {...cr, ia: true, bruta: d3.sum(x.topicos, (t) => t.nota), desconto: 0,
+        topicos: x.topicos.map((t, i) => ({i, nota: t.nota, vale: x.vale || cr.topicos[i].vale, ok: t.aproveitado || [], parcial: [], falta: t.faltou || [], erros: t.errado || [], citou: [], faltaC: [], melhorar: t.melhorar || []})),
+        forma: x.forma || [], estranhas: [], comentario: x.comentario_geral, exemplo: x.paragrafo_exemplo};
+      cr.nota = Math.round(cr.bruta * 4) / 4;
+    }
     if (!dsCur.salvo) {
       const h = (dsNotas[r.id] || {h: []}).h;
-      h.push({t: cr.topicos.map((x) => x.nota), n: cr.nota, a: 1, l: cr.lin, s: dsCur.seg || 0, at: Date.now()});
-      dsNotas[r.id] = {h: h.slice(-10), x: txt.slice(0, 8000)};
+      h.push({t: cr.topicos.map((x) => x.nota), n: cr.nota, a: 1, ...(viaIA ? {ia: 1} : {}), l: cr.lin, s: dsCur.seg || 0, at: Date.now()});
+      dsNotas[r.id] = {h: h.slice(-10), x: txt.slice(0, 8000), ...(viaIA ? {c: dsCur.ia} : {})};
       dsCur.salvo = true; saveNow();
     }
     const nc = (v, max) => v >= 0.7 * max ? 'ok' : v >= 0.5 * max ? 'warn' : 'bad';
@@ -2735,21 +2793,24 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
     const nk = el('div', 'pe-card ds-nota ' + nc(cr.nota, 10)); nk.id = 'ds-corr';
     const big = el('div', 'ds-big'); big.append(el('span', 'v', fmt1(cr.nota)), el('span', 'm', ' / 10'));
     const info = el('div', 'ds-info');
-    info.append(el('div', 'pe-kpi-label', 'Correção automática · ' + r.titulo),
+    info.append(el('div', 'pe-kpi-label', (cr.ia ? '✦ Correção do examinador · ' : 'Correção automática · ') + r.titulo),
       el('div', 'ds-sit', cr.nota >= 7 ? 'Boa resposta: dentro do padrão do espelho' : cr.nota >= 5 ? 'Acima do mínimo, mas com pontos a melhorar' : 'Abaixo de 5: na prova, essa nota elimina (mínimo de 50%)'),
       el('div', 'pe-kpi-note', `Conteúdo ${fmt1(cr.bruta)}${cr.desconto ? ` − ${fmt1(cr.desconto)} por texto curto` : ''} · ${cr.lin} linha(s) estimada(s), faixa ${r.linhas_min} a ${r.linhas_max}`));
     const bars = el('div', 'ds-tbars');
     cr.topicos.forEach((t) => { const b = el('div', 'ds-tbar'); const bb = el('div', 'pe-bar'); const i = el('i'); i.style.width = (t.nota / t.vale * 100) + '%'; i.className = nc(t.nota, t.vale); bb.append(i); b.append(el('span', null, `Tópico ${t.i + 1}`), bb, el('b', null, `${fmt1(t.nota)} / ${fmt1(t.vale)}`)); bars.append(b); });
     info.append(bars);
     nk.append(big, info); work.append(nk);
+    if (dsCur.ia && dsCur.ia.erro) work.append(el('div', 'pe-card ia-err', 'O examinador IA não respondeu (' + dsCur.ia.erro + '). Esta é a correção automática da plataforma.'));
+    if (cr.comentario) { const pc = el('div', 'pe-card ia-card'); pc.append(el('div', 'ia-tit', '✦ Parecer do examinador'), el('p', null, cr.comentario)); work.append(pc); }
     // 2. tópico a tópico
     const tc = el('div', 'pe-card');
-    tc.append(el('h2', 'pe-h2', 'Correção tópico a tópico'), el('p', 'pe-note', 'Sua resposta foi comparada com o espelho de correção, ideia por ideia, e com os dispositivos legais que fundamentam cada conclusão.'));
+    tc.append(el('h2', 'pe-h2', 'Correção tópico a tópico'), el('p', 'pe-note', cr.ia ? 'O examinador leu a sua resposta e a comparou com o espelho da banca, tópico por tópico.' : 'Sua resposta foi comparada com o espelho de correção, ideia por ideia, e com os dispositivos legais que fundamentam cada conclusão.'));
     cr.topicos.forEach((t) => {
       const b = el('div', 'pe-ds-esp ds-top ' + nc(t.nota, t.vale));
       const hd = el('div', 'ds-top-h'); hd.append(el('h4', null, `Tópico ${t.i + 1}: ${r.topicos[t.i]}`), el('span', 'pv-st ' + nc(t.nota, t.vale), `${fmt1(t.nota)} / ${fmt1(t.vale)}`)); b.append(hd);
       const sec = (cls, tit, itens) => { if (!itens.length) return; const d = el('div', 'ds-sec ' + cls); d.append(el('div', 'ds-sec-t', tit)); const ul = el('ul'); itens.forEach((x) => ul.append(el('li', null, x))); d.append(ul); b.append(d); };
       sec('ok', '✓ O que pode ser aproveitado', [...t.ok, ...t.parcial.map((x) => 'Parcialmente: ' + x), ...(t.citou.length ? ['Fundamentação citada corretamente: ' + t.citou.join(', ')] : [])]);
+      if (cr.ia) { sec('bad', '✗ O que está errado', t.erros); sec('warn', '△ O que faltou', t.falta); sec('tip', '→ Como melhorar', t.melhorar.length ? t.melhorar : ['Tópico completo. Mantenha essa estrutura: conclusão + fundamento legal + aplicação ao caso.']); tc.append(b); return; }
       sec('bad', '✗ O que está errado', t.erros);
       sec('warn', '△ O que faltou', [...t.falta.filter((x) => !t.erros.length || !/^O espelho/.test(x)), ...(t.faltaC.length ? ['Dispositivos não citados: ' + t.faltaC.join(', ')] : [])]);
       const sug = [];
@@ -2771,8 +2832,9 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
     if (cr.estranhas.length) obs.push(`Confira estes dispositivos: ${cr.estranhas.join(', ')}. Eles não fazem parte da fundamentação esperada para este caso; se a citação estiver errada, o corretor pode desconsiderar o argumento.`);
     cr.forma.forEach((x) => obs.push(x));
     if (!obs.length) obs.push('Extensão adequada, texto organizado e fundamentado. Nada a corrigir na forma.');
+    if (cr.exemplo) { const ex = el('div', 'ds-sec tip'); ex.append(el('div', 'ds-sec-t', '✦ Como ficaria um trecho no padrão de nota máxima'), el('p', null, cr.exemplo)); fc.append(ex); }
     const ulObs = el('ul', 'ds-obs'); obs.forEach((x) => ulObs.append(el('li', null, x))); fc.append(ulObs);
-    fc.append(el('p', 'pe-note', 'Como a nota é calculada: em cada tópico (2,5 pontos), 70% vem das ideias do espelho presentes na resposta e 30% dos dispositivos legais citados; conclusões contrárias ao espelho tiram pontos. A correção é automática e serve de referência: use-a para melhorar a próxima versão.'));
+    if (!cr.ia) fc.append(el('p', 'pe-note', 'Como a nota é calculada: em cada tópico (2,5 pontos), 70% vem das ideias do espelho presentes na resposta e 30% dos dispositivos legais citados; conclusões contrárias ao espelho tiram pontos. A correção é automática e serve de referência: use-a para melhorar a próxima versão.'));
     const hist = el('div', 'pe-ds-hist'); const hh = (dsNotas[r.id] || {}).h || [];
     hist.textContent = hh.length ? 'Histórico de notas: ' + hh.map((x) => `${new Date(x.at).toLocaleDateString('pt-BR')} ${fmt1(dsNota(x))}`).join(' · ') : '';
     fc.append(hist);
@@ -3340,7 +3402,7 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
     ev = {}; if (obj.ev && typeof obj.ev === 'object') Object.keys(obj.ev).forEach((k) => { if (obj.ev[k]) ev[k] = 1; });
     simHist = Array.isArray(obj.sh) ? obj.sh.filter((x) => x && Array.isArray(x.b)).slice(-30) : [];
     snapSig = '';
-    dsNotas = {}; if (obj.ds && typeof obj.ds === 'object') Object.entries(obj.ds).forEach(([k, v]) => { if (v && Array.isArray(v.h)) { dsNotas[k] = {h: v.h.filter((x) => x && Array.isArray(x.t)).slice(-10).map((x) => ({t: x.t.map((n) => Math.max(0, Math.min(2.5, Number(n) || 0))), l: Number(x.l) || 0, at: Number(x.at) || 0, s: Number(x.s) || 0, ...(x.n != null ? {n: Math.max(0, Math.min(10, Number(x.n) || 0))} : {}), ...(x.a ? {a: 1} : {})}))}; if (typeof v.x === 'string') dsNotas[k].x = v.x.slice(0, 8000); } });
+    dsNotas = {}; if (obj.ds && typeof obj.ds === 'object') Object.entries(obj.ds).forEach(([k, v]) => { if (v && Array.isArray(v.h)) { dsNotas[k] = {h: v.h.filter((x) => x && Array.isArray(x.t)).slice(-10).map((x) => ({t: x.t.map((n) => Math.max(0, Math.min(2.5, Number(n) || 0))), l: Number(x.l) || 0, at: Number(x.at) || 0, s: Number(x.s) || 0, ...(x.n != null ? {n: Math.max(0, Math.min(10, Number(x.n) || 0))} : {}), ...(x.a ? {a: 1} : {}), ...(x.ia ? {ia: 1} : {})}))}; if (typeof v.x === 'string') dsNotas[k].x = v.x.slice(0, 8000); if (v.c && Array.isArray(v.c.topicos)) dsNotas[k].c = v.c; } });
     if (obj.dr && typeof obj.dr === 'object') { dsDraft = {}; Object.entries(obj.dr).forEach(([k, v]) => { if (typeof v === 'string') dsDraft[k] = v.slice(0, 8000); }); }
     else if (!('dr' in obj) && obj.v) { /* código manual: mantém rascunhos locais */ }
     dsCur = null;
