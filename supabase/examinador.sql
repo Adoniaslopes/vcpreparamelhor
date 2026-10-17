@@ -14,3 +14,4 @@ create table if not exists public.ia_cache (
 -- só a função (service role) acessa; alunos não leem nem escrevem direto
 alter table public.ia_uso enable row level security;
 alter table public.ia_cache enable row level security;
+alter table public.ia_uso add column if not exists n_chat int not null default 0;

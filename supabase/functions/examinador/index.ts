@@ -5,7 +5,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2.45.4';
 
 const MODELO = Deno.env.get('EXAMINADOR_MODELO') || 'claude-sonnet-5-5';
 const BUCKET = 'conteudo';
-const LIMITE = { discursiva: 6, questao: 40, analise: 4 }; // por aluno, por dia (administradores sem limite)
+const LIMITE = { discursiva: 6, questao: 40, analise: 4, chat: 40 }; // por aluno, por dia (administradores sem limite)
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -76,10 +76,15 @@ const TOOL_DISC = {
         },
       },
       forma: { ...lista, description: 'Observações sobre estrutura, clareza, norma-padrão, extensão e fundamentação.' },
+      roteiro: {
+        type: 'array',
+        description: 'Roteiro passo a passo de como responder ESTE caso para tirar nota máxima, na ordem ideal, como um professor guiando o aluno ("Comece pela competência…", "Depois aponte…"). 4 a 7 passos.',
+        items: { type: 'object', properties: { passo: { type: 'string', description: 'Título curto e imperativo do passo.' }, como: { type: 'string', description: 'O que escrever nesse passo, em 1 a 3 frases.' }, fundamento: { type: 'string', description: 'Dispositivo, súmula ou tese a citar nesse passo (ou vazio).' } }, required: ['passo', 'como', 'fundamento'], additionalProperties: false },
+      },
       paragrafo_exemplo: { type: 'string', description: 'Reescrita de UM trecho fraco da resposta do aluno mostrando como ficaria no padrão de nota máxima (máx. 6 linhas).' },
       comentario_geral: { type: 'string', description: 'Parecer do examinador em 2 a 4 frases, em tom de instrutor.' },
     },
-    required: ['topicos', 'forma', 'paragrafo_exemplo', 'comentario_geral'],
+    required: ['topicos', 'forma', 'roteiro', 'paragrafo_exemplo', 'comentario_geral'],
     additionalProperties: false,
   },
 };
@@ -216,6 +221,66 @@ ${m === 'depois' ? `\nGABARITO OFICIAL: ${q.gabarito}\nCOMENTÁRIO: ${q.comentar
   return dados;
 }
 
+// ---------- roteiro de resposta (antes de escrever) ----------
+const SCH_ROT = {
+  type: 'object',
+  properties: {
+    leitura: { type: 'string', description: 'O que o caso realmente pergunta, em 2 frases simples.' },
+    roteiro: TOOL_DISC.input_schema.properties.roteiro,
+    estrutura: { type: 'string', description: 'Como distribuir as linhas: introdução, um parágrafo por tópico, conclusão (com nº aproximado de linhas).' },
+    armadilhas: { type: 'array', items: { type: 'string' }, description: 'Erros comuns dos candidatos neste caso.' },
+  },
+  required: ['leitura', 'roteiro', 'estrutura', 'armadilhas'], additionalProperties: false,
+};
+async function roteiroDiscursiva(pasta: string, id: string, banca: string) {
+  const ck = `rot:${pasta}:${id}`;
+  const c = await admin.from('ia_cache').select('resposta').eq('chave', ck).maybeSingle();
+  if (c.data) return { ...c.data.resposta, cache: true };
+  const rows = await arquivo(pasta, 'discursivas.json');
+  const r = (rows as any[]).find((x) => x.id === id);
+  if (!r) throw new Error('Caso não encontrado.');
+  const user = `BANCA: ${banca || 'Cesgranrio'}\nCASO: ${r.titulo}\n${r.caso}\n\nCOMANDO: ${r.comando}\nTÓPICOS:\n${r.topicos.map((t: string, i: number) => `${i + 1}. ${t}`).join('\n')}\nLIMITE: ${r.linhas_min} a ${r.linhas_max} linhas.\n\nESPELHO:\n${r.espelho.map((t: string, i: number) => `Tópico ${i + 1}: ${t}`).join('\n')}`;
+  const sys = `Você é examinador e professor de discursivas jurídicas. Monte um roteiro de resposta passo a passo, guiando o aluno como um professor ao lado dele ("Comece pela competência…, depois aponte…, feche com…"). Baseie-se no espelho, sem copiar a resposta-modelo. Português do Brasil, direto.`;
+  const { dados } = await claude(sys, user, { input_schema: SCH_ROT }, 5000);
+  await admin.from('ia_cache').upsert({ chave: ck, resposta: dados });
+  return dados;
+}
+
+// ---------- conversa com o instrutor ----------
+async function claudeTexto(system: string, messages: any[], maxTokens = 2500) {
+  const r = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'x-api-key': Deno.env.get('ANTHROPIC_API_KEY')!, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
+    body: JSON.stringify({ model: MODELO, max_tokens: maxTokens, system, messages }),
+  });
+  if (!r.ok) throw new Error('IA indisponível (' + r.status + '): ' + (await r.text()).slice(0, 300));
+  const out = await r.json();
+  return (out.content || []).filter((b: any) => b.type === 'text').map((b: any) => b.text).join('\n').trim();
+}
+async function contextoChat(pasta: string, ctx: any) {
+  if (!ctx || typeof ctx !== 'object') return '';
+  if (ctx.tipo === 'discursiva' && ctx.id) {
+    const rows = await arquivo(pasta, 'discursivas.json');
+    const r = (rows as any[]).find((x) => x.id === ctx.id);
+    if (r) return `CONTEXTO: o aluno respondeu a uma discursiva.\nCASO: ${r.titulo}\n${r.caso}\nCOMANDO: ${r.comando}\nTÓPICOS: ${r.topicos.join(' | ')}\nESPELHO: ${r.espelho.map((t: string, i: number) => `(${i + 1}) ${t}`).join(' ')}\nRESPOSTA DO ALUNO: <<<${String(ctx.resposta || '').slice(0, 6000)}>>>\nCORREÇÃO JÁ FEITA (resumo): ${String(ctx.correcao || '').slice(0, 3000)}`;
+  }
+  if (ctx.tipo === 'questao' && ctx.id) {
+    const rows = await arquivo(pasta, 'questoes.json');
+    const q = (rows as any[]).find((x) => x.id === ctx.id);
+    if (q) return `CONTEXTO: questão objetiva que o aluno está estudando.\n${q.disciplina} · ${q.tema}\n${q.enunciado}\n${['a', 'b', 'c', 'd', 'e'].filter((l) => q[l]).map((l) => `${l.toUpperCase()}) ${q[l]}`).join('\n')}\nGABARITO OFICIAL: ${q.gabarito}\nO ALUNO MARCOU: ${ctx.marcada || '-'}\nCOMENTÁRIO: ${q.comentario || ''}`;
+  }
+  if (ctx.tipo === 'geral') return 'CONTEXTO: dados de desempenho do aluno (JSON): ' + JSON.stringify(ctx.dados || {}).slice(0, 8000);
+  return '';
+}
+const SYS_CHAT = `Você é o instrutor pessoal do aluno numa plataforma de preparação para concursos jurídicos (banca indicada no contexto, em geral Cesgranrio).
+Converse como um professor experiente ao lado do aluno: claro, encorajador, objetivo, em português do Brasil.
+- Responda à dúvida com base no contexto fornecido (espelho, gabarito oficial, dados do aluno). O gabarito oficial e o espelho são a referência.
+- Quando o aluno pedir como fazer algo, dê um passo a passo numerado.
+- Cite dispositivos legais só quando tiver segurança; se não tiver, diga para conferir na lei.
+- Respostas curtas (até ~200 palavras), salvo se o aluno pedir mais detalhe. Termine, quando fizer sentido, com uma pergunta ou sugestão de próximo passo.
+- Não use tabelas nem títulos com #; use parágrafos curtos e listas numeradas.
+- Não faça a prova pelo aluno: em discursivas novas, oriente e corrija, sem entregar o texto pronto completo.`;
+
 // ---------- instrutor: análise do diagnóstico e plano ----------
 const SCH_DIAG = {
   type: 'object',
@@ -264,22 +329,30 @@ Deno.serve(async (req) => {
     if (!ehAdmin && (!p.data || p.data.status !== 'aprovado' || (p.data.expira_em && p.data.expira_em < hoje))) return json({ erro: 'Acesso não liberado.' }, 403);
 
     const body = await req.json();
-    const tipo = ['questao', 'ingles', 'diagnostico'].includes(body.tipo) ? body.tipo : 'discursiva';
+    const tipo = ['questao', 'ingles', 'diagnostico', 'roteiro', 'chat'].includes(body.tipo) ? body.tipo : 'discursiva';
     const pasta = String(body.pasta || '').replace(/[^a-z0-9_-]/gi, '');
 
     // limite diário por aluno
     if (body.tipo === 'status') return json({ ok: true, ativo: !!Deno.env.get('ANTHROPIC_API_KEY') });
-    const us = await admin.from('ia_uso').select('n_disc, n_quest').eq('user_id', uid).eq('dia', hoje).maybeSingle();
-    const nd = us.data?.n_disc || 0, nq = us.data?.n_quest || 0;
+    const us = await admin.from('ia_uso').select('n_disc, n_quest, n_chat').eq('user_id', uid).eq('dia', hoje).maybeSingle();
+    const nd = us.data?.n_disc || 0, nq = us.data?.n_quest || 0, nc = us.data?.n_chat || 0;
+    if (!ehAdmin && tipo === 'chat' && nc >= LIMITE.chat) return json({ erro: `Limite diário de ${LIMITE.chat} mensagens com o instrutor atingido. Amanhã libera de novo.`, limite: true }, 429);
     if (!ehAdmin && tipo === 'discursiva' && nd >= LIMITE.discursiva) return json({ erro: `Limite diário de ${LIMITE.discursiva} correções pelo examinador atingido. Amanhã libera de novo.`, limite: true }, 429);
     if (!ehAdmin && tipo === 'diagnostico' && nd >= LIMITE.discursiva + LIMITE.analise) return json({ erro: 'Limite diário de análises atingido. Amanhã libera de novo.', limite: true }, 429);
-    if (!ehAdmin && tipo !== 'discursiva' && tipo !== 'diagnostico' && nq >= LIMITE.questao) return json({ erro: `Limite diário de ${LIMITE.questao} explicações atingido. Amanhã libera de novo.`, limite: true }, 429);
+    if (!ehAdmin && ['questao', 'ingles', 'roteiro'].includes(tipo) && nq >= LIMITE.questao) return json({ erro: `Limite diário de ${LIMITE.questao} explicações atingido. Amanhã libera de novo.`, limite: true }, 429);
 
     let out: any;
     if (tipo === 'discursiva') {
       const resposta = String(body.resposta || '').slice(0, 9000);
       if (resposta.trim().length < 80) return json({ erro: 'Resposta muito curta para correção.' }, 400);
       out = await corrigeDiscursiva(pasta, String(body.id), resposta, String(body.banca || ''));
+    } else if (tipo === 'chat') {
+      const ctxTxt = await contextoChat(pasta, body.ctx);
+      const msgs = (Array.isArray(body.msgs) ? body.msgs : []).slice(-12).map((m: any) => ({ role: m.role === 'assistant' ? 'assistant' : 'user', content: String(m.content || '').slice(0, 3000) })).filter((m: any) => m.content);
+      if (!msgs.length || msgs[msgs.length - 1].role !== 'user') return json({ erro: 'Mensagem vazia.' }, 400);
+      out = { resposta: await claudeTexto(SYS_CHAT + (ctxTxt ? '\n\n' + ctxTxt : ''), msgs) };
+    } else if (tipo === 'roteiro') {
+      out = await roteiroDiscursiva(pasta, String(body.id), String(body.banca || ''));
     } else if (tipo === 'diagnostico') {
       out = await analisaDiagnostico(body.dados || {});
     } else if (tipo === 'ingles') {
@@ -287,7 +360,7 @@ Deno.serve(async (req) => {
     } else {
       out = await explicaQuestao(pasta, String(body.id), String(body.marcada || '').toUpperCase().slice(0, 1));
     }
-    if (!out.cache) await admin.from('ia_uso').upsert({ user_id: uid, dia: hoje, n_disc: nd + (tipo === 'discursiva' || tipo === 'diagnostico' ? 1 : 0), n_quest: nq + (tipo === 'questao' || tipo === 'ingles' ? 1 : 0) });
+    if (!out.cache) await admin.from('ia_uso').upsert({ user_id: uid, dia: hoje, n_disc: nd + (tipo === 'discursiva' || tipo === 'diagnostico' ? 1 : 0), n_quest: nq + (['questao', 'ingles', 'roteiro'].includes(tipo) ? 1 : 0), n_chat: nc + (tipo === 'chat' ? 1 : 0) });
     return json({ ok: true, ...out });
   } catch (e) {
     return json({ erro: String((e as Error).message || e) }, 500);
