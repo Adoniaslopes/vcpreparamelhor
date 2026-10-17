@@ -2857,7 +2857,7 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
       box.append(el('div', 'ia-tit', '✦ Seu instrutor está ativo'), el('p', null, `Comece pelo diagnóstico (${dgAnswered()} de ${diag.ids.length} questões feitas). Ao terminar, eu analiso o resultado, aponto suas prioridades e monto o plano da semana.`));
       const b = el('button', 'pe-btn ia-btn', dgAnswered() ? 'Continuar o diagnóstico' : 'Fazer o diagnóstico'); b.addEventListener('click', () => show('diagnostico')); box.append(b); return;
     }
-    if (!diag.ia && !diagPedindo && !diag.iaErro && iaStatus.s === 'ativo') pedeAnaliseDiag();
+    if (!diag.ia && !diagPedindo && !diag.iaErro && iaStatus.s === 'ativo') setTimeout(pedeAnaliseDiag, 0);
     box.append(cartaoAnalise(true));
   }
   // ---------- examinador IA (função no servidor; a chave da IA nunca fica no site) ----------
