@@ -167,6 +167,54 @@ COMENTÁRIO DO BANCO: ${q.comentario || '(sem comentário)'}`;
   return dados;
 }
 
+// ---------- inglês: ajuda de leitura para quem não domina o idioma ----------
+const VOC = { type: 'array', items: { type: 'object', properties: { en: { type: 'string' }, pt: { type: 'string' } }, required: ['en', 'pt'], additionalProperties: false } };
+const SCH_ING: Record<string, any> = {
+  antes: {
+    type: 'object',
+    properties: {
+      vocabulario: { ...VOC, description: '15 a 25 palavras ou expressões-chave do texto e das alternativas, com o significado em português no contexto.' },
+      pergunta_pt: { type: 'string', description: 'Tradução da pergunta (último comando do enunciado).' },
+      alternativas_pt: { type: 'array', items: { type: 'object', properties: { letra: { type: 'string' }, pt: { type: 'string' } }, required: ['letra', 'pt'], additionalProperties: false } },
+      como_procurar: { type: 'string', description: 'Em qual parágrafo e por quais palavras procurar a resposta, SEM dizer qual alternativa é a correta.' },
+    },
+    required: ['vocabulario', 'pergunta_pt', 'alternativas_pt', 'como_procurar'], additionalProperties: false,
+  },
+  depois: {
+    type: 'object',
+    properties: {
+      traducao: { type: 'string', description: 'Tradução fiel do texto completo para o português, mantendo os parágrafos (separe com \\n).' },
+      trecho_chave: { type: 'string', description: 'O trecho em inglês do texto que responde à questão, copiado literalmente.' },
+      explicacao: { type: 'string', description: 'Por que esse trecho leva ao gabarito, em português simples, para quem não sabe inglês.' },
+      tecnica: { type: 'string', description: 'Técnica de prova para resolver esse tipo de questão sem dominar o inglês (cognatos, conectores, referência, ideia principal etc.).' },
+    },
+    required: ['traducao', 'trecho_chave', 'explicacao', 'tecnica'], additionalProperties: false,
+  },
+};
+const SYS_ING = `Você é professor de inglês instrumental para concursos (banca Cesgranrio) e ajuda um aluno brasileiro que quase não sabe inglês a ler textos de prova.
+Responda em português do Brasil, simples e direto. O gabarito oficial informado é definitivo.
+No modo "antes", nunca revele nem insinue qual alternativa é a correta: só dê vocabulário, traduções neutras e onde procurar.`;
+
+async function ajudaIngles(pasta: string, id: string, modo: string) {
+  const m = modo === 'depois' ? 'depois' : 'antes';
+  const ck = `ing:${pasta}:${id}:${m}`;
+  const c = await admin.from('ia_cache').select('resposta').eq('chave', ck).maybeSingle();
+  if (c.data) return { ...c.data.resposta, cache: true };
+  const rows = await arquivo(pasta, 'questoes.json');
+  const q = (rows as any[]).find((x) => x.id === id);
+  if (!q) throw new Error('Questão não encontrada.');
+  const alts = ['A', 'B', 'C', 'D', 'E'].filter((l) => q[l.toLowerCase()]).map((l) => `${l}) ${q[l.toLowerCase()]}`).join('\n');
+  const user = `MODO: ${m}
+ENUNCIADO (texto e pergunta):
+${q.enunciado}
+
+${alts}
+${m === 'depois' ? `\nGABARITO OFICIAL: ${q.gabarito}\nCOMENTÁRIO: ${q.comentario || ''}` : ''}`;
+  const { dados } = await claude(SYS_ING, user, { input_schema: SCH_ING[m] }, m === 'depois' ? 4000 : 2000);
+  await admin.from('ia_cache').upsert({ chave: ck, resposta: dados });
+  return dados;
+}
+
 // ---------- entrada ----------
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS });
@@ -181,24 +229,26 @@ Deno.serve(async (req) => {
     if (!ehAdmin && (!p.data || p.data.status !== 'aprovado' || (p.data.expira_em && p.data.expira_em < hoje))) return json({ erro: 'Acesso não liberado.' }, 403);
 
     const body = await req.json();
-    const tipo = body.tipo === 'questao' ? 'questao' : 'discursiva';
+    const tipo = body.tipo === 'questao' || body.tipo === 'ingles' ? body.tipo : 'discursiva';
     const pasta = String(body.pasta || '').replace(/[^a-z0-9_-]/gi, '');
 
     // limite diário por aluno
     const us = await admin.from('ia_uso').select('n_disc, n_quest').eq('user_id', uid).eq('dia', hoje).maybeSingle();
     const nd = us.data?.n_disc || 0, nq = us.data?.n_quest || 0;
     if (!ehAdmin && tipo === 'discursiva' && nd >= LIMITE.discursiva) return json({ erro: `Limite diário de ${LIMITE.discursiva} correções pelo examinador atingido. Amanhã libera de novo.`, limite: true }, 429);
-    if (!ehAdmin && tipo === 'questao' && nq >= LIMITE.questao) return json({ erro: `Limite diário de ${LIMITE.questao} explicações atingido. Amanhã libera de novo.`, limite: true }, 429);
+    if (!ehAdmin && tipo !== 'discursiva' && nq >= LIMITE.questao) return json({ erro: `Limite diário de ${LIMITE.questao} explicações atingido. Amanhã libera de novo.`, limite: true }, 429);
 
     let out: any;
     if (tipo === 'discursiva') {
       const resposta = String(body.resposta || '').slice(0, 9000);
       if (resposta.trim().length < 80) return json({ erro: 'Resposta muito curta para correção.' }, 400);
       out = await corrigeDiscursiva(pasta, String(body.id), resposta, String(body.banca || ''));
+    } else if (tipo === 'ingles') {
+      out = await ajudaIngles(pasta, String(body.id), String(body.modo || 'antes'));
     } else {
       out = await explicaQuestao(pasta, String(body.id), String(body.marcada || '').toUpperCase().slice(0, 1));
     }
-    if (!out.cache) await admin.from('ia_uso').upsert({ user_id: uid, dia: hoje, n_disc: nd + (tipo === 'discursiva' ? 1 : 0), n_quest: nq + (tipo === 'questao' ? 1 : 0) });
+    if (!out.cache) await admin.from('ia_uso').upsert({ user_id: uid, dia: hoje, n_disc: nd + (tipo === 'discursiva' ? 1 : 0), n_quest: nq + (tipo !== 'discursiva' ? 1 : 0) });
     return json({ ok: true, ...out });
   } catch (e) {
     return json({ erro: String((e as Error).message || e) }, 500);

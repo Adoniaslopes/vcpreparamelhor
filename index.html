@@ -948,6 +948,30 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
 .pe .ia-load { grid-template-columns: auto minmax(0, 1fr); border-top-color: #4F46E5; }
 .pe .ia-spin { width: 42px; height: 42px; border-radius: 50%; border: 4px solid #C7D2FE; border-top-color: #4F46E5; animation: iaSpin 1s linear infinite; }
 @keyframes iaSpin { to { transform: rotate(360deg); } }
+
+/* inglês: leitura */
+.pe .pe-ing { border: 1px solid #DCE3DF; border-radius: 10px; background: #FBFCFB; margin-bottom: 10px; }
+.pe .pe-ing > summary { padding: 8px 12px; font-weight: 600; cursor: pointer; color: #1D4ED8; }
+.pe .pe-ing-txt { white-space: pre-line; max-height: 22rem; overflow-y: auto; padding: 4px 14px 12px; line-height: 1.7; font-size: var(--cds-font-size-body); }
+.pe .pe-ing-q { font-weight: 700; margin: 6px 0 4px; }
+.pe .ia-voc { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.pe .ia-voc span { background: #fff; border: 1px solid #C7D2FE; border-radius: 999px; padding: 3px 10px; font-size: var(--cds-font-size-caption); color: #1E1B4B; }
+.pe .ia-voc b { color: #3730A3; }
+.pe .ia-alts { margin: 4px 0 6px 1.1rem; padding: 0; line-height: 1.55; color: #1E1B4B; }
+.pe .ia-trecho { font-style: italic; background: #fff; border-left: 3px solid #4F46E5; padding: 6px 10px; }
+.pe .ia-card details > summary { color: #3730A3; }
+
+/* plano de inglês */
+.pe .pe-ing-plano { margin-bottom: var(--cds-gap-md); border-top: 5px solid #1D4ED8; }
+.pe .pe-ing-plano p, .pe .pe-ing-plano li { line-height: 1.6; }
+.pe .pe-ing-plano ul { margin: 4px 0 10px 1.2rem; padding: 0; }
+.pe .pi-h { font-size: var(--cds-font-size-body); font-weight: 700; color: #1D4ED8; margin: 16px 0 6px; }
+.pe .pi-meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); gap: 8px; margin: 8px 0; }
+.pe .pi-meta div { background: #EFF4FF; border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; }
+.pe .pi-meta b { color: #1D4ED8; } .pe .pi-meta span { font-size: var(--cds-font-size-caption); color: #33443C; }
+.pe .pi-tab { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-caption); }
+.pe .pi-tab td { padding: 6px 8px; border-bottom: 1px solid #E3E9E6; vertical-align: top; }
+.pe .pi-tab td.en { font-weight: 700; color: #14201B; width: 48%; }
 </style>
 
 
@@ -1093,6 +1117,7 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
   <section class="pe-page" id="material" hidden>
     <p class="pe-note" style="margin-bottom:var(--cds-gap-md)">Antes das questões: leia a Sinopse da disciplina aqui mesmo e confira a letra da lei nos dispositivos mais cobrados no banco. Os links “Ler a lei” abrem o texto oficial compilado no Planalto.</p>
     <div class="pe-chips" id="mt-chips" role="tablist" aria-label="Disciplinas"></div>
+    <div class="pe-card pe-ing-plano" id="mt-ing" hidden></div>
     <div class="pe-mt" id="mt-box" data-source="materiais">
       <div class="pe-card pe-mt-pdf" id="mt-pdf"></div>
       <div class="pe-card pe-reader" id="mt-reader" data-source="sinopses"></div>
@@ -1562,6 +1587,7 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
     if (!mtDisc) mtDisc = DISCS[0] && DISCS[0].disc;
     const chips = document.getElementById('mt-chips'); chips.replaceChildren();
     DISCS.forEach((d) => { const c = el('button', 'pe-chip', SHORT[d.disc] || d.disciplina); c.setAttribute('role', 'tab'); c.setAttribute('aria-selected', String(d.disc === mtDisc)); c.style.setProperty('--dc', DC[d.disc]); c.addEventListener('click', () => { mtDisc = d.disc; renderMaterial(); }); chips.append(c); });
+    renderPlanoIngles();
     const rows = matRows().filter((r) => r.disc === mtDisc);
     const box = document.getElementById('mt-box'); box.style.setProperty('--dc', DC[mtDisc]);
     const pdfBox = document.getElementById('mt-pdf'), list = document.getElementById('mt-lista');
@@ -1690,7 +1716,8 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
     document.getElementById('questao').style.setProperty('--dc', DC[q.disc]);
     document.getElementById('q-disc').style.color = DC[q.disc];
     document.getElementById('q-nivel').textContent = ['', 'Nível 1 · básico', 'Nível 2 · intermediário', 'Nível 3 · avançado'][Number(q.nivel)] || '';
-    document.getElementById('q-stem').textContent = q.enunciado;
+    desenhaEnunciado(document.getElementById('q-stem'), q, sess.i ? byId.get(sess.ids[sess.i - 1]) : null);
+    if (q.disc === 'ing' && sess.label !== 'simulado') document.getElementById('q-stem').append(ajudaIngles(q, 'antes'));
     qAlts.replaceChildren();
     LETTERS.forEach((k) => {
       const b = el('button', 'pe-alt'); b.dataset.k = k.toUpperCase();
@@ -1760,7 +1787,8 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
     const fb = el('div', 'pe-fb ' + (ok ? 'ok' : 'bad'));
     fb.append(el('strong', null, ok ? 'Correto.' : `Incorreto — gabarito: ${q.gabarito}.`), el('span', null, q.comentario));
     qFb.replaceChildren(fb);
-    if (!ok) qFb.append(explicaErro(q, sess.sel));
+    if (!ok && q.disc !== 'ing') qFb.append(explicaErro(q, sess.sel));
+    if (q.disc === 'ing') qFb.append(ajudaIngles(q, 'depois'));
     qResp.hidden = true; qProx.hidden = false;
     qProx.textContent = sess.i + 1 < sess.ids.length ? 'Próxima' : 'Ver resultado';
     drawProg();
@@ -1851,9 +1879,10 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
   const DIAG_N = [1, 2, 2, 3, 2, 1, 2, 3, 2, 2];
   const hsh = (s) => { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; };
   let diag = {ids: [], ans: {}, times: {}, s: null, f: null};
-  function pickDiag() {
+  function pickDiag(so) {
     const ids = [];
     for (const d of DISCS) {
+      if (so && !so.has(d.disc)) continue;
       const groups = d3.groups(Q.filter((q) => q.disc === d.disc), (q) => assunto(q.tema)).sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]));
       groups.forEach((g) => g[1].sort((x, y) => hsh(x.id) - hsh(y.id)));
       const used = new Set(); let gi = 0, k = 0, guard = 0;
@@ -1867,12 +1896,24 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
     return ids;
   }
   const dgValid = () => diag.ids.length && diag.ids.every((id) => byId.has(id));
+  // diagnóstico criado antes de uma disciplina entrar no banco (ex.: Português e Inglês): acrescenta 10 questões dela
+  function completaDiag() {
+    if (!dgValid()) return;
+    const tem = new Set(diag.ids.map((id) => byId.get(id).disc));
+    const falta = new Set(DISCS.map((d) => d.disc).filter((d) => !tem.has(d)));
+    if (!falta.size) return;
+    if (diag.f) { arquivaDiag(); diag.f = null; }
+    // as disciplinas que faltam entram no começo da fila de pendentes (Português e Inglês abrem a prova)
+    const novas = pickDiag(falta);
+    diag.ids = [...novas, ...diag.ids];
+    saveNow();
+  }
   const dgAnswered = () => diag.ids.filter((id) => diag.ans[id]).length;
   const dgPending = () => diag.ids.filter((id) => !diag.ans[id]);
   let dgCur = null, dgSel = null, dgT = 0;
   const dgOk = document.getElementById('dg-ok'), dgMsg = document.getElementById('dg-msg');
   function diagStart() {
-    if (!dgValid()) diag = {ids: pickDiag(), ans: {}, times: {}, s: null, f: null};
+    if (!dgValid()) diag = {ids: pickDiag(), ans: {}, times: {}, s: null, f: null}; else completaDiag();
     if (!dgPending().length) { renderDiag(); document.getElementById('dg-res').scrollIntoView({block: 'start'}); return; }
     if (!diag.s) diag.s = Date.now();
     document.getElementById('dg-res').hidden = true;
@@ -1893,7 +1934,7 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
     const box = document.getElementById('dg-q'); box.hidden = false; box.style.setProperty('--dc', DC[q.disc]);
     document.getElementById('dg-pos').textContent = `Questão ${dgAnswered() + 1} de ${diag.ids.length} · Bloco ${Math.floor(pos / 10) + 1} de ${Math.ceil(diag.ids.length / 10)}`;
     const dd = document.getElementById('dg-disc'); dd.textContent = `${q.disciplina} · nível ${q.nivel}`; dd.style.color = DC[q.disc];
-    document.getElementById('dg-stem').textContent = q.enunciado;
+    desenhaEnunciado(document.getElementById('dg-stem'), q, pos ? byId.get(diag.ids[pos - 1]) : null);
     const alts = document.getElementById('dg-alts'); alts.replaceChildren();
     LETTERS.forEach((k) => {
       const b = el('button', 'pe-alt'); b.dataset.k = k.toUpperCase();
@@ -1937,7 +1978,7 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
   }
   function renderDiagBlocks() {
     const box = document.getElementById('dg-blocks'); box.replaceChildren();
-    if (!dgValid()) diag.ids = pickDiag();
+    if (!dgValid()) diag.ids = pickDiag(); else completaDiag();
     DISCS.forEach((d) => {
       const tot = diag.ids.filter((id) => byId.get(id).disc === d.disc).length;
       const n = diag.ids.filter((id) => byId.get(id).disc === d.disc && diag.ans[id]).length;
@@ -2626,6 +2667,68 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
     return {treina, corrige, cites, stems};
   })();
 
+  // ---------- plano mínimo de Inglês (para quem parte do zero) ----------
+  function renderPlanoIngles() {
+    const box = document.getElementById('mt-ing'); box.hidden = mtDisc !== 'ing'; if (box.hidden) return;
+    if (box.childElementCount) return;
+    const h = (t) => el('h3', 'pi-h', t);
+    const p = (t) => el('p', null, t);
+    const tab = (rows) => { const t = el('table', 'pi-tab'); rows.forEach(([a, b]) => { const tr = el('tr'); tr.append(el('td', 'en', a), el('td', null, b)); t.append(tr); }); return t; };
+    const ul = (xs) => { const u = el('ul'); xs.forEach((x) => u.append(el('li', null, x))); return u; };
+    box.append(el('div', 'pe-kpi-label', 'Inglês do zero · meta: não ser eliminado'), el('h2', 'pe-h2', 'Plano mínimo de Inglês'));
+    box.append(p('Na prova são 10 questões de Inglês sobre texto (em geral um texto longo para várias questões, com temas de energia, petróleo, meio ambiente e negócios). Você não precisa dominar o idioma: precisa acertar o suficiente para não zerar e, somado ao Português, chegar a 10 dos 20 pontos de Conhecimentos Gerais.'));
+    const k = el('div', 'pi-meta');
+    [['Elimina', 'zerar Inglês, ou menos de 10 acertos em Português + Inglês'], ['Só no chute', 'média de 2 acertos, mas cerca de 1 chance em 10 de zerar'], ['Sua meta', 'Inglês 3 a 4 + Português 7 ou mais']].forEach(([a, b]) => { const c = el('div'); c.append(el('b', null, a), el('span', null, b)); k.append(c); });
+    box.append(k);
+    box.append(h('Como resolver sem saber inglês'), ul([
+      'Leia primeiro a pergunta e as alternativas, depois procure no texto só o trecho que interessa. Não traduza o texto inteiro.',
+      'Título e primeiro parágrafo dão a ideia principal: resolvem as questões de “main idea”, “purpose” e “the text is mainly about”.',
+      'Use os cognatos (palavras parecidas com o português): technology, environment, investment, operation, community. Eles carregam o sentido da frase.',
+      'Questões de referência (“the word it/they/this refers to”): volte ao substantivo mais próximo, antes da palavra, que concorde em número.',
+      'Conectores mudam o sentido da frase: “however” anuncia contraste; “therefore”, conclusão. Decore a tabela abaixo: é a parte que mais rende.',
+      'Desconfie de alternativas absolutas (always, never, only, all, none) e das que copiam palavras do texto, mas invertem o sentido.',
+      'Nunca deixe em branco: na Cesgranrio a errada não anula a certa. Ao chutar, elimine antes as absolutas e as que fogem do tema do texto.',
+    ]));
+    box.append(h('Conectores mais cobrados'), tab([
+      ['however · nevertheless · yet · but', 'porém, contudo, no entanto (contraste)'],
+      ['although · though · even though', 'embora, mesmo que'],
+      ['despite · in spite of', 'apesar de'],
+      ['whereas · while', 'enquanto (contraste entre duas ideias)'],
+      ['therefore · thus · hence · consequently · as a result · so', 'portanto, assim, consequentemente'],
+      ['because · since · as · due to · owing to', 'porque, já que, devido a'],
+      ['moreover · furthermore · in addition · besides · also', 'além disso, também'],
+      ['for instance · for example · such as', 'por exemplo, tal como'],
+      ['unless', 'a menos que'],
+      ['instead (of)', 'em vez de'],
+      ['otherwise', 'caso contrário'],
+      ['similarly · likewise', 'da mesma forma'],
+      ['in order to', 'para, a fim de'],
+      ['meanwhile', 'enquanto isso'],
+    ]));
+    box.append(h('Falsos cognatos que derrubam candidatos'), tab([
+      ['actually', 'na verdade (e não “atualmente”)'], ['eventually', 'finalmente, com o tempo'], ['pretend', 'fingir'], ['realize', 'perceber'],
+      ['assist', 'ajudar'], ['attend', 'comparecer'], ['resume', 'retomar'], ['sensible', 'sensato'], ['library', 'biblioteca'], ['push', 'empurrar'],
+      ['exquisite', 'requintado'], ['policy', 'política, diretriz (e não “polícia”)'],
+    ]));
+    box.append(h('Verbos modais (mudam o sentido da afirmação)'), tab([
+      ['must', 'deve (obrigação) ou certamente (dedução)'], ['should', 'deveria (recomendação)'], ['may · might', 'pode, talvez (possibilidade)'],
+      ['can · could', 'pode, consegue (capacidade) / poderia'], ['will', 'vai (futuro)'], ['would', 'faria, iria (condição)'],
+    ]));
+    box.append(h('Vocabulário de energia e negócios'), tab([
+      ['oil · gas · crude', 'petróleo · gás · petróleo bruto'], ['pipeline · leak · spill', 'duto · vazamento · derramamento'],
+      ['rig · drilling · offshore', 'plataforma, sonda · perfuração · no mar'], ['refinery · fuel · shipping', 'refinaria · combustível · transporte marítimo'],
+      ['supply · demand · shortage', 'oferta, abastecimento · demanda · escassez'], ['safety · hazard · harm', 'segurança · risco, perigo · dano'],
+      ['emissions · renewable · carbon', 'emissões · renovável · carbono'], ['revenue · profit · shareholder', 'receita · lucro · acionista'],
+      ['workforce · stakeholders · compliance', 'força de trabalho · partes interessadas · conformidade'], ['goal · growth · decline', 'meta · crescimento · queda'],
+    ]));
+    box.append(h('Rotina até a prova (20 a 30 minutos por dia)'), ul([
+      'Semana 1: decore conectores, modais e falsos cognatos (as três tabelas acima). Revise todo dia.',
+      'Semanas 2 e 3: faça as questões de Inglês do Treino com a “Ajuda de leitura” do examinador. Depois de responder, use “Traduzir o texto e mostrar onde estava a resposta” e anote as palavras novas.',
+      'Semanas 4 em diante: refaça as questões sem ajuda, cronometrando cerca de 3 minutos por questão. Meta: 4 de 10.',
+      'Na prova: comece pelo Português (onde você soma mais) e reserve cerca de 30 minutos para o Inglês.',
+    ]));
+    const ac = el('div', 'pe-actions'); const b = el('button', 'pe-btn primary', 'Treinar Inglês com ajuda de leitura'); b.addEventListener('click', () => startFrom('ing')); ac.append(b); box.append(ac);
+  }
   // ---------- examinador IA (função no servidor; a chave da IA nunca fica no site) ----------
   const IA = {
     on: () => !!(window.PET_SB && window.PET_UID),
@@ -2636,6 +2739,49 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
       return r.data;
     }
   };
+  // questões de inglês: texto em quadro rolável, pergunta destacada; texto repetido da questão anterior fica recolhido
+  const separaIng = (q) => {
+    const ls = String(q.enunciado).split('\n'); if (!/^read the text/i.test(ls[0]) || ls.length < 4) return null;
+    return {cab: ls[0], texto: ls.slice(1, -1).join('\n'), pergunta: ls[ls.length - 1]};
+  };
+  function desenhaEnunciado(box, q, ant) {
+    box.replaceChildren();
+    const p = q.disc === 'ing' ? separaIng(q) : null;
+    if (!p) { box.textContent = q.enunciado; return; }
+    const pa = ant && ant.disc === 'ing' ? separaIng(ant) : null;
+    const mesmo = pa && pa.texto === p.texto;
+    const det = document.createElement('details'); det.className = 'pe-ing'; det.open = !mesmo;
+    const sm = document.createElement('summary'); sm.textContent = mesmo ? 'Texto (o mesmo da questão anterior) — clique para abrir' : 'Texto'; det.append(sm);
+    const tx = el('div', 'pe-ing-txt'); tx.textContent = p.texto; det.append(tx);
+    box.append(det, el('p', 'pe-ing-q', p.pergunta));
+  }
+  function ajudaIngles(q, modo) {
+    const box = el('div', 'ia-exp');
+    if (!IA.on()) return box;
+    const lab = modo === 'antes' ? '✦ Ajuda de leitura: vocabulário e tradução da pergunta' : '✦ Traduzir o texto e mostrar onde estava a resposta';
+    const b = el('button', 'pe-btn ia-btn', lab);
+    b.addEventListener('click', async () => {
+      b.disabled = true; b.textContent = 'O examinador está preparando…';
+      try {
+        const x = await IA.chama({tipo: 'ingles', id: q.id, modo});
+        const c = el('div', 'ia-card'); c.append(el('div', 'ia-tit', modo === 'antes' ? '✦ Ajuda de leitura (não revela a resposta)' : '✦ Texto traduzido e resolução'));
+        const sec = (t, node) => { const d = el('div', 'ia-sec'); d.append(el('b', null, t), node); c.append(d); };
+        if (modo === 'antes') {
+          sec('A pergunta em português', el('p', null, x.pergunta_pt));
+          const ul = el('ul', 'ia-alts'); (x.alternativas_pt || []).forEach((a) => ul.append(el('li', null, `${a.letra}) ${a.pt}`))); sec('As alternativas em português', ul);
+          const vb = el('div', 'ia-voc'); (x.vocabulario || []).forEach((v) => { const i = el('span'); i.append(el('b', null, v.en), ' ' + v.pt); vb.append(i); }); sec('Palavras-chave do texto', vb);
+          sec('Onde procurar no texto', el('p', null, x.como_procurar));
+        } else {
+          sec('Trecho que responde', el('p', 'ia-trecho', x.trecho_chave));
+          sec('Por que leva ao gabarito ' + q.gabarito, el('p', null, x.explicacao));
+          sec('Técnica para a prova', el('p', null, x.tecnica));
+          const d2 = document.createElement('details'); const s2 = document.createElement('summary'); s2.textContent = 'Ver o texto inteiro em português'; d2.append(s2); const tp = el('div', 'pe-ing-txt'); tp.textContent = x.traducao; d2.append(tp); c.append(d2);
+        }
+        box.replaceChildren(c);
+      } catch (e) { b.disabled = false; b.textContent = lab; box.querySelector('.ia-err')?.remove(); box.append(el('div', 'ia-err', e.message)); }
+    });
+    box.append(b); return box;
+  }
   function explicaErro(q, marcada) {
     const box = el('div', 'ia-exp');
     if (!IA.on()) return box;
@@ -3114,7 +3260,9 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
         .map(([a, v]) => ({a, ...v})).sort((p, q) => (q.f - p.f) || (q.n - p.n)).slice(0, 4);
       const ul = el('ul');
       grp.forEach((r) => { const li = el('li'); const sp = el('span', null, `${r.a} · ${r.n} questões${r.s.n ? ` · ${pf(r.s.acc)} de acerto` : ''}`); const b = el('button', 'pe-btn', 'Treinar'); b.addEventListener('click', () => startAssunto(x.disc, r.a)); li.append(sp, b); ul.append(li); });
-      box.append(el('div', 'pe-kpi-note', 'Assuntos de entrada:'), ul); bas.append(box);
+      box.append(el('div', 'pe-kpi-note', 'Assuntos de entrada:'), ul);
+      if (x.disc === 'ing') { const pb = el('button', 'pe-btn primary', 'Plano mínimo de Inglês (para quem parte do zero)'); pb.style.marginTop = '8px'; pb.addEventListener('click', () => openMaterial('ing')); box.append(pb); }
+      bas.append(box);
     });
     if (!g) bas.append(el('p', 'pe-empty', 'Esta prova não tem bloco de básicas.'));
 
