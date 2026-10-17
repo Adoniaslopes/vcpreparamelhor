@@ -43,6 +43,7 @@ async function claude(system: string, user: string, tool: any, maxTokens = 3000)
   });
   if (!r.ok) throw new Error('IA indisponível (' + r.status + '): ' + (await r.text()).slice(0, 300));
   const out = await r.json();
+  if (out.stop_reason === 'max_tokens') throw new Error('Resposta da IA ficou longa demais; tente de novo.');
   const blk = (out.content || []).find((b: any) => b.type === 'text');
   if (!blk) throw new Error('Resposta da IA sem conteúdo.');
   let dados: any;
@@ -117,7 +118,7 @@ RESPOSTA DO CANDIDATO:
 """
 ${resposta}
 """`;
-  const { dados, uso } = await claude(SYS_DISC, user, TOOL_DISC, 3500);
+  const { dados, uso } = await claude(SYS_DISC, user, TOOL_DISC, 7000);
   const q = (v: number) => Math.round(Math.max(0, Math.min(vale, Number(v) || 0)) * 4) / 4;
   const topicos = (dados.topicos || []).slice(0, r.topicos.length).map((t: any) => ({ ...t, nota: q(t.nota) }));
   while (topicos.length < r.topicos.length) topicos.push({ nota: 0, aproveitado: [], errado: [], faltou: ['Tópico não avaliado.'], melhorar: [] });
@@ -162,7 +163,7 @@ ${alts}
 GABARITO OFICIAL: ${q.gabarito}
 ALTERNATIVA MARCADA PELO ALUNO: ${marcada}
 COMENTÁRIO DO BANCO: ${q.comentario || '(sem comentário)'}`;
-  const { dados } = await claude(SYS_Q, user, TOOL_Q, 1200);
+  const { dados } = await claude(SYS_Q, user, TOOL_Q, 2500);
   await admin.from('ia_cache').upsert({ chave: ck, resposta: dados });
   return dados;
 }
@@ -210,7 +211,7 @@ ${q.enunciado}
 
 ${alts}
 ${m === 'depois' ? `\nGABARITO OFICIAL: ${q.gabarito}\nCOMENTÁRIO: ${q.comentario || ''}` : ''}`;
-  const { dados } = await claude(SYS_ING, user, { input_schema: SCH_ING[m] }, m === 'depois' ? 4000 : 2000);
+  const { dados } = await claude(SYS_ING, user, { input_schema: SCH_ING[m] }, m === 'depois' ? 7000 : 3500);
   await admin.from('ia_cache').upsert({ chave: ck, resposta: dados });
   return dados;
 }
@@ -245,7 +246,7 @@ Seja direto, prático e humano, em português do Brasil, falando com o aluno (vo
 
 async function analisaDiagnostico(dados: any) {
   const user = 'DADOS DO ALUNO (JSON):\n' + JSON.stringify(dados).slice(0, 12000);
-  const { dados: out } = await claude(SYS_DIAG, user, { input_schema: SCH_DIAG }, 3500);
+  const { dados: out } = await claude(SYS_DIAG, user, { input_schema: SCH_DIAG }, 9000);
   return out;
 }
 
