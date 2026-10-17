@@ -31,20 +31,23 @@ async function arquivo(pasta: string, nome: string) {
 }
 
 async function claude(system: string, user: string, tool: any, maxTokens = 3000) {
+  // saída estruturada (JSON Schema) — formato recomendado pela API para os modelos atuais
   const r = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: { 'x-api-key': Deno.env.get('ANTHROPIC_API_KEY')!, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
     body: JSON.stringify({
-      model: MODELO, max_tokens: maxTokens, temperature: 0.2,
+      model: MODELO, max_tokens: maxTokens,
       system, messages: [{ role: 'user', content: user }],
-      tools: [tool], tool_choice: { type: 'tool', name: tool.name },
+      output_config: { format: { type: 'json_schema', schema: tool.input_schema } },
     }),
   });
   if (!r.ok) throw new Error('IA indisponível (' + r.status + '): ' + (await r.text()).slice(0, 300));
   const out = await r.json();
-  const blk = (out.content || []).find((b: any) => b.type === 'tool_use');
-  if (!blk) throw new Error('Resposta da IA sem conteúdo estruturado.');
-  return { dados: blk.input, uso: out.usage };
+  const blk = (out.content || []).find((b: any) => b.type === 'text');
+  if (!blk) throw new Error('Resposta da IA sem conteúdo.');
+  let dados: any;
+  try { dados = JSON.parse(blk.text); } catch { throw new Error('Resposta da IA fora do formato esperado.'); }
+  return { dados, uso: out.usage };
 }
 
 const lista = { type: 'array', items: { type: 'string' } };
@@ -68,6 +71,7 @@ const TOOL_DISC = {
             melhorar: { ...lista, description: 'Orientações práticas e específicas para a próxima versão.' },
           },
           required: ['nota', 'aproveitado', 'errado', 'faltou', 'melhorar'],
+          additionalProperties: false,
         },
       },
       forma: { ...lista, description: 'Observações sobre estrutura, clareza, norma-padrão, extensão e fundamentação.' },
@@ -75,6 +79,7 @@ const TOOL_DISC = {
       comentario_geral: { type: 'string', description: 'Parecer do examinador em 2 a 4 frases, em tom de instrutor.' },
     },
     required: ['topicos', 'forma', 'paragrafo_exemplo', 'comentario_geral'],
+    additionalProperties: false,
   },
 };
 const SYS_DISC = `Você é examinador de provas discursivas jurídicas de concursos públicos, no padrão da banca indicada.
@@ -86,7 +91,7 @@ Regras:
 - Não invente entendimento diferente do espelho. Se a resposta trouxer tese alternativa juridicamente defensável que o espelho admite, considere.
 - Texto acima do limite máximo de linhas é desconsiderado no excedente.
 - Linguagem: português do Brasil, direta, técnica e encorajadora, como um instrutor que quer a aprovação do aluno.
-- Use o formato pedido na ferramenta registrar_correcao. Uma entrada em "topicos" para cada tópico, na mesma ordem.`;
+- Responda no formato JSON pedido. Uma entrada em "topicos" para cada tópico, na mesma ordem.`;
 
 async function corrigeDiscursiva(pasta: string, id: string, resposta: string, banca: string) {
   const rows = await arquivo(pasta, 'discursivas.json');
@@ -133,6 +138,7 @@ const TOOL_Q = {
       dica: { type: 'string', description: 'Uma dica curta de memorização ou de técnica para não errar de novo.' },
     },
     required: ['por_que_errou', 'por_que_certa', 'pegadinha', 'fundamento', 'dica'],
+    additionalProperties: false,
   },
 };
 const SYS_Q = `Você é professor de cursinho preparatório para concursos jurídicos e explica questões objetivas a um aluno que errou.
