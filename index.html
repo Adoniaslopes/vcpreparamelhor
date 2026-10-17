@@ -972,6 +972,36 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
 .pe .pi-tab { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-caption); }
 .pe .pi-tab td { padding: 6px 8px; border-bottom: 1px solid #E3E9E6; vertical-align: top; }
 .pe .pi-tab td.en { font-weight: 700; color: #14201B; width: 48%; }
+
+/* selo e painel do instrutor */
+.pe .ia-selo { position: fixed; right: 18px; bottom: 18px; z-index: 60; display: flex; align-items: center; gap: 8px; border: 0; border-radius: 999px; padding: 10px 16px; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; background: #312E81; color: #fff; box-shadow: 0 10px 26px rgba(49,46,129,.35); }
+.pe .ia-selo:hover { background: #3730A3; }
+.pe .ia-selo .ia-dot { width: 10px; height: 10px; border-radius: 50%; background: #9CA3AF; }
+.pe .ia-selo.ativo .ia-dot { background: #22C55E; box-shadow: 0 0 0 0 rgba(34,197,94,.7); animation: iaPulse 1.8s infinite; }
+.pe .ia-selo.verificando .ia-dot { background: #F59E0B; }
+.pe .ia-selo.desligado { background: #4B5563; }
+.pe .ia-selo .ia-st { font-weight: 500; font-size: 12px; opacity: .85; background: rgba(255,255,255,.14); border-radius: 999px; padding: 2px 8px; }
+@keyframes iaPulse { 0% { box-shadow: 0 0 0 0 rgba(34,197,94,.7); } 70% { box-shadow: 0 0 0 9px rgba(34,197,94,0); } 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); } }
+.pe .ia-pop { position: fixed; right: 18px; bottom: 72px; z-index: 61; width: min(360px, calc(100vw - 36px)); background: #fff; border: 1px solid #C7D2FE; border-radius: 14px; box-shadow: 0 18px 40px rgba(20,32,27,.22); padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; }
+.pe .ia-pop p { margin: 0; color: #33443C; font-size: var(--cds-font-size-caption); line-height: 1.5; }
+.pe .ia-x { position: absolute; top: 6px; right: 10px; border: 0; background: none; font-size: 22px; cursor: pointer; color: #55665E; }
+.pe .ia-op { text-align: left; border: 1px solid #E0E7FF; background: #F5F7FF; border-radius: 10px; padding: 8px 10px; cursor: pointer; display: flex; flex-direction: column; gap: 2px; font: inherit; }
+.pe .ia-op:hover { background: #EEF2FF; border-color: #A5B4FC; }
+.pe .ia-op b { color: #312E81; font-size: 14px; } .pe .ia-op span { color: #475569; font-size: 12px; }
+.pe .ia-painel { border-left: 5px solid #4F46E5; background: #F5F7FF; margin-bottom: var(--cds-gap-md); }
+.pe .ia-painel > .ia-card { margin: 0; border: 0; background: none; padding: 0; }
+.pe .ia-resumo { font-size: var(--cds-font-size-body); }
+.pe .ia-riscos li { color: #9F1239; }
+.pe .ia-prio { margin: 4px 0 4px 1.2rem; padding: 0; line-height: 1.55; color: #1E1B4B; }
+.pe .ia-prio b, .pe .ia-semana b { text-transform: none; letter-spacing: 0; font-size: inherit; }
+.pe .ia-prio li { margin-bottom: 6px; } .pe .ia-prio .como { color: #334155; font-size: var(--cds-font-size-caption); }
+.pe .ia-semana { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: 8px; margin-top: 6px; }
+.pe .ia-semana > div { background: #fff; border: 1px solid #E0E7FF; border-radius: 10px; padding: 8px 10px; display: flex; flex-direction: column; gap: 3px; font-size: var(--cds-font-size-caption); color: #1E1B4B; }
+.pe .ia-semana b { color: #3730A3; } .pe .ia-semana i { font-style: normal; font-weight: 600; }
+.pe .ia-msg { font-weight: 600; color: #3730A3; }
+.pe .ia-loading { display: flex; align-items: center; gap: 10px; color: #3730A3; }
+.pe .ia-spin.sm { width: 20px; height: 20px; border-width: 3px; }
+@media (max-width: 520px) { .pe .ia-selo .ia-st { display: none; } }
 </style>
 
 
@@ -1020,6 +1050,7 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
 
   <!-- PAINEL DE VOO -->
   <section class="pe-page" id="voo">
+    <div class="pe-card ia-painel" id="pv-ia" hidden></div>
     <div class="pe-kpis pv-inst" id="pv-inst"></div>
     <div class="pe-card pv-alerta" id="pv-alerta" hidden></div>
     <div class="pe-card" id="pv-estrutura"></div>
@@ -2092,6 +2123,7 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
     const b0 = el('button', 'pe-btn primary', 'Começar a trilha de recuperação'); b0.addEventListener('click', () => { trCur = null; show('dirigido'); });
     const b = el('button', 'pe-btn', 'Montar meu cronograma'); b.addEventListener('click', () => { show('cronograma'); document.getElementById('cr-config').scrollIntoView({block: 'start'}); });
     const ar = el('div', 'pe-actions'); ar.append(b0, b); go.append(ar); wrap.append(go);
+    if (!partial) wrap.insertBefore(instrutorDiag(), wrap.children[1] || null);
     return wrap;
   }
 
@@ -2729,6 +2761,105 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
     ]));
     const ac = el('div', 'pe-actions'); const b = el('button', 'pe-btn primary', 'Treinar Inglês com ajuda de leitura'); b.addEventListener('click', () => startFrom('ing')); ac.append(b); box.append(ac);
   }
+  // ---------- instrutor IA: selo de status, análise do diagnóstico e plano ----------
+  const iaStatus = {s: 'verificando'};
+  async function checaIA() {
+    if (!IA.on()) { iaStatus.s = 'desligado'; desenhaSelo(); return; }
+    try { const r = await IA.chama({tipo: 'status'}); iaStatus.s = r.ativo ? 'ativo' : 'desligado'; } catch (e) { iaStatus.s = 'desligado'; iaStatus.erro = e.message; }
+    desenhaSelo();
+  }
+  function desenhaSelo() {
+    let b = document.getElementById('ia-selo');
+    if (!b) {
+      b = el('button', 'ia-selo'); b.id = 'ia-selo'; b.type = 'button'; b.addEventListener('click', abrePainelIA); ROOT.append(b);
+    }
+    const st = iaStatus.s;
+    b.className = 'ia-selo ' + st;
+    b.replaceChildren(el('span', 'ia-dot'), el('span', 'ia-nm', '✦ Instrutor IA'), el('span', 'ia-st', st === 'ativo' ? 'ativo' : st === 'verificando' ? 'conectando…' : 'indisponível'));
+    b.title = st === 'ativo' ? 'Seu instrutor está ativo. Clique para ver o que ele faz.' : 'O instrutor não está disponível agora; a plataforma usa a correção automática.';
+  }
+  function abrePainelIA() {
+    let pn = document.getElementById('ia-pop');
+    if (pn) { pn.remove(); return; }
+    pn = el('div', 'ia-pop'); pn.id = 'ia-pop';
+    const fecha = el('button', 'ia-x', '×'); fecha.setAttribute('aria-label', 'Fechar'); fecha.addEventListener('click', () => pn.remove());
+    pn.append(fecha, el('div', 'ia-tit', '✦ Seu instrutor'), el('p', null, iaStatus.s === 'ativo' ? 'Estou ativo e acompanhando o seu estudo. É assim que eu ajudo:' : 'Estou indisponível no momento. A plataforma segue funcionando com a correção automática.'));
+    const it = (t, d, fn) => { const b = el('button', 'ia-op'); b.append(el('b', null, t), el('span', null, d)); b.addEventListener('click', () => { pn.remove(); fn(); }); pn.append(b); };
+    it('Análise do meu diagnóstico', diag.ia ? 'Ver a análise, as prioridades e o plano da semana' : 'Analiso o seu diagnóstico e monto as prioridades e o plano da semana', () => { show('voo'); window.scrollTo({top: 0}); if (!diag.ia) pedeAnaliseDiag(); });
+    it('Corrigir discursivas', 'Corrijo como examinador, pelo espelho da banca, com nota e orientações', () => show('discursivas'));
+    it('Explicar os meus erros', 'No Treino e na Revisão de erros, use o botão ✦ quando errar uma questão', () => show('revisao'));
+    it('Inglês do zero', 'Plano mínimo e ajuda de leitura nas questões de Inglês', () => openMaterial('ing'));
+    ROOT.append(pn);
+  }
+  function dadosDiag() {
+    const st = diagStats(); const qd = quadro(); const cfg = qd ? qd.cfg : null;
+    const prova = new Map(qd ? qd.blocos.flatMap((b) => b.itens.map((x) => [x.disc, x.q])) : []);
+    const ids = diag.ids.filter((id) => diag.ans[id]);
+    const errs = d3.rollups(ids.map((id) => byId.get(id)).filter((q) => diag.ans[q.id] !== q.gabarito), (v) => v.length, (q) => q.disciplina + ' · ' + assunto(q.tema)).sort((a, b) => b[1] - a[1]).slice(0, 18).map(([k, n]) => ({assunto: k, erros: n}));
+    const dataProva = cfg && cfg.data ? cfg.data : plan ? plan.exam : null;
+    const all = statsFor(Q);
+    const dn = Object.values(dsNotas).filter((v) => v.h && v.h.length).map((v) => dsNota(v.h[v.h.length - 1]));
+    return {
+      cargo: document.getElementById('topo-cargo') ? document.getElementById('topo-cargo').textContent : window.PET_CARGO, banca: window.PET_BANCA || 'Cesgranrio',
+      data_prova: dataProva, dias_para_a_prova: dataProva ? Math.ceil((pdate(dataProva) - pdate(dkey(new Date()))) / 86400000) : null,
+      minutos_de_estudo_por_dia: plan ? plan.min : null, hoje: new Date().toLocaleDateString('pt-BR', {weekday: 'long', day: '2-digit', month: '2-digit'}),
+      regras_do_edital: cfg && cfg.regras ? cfg.regras : [], estrutura: qd ? qd.blocos.map((b) => ({bloco: b.nome, questoes: b.q, minimo_pct: (b.minimo || 0.5) * 100, nao_pode_zerar: !!b.naoZerar})) : [],
+      discursiva: cfg && cfg.discursiva ? {casos: cfg.discursiva.questoes, pontos: cfg.discursiva.pontos, media_do_aluno: dn.length ? Math.round(d3.mean(dn) * 10) / 10 : null} : null,
+      diagnostico: st.filter((x) => x.n).map((x) => ({disciplina: x.disciplina, questoes_na_prova: prova.get(x.disc) || null, acertos: x.h, de: x.n, proficiencia: x.prof})),
+      erros_por_assunto: errs, tempo_medio_por_questao_seg: ids.length ? Math.round(d3.mean(ids, (id) => diag.times[id] || 0) / 1000) : null,
+      treino_geral: {respondidas: all.n, acerto_pct: all.n ? Math.round(all.acc * 100) : null},
+    };
+  }
+  let diagPedindo = false;
+  async function pedeAnaliseDiag() {
+    if (diagPedindo || !IA.on()) return; diagPedindo = true; render();
+    try { const r = await IA.chama({tipo: 'diagnostico', dados: dadosDiag()}); diag.ia = {at: Date.now(), r}; saveNow(); }
+    catch (e) { diag.iaErro = e.message; }
+    diagPedindo = false; render();
+  }
+  function cartaoAnalise(compacto) {
+    const c = el('div', 'ia-card ia-analise');
+    c.append(el('div', 'ia-tit', '✦ Análise do seu instrutor'));
+    if (!diag.ia) {
+      if (diagPedindo) { const l = el('div', 'ia-loading'); l.append(el('span', 'ia-spin sm'), el('span', null, 'Analisando o seu diagnóstico e montando o plano da semana… (20 a 60 segundos)')); c.append(l); return c; }
+      c.append(el('p', null, diag.iaErro ? 'Não consegui analisar agora (' + diag.iaErro + '). Tente de novo.' : 'Com base no seu diagnóstico, eu monto as suas prioridades, aponto os riscos de eliminação e faço o plano dos próximos 7 dias.'));
+      const b = el('button', 'pe-btn ia-btn', '✦ Analisar meu diagnóstico'); b.addEventListener('click', pedeAnaliseDiag); c.append(b); return c;
+    }
+    const r = diag.ia.r;
+    c.append(el('p', 'ia-resumo', r.resumo));
+    const sec = (t, n) => { const d = el('div', 'ia-sec'); d.append(el('b', null, t), n); c.append(d); };
+    const lista = (xs, cls) => { const u = el('ul', cls || null); (xs || []).forEach((x) => u.append(el('li', null, x))); return u; };
+    if (r.riscos && r.riscos.length) sec('Riscos de eliminação', lista(r.riscos, 'ia-riscos'));
+    const pr = el('ol', 'ia-prio'); (r.prioridades || []).forEach((x) => { const li = el('li'); li.append(el('b', null, `${x.disciplina} · ${x.assunto}`), el('span', null, ' — ' + x.por_que), el('div', 'como', x.como)); pr.append(li); });
+    sec('Suas prioridades', pr);
+    if (!compacto) {
+      if (r.pontos_fortes && r.pontos_fortes.length) sec('Pontos fortes', lista(r.pontos_fortes));
+      const sm = el('div', 'ia-semana'); (r.semana || []).forEach((d) => { const x = el('div'); x.append(el('b', null, d.dia), el('i', null, d.foco), el('span', null, d.tarefas)); sm.append(x); });
+      sec('Plano dos próximos 7 dias', sm);
+      sec('Meta', el('p', null, r.meta));
+      c.append(el('p', 'ia-msg', r.mensagem));
+    }
+    const ac = el('div', 'pe-actions');
+    if (compacto) { const v = el('button', 'pe-btn ia-btn', 'Ver análise completa e plano da semana'); v.addEventListener('click', () => { show('diagnostico'); setTimeout(() => { const a = document.querySelector('#dg-res .ia-analise'); if (a) a.scrollIntoView({block: 'start'}); }, 50); }); ac.append(v); }
+    const nv = el('button', 'pe-btn', 'Refazer a análise com os dados de hoje'); nv.addEventListener('click', () => { delete diag.ia; pedeAnaliseDiag(); }); ac.append(nv);
+    ac.append(el('span', 'pe-msg', 'Análise de ' + new Date(diag.ia.at).toLocaleDateString('pt-BR')));
+    c.append(ac);
+    return c;
+  }
+  function instrutorDiag() { return cartaoAnalise(false); }
+  function renderPainelIA() {
+    const box = document.getElementById('pv-ia'); if (!box) return;
+    const terminou = diag.ids.length && dgAnswered() >= diag.ids.length;
+    box.hidden = !IA.on();
+    if (box.hidden) return;
+    box.replaceChildren();
+    if (!terminou) {
+      box.append(el('div', 'ia-tit', '✦ Seu instrutor está ativo'), el('p', null, `Comece pelo diagnóstico (${dgAnswered()} de ${diag.ids.length} questões feitas). Ao terminar, eu analiso o resultado, aponto suas prioridades e monto o plano da semana.`));
+      const b = el('button', 'pe-btn ia-btn', dgAnswered() ? 'Continuar o diagnóstico' : 'Fazer o diagnóstico'); b.addEventListener('click', () => show('diagnostico')); box.append(b); return;
+    }
+    if (!diag.ia && !diagPedindo && !diag.iaErro && iaStatus.s === 'ativo') pedeAnaliseDiag();
+    box.append(cartaoAnalise(true));
+  }
   // ---------- examinador IA (função no servidor; a chave da IA nunca fica no site) ----------
   const IA = {
     on: () => !!(window.PET_SB && window.PET_UID),
@@ -3139,6 +3270,7 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
     return {tot, done};
   }
   function renderVoo() {
+    renderPainelIA();
     const qd = quadro();
     const inst = document.getElementById('pv-inst'); inst.replaceChildren();
     const alerta = document.getElementById('pv-alerta');
@@ -3518,7 +3650,7 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
   const b64d = (t) => decodeURIComponent(escape(atob(t)));
   const snapshotObj = (withDrafts = true) => {
     const a = Object.entries(ans).map(([id, x]) => `${id}.${x.r}.${x.n}.${x.h}` + (x.t != null ? `.${x.t}.${x.b || 0}` : '')).join(',');
-    const dg = {ids: diag.ids, ans: diag.ans, times: Object.fromEntries(Object.entries(diag.times).map(([k, v]) => [k, Math.round(v / 1000)])), s: diag.s, f: diag.f};
+    const dg = {ids: diag.ids, ans: diag.ans, times: Object.fromEntries(Object.entries(diag.times).map(([k, v]) => [k, Math.round(v / 1000)])), s: diag.s, f: diag.f, ...(diag.ia ? {ia: diag.ia} : {})};
     const o = {v: 2, a, d: dg, p: plan, t: timeLog, k: [...done], tr: trilha, ds: dsNotas, dh: diagHist, sn: snaps, ev, sh: simHist};
     if (sess) o.ss = {ids: sess.ids, i: sess.i, done: sess.done, acc: Math.round(sess.acc / 1000), times: sess.times || [], label: sess.label || 'treino', tr: sess.trilha || null};
     if (timer.blocks.length) o.tm = {b: timer.blocks, bi: timer.bi, left: Math.round(timer.left / 60) * 60, l: timer.label, k: timer.sessKey};
@@ -3537,7 +3669,7 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
     const d = obj.d || {}; const ids = Array.isArray(d.ids) ? d.ids.filter((id) => byId.has(id)) : [];
     const da = {}; Object.entries(d.ans || {}).forEach(([id, r]) => { if (ids.includes(id) && /^[A-E]$/.test(r)) da[id] = r; });
     const dt = {}; Object.entries(d.times || {}).forEach(([id, v]) => { if (da[id]) dt[id] = (Number(v) || 0) * 1000; });
-    diag = ids.length ? {ids, ans: da, times: dt, s: d.s || null, f: d.f || null} : {ids: pickDiag(), ans: {}, times: {}, s: null, f: null};
+    diag = ids.length ? {ids, ans: da, times: dt, s: d.s || null, f: d.f || null, ...(d.ia && d.ia.r ? {ia: d.ia} : {})} : {ids: pickDiag(), ans: {}, times: {}, s: null, f: null};
     const pl = obj.p;
     plan = pl && pl.exam && Array.isArray(pl.days) && pl.w ? {exam: String(pl.exam), days: pl.days.map(Number), start: String(pl.start || '19:00'), min: Math.max(120, Number(pl.min) || 120), gen: String(pl.gen), w: pl.w, order: pl.order || {}, base: String(pl.base || 'diagnóstico'), disc: pl.disc ? 1 : 0} : null;
     if (plan) selDays = plan.days.slice();
@@ -3711,6 +3843,7 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
     if (!linked) {
       linked = true;
       initAutosave();
+      desenhaSelo(); checaIA().then(() => render());
       const named = document.getElementById(location.hash.slice(1) === 'painel' ? 'voo' : location.hash.slice(1));
       if (named && named.classList.contains('pe-page')) show(named.id);
     }

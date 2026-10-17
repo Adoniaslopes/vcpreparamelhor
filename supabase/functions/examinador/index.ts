@@ -5,7 +5,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2.45.4';
 
 const MODELO = Deno.env.get('EXAMINADOR_MODELO') || 'claude-sonnet-5-5';
 const BUCKET = 'conteudo';
-const LIMITE = { discursiva: 6, questao: 40 }; // por aluno, por dia (administradores sem limite)
+const LIMITE = { discursiva: 6, questao: 40, analise: 4 }; // por aluno, por dia (administradores sem limite)
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -215,6 +215,40 @@ ${m === 'depois' ? `\nGABARITO OFICIAL: ${q.gabarito}\nCOMENTÁRIO: ${q.comentar
   return dados;
 }
 
+// ---------- instrutor: análise do diagnóstico e plano ----------
+const SCH_DIAG = {
+  type: 'object',
+  properties: {
+    resumo: { type: 'string', description: 'Leitura do momento do aluno em 3 a 5 frases, em tom de instrutor, falando diretamente com ele (você).' },
+    riscos: { type: 'array', items: { type: 'string' }, description: 'Riscos de eliminação pelas regras do edital, com números. Vazio se não houver.' },
+    pontos_fortes: { type: 'array', items: { type: 'string' } },
+    prioridades: {
+      type: 'array',
+      description: '3 a 6 prioridades em ordem, considerando peso na prova e desempenho.',
+      items: { type: 'object', properties: { disciplina: { type: 'string' }, assunto: { type: 'string' }, por_que: { type: 'string' }, como: { type: 'string' } }, required: ['disciplina', 'assunto', 'por_que', 'como'], additionalProperties: false },
+    },
+    semana: {
+      type: 'array',
+      description: 'Plano dos próximos 7 dias, um item por dia, respeitando as horas por dia do aluno.',
+      items: { type: 'object', properties: { dia: { type: 'string' }, foco: { type: 'string' }, tarefas: { type: 'string' } }, required: ['dia', 'foco', 'tarefas'], additionalProperties: false },
+    },
+    meta: { type: 'string', description: 'Meta mensurável para o próximo diagnóstico ou simulado.' },
+    mensagem: { type: 'string', description: 'Frase final de incentivo, sincera e concreta.' },
+  },
+  required: ['resumo', 'riscos', 'pontos_fortes', 'prioridades', 'semana', 'meta', 'mensagem'],
+  additionalProperties: false,
+};
+const SYS_DIAG = `Você é o instrutor pessoal de um candidato a concurso público e acompanha o aluno do diagnóstico até a prova.
+Analise os dados de desempenho fornecidos (não invente números) junto com as regras e os pesos da prova, e oriente o aluno.
+Prioridades: 1) não ser eliminado (mínimos do edital, não zerar disciplinas básicas); 2) ganhar pontos onde a prova tem mais questões e o aluno erra mais; 3) consolidar pontos fortes.
+Seja direto, prático e humano, em português do Brasil, falando com o aluno (você). Use os nomes de disciplinas e assuntos como vieram nos dados.`;
+
+async function analisaDiagnostico(dados: any) {
+  const user = 'DADOS DO ALUNO (JSON):\n' + JSON.stringify(dados).slice(0, 12000);
+  const { dados: out } = await claude(SYS_DIAG, user, { input_schema: SCH_DIAG }, 3500);
+  return out;
+}
+
 // ---------- entrada ----------
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS });
@@ -229,26 +263,30 @@ Deno.serve(async (req) => {
     if (!ehAdmin && (!p.data || p.data.status !== 'aprovado' || (p.data.expira_em && p.data.expira_em < hoje))) return json({ erro: 'Acesso não liberado.' }, 403);
 
     const body = await req.json();
-    const tipo = body.tipo === 'questao' || body.tipo === 'ingles' ? body.tipo : 'discursiva';
+    const tipo = ['questao', 'ingles', 'diagnostico'].includes(body.tipo) ? body.tipo : 'discursiva';
     const pasta = String(body.pasta || '').replace(/[^a-z0-9_-]/gi, '');
 
     // limite diário por aluno
+    if (body.tipo === 'status') return json({ ok: true, ativo: !!Deno.env.get('ANTHROPIC_API_KEY') });
     const us = await admin.from('ia_uso').select('n_disc, n_quest').eq('user_id', uid).eq('dia', hoje).maybeSingle();
     const nd = us.data?.n_disc || 0, nq = us.data?.n_quest || 0;
     if (!ehAdmin && tipo === 'discursiva' && nd >= LIMITE.discursiva) return json({ erro: `Limite diário de ${LIMITE.discursiva} correções pelo examinador atingido. Amanhã libera de novo.`, limite: true }, 429);
-    if (!ehAdmin && tipo !== 'discursiva' && nq >= LIMITE.questao) return json({ erro: `Limite diário de ${LIMITE.questao} explicações atingido. Amanhã libera de novo.`, limite: true }, 429);
+    if (!ehAdmin && tipo === 'diagnostico' && nd >= LIMITE.discursiva + LIMITE.analise) return json({ erro: 'Limite diário de análises atingido. Amanhã libera de novo.', limite: true }, 429);
+    if (!ehAdmin && tipo !== 'discursiva' && tipo !== 'diagnostico' && nq >= LIMITE.questao) return json({ erro: `Limite diário de ${LIMITE.questao} explicações atingido. Amanhã libera de novo.`, limite: true }, 429);
 
     let out: any;
     if (tipo === 'discursiva') {
       const resposta = String(body.resposta || '').slice(0, 9000);
       if (resposta.trim().length < 80) return json({ erro: 'Resposta muito curta para correção.' }, 400);
       out = await corrigeDiscursiva(pasta, String(body.id), resposta, String(body.banca || ''));
+    } else if (tipo === 'diagnostico') {
+      out = await analisaDiagnostico(body.dados || {});
     } else if (tipo === 'ingles') {
       out = await ajudaIngles(pasta, String(body.id), String(body.modo || 'antes'));
     } else {
       out = await explicaQuestao(pasta, String(body.id), String(body.marcada || '').toUpperCase().slice(0, 1));
     }
-    if (!out.cache) await admin.from('ia_uso').upsert({ user_id: uid, dia: hoje, n_disc: nd + (tipo === 'discursiva' ? 1 : 0), n_quest: nq + (tipo !== 'discursiva' ? 1 : 0) });
+    if (!out.cache) await admin.from('ia_uso').upsert({ user_id: uid, dia: hoje, n_disc: nd + (tipo === 'discursiva' || tipo === 'diagnostico' ? 1 : 0), n_quest: nq + (tipo === 'questao' || tipo === 'ingles' ? 1 : 0) });
     return json({ ok: true, ...out });
   } catch (e) {
     return json({ erro: String((e as Error).message || e) }, 500);
