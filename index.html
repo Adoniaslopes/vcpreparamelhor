@@ -105,7 +105,7 @@ body { min-height: 100vh; }
 <script src="config.js"></script>
 <script src="vendor/supabase.js"></script>
 <script src="vendor/d3.min.js"></script>
-<script src="shim.js?v=ls3"></script>
+<script src="shim.js?v=ls4"></script>
 </head>
 <body>
 
@@ -1036,6 +1036,7 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
 .pe .ia-passos .fund { font-size: var(--cds-font-size-caption); color: #155E75; margin-top: 2px; }
 .pe .ia-rot .ia-sec b { color: #0E7490; }
 
+.ia-aviso { background: color-mix(in srgb, #FFCC29 18%, transparent); border-radius: 10px; padding: 10px 12px; margin: 6px 0 10px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: var(--cds-font-size-caption); }
 /* ===== Lei Seca ===== */
 #ls-root { margin-bottom: var(--cds-gap-lg); }
 #ls-home > * + * { margin-top: var(--cds-gap-md); }
@@ -3388,9 +3389,11 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
     };
   }
   let diagPedindo = false;
+  // muda quando o aluno corrige uma discursiva nova ou responde mais questões
+  const diagSig = () => { const dn = Object.values(dsNotas).reduce((a, v) => a + ((v.h || []).length), 0); return dn + ':' + Math.floor(Object.keys(ans).length / 50); };
   async function pedeAnaliseDiag() {
     if (diagPedindo || !IA.on()) return; diagPedindo = true; render();
-    try { const r = await IA.chama({tipo: 'diagnostico', dados: dadosDiag()}); diag.ia = {at: Date.now(), r}; saveNow(); }
+    try { const r = await IA.chama({tipo: 'diagnostico', dados: dadosDiag()}); diag.ia = {at: Date.now(), r, sig: diagSig()}; saveNow(); }
     catch (e) { diag.iaErro = e.message; }
     diagPedindo = false; render();
   }
@@ -3403,6 +3406,11 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
       const b = el('button', 'pe-btn ia-btn', '✦ Analisar meu diagnóstico'); b.addEventListener('click', pedeAnaliseDiag); c.append(b); return c;
     }
     const r = diag.ia.r;
+    if (diag.ia.sig !== diagSig()) {
+      const av = el('div', 'ia-aviso'); av.append(el('b', null, 'Há resultados novos (discursivas ou questões) desde esta análise. '));
+      const up = el('button', 'pe-btn ia-btn', diagPedindo ? 'Atualizando…' : '✦ Atualizar a análise agora'); up.disabled = diagPedindo; up.addEventListener('click', () => { pedeAnaliseDiag(); });
+      av.append(up); c.append(av);
+    }
     c.append(el('p', 'ia-resumo', r.resumo));
     const sec = (t, n) => { const d = el('div', 'ia-sec'); d.append(el('b', null, t), n); c.append(d); };
     const lista = (xs, cls) => { const u = el('ul', cls || null); (xs || []).forEach((x) => u.append(el('li', null, x))); return u; };
@@ -3441,8 +3449,10 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
   // ---------- examinador IA (função no servidor; a chave da IA nunca fica no site) ----------
   const IA = {
     on: () => !!(window.PET_SB && window.PET_UID),
-    async chama(body) {
-      const r = await window.PET_SB.functions.invoke('examinador', {body: {...body, pasta: window.PET_PASTA || '', banca: window.PET_BANCA || ''}});
+    async chama(body, ms = 100000) {
+      // limite de espera: se o examinador não responder, a plataforma segue com a correção automática
+      const lim = new Promise((_, rej) => setTimeout(() => rej(new Error('o examinador demorou demais para responder')), ms));
+      const r = await Promise.race([window.PET_SB.functions.invoke('examinador', {body: {...body, pasta: window.PET_PASTA || '', banca: window.PET_BANCA || ''}}), lim]);
       if (r.error) { let m = r.error.message || 'Falha na conexão com o examinador.'; try { const j = await r.error.context.json(); if (j && j.erro) m = j.erro; } catch (e) { /* sem corpo */ } throw new Error(m); }
       if (!r.data || r.data.erro) throw new Error((r.data && r.data.erro) || 'Resposta vazia do examinador.');
       return r.data;
@@ -3620,7 +3630,7 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
       fin.addEventListener('click', () => {
         const l = dsLines(ta.value);
         if (l < 3) { msg.textContent = 'Escreva a resposta antes de finalizar.'; return; }
-        dsCur.fase = 'corrigir'; dsCur.run = false; dsCur.lin = l; dsCur.txt = ta.value; dsCur.seg = Math.round((Date.now() - dsCur.ini) / 1000); drawDiscWork(); document.getElementById('ds-corr').scrollIntoView({block: 'start'});
+        dsCur.fase = 'corrigir'; dsCur.run = false; dsCur.lin = l; dsCur.txt = ta.value; dsCur.seg = dsCur.ini ? Math.round((Date.now() - dsCur.ini) / 1000) : 0; drawDiscWork(); document.getElementById('ds-corr').scrollIntoView({block: 'start'});
       });
       const ac = el('div', 'pe-actions'); ac.append(fin, msg); wc.append(ac);
       work.append(wc); return;
@@ -3635,9 +3645,19 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
       IA.chama({tipo: 'discursiva', id: r.id, resposta: txt}).then((x) => { if (dsCur && dsCur.id === r.id) { dsCur.ia = x; drawDiscWork(); } })
         .catch((e) => { if (dsCur && dsCur.id === r.id) { dsCur.ia = {erro: e.message}; drawDiscWork(); } });
     }
+    if (dsCur.ia === 'carregando' && !dsCur.salvoAuto) {
+      // grava já a nota da correção automática: a tentativa conta no desempenho mesmo se o examinador falhar ou se o aluno sair da tela
+      const h0 = (dsNotas[r.id] || {h: []}).h;
+      h0.push({t: cr.topicos.map((x) => x.nota), n: cr.nota, a: 1, l: cr.lin, s: dsCur.seg || 0, at: Date.now()});
+      dsNotas[r.id] = {h: h0.slice(-10), x: txt.slice(0, 8000)};
+      dsCur.salvoAuto = true; saveNow(); renderPainel();
+    }
     if (dsCur.ia === 'carregando') {
       const ld = el('div', 'pe-card ds-nota ia-load'); ld.id = 'ds-corr';
       const sp = el('div', 'ia-spin'); const tx = el('div'); tx.append(el('div', 'ds-sit', '✦ O examinador está corrigindo a sua resposta…'), el('div', 'pe-kpi-note', 'Ele lê o texto inteiro, compara com o espelho da banca tópico por tópico e prepara as orientações. Leva de 20 a 60 segundos.'));
+      const pular = el('button', 'pe-btn', 'Ver já a correção automática'); pular.addEventListener('click', () => { dsCur.ia = {erro: 'correção automática escolhida pelo aluno'}; drawDiscWork(); });
+      tx.append(el('div', 'pe-actions'));
+      tx.lastChild.append(pular, el('span', 'pe-msg', `Nota provisória já registrada: ${fmt1(cr.nota)}`));
       ld.append(sp, tx); work.append(ld); return;
     }
     const viaIA = dsCur.ia && !dsCur.ia.erro;
@@ -3650,9 +3670,10 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
     }
     if (!dsCur.salvo) {
       const h = (dsNotas[r.id] || {h: []}).h;
+      if (dsCur.salvoAuto && h.length) h.pop(); // troca a nota provisória pela definitiva
       h.push({t: cr.topicos.map((x) => x.nota), n: cr.nota, a: 1, ...(viaIA ? {ia: 1} : {}), l: cr.lin, s: dsCur.seg || 0, at: Date.now()});
       dsNotas[r.id] = {h: h.slice(-10), x: txt.slice(0, 8000), ...(viaIA ? {c: dsCur.ia} : {})};
-      dsCur.salvo = true; saveNow();
+      dsCur.salvo = true; saveNow(); renderPainel();
     }
     const nc = (v, max) => v >= 0.7 * max ? 'ok' : v >= 0.5 * max ? 'warn' : 'bad';
     // 1. nota
@@ -4450,6 +4471,6 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
 </div>
 </section>
 
-<script src="app.js?v=ls3"></script>
+<script src="app.js?v=ls4"></script>
 </body>
 </html>
