@@ -105,7 +105,7 @@ body { min-height: 100vh; }
 <script src="config.js"></script>
 <script src="vendor/supabase.js"></script>
 <script src="vendor/d3.min.js"></script>
-<script src="shim.js?v=ls1"></script>
+<script src="shim.js?v=ls2"></script>
 </head>
 <body>
 
@@ -1845,7 +1845,7 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
       const id = String(r.lei_id || r.lei);
       if (!byLei.has(id)) byLei.set(id, {id, lei: r.lei, disc: r.disc, url: r.url || '', chaves: Array.isArray(r.chaves) ? r.chaves : [], arts: [], units: []});
       const L = byLei.get(id);
-      const linhas = String(r.texto || '').split('\n').map((x) => x.trim()).filter(Boolean);
+      const linhas = String(r.texto || '').split('\n').map((x) => x.trim().replace(/((?:Art\.|§)\s*\d+)\s?o(?=[\s.,;:-])/g, '$1º').replace(/\bn\s?o\s(?=\d)/g, 'nº ')).filter(Boolean);
       const art = {art: String(r.art), linhas, url: r.url || L.url};
       L.arts.push(art);
       linhas.forEach((t, i) => {
@@ -1878,7 +1878,25 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
   }
   function lsCard(u) {
     const toks = lsTokens(u.texto);
-    if (!toks.length) return {tipo: 'flash', u};
+    if (!toks.length) {
+      // lacuna de palavra-chave: a palavra exata da lei, com distratores tirados da própria norma
+      const low = u.texto.toLowerCase();
+      const corpo = u.texto.replace(/^(Art\.\s*\S+|§\s*\S+|Parágrafo único\.?|[IVXLC]+\s*[-–—]|[a-z]\))\s*/, '');
+      const off = u.texto.length - corpo.length;
+      const STOP = /^(seguintes?|disposto|dispostos?|conforme|respectivas?|respectivos?|qualquer|quaisquer|mediante|inclusive|observado|observada|referidos?|referidas?|previstos?|previstas?|presente|seguinte|hipótese|hipóteses|condições|termos|artigos?|parágrafo|inciso|incisos|anterior)$/i;
+      const cands = [...corpo.matchAll(/[A-Za-zÀ-ú]{8,}/g)].filter((m) => m.index > 12 && !STOP.test(m[0]));
+      if (cands.length && Math.random() < .6) {
+        const m = cands[Math.floor(Math.random() * cands.length)], w = m[0];
+        const pool = [...new Set(u.L.units.flatMap((x) => x.texto.match(/[A-Za-zÀ-ú]{8,}/g) || []).map((x) => x.toLowerCase()))]
+          .filter((x) => x !== w.toLowerCase() && !low.includes(x) && Math.abs(x.length - w.length) <= 3);
+        if (pool.length >= 4) {
+          const t = {s: off + m.index, e: off + m.index + w.length, orig: w};
+          const opts = shuffle([w, ...shuffle(pool).slice(0, 4).map((x) => lsCase(w, x))]);
+          return {tipo: 'mc', u, t, opts, ok: opts.indexOf(w)};
+        }
+      }
+      return {tipo: 'flash', u};
+    }
     const t = toks[Math.floor(Math.random() * toks.length)];
     if (t.alts.length >= 4 && Math.random() < .5) {
       const opts = shuffle([t.orig, ...shuffle(t.alts.slice(0, 6)).slice(0, 4)]);
@@ -4394,6 +4412,6 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
 </div>
 </section>
 
-<script src="app.js?v=ls1"></script>
+<script src="app.js?v=ls2"></script>
 </body>
 </html>
