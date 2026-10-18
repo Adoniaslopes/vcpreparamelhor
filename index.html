@@ -105,7 +105,7 @@ body { min-height: 100vh; }
 <script src="config.js"></script>
 <script src="vendor/supabase.js"></script>
 <script src="vendor/d3.min.js"></script>
-<script src="shim.js?v=ls2"></script>
+<script src="shim.js?v=ls3"></script>
 </head>
 <body>
 
@@ -1077,11 +1077,16 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
 .ls-lei { font-size: var(--cds-font-size-caption); font-weight: 700; color: #00843D; }
 .ls-caput { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-top: 4px; border-left: 3px solid var(--color-border-line); padding-left: 8px; }
 .ls-tag { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; background: color-mix(in srgb, #FFCC29 30%, transparent); color: var(--color-fg); border-radius: 999px; padding: 3px 10px; }
-.ls-txt { font-size: 1.08rem; line-height: 1.6; margin: 12px 0; color: var(--color-fg); }
+.ls-txt { font-size: .95rem; line-height: 1.55; margin: 10px 0; color: var(--color-fg); }
+.ls-q { white-space: pre-wrap; max-height: 55vh; overflow: auto; padding-right: 4px; }
+.ls-com { font-size: .88rem; color: var(--color-fg-muted); white-space: pre-wrap; }
+.ls-card .pe-alt { font-size: .9rem; padding: 8px 10px; }
+.ls-card .ls-lei { font-size: .78rem; }
+@media (max-width: 600px) { .ls-txt { font-size: .9rem; } .ls-card { padding: 14px; } .ls-ce { padding: 9px; font-size: .92rem; } .pe-btn.ls-big { font-size: .95rem; } .ls-stat b { font-size: 1.2rem; } }
 .ls-gap { display: inline-block; min-width: 5rem; border-bottom: 2px solid #00A859; color: transparent; }
 .ls-blur { color: var(--color-fg-muted); }
 .ls-acts { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
-.ls-ce { font: inherit; font-weight: 700; font-size: 1rem; flex: 1; min-width: 8rem; padding: 12px; border-radius: 12px; cursor: pointer; border: 2px solid; background: var(--color-bg); }
+.ls-ce { font: inherit; font-weight: 700; font-size: .95rem; flex: 1; min-width: 8rem; padding: 12px; border-radius: 12px; cursor: pointer; border: 2px solid; background: var(--color-bg); }
 .ls-ce.c { border-color: #00A859; color: #00693E; } .ls-ce.e { border-color: #E11D48; color: #BE123C; }
 .ls-ce:disabled { cursor: default; opacity: .55; }
 .ls-ce.ok { opacity: 1; background: color-mix(in srgb, var(--color-ok) 16%, transparent); } .ls-ce.bad { opacity: 1; background: color-mix(in srgb, var(--color-bad) 16%, transparent); }
@@ -1837,7 +1842,7 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
   function lsIndex() {
     const d = dash.data('leiseca');
     if (d.status !== 'ok') return null;
-    const sig = d.data.length + ':' + Q.length;
+    const sig = d.data.length + ':' + Q.length + ':' + DISCS.length;
     if (LS_IDX.sig === sig) return LS_IDX;
     const units = [], byId = new Map(), byLei = new Map();
     const rows = d.data.map((r) => ({...r, ordem: Number(r.ordem) || 0, ordem_lei: Number(r.ordem_lei) || 0})).sort((a, b) => a.ordem_lei - b.ordem_lei || a.ordem - b.ordem);
@@ -1854,7 +1859,21 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
         units.push(u); byId.set(u.id, u); L.units.push(u);
       });
     }
-    Object.assign(LS_IDX, {sig, units, byId, leis: [...byLei.values()].filter((L) => L.units.length), qArt: null});
+    const leis = [...byLei.values()].filter((L) => L.units.length);
+    // disciplinas sem lei seca (Português, Inglês...): trilha com as questões do banco
+    const comLei = new Set(leis.map((L) => L.disc));
+    DISCS.filter((d) => !comLei.has(d.disc)).forEach((d) => {
+      const qs = Q.filter((q) => q.disc === d.disc).sort((a, b) => (a.nivel || 2) - (b.nivel || 2) || (a.ordem || 0) - (b.ordem || 0));
+      if (!qs.length) return;
+      const L = {id: 'q-' + d.disc, lei: 'Questões do banco · ' + d.disciplina, disc: d.disc, url: '', chaves: [], arts: [], units: [], q: true};
+      qs.forEach((q, i) => {
+        const A = {art: String(i + 1), linhas: [], url: ''};
+        const u = {id: 'q|' + q.id, L, A, i: 0, texto: String(q.enunciado || ''), rot: assunto(q.tema) || 'Questão', q};
+        units.push(u); byId.set(u.id, u); L.units.push(u);
+      });
+      leis.push(L);
+    });
+    Object.assign(LS_IDX, {sig, units, byId, leis, qArt: null});
     return LS_IDX;
   }
   // questões do banco que citam o artigo (número do artigo + termo da norma no enunciado/comentário)
@@ -1877,6 +1896,7 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
     if (LS.dia.d !== h) LS.dia = {d: h, r: 0, h: 0, s: 0, nw: 0};
   }
   function lsCard(u) {
+    if (u.q) return {tipo: 'q', u};
     const toks = lsTokens(u.texto);
     if (!toks.length) {
       // lacuna de palavra-chave: a palavra exata da lei, com distratores tirados da própria norma
@@ -1905,6 +1925,9 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
     const errado = Math.random() < .5;
     return {tipo: 'ce', u, t, troca: errado ? t.alts[Math.floor(Math.random() * Math.min(4, t.alts.length))] : null, gab: errado ? 'E' : 'C'};
   }
+  function lsSeq() { const h = dayNum(); if (LS.st.d !== h) { LS.st.n = LS.st.d === h - 1 ? LS.st.n + 1 : 1; LS.st.d = h; LS.st.b = Math.max(LS.st.b, LS.st.n); } }
+  // questões respondidas no Treino, Diagnóstico e Revisão também contam XP, sequência e missões
+  function lsPonto(ok, pts) { lsDiaReset(); LS.dia.r++; if (ok) LS.dia.h++; LS.xp += ok ? pts : 1; lsSeq(); }
   function lsGrade(u, ok) {
     const h = dayNum(); lsDiaReset();
     const c = LS.c[u.id] || [250, 0, h, 0, 0, h];
@@ -1915,7 +1938,7 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
     LS.c[u.id] = c;
     LS.dia.r++; if (ok) LS.dia.h++;
     LS.xp += ok ? 10 : 2;
-    if (LS.st.d !== h) { LS.st.n = LS.st.d === h - 1 ? LS.st.n + 1 : 1; LS.st.d = h; LS.st.b = Math.max(LS.st.b, LS.st.n); }
+    lsSeq();
   }
   function lsMontar(escopo) {
     const I = lsIndex(); if (!I) return [];
@@ -1933,12 +1956,12 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
     if (!lista.length) return;
     lsSess = {fila: lista.map(lsCard), i: 0, n: 0, h: 0, xp0: LS.xp, t0: Date.now(), rotulo, diaria, refeitos: new Set(), resp: null};
     lsDesenhaCard();
-    document.getElementById('ls-root').scrollIntoView({block: 'start'});
   }
   const lsMark = (txt, s, e, cls) => { const p = el('p', 'ls-txt'); p.append(txt.slice(0, s)); p.append(el('mark', cls || null, txt.slice(s, e))); p.append(txt.slice(e)); return p; };
   function lsContexto(u) {
     const box = el('div', 'ls-ctx');
     box.append(el('div', 'ls-lei', u.L.lei + ' · ' + u.rot));
+    if (u.q) return box;
     if (u.i > 0 && u.A.linhas[0]) { const cp = u.A.linhas[0]; box.append(el('div', 'ls-caput', cp.length > 220 ? cp.slice(0, 217) + '…' : cp)); }
     return box;
   }
@@ -1952,13 +1975,18 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
     top.append(sair, bar, el('span', 'ls-cont', `${S.i + 1}/${S.fila.length}`));
     const box = el('div', 'pe-card ls-card');
     box.append(lsContexto(u));
-    const tag = el('span', 'ls-tag', card.tipo === 'ce' ? 'Certo ou errado?' : card.tipo === 'mc' ? 'Complete a lacuna' : 'Lembra deste dispositivo?');
+    const tag = el('span', 'ls-tag', card.tipo === 'ce' ? 'Certo ou errado?' : card.tipo === 'mc' ? 'Complete a lacuna' : card.tipo === 'q' ? 'Questão de prova' : 'Lembra deste dispositivo?');
     box.append(tag);
     const acts = el('div', 'ls-acts');
     if (card.tipo === 'ce') {
       const t = card.t, txt = card.troca ? u.texto.slice(0, t.s) + card.troca + u.texto.slice(t.e) : u.texto;
       box.append(el('p', 'ls-txt', txt));
       [['C', 'Certo'], ['E', 'Errado']].forEach(([k, r]) => { const b = el('button', 'ls-ce ' + (k === 'C' ? 'c' : 'e'), r); b.addEventListener('click', () => lsResponde(k === card.gab, k)); acts.append(b); });
+    } else if (card.tipo === 'q') {
+      const q = u.q; box.append(el('p', 'ls-txt ls-q', q.enunciado));
+      const alts = el('div', 'pe-alts');
+      LETTERS.forEach((k) => { const tx = q[k]; if (tx == null || tx === '') return; const K = k.toUpperCase(); const b = el('button', 'pe-alt'); b.dataset.k = K; b.append(el('span', 'l', K), el('span', null, tx)); b.addEventListener('click', () => lsResponde(K === q.gabarito, K)); alts.append(b); });
+      box.append(alts);
     } else if (card.tipo === 'mc') {
       const t = card.t; const p = el('p', 'ls-txt'); p.append(u.texto.slice(0, t.s), el('span', 'ls-gap', '________'), u.texto.slice(t.e)); box.append(p);
       const alts = el('div', 'pe-alts');
@@ -1977,6 +2005,8 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
     }
     box.append(acts);
     play.append(top, box);
+    document.getElementById('mt-chips').hidden = true;
+    const y = top.getBoundingClientRect().top + window.scrollY - 64; window.scrollTo({top: Math.max(0, y)});
   }
   function lsResponde(ok, escolha) {
     const S = lsSess; if (!S || S.resp) return;
@@ -1988,18 +2018,24 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
     const box = document.querySelector('#ls-play .ls-card');
     box.querySelectorAll('button').forEach((b) => { b.disabled = true; });
     if (card.tipo === 'mc') box.querySelectorAll('.pe-alt').forEach((b, i) => { if (i === card.ok) b.classList.add('ok'); else if (i === escolha) b.classList.add('bad'); });
+    if (card.tipo === 'q') { box.querySelectorAll('.pe-alt').forEach((b) => { if (b.dataset.k === u.q.gabarito) b.classList.add('ok'); else if (b.dataset.k === escolha) b.classList.add('bad'); }); if (primeira) registra(u.q, escolha, true); }
     if (card.tipo === 'ce') box.querySelectorAll('.ls-ce').forEach((b) => { const k = b.classList.contains('c') ? 'C' : 'E'; if (k === card.gab) b.classList.add('ok'); else if (k === escolha) b.classList.add('bad'); });
     const fb = el('div', 'ls-fb ' + (ok ? 'ok' : 'bad'));
     fb.append(el('b', null, ok ? (['Isso!', 'Certíssimo.', 'Na mosca.', 'Boa!'][Math.floor(Math.random() * 4)] + ' +10 XP') : 'Não foi dessa vez. Este dispositivo volta no fim da sessão e amanhã.'));
-    if (card.tipo !== 'flash') {
+    if (card.tipo === 'q') {
+      fb.append(el('div', 'ls-fb-l', 'Gabarito: ' + u.q.gabarito));
+      if (u.q.comentario) fb.append(el('p', 'ls-txt ls-com', u.q.comentario));
+    } else if (card.tipo !== 'flash') {
       fb.append(el('div', 'ls-fb-l', 'Letra da lei:'), lsMark(u.texto, card.t.s, card.t.e));
       if (card.tipo === 'ce' && card.troca) fb.append(el('p', 'pe-note', `O enunciado trocou “${card.t.orig}” por “${card.troca}”.`));
     }
-    const det = el('details', 'ls-art'); det.append(el('summary', null, 'Ver o artigo inteiro'));
-    u.A.linhas.forEach((ln, i) => det.append(el('p', i === u.i ? 'ls-txt ls-cur' : 'ls-txt', ln)));
-    if (u.A.url) det.append(anchor('ghost', 'Texto oficial no Planalto', u.A.url));
-    fb.append(det);
-    const qs = lsQuestoes(u);
+    if (!u.q) {
+      const det = el('details', 'ls-art'); det.append(el('summary', null, 'Ver o artigo inteiro'));
+      u.A.linhas.forEach((ln, i) => det.append(el('p', i === u.i ? 'ls-txt ls-cur' : 'ls-txt', ln)));
+      if (u.A.url) det.append(anchor('ghost', 'Texto oficial', u.A.url));
+      fb.append(det);
+    }
+    const qs = u.q ? [] : lsQuestoes(u);
     const acts = el('div', 'pe-actions');
     if (qs.length) {
       const bq = el('button', 'pe-btn', `Resolver ${qs.length} ${qs.length === 1 ? 'questão' : 'questões'} do banco sobre o art. ${u.A.art}`);
@@ -2035,6 +2071,7 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
     const home = document.getElementById('ls-home'), play = document.getElementById('ls-play');
     if (lsSess) return;
     play.hidden = true; play.replaceChildren(); home.hidden = false;
+    document.getElementById('mt-chips').hidden = false;
     const st = dash.data('leiseca').status;
     const det = document.getElementById('mt-det');
     if (st === 'loading') { home.replaceChildren(el('div', 'pe-card dash-skeleton')); return; }
@@ -2051,7 +2088,7 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
     const dom = I.units.filter((u) => lsDom(LS.c[u.id])).length;
     const vivo = LS.st.d === h || LS.st.d === h - 1;
     const g = el('div', 'ls-stats');
-    [[`🔥 ${vivo ? LS.st.n : 0}`, LS.st.d === h ? 'dias seguidos' : 'dias seguidos · estude hoje'], [`⚡ ${nf.format(LS.xp)}`, 'XP total'], [`${venc}`, 'para revisar hoje'], [`${dom}/${I.units.length}`, 'dispositivos dominados']].forEach(([v, l]) => { const c = el('div', 'ls-stat'); c.append(el('b', null, v), el('span', null, l)); g.append(c); });
+    [[`🔥 ${vivo ? LS.st.n : 0}`, LS.st.d === h ? 'dias seguidos' : 'dias seguidos · estude hoje'], [`⚡ ${nf.format(LS.xp)}`, 'XP total'], [`${venc}`, 'para revisar hoje'], [`${dom}/${I.units.length}`, 'itens dominados']].forEach(([v, l]) => { const c = el('div', 'ls-stat'); c.append(el('b', null, v), el('span', null, l)); g.append(c); });
     home.append(g);
     // sessão do dia + missões
     const duo = el('div', 'ls-duo');
@@ -2080,7 +2117,7 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
     // trilha da disciplina
     const leis = I.leis.filter((L) => L.disc === mtDisc);
     const tr = el('div', 'pe-card');
-    tr.append(el('h2', 'pe-h2', 'Trilha · ' + ((DISCS.find((d) => d.disc === mtDisc) || {}).disciplina || '')), el('p', 'pe-note', 'Cada nível tem 5 dispositivos. Conclua um nível para liberar o próximo; os já concluídos podem ser refeitos quando quiser.'));
+    tr.append(el('h2', 'pe-h2', 'Trilha · ' + ((DISCS.find((d) => d.disc === mtDisc) || {}).disciplina || '')), el('p', 'pe-note', 'Cada nível tem 5 itens (dispositivos de lei ou, em Português e Inglês, questões do banco). Conclua um nível para liberar o próximo; os já concluídos podem ser refeitos quando quiser.'));
     if (!leis.length) { tr.append(el('p', 'pe-empty', 'Esta disciplina ainda não tem leis na Lei Seca. Use a Sinopse abaixo.')); if (det) det.open = true; }
     if (!lsLei || !leis.some((L) => L.id === lsLei)) lsLei = leis[0] && leis[0].id;
     const grid = el('div', 'ls-leis');
@@ -2102,10 +2139,10 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
         const n = el('div', 'ls-node ' + estado); n.style.setProperty('--x', `${Math.round(Math.sin(k * 1.1) * 70)}px`);
         const bt = el('button', null, estado === 'done' ? '✓' : estado === 'cur' ? '★' : '🔒');
         bt.disabled = estado === 'lock';
-        const ini = grp[0].A.art, fim = grp[grp.length - 1].A.art;
-        bt.title = `Nível ${k + 1}: art. ${ini}${ini !== fim ? ' a ' + fim : ''}`;
+        const ini = grp[0].A.art, fim = grp[grp.length - 1].A.art, rotN = L.q ? `questões ${ini}–${fim}` : `art. ${ini}${ini !== fim ? '–' + fim : ''}`;
+        bt.title = `Nível ${k + 1}: ${rotN}`;
         bt.addEventListener('click', () => lsIniciar(grp, `${L.lei} · nível ${k + 1}`, false));
-        n.append(bt, el('span', null, estado === 'cur' ? `Praticar nível ${k + 1}` : `Nível ${k + 1} · art. ${ini}${ini !== fim ? '–' + fim : ''}`));
+        n.append(bt, el('span', null, estado === 'cur' ? `Praticar nível ${k + 1}` : `Nível ${k + 1} · ${rotN}`));
         path.append(n);
       });
       tr.append(path);
@@ -3695,9 +3732,10 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
   const INT = [1, 1, 3, 7, 15, 30];
   const dayNum = (d = new Date()) => Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000);
   const dayDate = (n) => new Date(Number(n) * 86400000).toLocaleDateString('pt-BR', {timeZone: 'UTC'});
-  function registra(q, r) {
+  function registra(q, r, semXp) {
     const a = ans[q.id] || {r: null, n: 0, h: 0, b: 0};
     const ok = r === q.gabarito;
+    if (!semXp) lsPonto(ok, 5);
     a.r = r; a.n++; if (ok) a.h++;
     a.b = ok ? Math.min(5, (a.b || 0) + 1) : 0; a.t = dayNum();
     ans[q.id] = a;
@@ -4412,6 +4450,6 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
 </div>
 </section>
 
-<script src="app.js?v=ls2"></script>
+<script src="app.js?v=ls3"></script>
 </body>
 </html>
