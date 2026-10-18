@@ -3,8 +3,8 @@
   'use strict';
   var cfg = window.PET_CONFIG || {};
   var $ = function (id) { return document.getElementById(id); };
-  var ARQS = ['questoes.json', 'materiais.json', 'trilhas.json', 'sinopses.json', 'discursivas.json', 'prova2023.json', 'edital.json'];
-  var OPCIONAIS = ['discursivas', 'prova2023', 'edital'];
+  var ARQS = ['questoes.json', 'materiais.json', 'trilhas.json', 'sinopses.json', 'discursivas.json', 'prova2023.json', 'edital.json', 'leiseca.json'];
+  var OPCIONAIS = ['discursivas', 'prova2023', 'edital', 'leiseca'];
   var BUCKET = 'conteudo';
   var NOME_PLAT = 'Plataforma de Estudos para Concursos da Petrobras e Transpetro';
   // cargo "Advogado(a) – Transpetro": o primeiro, cujos arquivos ficam na raiz do depósito

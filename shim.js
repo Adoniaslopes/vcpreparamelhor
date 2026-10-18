@@ -4,7 +4,7 @@
 (function () {
   'use strict';
   var data = {}, calcs = {}, subs = [];
-  ['questoes', 'sinopses', 'materiais', 'trilhas', 'discursivas', 'prova2023', 'edital'].forEach(function (k) { data[k] = {status: 'loading', data: null}; });
+  ['questoes', 'sinopses', 'materiais', 'trilhas', 'discursivas', 'prova2023', 'edital', 'leiseca'].forEach(function (k) { data[k] = {status: 'loading', data: null}; });
 
   function recompute() {
     Object.keys(calcs).forEach(function (id) {

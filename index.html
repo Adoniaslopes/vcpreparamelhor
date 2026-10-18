@@ -1035,6 +1035,72 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
 .pe .ia-passos li { margin-bottom: 8px; } .pe .ia-passos b { color: #0E7490; }
 .pe .ia-passos .fund { font-size: var(--cds-font-size-caption); color: #155E75; margin-top: 2px; }
 .pe .ia-rot .ia-sec b { color: #0E7490; }
+
+/* ===== Lei Seca ===== */
+#ls-root { margin-bottom: var(--cds-gap-lg); }
+#ls-home > * + * { margin-top: var(--cds-gap-md); }
+.ls-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr)); gap: 10px; }
+.ls-stat { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: 14px; padding: 12px 14px; display: flex; flex-direction: column; gap: 2px; }
+.ls-stat b { font-size: 1.5rem; line-height: 1.2; font-variant-numeric: tabular-nums; color: var(--color-fg); }
+.ls-stat span { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.ls-duo { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: var(--cds-gap-md); }
+@media (max-width: 760px) { .ls-duo { grid-template-columns: 1fr; } }
+.ls-k { font-size: 11px; letter-spacing: .14em; font-weight: 700; color: #00843D; margin-bottom: 6px; }
+.pe .pe-card.ls-cta, .pe-card.ls-cta { background: linear-gradient(135deg, #0B3B2A, #00693E); color: #fff; border: 0 !important; background: linear-gradient(135deg, #0B3B2A, #00693E) !important; }
+.pe .ls-cta .pe-h2 { color: #fff; } .ls-cta .pe-note { color: rgba(255,255,255,.85); } .ls-cta .ls-k { color: #FFCC29; }
+.ls-cta .pe-nav { background: rgba(255,255,255,.12); color: #fff; border: 1px solid rgba(255,255,255,.3); border-radius: 999px; padding: 4px 10px; }
+.ls-cta .pe-nav option { color: #14201B; }
+.pe-btn.ls-big { font-size: 1rem; padding: 10px 22px; background: #FFCC29; color: #0B3B2A; border-color: #FFCC29; font-weight: 700; }
+.ls-mis .ls-m { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; padding: 8px 0; border-top: 1px solid var(--color-border-line); font-size: var(--cds-font-size-body); }
+.ls-mis .ls-m:first-of-type { border-top: 0; }
+.ls-mis .ls-m .ls-bar { grid-column: 1 / -1; }
+.ls-mis .ls-m.done span:first-child { color: var(--color-ok); font-weight: 600; }
+.ls-mv { font-variant-numeric: tabular-nums; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+.ls-bar { height: 8px; border-radius: 999px; background: color-mix(in srgb, var(--color-fg) 10%, transparent); overflow: hidden; flex: 1; }
+.ls-bar i { display: block; height: 100%; background: linear-gradient(90deg, #00A859, #FFCC29); border-radius: 999px; transition: width .3s; }
+.ls-leis { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr)); gap: 8px; margin-bottom: var(--cds-gap-md); }
+.ls-leib { font: inherit; text-align: left; display: flex; flex-direction: column; gap: 4px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--color-border-line); background: var(--color-bg); color: var(--color-fg); cursor: pointer; }
+.ls-leib b { font-size: var(--cds-font-size-body); } .ls-leib span { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.ls-leib.on { border-color: #00A859; box-shadow: 0 0 0 2px color-mix(in srgb, #00A859 30%, transparent); }
+.ls-path { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 12px 0 4px; }
+.ls-node { display: flex; flex-direction: column; align-items: center; gap: 4px; transform: translateX(var(--x)); }
+.ls-node button { width: 62px; height: 62px; border-radius: 50%; font-size: 1.4rem; cursor: pointer; border: 0; color: #fff; background: #00A859; box-shadow: 0 5px 0 #00693E; transition: transform .12s; }
+.ls-node button:hover:not(:disabled) { transform: translateY(-2px); }
+.ls-node.cur button { background: #FFCC29; color: #0B3B2A; box-shadow: 0 5px 0 #C99A00, 0 0 0 6px color-mix(in srgb, #FFCC29 35%, transparent); width: 72px; height: 72px; }
+.ls-node.lock button { background: color-mix(in srgb, var(--color-fg) 12%, transparent); box-shadow: 0 5px 0 color-mix(in srgb, var(--color-fg) 18%, transparent); cursor: default; font-size: 1.1rem; }
+.ls-node span { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); text-align: center; max-width: 12rem; }
+.ls-node.cur span { color: var(--color-fg); font-weight: 700; }
+.ls-top { display: flex; align-items: center; gap: 12px; margin-bottom: var(--cds-gap-md); }
+.ls-cont { font-variant-numeric: tabular-nums; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.ls-card { max-width: 46rem; margin: 0 auto; }
+.ls-ctx { margin-bottom: 10px; }
+.ls-lei { font-size: var(--cds-font-size-caption); font-weight: 700; color: #00843D; }
+.ls-caput { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-top: 4px; border-left: 3px solid var(--color-border-line); padding-left: 8px; }
+.ls-tag { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; background: color-mix(in srgb, #FFCC29 30%, transparent); color: var(--color-fg); border-radius: 999px; padding: 3px 10px; }
+.ls-txt { font-size: 1.08rem; line-height: 1.6; margin: 12px 0; color: var(--color-fg); }
+.ls-gap { display: inline-block; min-width: 5rem; border-bottom: 2px solid #00A859; color: transparent; }
+.ls-blur { color: var(--color-fg-muted); }
+.ls-acts { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+.ls-ce { font: inherit; font-weight: 700; font-size: 1rem; flex: 1; min-width: 8rem; padding: 12px; border-radius: 12px; cursor: pointer; border: 2px solid; background: var(--color-bg); }
+.ls-ce.c { border-color: #00A859; color: #00693E; } .ls-ce.e { border-color: #E11D48; color: #BE123C; }
+.ls-ce:disabled { cursor: default; opacity: .55; }
+.ls-ce.ok { opacity: 1; background: color-mix(in srgb, var(--color-ok) 16%, transparent); } .ls-ce.bad { opacity: 1; background: color-mix(in srgb, var(--color-bad) 16%, transparent); }
+.ls-fb { margin-top: var(--cds-gap-md); padding: 12px 14px; border-radius: 12px; border: 1px solid; }
+.ls-fb.ok { border-color: var(--color-ok); background: color-mix(in srgb, var(--color-ok) 7%, transparent); }
+.ls-fb.bad { border-color: var(--color-bad); background: color-mix(in srgb, var(--color-bad) 7%, transparent); }
+.ls-fb-l { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-top: 8px; }
+.ls-fb mark { background: color-mix(in srgb, #FFCC29 55%, transparent); color: inherit; padding: 0 2px; border-radius: 3px; }
+.ls-art summary { cursor: pointer; font-size: var(--cds-font-size-caption); color: #00843D; font-weight: 600; margin-top: 6px; }
+.ls-art .ls-txt { font-size: .95rem; margin: 6px 0; }
+.ls-art .ls-cur { background: color-mix(in srgb, #FFCC29 22%, transparent); border-radius: 6px; padding: 2px 6px; }
+.ls-end { max-width: 34rem; margin: 0 auto; text-align: center; }
+.ls-end .ls-stats { text-align: left; margin-top: var(--cds-gap-md); }
+.ls-end .pe-actions { justify-content: center; }
+.ls-trophy { font-size: 2.6rem; }
+.ls-sinopse > summary { cursor: pointer; display: flex; flex-direction: column; gap: 2px; list-style: none; }
+.ls-sinopse > summary::-webkit-details-marker { display: none; }
+.ls-sinopse > summary b::before { content: "▸ "; } .ls-sinopse[open] > summary b::before { content: "▾ "; }
+.ls-sinopse > summary span { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
 </style>
 
 
@@ -1073,7 +1139,7 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
     <button class="pe-tab pe-tab-start" role="tab" data-page="diagnostico" aria-selected="false">Diagnóstico</button>
     <button class="pe-tab" role="tab" data-page="dirigido" aria-selected="false">Estudo dirigido</button>
     <button class="pe-tab" role="tab" data-page="bussola" aria-selected="false">Bússola</button>
-    <button class="pe-tab" role="tab" data-page="material" aria-selected="false">Material de estudo</button>
+    <button class="pe-tab" role="tab" data-page="material" aria-selected="false">Lei Seca</button>
     <button class="pe-tab" role="tab" data-page="treino" aria-selected="false">Treino</button>
     <button class="pe-tab" role="tab" data-page="discursivas" aria-selected="false">Discursivas</button>
     <button class="pe-tab" role="tab" data-page="revisao" aria-selected="false">Revisão de erros</button>
@@ -1177,20 +1243,27 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
     </div>
   </section>
 
-  <!-- MATERIAL -->
+  <!-- MATERIAL: LEI SECA (principal) + SINOPSE (apoio) -->
   <section class="pe-page" id="material" hidden>
-    <p class="pe-note" style="margin-bottom:var(--cds-gap-md)">Antes das questões: leia a Sinopse da disciplina aqui mesmo e confira a letra da lei nos dispositivos mais cobrados no banco. Os links “Ler a lei” abrem o texto oficial compilado no Planalto.</p>
     <div class="pe-chips" id="mt-chips" role="tablist" aria-label="Disciplinas"></div>
-    <div class="pe-card pe-ing-plano" id="mt-ing" hidden></div>
-    <div class="pe-mt" id="mt-box" data-source="materiais">
-      <div class="pe-card pe-mt-pdf" id="mt-pdf"></div>
-      <div class="pe-card pe-reader" id="mt-reader" data-source="sinopses"></div>
-      <div class="pe-card" id="mt-lei">
-        <h2 class="pe-h2">Lei seca · dispositivos cobrados</h2>
-        <p class="pe-note">Ordenados pelo número de questões do banco que citam cada norma.</p>
-        <div class="pe-lei-list" id="mt-lista"></div>
-      </div>
+    <div id="ls-root">
+      <div id="ls-home"></div>
+      <div id="ls-play" hidden></div>
     </div>
+    <details class="pe-card ls-sinopse" id="mt-det">
+      <summary><b>Sinopse e leis da disciplina</b><span>Teoria de apoio, quadros e a lista de dispositivos mais cobrados no banco</span></summary>
+      <p class="pe-note" style="margin:var(--cds-gap-md) 0">Use a Sinopse como leitura complementar, principalmente nos assuntos mais doutrinários ou de jurisprudência. Os links “Ler a lei” abrem o texto oficial compilado no Planalto.</p>
+      <div class="pe-card pe-ing-plano" id="mt-ing" hidden></div>
+      <div class="pe-mt" id="mt-box" data-source="materiais">
+        <div class="pe-card pe-mt-pdf" id="mt-pdf"></div>
+        <div class="pe-card pe-reader" id="mt-reader" data-source="sinopses"></div>
+        <div class="pe-card" id="mt-lei">
+          <h2 class="pe-h2">Lei seca · dispositivos cobrados</h2>
+          <p class="pe-note">Ordenados pelo número de questões do banco que citam cada norma.</p>
+          <div class="pe-lei-list" id="mt-lista"></div>
+        </div>
+      </div>
+    </details>
   </section>
 
   <!-- TREINO -->
@@ -1652,6 +1725,7 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
     const chips = document.getElementById('mt-chips'); chips.replaceChildren();
     DISCS.forEach((d) => { const c = el('button', 'pe-chip', SHORT[d.disc] || d.disciplina); c.setAttribute('role', 'tab'); c.setAttribute('aria-selected', String(d.disc === mtDisc)); c.style.setProperty('--dc', DC[d.disc]); c.addEventListener('click', () => { mtDisc = d.disc; renderMaterial(); }); chips.append(c); });
     renderPlanoIngles();
+    renderLeiSeca();
     const rows = matRows().filter((r) => r.disc === mtDisc);
     const box = document.getElementById('mt-box'); box.style.setProperty('--dc', DC[mtDisc]);
     const pdfBox = document.getElementById('mt-pdf'), list = document.getElementById('mt-lista');
@@ -1687,6 +1761,353 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
     });
   }
 
+
+  // ---------- Lei Seca: cards de lei, revisão espaçada, XP e sequência ----------
+  // Conteúdo opcional leiseca.json: [{disc, lei_id, lei, ordem_lei, art, ordem, texto, url, chaves}]
+  //   texto = o artigo, um dispositivo por linha (caput, incisos, alíneas, parágrafos)
+  //   chaves = termos que identificam a norma nas questões do banco (ex.: ["Constituição", "CF"])
+  // Estado do aluno: LS.c[id] = [facilidade x100, intervalo em dias, dia de revisão, acertos seguidos, lapsos, dia da 1ª vez]
+  let LS = {c: {}, xp: 0, st: {d: 0, n: 0, b: 0}, dia: {d: 0, r: 0, h: 0, s: 0, nw: 0}, nv: 10};
+  let lsSess = null, lsLei = null;
+  const LS_IDX = {sig: '', units: [], byId: new Map(), leis: [], qArt: null};
+  const LS_NUMS = [[1, 'um'], [2, 'dois'], [3, 'três'], [4, 'quatro'], [5, 'cinco'], [6, 'seis'], [7, 'sete'], [8, 'oito'], [9, 'nove'], [10, 'dez'], [11, 'onze'], [12, 'doze'], [15, 'quinze'], [18, 'dezoito'], [20, 'vinte'], [21, 'vinte e um'], [25, 'vinte e cinco'], [30, 'trinta'], [35, 'trinta e cinco'], [40, 'quarenta'], [45, 'quarenta e cinco'], [48, 'quarenta e oito'], [50, 'cinquenta'], [60, 'sessenta'], [65, 'sessenta e cinco'], [70, 'setenta'], [75, 'setenta e cinco'], [90, 'noventa'], [100, 'cem'], [120, 'cento e vinte'], [180, 'cento e oitenta']];
+  const LS_W2N = new Map(LS_NUMS.map(([n, w]) => [w, n])); LS_W2N.set('uma', 1); LS_W2N.set('duas', 2);
+  const LS_N2W = new Map(LS_NUMS);
+  const LS_UNI = {dia: 'dias', ano: 'anos', 'mês': 'meses', hora: 'horas', semana: 'semanas', vez: 'vezes'};
+  const LS_FEM = /^(hora|semana|vez)/;
+  const lsEsc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const LS_NUM_RE = new RegExp('(?<![\\wÀ-ú])(' + [...LS_W2N.keys()].sort((a, b) => b.length - a.length).map(lsEsc).join('|') + '|\\d{1,4})(\\s*\\([^)]{1,40}\\))?\\s+(dias|dia|anos|ano|meses|mês|horas|hora|semanas|semana|vezes|vez)(?![\\wÀ-ú])', 'gi');
+  // grupos de termos que a banca troca entre si (só troca por termo que não aparece no mesmo dispositivo)
+  const LS_GRUPOS = [
+    ['um terço', 'dois terços', 'três quintos', 'um quinto', 'metade', 'um quarto'],
+    ['maioria absoluta', 'maioria simples', 'maioria relativa'],
+    ['poderá', 'deverá'], ['poderão', 'deverão'],
+    ['privativamente', 'exclusivamente', 'concorrentemente', 'supletivamente'],
+    ['é vedado', 'é facultado', 'é obrigatório'], ['é vedada', 'é facultada', 'é obrigatória'],
+    ['no mínimo', 'no máximo'], ['inferior', 'superior'], ['anterior', 'posterior'],
+    ['lei complementar', 'lei ordinária'], ['mensal', 'anual', 'semestral', 'bienal'],
+    ['Senado Federal', 'Câmara dos Deputados'], ['Supremo Tribunal Federal', 'Superior Tribunal de Justiça'],
+    ['nulo', 'anulável'], ['nula', 'anulável'], ['solidária', 'subsidiária'], ['solidariamente', 'subsidiariamente'],
+    ['objetiva', 'subjetiva'], ['decadência', 'prescrição'], ['imprescritível', 'prescritível'], ['imprescritíveis', 'prescritíveis'],
+    ['ordinária', 'extraordinária'], ['absoluta', 'relativa'], ['dolo', 'culpa'], ['gratuita', 'onerosa'],
+  ];
+  const LS_GRUPOS_RE = LS_GRUPOS.flatMap((g) => g.map((w) => ({g, w, re: new RegExp('(?<![\\wÀ-ú])' + lsEsc(w) + '(?![\\wÀ-ú])', 'gi')})));
+  const lsCase = (orig, alt) => (orig[0] && orig[0] === orig[0].toUpperCase() && orig[0] !== orig[0].toLowerCase()) ? alt[0].toUpperCase() + alt.slice(1) : alt;
+
+  function lsNumAlts(m) {
+    const raw = m[1].toLowerCase(), isD = /^\d+$/.test(raw);
+    const v = isD ? Number(raw) : LS_W2N.get(raw);
+    if (!v) return [];
+    const uni = m[3].toLowerCase(), sing = LS_UNI[uni] ? uni : Object.keys(LS_UNI).find((k) => LS_UNI[k] === uni);
+    const fem = LS_FEM.test(sing);
+    const estilo = isD ? (m[2] ? 'dw' : 'd') : 'w';
+    const cand = LS_NUMS.map(([n]) => n).filter((n) => n !== v && (estilo !== 'w' || LS_N2W.has(n)));
+    cand.sort((a, b) => Math.abs(Math.log(a / v)) - Math.abs(Math.log(b / v)));
+    const word = (n) => { let w = LS_N2W.get(n) || String(n); if (fem) w = w.replace(/^um$/, 'uma').replace(/^dois$/, 'duas').replace(/ e um$/, ' e uma').replace(/ e dois$/, ' e duas'); return w; };
+    return cand.slice(0, 6).map((n) => {
+      const u = n === 1 ? sing : LS_UNI[sing];
+      const num = estilo === 'd' ? String(n) : estilo === 'dw' ? `${n} (${word(n)})` : word(n);
+      return lsCase(m[0], num + ' ' + u);
+    });
+  }
+  function lsTokens(txt) {
+    const out = [], low = txt.toLowerCase();
+    for (const m of txt.matchAll(LS_NUM_RE)) { const alts = lsNumAlts(m); if (alts.length) out.push({s: m.index, e: m.index + m[0].length, orig: m[0], alts}); }
+    for (const {g, w, re} of LS_GRUPOS_RE) {
+      for (const m of txt.matchAll(re)) {
+        const alts = g.filter((x) => x.toLowerCase() !== w.toLowerCase() && !new RegExp('(?<![\\wÀ-ú])' + lsEsc(x.toLowerCase()) + '(?![\\wÀ-ú])').test(low)).map((x) => lsCase(m[0], x));
+        if (alts.length) out.push({s: m.index, e: m.index + m[0].length, orig: m[0], alts});
+      }
+    }
+    out.sort((a, b) => a.s - b.s || (b.e - b.s) - (a.e - a.s));
+    const keep = []; let fim = -1;
+    for (const t of out) if (t.s >= fim) { keep.push(t); fim = t.e; }
+    return keep;
+  }
+  function lsRotulo(t, i, art) {
+    const a = 'Art. ' + art;
+    if (i === 0) return a + ', caput';
+    let m;
+    if (/^par[aá]grafo [uú]nico/i.test(t)) return a + ', parágrafo único';
+    if ((m = t.match(/^§\s*(\d+[º°o]?)/))) return a + ', § ' + m[1].replace(/o$/, 'º');
+    if ((m = t.match(/^([IVXLC]+)\s*[-–—.]/))) return a + ', inciso ' + m[1];
+    if ((m = t.match(/^([a-z])\)/))) return a + ', alínea ' + m[1];
+    return a;
+  }
+  function lsIndex() {
+    const d = dash.data('leiseca');
+    if (d.status !== 'ok') return null;
+    const sig = d.data.length + ':' + Q.length;
+    if (LS_IDX.sig === sig) return LS_IDX;
+    const units = [], byId = new Map(), byLei = new Map();
+    const rows = d.data.map((r) => ({...r, ordem: Number(r.ordem) || 0, ordem_lei: Number(r.ordem_lei) || 0})).sort((a, b) => a.ordem_lei - b.ordem_lei || a.ordem - b.ordem);
+    for (const r of rows) {
+      const id = String(r.lei_id || r.lei);
+      if (!byLei.has(id)) byLei.set(id, {id, lei: r.lei, disc: r.disc, url: r.url || '', chaves: Array.isArray(r.chaves) ? r.chaves : [], arts: [], units: []});
+      const L = byLei.get(id);
+      const linhas = String(r.texto || '').split('\n').map((x) => x.trim()).filter(Boolean);
+      const art = {art: String(r.art), linhas, url: r.url || L.url};
+      L.arts.push(art);
+      linhas.forEach((t, i) => {
+        if (t.replace(/^\S+\s*[-–—.)]?\s*/, '').length < 25 || /\((revogad|vetad)/i.test(t)) return;
+        const u = {id: id + '|' + art.art + '|' + i, L, A: art, i, texto: t, rot: lsRotulo(t, i, art.art)};
+        units.push(u); byId.set(u.id, u); L.units.push(u);
+      });
+    }
+    Object.assign(LS_IDX, {sig, units, byId, leis: [...byLei.values()].filter((L) => L.units.length), qArt: null});
+    return LS_IDX;
+  }
+  // questões do banco que citam o artigo (número do artigo + termo da norma no enunciado/comentário)
+  function lsQuestoes(u) {
+    if (!LS_IDX.qArt) {
+      LS_IDX.qArt = Q.map((q) => {
+        const txt = [q.enunciado, q.comentario, q.tema].join(' ');
+        const arts = new Set(); for (const m of txt.matchAll(/\bart(?:igo)?s?\.?\s*(\d{1,4}(?:\.\d{3})?)/gi)) arts.add(m[1].replace('.', ''));
+        return {q, arts, low: txt.toLowerCase()};
+      }).filter((x) => x.arts.size);
+    }
+    const n = u.A.art.replace(/[^\d]/g, ''), ch = u.L.chaves.map((c) => String(c).toLowerCase()).filter(Boolean);
+    return LS_IDX.qArt.filter((x) => x.arts.has(n) && (ch.length ? ch.some((c) => x.low.includes(c)) : x.q.disc === u.L.disc)).map((x) => x.q);
+  }
+  const lsDom = (c) => c && c[1] >= 21;
+  function lsNiveis(L) { const out = []; for (let i = 0; i < L.units.length; i += 5) out.push(L.units.slice(i, i + 5)); return out; }
+  function lsNivelAtual(L) { const nv = lsNiveis(L); const k = nv.findIndex((g) => g.some((u) => !LS.c[u.id])); return k < 0 ? nv.length : k; }
+  function lsDiaReset() {
+    const h = dayNum();
+    if (LS.dia.d !== h) LS.dia = {d: h, r: 0, h: 0, s: 0, nw: 0};
+  }
+  function lsCard(u) {
+    const toks = lsTokens(u.texto);
+    if (!toks.length) return {tipo: 'flash', u};
+    const t = toks[Math.floor(Math.random() * toks.length)];
+    if (t.alts.length >= 4 && Math.random() < .5) {
+      const opts = shuffle([t.orig, ...shuffle(t.alts.slice(0, 6)).slice(0, 4)]);
+      return {tipo: 'mc', u, t, opts, ok: opts.indexOf(t.orig)};
+    }
+    const errado = Math.random() < .5;
+    return {tipo: 'ce', u, t, troca: errado ? t.alts[Math.floor(Math.random() * Math.min(4, t.alts.length))] : null, gab: errado ? 'E' : 'C'};
+  }
+  function lsGrade(u, ok) {
+    const h = dayNum(); lsDiaReset();
+    const c = LS.c[u.id] || [250, 0, h, 0, 0, h];
+    if (!LS.c[u.id]) LS.dia.nw++;
+    if (ok) { c[3]++; c[1] = c[3] === 1 ? 1 : c[3] === 2 ? 3 : Math.min(365, Math.round(c[1] * c[0] / 100)); c[0] = Math.min(300, c[0] + 5); }
+    else { c[3] = 0; c[4]++; c[1] = 0; c[0] = Math.max(130, c[0] - 20); }
+    c[2] = h + Math.max(1, c[1]);
+    LS.c[u.id] = c;
+    LS.dia.r++; if (ok) LS.dia.h++;
+    LS.xp += ok ? 10 : 2;
+    if (LS.st.d !== h) { LS.st.n = LS.st.d === h - 1 ? LS.st.n + 1 : 1; LS.st.d = h; LS.st.b = Math.max(LS.st.b, LS.st.n); }
+  }
+  function lsMontar(escopo) {
+    const I = lsIndex(); if (!I) return [];
+    const h = dayNum(); lsDiaReset();
+    if (escopo && escopo.nivel != null) return escopo.L ? lsNiveis(escopo.L)[escopo.nivel] || [] : [];
+    const venc = I.units.filter((u) => LS.c[u.id] && LS.c[u.id][2] <= h).sort((a, b) => LS.c[a.id][2] - LS.c[b.id][2]).slice(0, 25);
+    const leis = I.leis.filter((L) => L.disc === mtDisc).concat(I.leis.filter((L) => L.disc !== mtDisc));
+    const novos = []; const vagas = Math.max(0, LS.nv - LS.dia.nw);
+    for (const L of leis) { for (const u of L.units) { if (novos.length >= vagas) break; if (!LS.c[u.id]) novos.push(u); } if (novos.length >= vagas) break; }
+    let lista = shuffle(venc).concat(novos);
+    if (!lista.length) lista = I.units.filter((u) => LS.c[u.id]).sort((a, b) => LS.c[a.id][0] - LS.c[b.id][0] || LS.c[b.id][4] - LS.c[a.id][4]).slice(0, 10);
+    return lista;
+  }
+  function lsIniciar(lista, rotulo, diaria) {
+    if (!lista.length) return;
+    lsSess = {fila: lista.map(lsCard), i: 0, n: 0, h: 0, xp0: LS.xp, t0: Date.now(), rotulo, diaria, refeitos: new Set(), resp: null};
+    lsDesenhaCard();
+    document.getElementById('ls-root').scrollIntoView({block: 'start'});
+  }
+  const lsMark = (txt, s, e, cls) => { const p = el('p', 'ls-txt'); p.append(txt.slice(0, s)); p.append(el('mark', cls || null, txt.slice(s, e))); p.append(txt.slice(e)); return p; };
+  function lsContexto(u) {
+    const box = el('div', 'ls-ctx');
+    box.append(el('div', 'ls-lei', u.L.lei + ' · ' + u.rot));
+    if (u.i > 0 && u.A.linhas[0]) { const cp = u.A.linhas[0]; box.append(el('div', 'ls-caput', cp.length > 220 ? cp.slice(0, 217) + '…' : cp)); }
+    return box;
+  }
+  function lsDesenhaCard() {
+    const play = document.getElementById('ls-play'), home = document.getElementById('ls-home');
+    home.hidden = true; play.hidden = false; play.replaceChildren();
+    const S = lsSess, card = S.fila[S.i], u = card.u;
+    const top = el('div', 'ls-top');
+    const sair = el('button', 'pe-btn ghost', '✕ Sair'); sair.addEventListener('click', () => { lsSess = null; renderLeiSeca(); });
+    const bar = el('div', 'ls-bar'); const fill = el('i'); fill.style.width = Math.round(100 * S.i / S.fila.length) + '%'; bar.append(fill);
+    top.append(sair, bar, el('span', 'ls-cont', `${S.i + 1}/${S.fila.length}`));
+    const box = el('div', 'pe-card ls-card');
+    box.append(lsContexto(u));
+    const tag = el('span', 'ls-tag', card.tipo === 'ce' ? 'Certo ou errado?' : card.tipo === 'mc' ? 'Complete a lacuna' : 'Lembra deste dispositivo?');
+    box.append(tag);
+    const acts = el('div', 'ls-acts');
+    if (card.tipo === 'ce') {
+      const t = card.t, txt = card.troca ? u.texto.slice(0, t.s) + card.troca + u.texto.slice(t.e) : u.texto;
+      box.append(el('p', 'ls-txt', txt));
+      [['C', 'Certo'], ['E', 'Errado']].forEach(([k, r]) => { const b = el('button', 'ls-ce ' + (k === 'C' ? 'c' : 'e'), r); b.addEventListener('click', () => lsResponde(k === card.gab, k)); acts.append(b); });
+    } else if (card.tipo === 'mc') {
+      const t = card.t; const p = el('p', 'ls-txt'); p.append(u.texto.slice(0, t.s), el('span', 'ls-gap', '________'), u.texto.slice(t.e)); box.append(p);
+      const alts = el('div', 'pe-alts');
+      card.opts.forEach((o, i) => { const b = el('button', 'pe-alt'); b.append(el('span', 'l', LETTERS[i].toUpperCase()), el('span', null, o)); b.addEventListener('click', () => lsResponde(i === card.ok, i)); alts.append(b); });
+      box.append(alts);
+    } else {
+      const ini = u.texto.split(/\s+/).slice(0, 6).join(' ');
+      box.append(el('p', 'ls-txt ls-blur', ini + ' …'));
+      const b = el('button', 'pe-btn primary', 'Mostrar o texto'); b.addEventListener('click', () => {
+        box.querySelector('.ls-blur').replaceWith(el('p', 'ls-txt', u.texto)); acts.replaceChildren();
+        const s = el('button', 'ls-ce c', 'Lembrei'); s.addEventListener('click', () => lsResponde(true, 'S'));
+        const n = el('button', 'ls-ce e', 'Não lembrei'); n.addEventListener('click', () => lsResponde(false, 'N'));
+        acts.append(s, n);
+      });
+      acts.append(b);
+    }
+    box.append(acts);
+    play.append(top, box);
+  }
+  function lsResponde(ok, escolha) {
+    const S = lsSess; if (!S || S.resp) return;
+    const card = S.fila[S.i], u = card.u;
+    S.resp = {ok}; S.n++; if (ok) S.h++;
+    const primeira = !S.refeitos.has(u.id);
+    if (primeira) lsGrade(u, ok);
+    if (!ok && primeira) { S.refeitos.add(u.id); S.fila.push(lsCard(u)); }
+    const box = document.querySelector('#ls-play .ls-card');
+    box.querySelectorAll('button').forEach((b) => { b.disabled = true; });
+    if (card.tipo === 'mc') box.querySelectorAll('.pe-alt').forEach((b, i) => { if (i === card.ok) b.classList.add('ok'); else if (i === escolha) b.classList.add('bad'); });
+    if (card.tipo === 'ce') box.querySelectorAll('.ls-ce').forEach((b) => { const k = b.classList.contains('c') ? 'C' : 'E'; if (k === card.gab) b.classList.add('ok'); else if (k === escolha) b.classList.add('bad'); });
+    const fb = el('div', 'ls-fb ' + (ok ? 'ok' : 'bad'));
+    fb.append(el('b', null, ok ? (['Isso!', 'Certíssimo.', 'Na mosca.', 'Boa!'][Math.floor(Math.random() * 4)] + ' +10 XP') : 'Não foi dessa vez. Este dispositivo volta no fim da sessão e amanhã.'));
+    if (card.tipo !== 'flash') {
+      fb.append(el('div', 'ls-fb-l', 'Letra da lei:'), lsMark(u.texto, card.t.s, card.t.e));
+      if (card.tipo === 'ce' && card.troca) fb.append(el('p', 'pe-note', `O enunciado trocou “${card.t.orig}” por “${card.troca}”.`));
+    }
+    const det = el('details', 'ls-art'); det.append(el('summary', null, 'Ver o artigo inteiro'));
+    u.A.linhas.forEach((ln, i) => det.append(el('p', i === u.i ? 'ls-txt ls-cur' : 'ls-txt', ln)));
+    if (u.A.url) det.append(anchor('ghost', 'Texto oficial no Planalto', u.A.url));
+    fb.append(det);
+    const qs = lsQuestoes(u);
+    const acts = el('div', 'pe-actions');
+    if (qs.length) {
+      const bq = el('button', 'pe-btn', `Resolver ${qs.length} ${qs.length === 1 ? 'questão' : 'questões'} do banco sobre o art. ${u.A.art}`);
+      bq.addEventListener('click', () => { const disc = qs[0].disc; lsSess = null; renderLeiSeca(); show('treino'); fDisc.value = qs.every((q) => q.disc === disc) ? disc : 'all'; fillAssuntos(); begin(qs, 'treino'); });
+      acts.append(bq);
+    }
+    const prox = el('button', 'pe-btn primary', S.i + 1 < S.fila.length ? 'Próximo' : 'Concluir sessão');
+    prox.addEventListener('click', () => { S.resp = null; S.i++; if (S.i < S.fila.length) lsDesenhaCard(); else lsFim(); });
+    acts.append(prox);
+    fb.append(acts);
+    box.append(fb);
+    prox.focus({preventScroll: true});
+  }
+  function lsFim() {
+    const S = lsSess; lsDiaReset();
+    if (S.diaria) LS.dia.s++;
+    LS.xp += 20;
+    const play = document.getElementById('ls-play'); play.replaceChildren();
+    const box = el('div', 'pe-card ls-end');
+    const firsts = new Set(S.fila.map((c) => c.u.id));
+    const dom = [...firsts].filter((id) => lsDom(LS.c[id])).length;
+    const seg = Math.round((Date.now() - S.t0) / 1000);
+    box.append(el('div', 'ls-trophy', '🏆'), el('h2', 'pe-h2', 'Sessão concluída!'), el('p', 'pe-note', `${S.rotulo}. Sequência de ${LS.st.n} ${LS.st.n === 1 ? 'dia' : 'dias'}.`));
+    const g = el('div', 'ls-stats');
+    [[`${LS.xp - S.xp0}`, 'XP ganho'], [pf(S.n ? S.h / S.n : null), `${S.h} de ${S.n} certas`], [`${Math.floor(seg / 60)}:${String(seg % 60).padStart(2, '0')}`, 'tempo'], [String(dom), 'dispositivos dominados']].forEach(([v, l]) => { const c = el('div', 'ls-stat'); c.append(el('b', null, v), el('span', null, l)); g.append(c); });
+    const acts = el('div', 'pe-actions');
+    const voltar = el('button', 'pe-btn primary', 'Voltar à Lei Seca'); voltar.addEventListener('click', () => { lsSess = null; renderLeiSeca(); });
+    acts.append(voltar);
+    box.append(g, acts); play.append(box);
+  }
+  function renderLeiSeca() {
+    const root = document.getElementById('ls-root'); if (!root) return;
+    const home = document.getElementById('ls-home'), play = document.getElementById('ls-play');
+    if (lsSess) return;
+    play.hidden = true; play.replaceChildren(); home.hidden = false;
+    const st = dash.data('leiseca').status;
+    const det = document.getElementById('mt-det');
+    if (st === 'loading') { home.replaceChildren(el('div', 'pe-card dash-skeleton')); return; }
+    const I = lsIndex();
+    if (!I || !I.units.length) {
+      home.replaceChildren(el('div', 'pe-card pe-empty', 'A Lei Seca ainda não tem conteúdo publicado nesta área. Enquanto isso, use a Sinopse e a lista de leis abaixo.'));
+      if (det) det.open = true; return;
+    }
+    lsDiaReset();
+    const h = dayNum();
+    home.replaceChildren();
+    // placar
+    const venc = I.units.filter((u) => LS.c[u.id] && LS.c[u.id][2] <= h).length;
+    const dom = I.units.filter((u) => lsDom(LS.c[u.id])).length;
+    const vivo = LS.st.d === h || LS.st.d === h - 1;
+    const g = el('div', 'ls-stats');
+    [[`🔥 ${vivo ? LS.st.n : 0}`, LS.st.d === h ? 'dias seguidos' : 'dias seguidos · estude hoje'], [`⚡ ${nf.format(LS.xp)}`, 'XP total'], [`${venc}`, 'para revisar hoje'], [`${dom}/${I.units.length}`, 'dispositivos dominados']].forEach(([v, l]) => { const c = el('div', 'ls-stat'); c.append(el('b', null, v), el('span', null, l)); g.append(c); });
+    home.append(g);
+    // sessão do dia + missões
+    const duo = el('div', 'ls-duo');
+    const cta = el('div', 'pe-card ls-cta');
+    const lista = lsMontar(null);
+    const novos = lista.filter((u) => !LS.c[u.id]).length;
+    const reforco = !venc && !novos && lista.length;
+    cta.append(el('div', 'ls-k', 'SESSÃO DO DIA'), el('h2', 'pe-h2', lista.length ? `${lista.length} cards · cerca de ${Math.max(3, Math.round(lista.length * .6))} min` : 'Tudo em dia'),
+      el('p', 'pe-note', reforco ? 'Revisões e novos de hoje concluídos. Esta é uma rodada extra de reforço com os dispositivos que você mais errou (aumente os “novos por dia” se quiser avançar).' : lista.length ? `${lista.length - novos} revisões programadas e ${novos} dispositivos novos${novos ? ' de ' + (SHORT[mtDisc] || 'outra disciplina') : ''}. Certo/errado e lacunas no estilo da banca; o que você errar volta amanhã.` : 'Sem revisões pendentes. Avance um nível da trilha abaixo.'));
+    const bi = el('button', 'pe-btn primary ls-big', LS.dia.s ? 'Fazer outra rodada' : '▶ Começar sessão do dia');
+    bi.disabled = !lista.length; bi.addEventListener('click', () => lsIniciar(lsMontar(null), 'Sessão do dia', true));
+    cta.append(bi);
+    const nvSel = el('select', 'pe-nav'); nvSel.setAttribute('aria-label', 'Dispositivos novos por dia');
+    [5, 10, 15, 20, 30].forEach((n) => nvSel.append(new Option(`${n} novos por dia`, String(n))));
+    nvSel.value = String(LS.nv); nvSel.addEventListener('change', () => { LS.nv = Number(nvSel.value); renderLeiSeca(); });
+    cta.append(el('div', 'pe-actions'));
+    cta.lastChild.append(nvSel);
+    const mis = el('div', 'pe-card ls-mis');
+    mis.append(el('div', 'ls-k', 'MISSÕES DE HOJE'));
+    [['Responda 15 itens', LS.dia.r, 15], ['Acerte 10 itens', LS.dia.h, 10], ['Conclua a sessão do dia', LS.dia.s, 1]].forEach(([t, v, m]) => {
+      const r = el('div', 'ls-m' + (v >= m ? ' done' : ''));
+      const b = el('div', 'ls-bar'); const f = el('i'); f.style.width = Math.min(100, Math.round(100 * v / m)) + '%'; b.append(f);
+      r.append(el('span', null, (v >= m ? '✓ ' : '') + t), el('span', 'ls-mv', `${Math.min(v, m)}/${m}`), b); mis.append(r);
+    });
+    duo.append(cta, mis); home.append(duo);
+    // trilha da disciplina
+    const leis = I.leis.filter((L) => L.disc === mtDisc);
+    const tr = el('div', 'pe-card');
+    tr.append(el('h2', 'pe-h2', 'Trilha · ' + ((DISCS.find((d) => d.disc === mtDisc) || {}).disciplina || '')), el('p', 'pe-note', 'Cada nível tem 5 dispositivos. Conclua um nível para liberar o próximo; os já concluídos podem ser refeitos quando quiser.'));
+    if (!leis.length) { tr.append(el('p', 'pe-empty', 'Esta disciplina ainda não tem leis na Lei Seca. Use a Sinopse abaixo.')); if (det) det.open = true; }
+    if (!lsLei || !leis.some((L) => L.id === lsLei)) lsLei = leis[0] && leis[0].id;
+    const grid = el('div', 'ls-leis');
+    leis.forEach((L) => {
+      const vis = L.units.filter((u) => LS.c[u.id]).length, dm = L.units.filter((u) => lsDom(LS.c[u.id])).length;
+      const b = el('button', 'ls-leib' + (L.id === lsLei ? ' on' : ''));
+      const bar = el('div', 'ls-bar'); const f = el('i'); f.style.width = Math.round(100 * vis / L.units.length) + '%'; bar.append(f);
+      b.append(el('b', null, L.lei), el('span', null, `${vis}/${L.units.length} vistos · ${dm} dominados`), bar);
+      b.addEventListener('click', () => { lsLei = L.id; renderLeiSeca(); });
+      grid.append(b);
+    });
+    tr.append(grid);
+    const L = leis.find((x) => x.id === lsLei);
+    if (L) {
+      const nv = lsNiveis(L), atual = lsNivelAtual(L);
+      const path = el('div', 'ls-path');
+      nv.forEach((grp, k) => {
+        const estado = k < atual ? 'done' : k === atual ? 'cur' : 'lock';
+        const n = el('div', 'ls-node ' + estado); n.style.setProperty('--x', `${Math.round(Math.sin(k * 1.1) * 70)}px`);
+        const bt = el('button', null, estado === 'done' ? '✓' : estado === 'cur' ? '★' : '🔒');
+        bt.disabled = estado === 'lock';
+        const ini = grp[0].A.art, fim = grp[grp.length - 1].A.art;
+        bt.title = `Nível ${k + 1}: art. ${ini}${ini !== fim ? ' a ' + fim : ''}`;
+        bt.addEventListener('click', () => lsIniciar(grp, `${L.lei} · nível ${k + 1}`, false));
+        n.append(bt, el('span', null, estado === 'cur' ? `Praticar nível ${k + 1}` : `Nível ${k + 1} · art. ${ini}${ini !== fim ? '–' + fim : ''}`));
+        path.append(n);
+      });
+      tr.append(path);
+      if (L.url) { const a = el('div', 'pe-actions'); a.append(anchor('ghost', 'Ler a lei completa no Planalto', L.url)); tr.append(a); }
+    }
+    home.append(tr);
+  }
+  const lsSnap = () => ({c: LS.c, xp: LS.xp, st: LS.st, dia: LS.dia, nv: LS.nv});
+  function lsApply(o) {
+    const n = {c: {}, xp: 0, st: {d: 0, n: 0, b: 0}, dia: {d: 0, r: 0, h: 0, s: 0, nw: 0}, nv: 10};
+    if (o && typeof o === 'object') {
+      if (o.c && typeof o.c === 'object') Object.entries(o.c).forEach(([k, v]) => { if (Array.isArray(v) && v.length >= 5) n.c[k] = v.slice(0, 6).map((x) => Number(x) || 0); });
+      n.xp = Math.max(0, Number(o.xp) || 0);
+      if (o.st) n.st = {d: Number(o.st.d) || 0, n: Number(o.st.n) || 0, b: Number(o.st.b) || 0};
+      if (o.dia) n.dia = {d: Number(o.dia.d) || 0, r: Number(o.dia.r) || 0, h: Number(o.dia.h) || 0, s: Number(o.dia.s) || 0, nw: Number(o.dia.nw) || 0};
+      if ([5, 10, 15, 20, 30].includes(Number(o.nv))) n.nv = Number(o.nv);
+    }
+    LS = n; lsSess = null;
+  }
+
   // ---------- treino ----------
   const fDisc = document.getElementById('f-disc'), fModo = document.getElementById('f-modo'), fNivel = document.getElementById('f-nivel'), fQtd = document.getElementById('f-qtd');
   const fMsg = document.getElementById('f-msg');
@@ -1703,8 +2124,8 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
     const d = fDisc.value;
     const pdf = matRows().find((r) => r.disc === d && r.tipo === 'pdf');
     if (!d || d === 'all' || !pdf) { b.hidden = true; return; }
-    b.hidden = false; b.replaceChildren(el('span', null, 'Antes de começar, revise a Sinopse (PDF) e a lei seca da disciplina:'));
-    const lei = el('button', 'pe-btn ghost', 'Abrir material de estudo'); lei.addEventListener('click', () => openMaterial(d)); b.append(lei);
+    b.hidden = false; b.replaceChildren(el('span', null, 'Antes de começar, faça a sessão de Lei Seca da disciplina (a Sinopse fica logo abaixo, como apoio):'));
+    const lei = el('button', 'pe-btn ghost', 'Abrir Lei Seca'); lei.addEventListener('click', () => openMaterial(d)); b.append(lei);
   }
   const fAss = document.getElementById('f-assunto');
   function fillAssuntos() {
@@ -2231,8 +2652,8 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
       slots.forEach((s) => {
         if (s.tipo === 'disc') {
           const lei = (matRows().find((r) => r.disc === s.disc && r.tipo === 'lei' && r.questoes > 0) || {}).titulo || 'lei seca da disciplina';
-          const a = Math.round(S * .35), b = Math.round(S * .1), c = Math.round(S * .45), dd = Math.round(S - a - b - c);
-          s.blocks = [{label: `Leitura: Sinopse — ${s.assunto}`, min: a}, {label: `Lei seca: ${lei}`, min: b}, {label: `Questões: ${Math.floor(c / 3)} de ${s.assunto}`, min: c}, {label: 'Revisão dos erros do dia', min: dd}];
+          const b = Math.round(S * .25), a = Math.round(S * .2), c = Math.round(S * .45), dd = Math.round(S - a - b - c);
+          s.blocks = [{label: `Lei Seca: sessão do dia de cards (${lei})`, min: b}, {label: `Leitura complementar: Sinopse — ${s.assunto}`, min: a}, {label: `Questões: ${Math.floor(c / 3)} de ${s.assunto}`, min: c}, {label: 'Revisão dos erros do dia', min: dd}];
         } else if (s.tipo === 'discursiva') {
           const a = 15, b = 45, c = 20, dd = Math.max(0, Math.round(S - a - b - c));
           s.blocks = [{label: `Leitura do caso e esquema dos 4 tópicos — ${s.titulo}`, min: a}, {label: `Redação: ${s.lmin} a ${s.lmax} linhas, sem consulta`, min: b}, {label: 'Autocorreção pelo espelho e nota por tópico', min: c}];
@@ -3769,7 +4190,7 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
   const snapshotObj = (withDrafts = true) => {
     const a = Object.entries(ans).map(([id, x]) => `${id}.${x.r}.${x.n}.${x.h}` + (x.t != null ? `.${x.t}.${x.b || 0}` : '')).join(',');
     const dg = {ids: diag.ids, ans: diag.ans, times: Object.fromEntries(Object.entries(diag.times).map(([k, v]) => [k, Math.round(v / 1000)])), s: diag.s, f: diag.f, ...(diag.ia ? {ia: diag.ia} : {})};
-    const o = {v: 2, a, d: dg, p: plan, t: timeLog, k: [...done], tr: trilha, ds: dsNotas, dh: diagHist, sn: snaps, ev, sh: simHist};
+    const o = {v: 2, a, d: dg, p: plan, t: timeLog, k: [...done], tr: trilha, ds: dsNotas, dh: diagHist, sn: snaps, ev, sh: simHist, ls: lsSnap()};
     if (sess) o.ss = {ids: sess.ids, i: sess.i, done: sess.done, acc: Math.round(sess.acc / 1000), times: sess.times || [], label: sess.label || 'treino', tr: sess.trilha || null};
     if (timer.blocks.length) o.tm = {b: timer.blocks, bi: timer.bi, left: Math.round(timer.left / 60) * 60, l: timer.label, k: timer.sessKey};
     if (withDrafts) o.dr = dsDraft;
@@ -3798,6 +4219,7 @@ section[data-view="app"] { background: #EEF2F0; min-height: 100vh; }
     diagHist = Array.isArray(obj.dh) ? obj.dh.filter((x) => x && typeof x === 'object' && x.d).slice(-20) : [];
     snaps = {}; if (obj.sn && typeof obj.sn === 'object') Object.entries(obj.sn).forEach(([k, v]) => { if (/^\d+$/.test(k) && v && typeof v === 'object') snaps[k] = {n: Number(v.n) || 0, h: Number(v.h) || 0, p: v.p == null ? null : Number(v.p), d: v.d && typeof v.d === 'object' ? v.d : {}}; });
     ev = {}; if (obj.ev && typeof obj.ev === 'object') Object.keys(obj.ev).forEach((k) => { if (obj.ev[k]) ev[k] = 1; });
+    lsApply(obj.ls);
     simHist = Array.isArray(obj.sh) ? obj.sh.filter((x) => x && Array.isArray(x.b)).slice(-30) : [];
     snapSig = '';
     dsNotas = {}; if (obj.ds && typeof obj.ds === 'object') Object.entries(obj.ds).forEach(([k, v]) => { if (v && Array.isArray(v.h)) { dsNotas[k] = {h: v.h.filter((x) => x && Array.isArray(x.t)).slice(-10).map((x) => ({t: x.t.map((n) => Math.max(0, Math.min(2.5, Number(n) || 0))), l: Number(x.l) || 0, at: Number(x.at) || 0, s: Number(x.s) || 0, ...(x.n != null ? {n: Math.max(0, Math.min(10, Number(x.n) || 0))} : {}), ...(x.a ? {a: 1} : {}), ...(x.ia ? {ia: 1} : {})}))}; if (typeof v.x === 'string') dsNotas[k].x = v.x.slice(0, 8000); if (v.c && Array.isArray(v.c.topicos)) dsNotas[k].c = v.c; } });
