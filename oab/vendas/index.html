@@ -182,7 +182,7 @@ h2{font-size:clamp(34px,5.2vw,56px);margin-bottom:34px}
 footer{padding:44px 0 120px;background:#02050F;color:#6F7D99;font-family:'IBM Plex Sans',sans-serif;font-size:13.5px;line-height:1.6}
 footer .larga{display:flex;flex-direction:column;gap:10px}
 footer b{color:var(--nevoa)}
-.fixo{position:fixed;left:12px;right:12px;bottom:12px;z-index:30;display:none;transition:opacity .25s}
+.fixo{position:fixed;z-index:30;transition:opacity .25s}
 .fixo .btn{width:100%;font-size:17px;padding:16px 20px}
 @media (max-width:900px){
   body{font-size:19px}
@@ -193,12 +193,23 @@ footer b{color:var(--nevoa)}
   .carta{padding:44px 24px}.carta p{font-size:19px}
   .inclui{columns:1}
   .gar{grid-template-columns:1fr;text-align:center;justify-items:center;padding:32px 22px}
-  .fixo{display:block}
   .cena{padding-left:20px}.cena p{font-size:20px}
   .pd{grid-template-columns:1fr;gap:2px}
 }
 @media (max-width:480px){.cel{width:170px}.fones{height:390px}.cg{min-width:74px}.cg b{font-size:38px}.fatos{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn{transition:none}.desce span{animation:none}}
+
+.cta-abre{margin-top:40px}
+.papel .miudo{color:var(--tinta2)}
+.cta-meio{margin:44px 0 10px;text-align:center}
+.cta-meio .btn,.cta-abre .btn{animation:pulso 2.6s ease-in-out infinite}
+@keyframes pulso{0%,100%{box-shadow:0 18px 44px rgba(255,77,94,.38)}50%{box-shadow:0 18px 60px rgba(255,77,94,.65),0 0 0 6px rgba(255,77,94,.15)}}
+.grande-btn{font-size:22px;padding:22px 40px}
+.fixo{display:flex !important;left:0;right:0;bottom:0;padding:12px 18px;background:rgba(4,9,26,.94);backdrop-filter:blur(10px);border-top:1px solid rgba(255,77,94,.35);align-items:center;justify-content:center;gap:22px}
+.fixo .btn{width:auto;font-size:17px;padding:14px 26px}
+.fx-txt{font-family:'IBM Plex Sans',sans-serif;font-size:15px;color:var(--nevoa)}.fx-txt b{color:#fff}
+@media (max-width:600px){.fx-txt{display:none}.fixo .btn{width:100%}}
+@media (prefers-reduced-motion:reduce){.cta-meio .btn,.cta-abre .btn{animation:none}}
 </style>
 </head>
 <body>
@@ -212,8 +223,9 @@ footer b{color:var(--nevoa)}
   <div class="larga">
     <img class="carteira" src="img/carteira.jpg" alt="Carteira vermelha da OAB">
     <h1>Você não chegou até aqui<br>para parar <em>na porta.</em></h1>
-    <p class="sub">Uma carta para quem já reprovou na OAB — ou tem medo de reprovar — e, lá no fundo, ainda sonha com o dia de segurar esta carteira.</p>
-    <div class="desce">Leia até o fim<span>↓</span></div>
+    <p class="sub">Para quem já reprovou na OAB, ou vai fazer a prova pela primeira vez, e quer chegar aos 40 pontos com um plano — não com sorte.</p>
+    <div class="cta-abre"><a class="btn pri" data-checkout="1" href="#">Quero minha preparação · 12x R$&nbsp;19,99</a><span class="miudo">Acesso até a aprovação · liberação automática · 7 dias de garantia</span></div>
+    <div class="desce">ou continue lendo<span>↓</span></div>
   </div>
 </section>
 
@@ -221,9 +233,9 @@ footer b{color:var(--nevoa)}
 <section class="lembra">
   <div class="col">
     <p class="grande">Você lembra do dia em que contou para a sua família que ia fazer Direito?</p>
-    <p>Talvez alguém tenha chorado. Talvez tenham espalhado para os vizinhos, para o grupo da família, para quem quisesse ouvir: <em>"vai ser advogado"</em>.</p>
-    <p>E aí vieram os anos. Cinco, às vezes mais. Mensalidade apertando o orçamento — o seu ou o de alguém que acreditou em você. Estágio de manhã, aula à noite, código debaixo do braço no ônibus. Prova, trabalho, TCC. Fins de semana que você não viveu porque tinha que estudar.</p>
-    <p>Você aguentou tudo isso por um motivo. E ele não era um diploma.</p>
+    <p>Para muita gente, aquele foi um dia de orgulho. A partir dali, você passou a ser apresentado como <em>"o futuro advogado"</em> da família.</p>
+    <p>Depois vieram os anos de curso: mensalidades, estágio, provas, TCC, muitos fins de semana dedicados aos estudos. Um investimento alto de tempo e de dinheiro — seu ou de quem apostou em você.</p>
+    <p>Tudo isso tinha um objetivo. E ele não era apenas o diploma.</p>
     <span class="pausa" aria-hidden="true">· · ·</span>
     <p class="grande">Ninguém atravessa cinco anos de faculdade sonhando em ser <em class="o">bacharel.</em></p>
     <p>Você entrou para ser advogado. Para ter o seu nome numa procuração, atender o seu primeiro cliente, defender alguém que precisava de você. E descobriu, no fim do caminho, que entre você e tudo isso existe uma porta.</p>
@@ -235,7 +247,7 @@ footer b{color:var(--nevoa)}
 <section class="resultado">
   <div class="col">
     <p>E talvez você já conheça esta cena.</p>
-    <p>O resultado sai. Você abre a lista com o coração batendo na garganta. Procura o seu nome. Rola a tela. Procura de novo, devagar, letra por letra.</p>
+    <p>O resultado sai. Você abre a lista, procura o seu nome e confere mais uma vez.</p>
     <div class="tela" aria-hidden="true">
       <div class="t">Resultado preliminar · 1ª fase</div>
       <div class="ln"><span>ALMEIDA, B. S.</span><span>aprovado</span></div>
@@ -244,8 +256,7 @@ footer b{color:var(--nevoa)}
       <div class="ln"><span>BARBOSA, D. L.</span><span>aprovado</span></div>
     </div>
     <p class="dor">Não está lá.</p>
-    <p>Por um instante, o mundo fica em silêncio. Depois vem a matemática cruel: faltaram dois pontos. Três. Às vezes, um.</p>
-    <p>E então começa a parte que ninguém vê.</p>
+    <p>Muitas vezes, faltaram poucos pontos. E o mais difícil vem depois, longe da tela.</p>
   </div>
 </section>
 
@@ -255,30 +266,32 @@ footer b{color:var(--nevoa)}
     <ul class="lista-dor">
       <li>A mensagem no celular que você ainda não respondeu: <em>"E aí, passou?"</em></li>
       <li>O almoço de domingo em que você muda de assunto pela terceira vez.</li>
-      <li>A foto do colega de turma com a carteira vermelha — você curte, fecha o aplicativo e fica olhando para o teto.</li>
+      <li>Os colegas de turma compartilhando a foto com a carteira.</li>
       <li>Mais uma inscrição paga. Mais um cursinho. Mais seis meses recomeçando do zero, pelas mesmas 20 disciplinas.</li>
-      <li>A vaga que pede "OAB ativa". A vida que parece andar para todo mundo, menos para você.</li>
+      <li>As vagas que exigem "OAB ativa" e os planos que ficam em espera.</li>
     </ul>
-    <p>E, numa noite qualquer, sozinho, a pergunta que você nunca disse em voz alta:</p>
-    <p class="citacao">"E se eu não for capaz? E se eu tiver jogado cinco anos fora?"</p>
-    <p>Se você já se fez essa pergunta, leia com atenção o que vem agora.</p>
+    <p>E, com o tempo, surge uma dúvida que pesa mais do que qualquer reprovação:</p>
+    <p class="citacao">"Será que o problema sou eu?"</p>
+    <p>Não é. E os números mostram por quê.</p>
   </div>
 </section>
 
 <!-- 5. ABSOLVIÇÃO -->
 <section class="papel absolve">
   <div class="col">
-    <span class="kicker">A verdade que te devem</span>
-    <p class="grande">A culpa não é sua. <b>Você não é incapaz.</b> Você foi colocado para enfrentar essa prova do jeito errado.</p>
-    <p>Olhe os números de um único exame. Não para se assustar — para entender que você nunca esteve sozinho:</p>
+    <span class="kicker">O que os números mostram</span>
+    <p class="grande">O problema não é a sua capacidade. <b>É a estratégia</b> com que a maioria enfrenta essa prova.</p>
+    <p>Veja os números de um único exame:</p>
     <div class="fatos">
       <div class="ft"><b>151 mil</b><span>inscritos no 45º Exame de Ordem</span></div>
       <div class="ft"><b>3 em 4</b><span>ficaram pelo caminho na 1ª fase</span></div>
       <div class="ft"><b>14 em 100</b><span>saíram com a aprovação final</span></div>
     </div>
-    <p>São dezenas de milhares de bacharéis — gente que passou em provas, apresentou TCC, se formou — barrados a cada edição. Não é possível que todos eles sejam incapazes.</p>
+    <p>São dezenas de milhares de bacharéis — pessoas que concluíram o curso inteiro — que não passam a cada edição. Não faz sentido atribuir isso à falta de capacidade de todos eles.</p>
     <p>O que quase todos têm em comum é outra coisa: estudaram do jeito que ensinaram a eles. <span class="destaque">Vinte disciplinas, tudo com o mesmo peso, do começo ao fim</span> — como se a prova cobrasse tudo igual.</p>
     <p>Ela não cobra. E é aí que tudo muda.</p>
+    
+<div class="cta-meio"><a class="btn pri" data-checkout="1" href="#">Quero estudar do jeito certo →</a><span class="miudo">12x de R$ 19,99 · acesso até a aprovação</span></div>
     <p class="fonte">Números do 45º Exame (151.330 inscritos, 39.849 aprovados na 1ª fase e 21.644 ao final), compilados pelo Estratégia OAB.</p>
   </div>
 </section>
@@ -286,16 +299,15 @@ footer b{color:var(--nevoa)}
 <!-- 6. O SONHO -->
 <section class="sonho">
   <div class="col">
-    <span class="kicker">Antes de continuar</span>
-    <p class="feche">Me dê trinta segundos. Imagine comigo.</p>
+    <span class="kicker">Aonde você quer chegar</span>
+    <p class="feche">Pense, por um momento, no dia em que der certo.</p>
     <div class="cena">
-      <p>O resultado sai de novo. Você abre a lista — e desta vez, <b>o seu nome está lá.</b> Você lê três vezes para ter certeza. As mãos tremem.</p>
-      <p>Você liga para quem sempre acreditou em você. Do outro lado da linha, um silêncio. Depois, aquela voz embargada.</p>
-      <p>Semanas mais tarde, você está num auditório, vestido para a ocasião, com a família na plateia. Chamam o seu nome. Você caminha até a frente e <b>recebe a carteira vermelha com o seu nome e o seu número.</b></p>
-      <p>E num dia qualquer da semana seguinte, pela primeira vez, você assina uma petição como <b>advogado</b>.</p>
+      <p>Você abre a lista e <b>o seu nome está lá.</b> Liga para quem acompanhou toda a sua caminhada para dar a notícia.</p>
+      <p>Semanas depois, na sessão de entrega, com a família presente, você <b>recebe a carteira com o seu nome e o seu número de inscrição.</b></p>
+      <p>E logo depois assina a sua primeira petição como <b>advogado</b>.</p>
     </div>
     <p class="juramento">"Prometo exercer a advocacia com dignidade e independência…"<small>o compromisso que você vai prestar ao receber a sua carteira</small></p>
-    <p>Esse dia não é um sonho distante. Ele está a <span class="ouro-t">40 acertos</span> de você. Não 80. Quarenta.</p>
+    <p>Esse dia está a <span class="ouro-t">40 acertos</span> de você. Não 80. Quarenta.</p>
     <p>E se o seu plano é um concurso público, guarde isto: a carteira é o <em>plano que nunca vence</em>. Se o cargo demorar, ou um dia deixar de ser o que você quer, você terá sempre uma profissão nas mãos.</p>
   </div>
 </section>
@@ -305,20 +317,22 @@ footer b{color:var(--nevoa)}
   <div class="larga">
     <article class="carta">
       <span class="kicker">De um advogado para você</span>
-      <h2>"Eu refiz a prova dez anos depois. Sem estudar nada. E passaria de novo."</h2>
+      <h2>"Dez anos depois, refiz a prova sem estudar. E passaria de novo."</h2>
       <p class="cap">Meu nome é Adonias Lopes de Araújo. Sou advogado há mais de dez anos, inscrito na OAB de Goiás sob o número 50.607.</p>
       <p>Mas antes disso, eu estive onde você está agora: no fim do curso, com o diploma quase na mão e <b>uma única prova entre mim e a profissão</b> pela qual eu tinha pagado anos de faculdade.</p>
       <p>Estudar as 20 disciplinas do mesmo jeito me parecia o caminho mais longo. Então fiz diferente: comecei a resolver as provas anteriores da FGV, uma depois da outra, prestando atenção não só nas respostas — mas <em>na banca</em>.</p>
-      <p>E percebi algo que ninguém tinha me contado: <span class="marca-texto">a FGV repete o roteiro.</span> A mesma ordem de matérias, a mesma quantidade de questões para cada uma, os mesmos assuntos voltando com outra roupa. A prova que parecia um monstro tinha um mapa.</p>
-      <p>Com esse mapa, montei um método de cinco passos para estudar apenas o que decide a nota. E passei.</p>
+      <p>E percebi algo que ninguém tinha me contado: <span class="marca-texto">a FGV repete o roteiro.</span> A mesma ordem de matérias, a mesma quantidade de questões para cada uma, os mesmos assuntos voltando com outra roupa. A prova tinha um padrão.</p>
+      <p>A partir desse padrão, montei um método de cinco passos para estudar apenas o que decide a nota. E passei.</p>
       <p>Dez anos depois, quis saber se aquilo ainda funcionava. Sem abrir um livro, sem revisar uma linha, sentei e refiz as duas provas mais recentes do Exame de Ordem.</p>
       <div class="notas">
         <div class="nt"><b>56%</b><span>no 45º Exame</span></div>
         <div class="nt"><b>65%</b><span>no 46º Exame</span></div>
       </div>
       <p>As duas acima dos 50% que aprovam. Dez anos longe do conteúdo — e eu teria passado de novo.</p>
-      <p>Não conto isso para me gabar. Conto porque é a prova de que <b>não se trata de saber tudo. Se trata de saber onde estão os pontos.</b> E isso pode ser ensinado.</p>
-      <p>Foi por isso que transformei o meu método numa plataforma de treino: para que você não precise descobrir sozinho, reprovação depois de reprovação, o que eu descobri resolvendo prova atrás de prova.</p>
+      <p>Conto isso porque mostra que <b>não se trata de saber tudo. Se trata de saber onde estão os pontos.</b> E isso pode ser ensinado.</p>
+      <p>Foi por isso que transformei o meu método numa plataforma de treino: para que você tenha esse caminho organizado desde o primeiro dia.</p>
+      
+<div class="cta-meio"><a class="btn pri" data-checkout="1" href="#">Quero o método na plataforma →</a><span class="miudo">Liberação automática no seu e-mail</span></div>
       <div class="assin"><div class="sig">Adonias Lopes de Araújo</div><small>Advogado · OAB/GO 50.607 · criador do Método Aprovação OAB</small></div>
     </article>
   </div>
@@ -330,14 +344,16 @@ footer b{color:var(--nevoa)}
     <span class="kicker">O que a banca não anuncia</span>
     <h2 class="serif-t">Seis matérias decidem quase metade da sua nota.</h2>
     <p>Ética, Civil, Processo Civil, Constitucional, Penal e Processo Penal valem, juntas, <b>38 das 80 questões</b>. Enquanto isso, nove disciplinas do edital valem só duas questões cada uma.</p>
-    <p>Quem estuda tudo igual gasta semanas no que vale dois pontos e chega exausto no que vale oito. Quem conhece o mapa faz o contrário — e a conta fica assim:</p>
+    <p>Quem estuda tudo igual dedica o mesmo tempo ao que vale dois pontos e ao que vale oito. Quem conhece essa distribuição prioriza — e a conta fica assim:</p>
     <div class="conta">
       <div class="cc"><b>32</b><span>questões em Ética + 4 matérias suas</span></div>
       <div class="cc"><b>24</b><span>acertando 3 de cada 4</span></div>
       <div class="cc"><b>+16</b><span>nas outras 48: 1 em cada 3</span></div>
       <div class="cc fim"><b>40</b><span>a sua aprovação</span></div>
     </div>
-    <p>Você não precisa ser o melhor da sala. Não precisa gabaritar. Precisa de <b>quarenta acertos, nos lugares certos</b>. E isso, finalmente, cabe na sua vida.</p>
+    <p>Você não precisa ser o melhor da sala. Não precisa gabaritar. Precisa de <b>quarenta acertos, nos lugares certos</b> — e de um plano que caiba na sua rotina.</p>
+    
+<div class="cta-meio"><a class="btn pri" data-checkout="1" href="#">Quero meu plano para os 40 pontos →</a><span class="miudo">12x de R$ 19,99 · 7 dias de garantia</span></div>
     <p class="fonte" style="color:#7685A3 !important">Distribuição observada nas 10 últimas provas da FGV (38º ao 47º Exame).</p>
   </div>
 </section>
@@ -359,6 +375,8 @@ footer b{color:var(--nevoa)}
         <div class="pd"><small>Toda semana</small><p>Você resolve uma das <b>10 últimas provas da FGV</b> e vê a sua nota subir em direção aos 40.</p></div>
         <div class="pd"><small>No trajeto</small><p>Ouve as suas próprias gravações no <b>estúdio de áudio</b> e revisa as sinopses de uma página.</p></div>
       </div>
+<div class="cta-meio"><a class="btn pri" data-checkout="1" href="#">Quero começar hoje →</a><span class="miudo">Acesso em poucos minutos após o pagamento</span></div>
+
     </div>
   </div>
 </section>
@@ -371,7 +389,7 @@ footer b{color:var(--nevoa)}
       <h2 class="serif-t">Eu fico com você até você passar.</h2>
       <p>Por isso o plano principal não é de três meses, nem de seis. É <b style="color:#fff;font-weight:500">até a sua aprovação na 1ª fase</b>. Se este exame não for o seu, o acesso continua para o próximo — sem pagar de novo.</p>
     </div>
-    <div class="promessa"><p>Você não está comprando um curso.<br>Está comprando o fim do <b>"de novo"</b>.</p></div>
+    <div class="promessa"><p>Um plano para estudar o que decide a nota —<br><b>até você ser aprovado.</b></p></div>
     <ul class="inclui">
       <li>Diagnóstico com prova oficial da FGV</li>
       <li>Relatório raio-X das 20 disciplinas</li>
@@ -401,7 +419,7 @@ footer b{color:var(--nevoa)}
         <span class="miudo">Liberação automática no seu e-mail · 7 dias de garantia</span>
       </div>
     </div>
-    <p class="ancora">Uma nova inscrição no Exame custa <b>R$ 350</b>. Mais seis meses de espera custam o que nenhum dinheiro devolve.<br>O acesso até a aprovação custa menos do que uma única inscrição.</p>
+    <p class="ancora">Uma nova inscrição no Exame custa <b>R$ 350</b>, além de mais seis meses de espera.<br>O acesso até a aprovação custa menos do que uma única inscrição.</p>
   </div>
 </section>
 
@@ -411,8 +429,8 @@ footer b{color:var(--nevoa)}
     <div class="gar">
       <div class="selo-g"><div><b>7</b><span>DIAS</span></div></div>
       <div>
-        <h3>O risco é todo meu.</h3>
-        <p>Entre, faça o seu diagnóstico, leia o seu relatório e siga o plano por uma semana. Se você não sentir que, pela primeira vez, sabe exatamente o que estudar, peça o reembolso pela própria plataforma de pagamento. Sem perguntas.</p>
+        <h3>Garantia de 7 dias.</h3>
+        <p>Entre, faça o seu diagnóstico, leia o seu relatório e siga o plano por uma semana. Se não fizer sentido para você, peça o reembolso pela própria plataforma de pagamento, sem precisar justificar.</p>
       </div>
     </div>
   </div>
@@ -433,21 +451,21 @@ footer b{color:var(--nevoa)}
 <!-- 13. FECHAMENTO -->
 <section class="fim-sec">
   <div class="larga">
-    <span class="kicker">A última coisa que eu quero te dizer</span>
-    <h2>Você já pagou o preço mais alto.<br>Não deixe a última porta fechada.</h2>
+    <span class="kicker">Para terminar</span>
+    <h2>Você já fez a parte mais longa.<br>Agora falta a mais decisiva.</h2>
     <div class="contagem" id="contagem" aria-label="Tempo até a 1ª fase"></div>
   </div>
   <div class="col">
     <p>Daqui a algumas semanas, você vai estar diante dessa prova. Isso já está decidido. O que ainda não está decidido é <b style="color:#fff;font-weight:500">com qual estratégia</b> você vai chegar lá.</p>
-    <p>Você pode fazer como sempre fez — e torcer. Ou pode, a partir de hoje, saber a sua nota, seguir um plano que mira os 40 pontos e treinar nas provas reais até o dia 10 de janeiro.</p>
-    <p>Os cinco anos, você já atravessou. O sonho que te fez entrar na faculdade ainda está aí — talvez cansado, talvez machucado, mas está. <em class="o">Permita-se sonhar com ele de novo.</em></p>
+    <p>Você pode repetir a mesma forma de estudar. Ou pode, a partir de hoje, saber a sua nota, seguir um plano que mira os 40 pontos e treinar nas provas reais até o dia 10 de janeiro.</p>
+    <p>O objetivo que te levou a cursar Direito continua ao seu alcance. <em class="o">Ele está a 40 acertos de distância.</em></p>
   </div>
   <div class="larga" style="margin-top:46px">
-    <a class="btn pri" href="#planos">Sim, eu quero a minha carteira →</a>
+    <a class="btn pri grande-btn" data-checkout="1" href="#">Quero começar agora · 12x R$&nbsp;19,99 →</a>
     <span class="miudo">12x de R$&nbsp;19,99 · acesso até a aprovação · 7 dias de garantia</span>
   </div>
   <div class="ps">
-    <p><b>P.S.</b> A carteira vermelha não é para quem sabe tudo. É para quem acerta 40 questões no dia certo. Você não precisa ser outra pessoa para passar — precisa de outro caminho.</p>
+    <p><b>P.S.</b> A aprovação não exige saber tudo. Exige acertar 40 questões no dia da prova. Você não precisa ser outra pessoa para passar — precisa de outra estratégia.</p>
     <p><b>P.P.S.</b> Ainda não está pronto para decidir? Comece pelo e-book gratuito <em>Chega de Reprovar</em> e veja o método por dentro. <a href="ebook-chega-de-reprovar.pdf" download>Baixar o e-book →</a></p>
   </div>
 </section>
@@ -463,7 +481,7 @@ footer b{color:var(--nevoa)}
   </div>
 </footer>
 
-<div class="fixo"><a class="btn pri" href="#planos">Quero a minha carteira · 12x R$&nbsp;19,99</a></div>
+<div class="fixo"><span class="fx-txt"><b>Acesso até a aprovação</b> · 12x R$&nbsp;19,99</span><a class="btn pri" data-checkout="1" href="#">Garantir meu acesso →</a></div>
 
 <script>
 (function () {
