@@ -477,14 +477,27 @@
   function medidor(v) {
     var R = 92, cx = 120, cy = 118, L = Math.PI * R, f = v == null ? 0 : Math.max(0, Math.min(1, v / 80));
     var mx = cx, my = cy - R;
-    return '<div class="medidor"><svg viewBox="0 0 240 150" role="img" aria-label="' + (v == null ? 'Nota projetada: faça o diagnóstico' : 'Nota projetada: ' + Math.round(v) + ' de 80') + '">' +
+    return '<div class="medidor"><svg viewBox="0 0 240 152" role="img" aria-label="' + (v == null ? 'A carteira da OAB: faça o diagnóstico para medir a distância até ela' : 'Nota projetada: ' + Math.round(v) + ' de 80') + '">' +
       '<defs><linearGradient id="gm" x1="0" x2="1"><stop offset="0" stop-color="#FF4D5E"/><stop offset=".5" stop-color="#F5C542"/><stop offset="1" stop-color="#3DDC97"/></linearGradient></defs>' +
       '<path d="M' + (cx - R) + ' ' + cy + ' A' + R + ' ' + R + ' 0 0 1 ' + (cx + R) + ' ' + cy + '" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="16" stroke-linecap="round"/>' +
       (v == null ? '' : '<path class="medidor-v" d="M' + (cx - R) + ' ' + cy + ' A' + R + ' ' + R + ' 0 0 1 ' + (cx + R) + ' ' + cy + '" fill="none" stroke="url(#gm)" stroke-width="16" stroke-linecap="round" stroke-dasharray="' + (L * f).toFixed(1) + ' ' + L.toFixed(1) + '"/>') +
       '<line x1="' + mx + '" y1="' + (my - 12) + '" x2="' + mx + '" y2="' + (my + 12) + '" stroke="#F5C542" stroke-width="3"/>' +
       '<text x="' + mx + '" y="' + (my - 18) + '" text-anchor="middle" font-size="11" fill="#F5C542" font-weight="700">40</text>' +
-      '<text x="' + cx + '" y="' + (cy - 14) + '" text-anchor="middle" font-size="44" font-weight="800" fill="#fff" font-family="Bricolage Grotesque, sans-serif">' + (v == null ? '?' : Math.round(v)) + '</text>' +
-      '<text x="' + cx + '" y="' + (cy + 8) + '" text-anchor="middle" font-size="11" fill="#B9C7DE">' + (v == null ? 'faça o diagnóstico' : 'nota projetada de 80') + '</text></svg></div>';
+      (v == null ? carteiraOAB(cx, cy) : '<text x="' + cx + '" y="' + (cy - 14) + '" text-anchor="middle" font-size="44" font-weight="800" fill="#fff" font-family="Bricolage Grotesque, sans-serif">' + Math.round(v) + '</text>' +
+      '<text x="' + cx + '" y="' + (cy + 8) + '" text-anchor="middle" font-size="11" fill="#B9C7DE">nota projetada de 80</text>') + '</svg></div>';
+  }
+  // a carteira vermelha da OAB: o objetivo final do aluno (desenho próprio, sem o brasão oficial)
+  function carteiraOAB(cx, cy) {
+    var x = cx - 25, y = cy - 66;
+    return '<g class="carteira"><rect x="' + (x + 3) + '" y="' + (y + 3) + '" width="50" height="64" rx="5" fill="rgba(0,0,0,.35)"/>' +
+      '<rect x="' + x + '" y="' + y + '" width="50" height="64" rx="5" fill="#B5121B"/><rect x="' + x + '" y="' + y + '" width="7" height="64" rx="3" fill="#8E0E15"/>' +
+      '<rect x="' + (x + 11) + '" y="' + (y + 5) + '" width="35" height="54" rx="3" fill="none" stroke="#E9C46A" stroke-width=".8" opacity=".7"/>' +
+      '<text x="' + (x + 28.5) + '" y="' + (y + 17) + '" text-anchor="middle" font-size="10" font-weight="800" fill="#F2D27A" font-family="Bricolage Grotesque, sans-serif" letter-spacing="1">OAB</text>' +
+      '<g stroke="#F2D27A" stroke-width="1.3" fill="none" stroke-linecap="round"><path d="M' + (x + 28.5) + ' ' + (y + 24) + 'v18M' + (x + 19) + ' ' + (y + 27) + 'h19M' + (x + 23) + ' ' + (y + 46) + 'h11"/>' +
+      '<path d="M' + (x + 19) + ' ' + (y + 27) + 'l-4 8h8zM' + (x + 38) + ' ' + (y + 27) + 'l-4 8h8z"/></g>' +
+      '<text x="' + (x + 28.5) + '" y="' + (y + 56) + '" text-anchor="middle" font-size="4.6" fill="#F2D27A" letter-spacing=".6">ADVOGADO</text></g>' +
+      '<text x="' + cx + '" y="' + (cy + 14) + '" text-anchor="middle" font-size="11" fill="#B9C7DE">sua meta é esta carteira</text>' +
+      '<text x="' + cx + '" y="' + (cy + 28) + '" text-anchor="middle" font-size="10" fill="#8FA3C7">faça o diagnóstico para medir a distância</text>';
   }
   // a rota da aprovação: onde o aluno está
   function rotaAprovacao() {
