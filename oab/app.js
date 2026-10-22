@@ -79,20 +79,26 @@
     return r;
   }
   function notaDiag() { var n = 0; DIAG.forEach(function (id) { if (S.diag.resp[id] === QM[id].c) n++; }); return n; }
-  function treinoDisc(d) {
-    var h = S.hist.filter(function (x) { return QM[x.q] && QM[x.q].d === d; }).slice(-30);
+  // "ate" (opcional) = carimbo de tempo: calcula o estado como estava naquele momento
+  function treinoDisc(d, ate) {
+    var h = S.hist.filter(function (x) { return QM[x.q] && QM[x.q].d === d && (ate == null || x.t <= ate); }).slice(-30);
     return {n: h.length, ok: h.filter(function (x) { return x.ok; }).length};
   }
   // domínio estimado: diagnóstico + treino recente (o treino pesa mais quando há volume)
-  function dominio(d) {
-    var dg = diagFeito() ? diagPorDisc()[d] : null, tr = treinoDisc(d);
+  function dominio(d, ate, dgCache) {
+    var temDiag = diagFeito() && (ate == null || S.diag.fim <= ate);
+    var dg = temDiag ? (dgCache || diagPorDisc())[d] : null, tr = treinoDisc(d, ate);
     var a = dg && dg.n ? dg.ok / dg.n : null, b = tr.n ? tr.ok / tr.n : null;
     if (a == null) return b;
     if (b == null || tr.n < 5) return a;
     var w = Math.min(0.75, tr.n / 20);
     return a * (1 - w) + b * w;
   }
-  function projecao() { var s = 0; D.forEach(function (d) { var x = dominio(d.id); s += d.q * (x == null ? 0.25 : x); }); return s; }
+  function projecao(ate) {
+    var s = 0, dg = diagFeito() ? diagPorDisc() : null;
+    D.forEach(function (d) { var x = dominio(d.id, ate, dg); s += d.q * (x == null ? 0.25 : x); });
+    return s;
+  }
   var META = {etica: 0.75, dom: 0.75, B: 0.45, C: 0.5, A: 0.45};
   function metaDisc(d) { if (d.id === 'etica') return META.etica; if (S.dominio && S.dominio.indexOf(d.id) > -1) return META.dom; return META[d.g]; }
   function recomendar() {
@@ -214,6 +220,131 @@
     return '<div class="cartao" aria-label="Mapa das 80 questões: bolhas preenchidas são questões que você já tende a acertar">' + h + '</div>';
   }
 
+
+  // ---------- boletim do desempenho (formato de previsão do tempo na TV) ----------
+  var DIAS_EXT = ['DOMINGO', 'SEGUNDA', 'TERÇA', 'QUARTA', 'QUINTA', 'SEXTA', 'SÁBADO'];
+  function clima(p) {
+    if (p == null) return {n: 'sem dados', s: ''};
+    var sol = '<circle cx="14" cy="13" r="6.5" fill="#FFC93C"/><g stroke="#FFC93C" stroke-width="2" stroke-linecap="round"><path d="M14 2v3M14 21v3M3 13h3M22 13h3M6.2 5.2l2 2M19.8 5.2l-2 2M6.2 20.8l2-2"/></g>';
+    var nuvem = function (c) { return '<path d="M11 30h17a6 6 0 0 0 0-12 8 8 0 0 0-15.3 2.2A5 5 0 0 0 11 30z" fill="' + c + '"/>'; };
+    var gotas = '<g stroke="#5BC0FF" stroke-width="2" stroke-linecap="round"><path d="M14 33l-1.5 3M20 33l-1.5 3M26 33l-1.5 3"/></g>';
+    var raio = '<path d="M21 27l-4 6h4l-2 5 6-8h-4l2-3z" fill="#FFD43B"/>';
+    var svg = function (x) { return '<svg viewBox="0 0 38 38" width="34" height="34" aria-hidden="true">' + x + '</svg>'; };
+    if (p >= 0.7) return {n: 'tempo firme', s: svg('<g transform="translate(5 5)">' + sol + '</g>')};
+    if (p >= 0.5) return {n: 'sol entre nuvens', s: svg(sol + nuvem('#E8EEF8'))};
+    if (p >= 0.4) return {n: 'instável', s: svg(nuvem('#C9D3E3') + gotas)};
+    return {n: 'tempestade', s: svg(nuvem('#8E9BB3') + raio + gotas)};
+  }
+  function curva(pts) {
+    if (pts.length < 2) return '';
+    var d = 'M' + pts[0].x + ' ' + pts[0].y;
+    for (var i = 0; i < pts.length - 1; i++) {
+      var p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2;
+      d += ' C' + (p1.x + (p2.x - p0.x) / 6) + ' ' + (p1.y + (p2.y - p0.y) / 6) + ' ' + (p2.x - (p3.x - p1.x) / 6) + ' ' + (p2.y - (p3.y - p1.y) / 6) + ' ' + p2.x + ' ' + p2.y;
+    }
+    return d;
+  }
+  // o: {titulo, fonte, legA, legB, cols:[{rot, sub, a (0-1), aTxt, b (0-1), bTxt, ico (0-1), leg, val}], tag, manchete, linha, ticker:[...], abas}
+  function boletim(o) {
+    var n = o.cols.length;
+    var pa = o.cols.map(function (c, i) { return {x: (i + 0.5) / n * 100, y: 42 - Math.max(0, Math.min(1, c.a)) * 24}; });
+    var pb = o.cols.map(function (c, i) { return c.b == null ? null : {x: (i + 0.5) / n * 100, y: 90 - Math.max(0, Math.min(1, c.b)) * 24}; });
+    var pbOk = pb.filter(Boolean);
+    var pontos = function (ps, txts, cls) {
+      return ps.map(function (p, i) { return p ? '<span class="tv-pt ' + cls + '" style="left:' + p.x + '%;top:' + p.y + '%"></span><span class="tv-vl" style="left:' + p.x + '%;top:' + p.y + '%">' + esc(txts[i]) + '</span>' : ''; }).join('');
+    };
+    var agora = new Date();
+    return '<section class="tv" aria-label="' + esc(o.titulo) + '">' +
+      '<div class="tv-cab"><div class="tv-tit">' + esc(o.titulo) + '</div><div class="tv-fonte">FONTE: ' + esc(o.fonte) + '</div>' +
+      '<div class="tv-leg"><span><i style="background:#F2C230"></i>' + esc(o.legA) + '</span>' + (o.legB ? '<span><i style="background:#47B2FF"></i>' + esc(o.legB) + '</span>' : '') + '</div>' +
+      (o.abas || '') + '</div>' +
+      '<div class="tv-rolo"><div class="tv-painel" style="--n:' + n + '">' +
+      '<div class="tv-cols">' + o.cols.map(function (c) { return '<div><b>' + esc(c.rot) + '</b>' + (c.sub ? '<small>' + esc(c.sub) + '</small>' : '') + '</div>'; }).join('') + '</div>' +
+      '<div class="tv-graf"><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">' +
+      '<path d="' + curva(pa) + '" fill="none" stroke="#F2C230" stroke-width="3" vector-effect="non-scaling-stroke"/>' +
+      '<path d="' + curva(pbOk) + '" fill="none" stroke="#47B2FF" stroke-width="3" vector-effect="non-scaling-stroke"/></svg>' +
+      pontos(pa, o.cols.map(function (c) { return c.aTxt; }), 'am') + pontos(pb, o.cols.map(function (c) { return c.bTxt; }), 'az') + '</div>' +
+      '<div class="tv-rod">' + o.cols.map(function (c) { var k = clima(c.ico); return '<div title="' + esc(k.n) + '">' + k.s + '<span><small>' + esc(c.leg || k.n) + '</small><b>' + esc(c.val) + '</b></span></div>'; }).join('') + '</div>' +
+      '</div></div>' +
+      '<div class="tv-lt"><span class="tv-tag">' + esc(o.tag) + '</span><div class="tv-man"><b>' + esc(o.manchete) + '</b><span>' + esc(o.linha) + '</span></div></div>' +
+      ((o.ticker || []).length ? '<div class="tv-tick"><span class="tv-hora">' + String(agora.getHours()).padStart(2, '0') + ':' + String(agora.getMinutes()).padStart(2, '0') + '</span><span class="tv-tx">' + (o.ticker || []).map(esc).join(' <i>▸</i> ') + '</span></div>' : '<div style="height:20px"></div>') +
+      '</section>';
+  }
+  function juntar(l) { return l.length < 2 ? l.join('') : l.slice(0, -1).join(', ') + ' e ' + l[l.length - 1]; }
+  function tempoTxt(lista) {
+    var bom = lista.filter(function (x) { return x.p != null && x.p >= 0.7; }).map(function (x) { return x.nome; });
+    var ruim = lista.filter(function (x) { return x.p != null && x.p < 0.4; }).map(function (x) { return x.nome; });
+    var t = [];
+    if (bom.length) t.push('tempo firme em ' + juntar(bom.slice(0, 3)));
+    if (ruim.length) t.push('tempestade em ' + juntar(ruim.slice(0, 3)));
+    if (!t.length) return 'Tempo variável, sem extremos';
+    t[0] = t[0].charAt(0).toUpperCase() + t[0].slice(1);
+    return t.join('; ');
+  }
+
+  var vistaDiag = 'grupos';
+  function boletimDiag() {
+    var dg = diagPorDisc(), n = notaDiag(), cols;
+    var acc = function (ids) { var t = 0, ok = 0; ids.forEach(function (id) { t += dg[id].n; ok += dg[id].ok; }); return {t: t, ok: ok, p: t ? ok / t : 0}; };
+    var metaMed = function (ids) { var t = 0, m = 0; ids.forEach(function (id) { t += DM[id].q; m += DM[id].q * metaDisc(DM[id]); }); return t ? m / t : 0; };
+    if (vistaDiag === 'grupos') {
+      var gr = [['ÉTICA', 'Passo 2', ['etica']]].concat(['A', 'B', 'C'].map(function (g) {
+        return ['GRUPO ' + g, {A: 'decidem a prova', B: 'meio-campo', C: 'pontos rápidos'}[g], D.filter(function (d) { return d.g === g && d.id !== 'etica'; }).map(function (d) { return d.id; })];
+      }));
+      cols = gr.map(function (x) { var r = acc(x[2]), m = metaMed(x[2]); return {rot: x[0], sub: x[1], a: r.p, aTxt: pct(r.p), b: m, bTxt: pct(m), ico: r.p, leg: 'acertos', val: r.ok + '/' + r.t}; });
+    } else {
+      cols = D.filter(function (d) { return d.g === vistaDiag; }).map(function (d) {
+        var r = dg[d.id], p = r.ok / r.n;
+        return {rot: d.curto.toUpperCase(), sub: d.q + ' questões', a: p, aTxt: pct(p), b: metaDisc(d), bTxt: pct(metaDisc(d)), ico: p, leg: 'acertos', val: r.ok + '/' + r.n};
+      });
+    }
+    var abas = '<div class="tv-abas" role="tablist">' + [['grupos', 'Por grupo'], ['A', 'Grupo A'], ['B', 'Grupo B'], ['C', 'Grupo C']].map(function (x) {
+      return '<button role="tab" aria-selected="' + (vistaDiag === x[0]) + '" data-vdiag="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>';
+    return boletim({titulo: 'SEU DIAGNÓSTICO, DISCIPLINA POR DISCIPLINA', fonte: 'PROVA DIAGNÓSTICA DE ' + fmtData(iso(new Date(S.diag.fim)), true),
+      legA: 'acerto no diagnóstico', legB: 'sua meta', cols: cols, abas: abas, tag: 'DIAGNÓSTICO',
+      manchete: n >= 40 ? 'NOTA ' + n + ' DE 80: VOCÊ JÁ PASSARIA HOJE' : 'NOTA ' + n + ' DE 80: FALTAM ' + (40 - n) + ' ACERTOS',
+      linha: tempoTxt(D.map(function (d) { return {nome: d.curto, p: dg[d.id].ok / dg[d.id].n}; })),
+      ticker: D.map(function (d) { return d.curto.toUpperCase() + ' ' + dg[d.id].ok + '/' + dg[d.id].n; })});
+  }
+  function boletimDias() {
+    var dias = {}, ordem = [];
+    S.hist.forEach(function (h) { var k = iso(new Date(h.t)); if (!dias[k]) { dias[k] = {n: 0, ok: 0, fim: 0}; ordem.push(k); } dias[k].n++; if (h.ok) dias[k].ok++; dias[k].fim = Math.max(dias[k].fim, h.t); });
+    ordem = ordem.sort().slice(-6);
+    if (!ordem.length) return '';
+    var hj = hojeISO(), cols = ordem.map(function (k) {
+      var x = dias[k], p = x.ok / x.n, pr = projecao(x.fim);
+      return {rot: k === hj ? 'HOJE' : DIAS_EXT[dataDe(k).getDay()], sub: fmtData(k), a: p, aTxt: pct(p), b: pr / 80, bTxt: Math.round(pr) + ' pts', ico: p, leg: 'questões', val: String(x.n)};
+    });
+    var agora = projecao(), antes = cols.length > 1 ? projecao(dias[ordem[0]].fim) : null, dif = antes == null ? 0 : Math.round(agora) - Math.round(antes);
+    var dd = D.map(function (d) { return {nome: d.curto, p: dominio(d.id)}; });
+    return boletim({titulo: 'SEU DESEMPENHO NOS ÚLTIMOS DIAS', fonte: 'SEUS TREINOS', legA: 'acerto do dia', legB: 'nota projetada (de 80)', cols: cols,
+      tag: 'BOLETIM DO DESEMPENHO', manchete: 'NOTA PROJETADA: ' + Math.round(agora) + ' PONTOS' + (agora >= 40 ? ', ACIMA DO CORTE' : ''),
+      linha: (dif ? (dif > 0 ? 'Subiu ' : 'Caiu ') + Math.abs(dif) + (Math.abs(dif) === 1 ? ' ponto' : ' pontos') + ' no período. ' : 'Estável no período. ') + tempoTxt(dd),
+      ticker: D.filter(function (d) { return dominio(d.id) != null; }).map(function (d) { return d.curto.toUpperCase() + ' ' + pct(dominio(d.id)); })});
+  }
+  function boletimSessao() {
+    var l = (S.sessoes || []).slice(-5); if (!l.length) return '';
+    var nomeModo = function (m) { return m === 'mix' ? 'Treino do dia' : m === 'erros' ? 'Revisão de erros' : DM[m] ? DM[m].curto : m; };
+    var cols = l.map(function (x, i) {
+      var p = x.n ? x.ok / x.n : 0, d = new Date(x.t);
+      return {rot: i === l.length - 1 ? 'AGORA' : DIAS_EXT[d.getDay()], sub: nomeModo(x.modo), a: p, aTxt: pct(p), b: x.proj / 80, bTxt: Math.round(x.proj) + ' pts', ico: p, leg: 'acertos', val: x.ok + '/' + x.n};
+    });
+    var u = l[l.length - 1], ant = l.length > 1 ? l[l.length - 2] : null, dif = ant ? Math.round(u.proj) - Math.round(ant.proj) : 0;
+    var porD = {}; (u.det || []).forEach(function (r) { if (!porD[r.d]) porD[r.d] = {n: 0, ok: 0}; porD[r.d].n++; if (r.ok) porD[r.d].ok++; });
+    var ds = Object.keys(porD);
+    var h = boletim({titulo: 'SEUS ÚLTIMOS TREINOS', fonte: 'SESSÕES DE QUESTÕES', legA: 'acerto na sessão', legB: 'nota projetada (de 80)', cols: cols,
+      tag: 'TREINO CONCLUÍDO', manchete: 'ACERTO DE ' + pct(u.n ? u.ok / u.n : 0) + ' EM ' + nomeModo(u.modo).toUpperCase(),
+      linha: 'Nota projetada: ' + Math.round(u.proj) + ' pontos' + (ant ? (dif ? ' (' + (dif > 0 ? '+' : '') + dif + ' desde o treino anterior)' : ' (estável)') : ''),
+      ticker: ds.map(function (d) { return DM[d].curto.toUpperCase() + ' ' + porD[d].ok + '/' + porD[d].n; })});
+    if (ds.length > 1) {
+      h += boletim({titulo: 'ESTE TREINO, POR DISCIPLINA', fonte: 'SESSÃO DE AGORA', legA: 'acerto na disciplina', legB: 'seu domínio acumulado',
+        cols: ds.slice(0, 8).map(function (d) { var r = porD[d], p = r.ok / r.n, dm = dominio(d); return {rot: DM[d].curto.toUpperCase(), sub: DM[d].q + ' questões na prova', a: p, aTxt: pct(p), b: dm, bTxt: pct(dm), ico: p, leg: 'acertos', val: r.ok + '/' + r.n}; }),
+        tag: 'RAIO-X', manchete: tempoTxt(ds.map(function (d) { return {nome: DM[d].curto, p: porD[d].ok / porD[d].n}; })).toUpperCase(),
+        linha: 'Revise a sinopse das disciplinas com tempestade antes do próximo treino.', ticker: []});
+    }
+    return h;
+  }
+
   // ---------- telas ----------
   var R = {};
 
@@ -257,6 +388,7 @@
       '</div><div><p class="sub peq" style="margin-bottom:8px">As 80 questões da prova. Bolhas cheias são as que você já tende a acertar.</p>' + cartaoProva() + '</div></section>';
     if (!diagFeito()) return h + '<div class="vazio"><h2>Comece pelo diagnóstico</h2><p>Uma prova completa, com a mesma distribuição da FGV, mostra em quais disciplinas você já pontua e em quais está perdendo pontos. Com ela, o relatório indica suas 4 disciplinas de domínio e o cronograma é gerado.</p><a class="btn pri" href="#diagnostico">Fazer o diagnóstico</a></div>';
     if (!S.dominio) return h + '<div class="vazio"><h2>Escolha suas 4 disciplinas de domínio</h2><p>Seu relatório está pronto. Confirme as disciplinas e gere o cronograma.</p><a class="btn pri" href="#relatorio">Ver relatório</a></div>';
+    h += boletimDias() || boletimDiag();
     var c = crono(), hj = hojeISO(), dia = c.find(function (x) { return x.data >= hj; });
     var miss = '';
     if (!dia) miss = '<p>Seu cronograma terminou. Bom exame!</p>';
@@ -297,7 +429,7 @@
     var g = S.diag;
     if (g.fim) {
       var n = notaDiag();
-      return '<div class="cab"><div><h1>Diagnóstico concluído</h1><p class="sub">Feito em ' + fmtData(iso(new Date(g.fim)), true) + '. Você acertou ' + n + ' de 80.</p></div></div>' +
+      return '<div class="cab"><div><h1>Diagnóstico concluído</h1><p class="sub">Feito em ' + fmtData(iso(new Date(g.fim)), true) + '. Você acertou ' + n + ' de 80.</p></div></div>' + boletimDiag() +
         '<div class="grade g2"><div class="bloco"><h2>Seu cartão-resposta</h2>' + cartaoDiag(true) + '<p class="peq sub" style="margin-top:12px">Verde: acerto. Vermelho: erro. Tracejado: marcou "não sei".</p></div>' +
         '<div class="bloco"><h2>Próximo passo</h2><p>O relatório mostra seus pontos fortes e fracos e indica as 4 disciplinas de domínio que vão sustentar sua aprovação.</p><a class="btn pri" href="#relatorio">Ver meu relatório</a>' +
         '<p style="margin-top:18px" class="peq sub">Quer medir de novo depois de semanas de estudo? Você pode refazer o diagnóstico. As alternativas mudam de ordem.</p><button class="btn mini" data-act="refazer-diag">Refazer diagnóstico</button></div></div>';
@@ -363,6 +495,7 @@
       '<div><h2 style="color:#fff">' + (passa ? 'Hoje você já seria aprovado na 1ª fase.' : 'Faltam ' + (40 - n) + ' acertos para a aprovação.') + '</h2><p class="sub">' +
       (passa ? 'O trabalho agora é proteger essa nota e criar margem: o cronograma reforça suas disciplinas de domínio e transforma pontos fracos de baixo peso em pontos rápidos.' :
         'Não é preciso dominar as 20 disciplinas. A conta abaixo mostra como chegar lá concentrando energia onde a prova paga mais.') + '</p></div></section>' +
+      boletimDiag() +
       '<div class="kpis" style="margin-bottom:16px">' + grupos + '</div>' +
       '<div class="grade g2"><div class="bloco"><h2>Acerto por disciplina</h2><div class="barras">' +
       D.map(function (d) { return barra(esc(d.curto), d.cor, dg[d.id].ok / dg[d.id].n, null, ' <span class="sub peq">(' + dg[d.id].ok + '/' + dg[d.id].n + ')</span>'); }).join('') + '</div></div>' +
@@ -452,7 +585,12 @@
       if (!sess.l.length) return '<p><a class="link" href="#exercicios">Voltar</a></p><div class="vazio"><h2>Nada por aqui</h2><p>' + (arg === 'erros' ? 'Você não tem questões erradas pendentes.' : 'Sem questões nesta disciplina ainda.') + '</p></div>';
       if (sess.i >= sess.l.length) {
         var n = Object.keys(sess.resp).length;
-        return '<p><a class="link" href="#exercicios">Voltar</a></p><div class="bloco questao"><h1>Sessão concluída</h1><p class="num">' + sess.ok + '/' + n + '</p><p class="sub">acertos nesta sessão</p><div class="chips"><button class="btn pri" data-act="ex-novo">Treinar de novo</button><a class="btn" href="#painel">Ir para o painel</a></div></div>';
+        if (!sess.registrada && n) {
+          sess.registrada = true; S.sessoes = S.sessoes || [];
+          S.sessoes.push({t: Date.now(), modo: sess.modo, n: n, ok: sess.ok, proj: projecao(), det: Object.keys(sess.resp).map(function (id) { return {d: QM[id].d, ok: sess.resp[id] === QM[id].c}; })});
+          if (S.sessoes.length > 60) S.sessoes = S.sessoes.slice(-60); salvar();
+        }
+        return '<p><a class="link" href="#exercicios">Voltar</a></p><div class="bloco questao"><h1>Sessão concluída</h1><p class="num">' + sess.ok + '/' + n + '</p><p class="sub">acertos nesta sessão</p><div class="chips"><button class="btn pri" data-act="ex-novo">Treinar de novo</button><a class="btn" href="#painel">Ir para o painel</a></div></div>' + boletimSessao();
       }
       var id = sess.l[sess.i], q = QM[id], o = ordemAlt(q), r = sess.resp[id];
       var titulo = arg === 'erros' ? 'Revisão de erros' : arg === 'mix' ? 'Treino do dia' : DM[arg].nome;
@@ -568,6 +706,7 @@
     var ds = t.dataset;
     if (ds.dia != null) { t.setAttribute('aria-pressed', t.getAttribute('aria-pressed') !== 'true'); return; }
     if (ds.af) { t.setAttribute('aria-pressed', t.getAttribute('aria-pressed') !== 'true'); return; }
+    if (ds.vdiag) { vistaDiag = ds.vdiag; render(); return; }
     if (ds.tema) { lsSet('ontop-tema', ds.tema); aplicarTema(); render(); return; }
     if (ds.dom) {
       var i = escolha.indexOf(ds.dom);
