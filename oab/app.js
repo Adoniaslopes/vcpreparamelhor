@@ -433,16 +433,16 @@
   };
 
   R.painel = function () {
-    var p = S.perfil, falta = diasAte(p.prova), proj = projecao();
-    var h = '<section class="hero"><div><h1>Olá, ' + esc(p.nome.split(' ')[0]) + '.</h1><p class="sub">' +
+    var p = S.perfil || {nome: nuvem.nome || '', prova: OAB.EXAME.data}, falta = diasAte(p.prova), proj = projecao();
+    var nm = (p.nome || '').split(' ')[0];
+    var h = '<section class="hero"><div><h1>Olá' + (nm ? ', ' + esc(nm) : '') + '.</h1><p class="sub">' +
       (falta > 0 ? 'Faltam <b style="color:#fff">' + falta + ' dias</b> para a sua prova (' + fmtData(p.prova, true) + ').' : 'Dia de prova. Você se preparou para isto.') + '</p>' +
       '<div class="meta-linha"><div><span class="num">' + (diagFeito() ? notaDiag() : '—') + '</span><small>no diagnóstico</small></div>' +
       '<div><span class="num">' + (diagFeito() ? Math.round(proj) : '—') + '</span><small>nota projetada hoje</small></div>' +
       '<div><span class="num" style="color:#E6C24E">40</span><small>para passar</small></div></div>' +
       (diagFeito() ? '' : '<p style="margin-top:18px"><a class="btn ouro" href="#diagnostico">Fazer o diagnóstico</a></p>') +
       '</div><div><p class="sub peq" style="margin-bottom:8px">As 80 questões da prova. Bolhas cheias são as que você já tende a acertar.</p>' + cartaoProva() + '</div></section>';
-    if (!diagFeito()) return h + pesoProva() + '<div class="vazio"><h2>Comece pelo diagnóstico</h2><p>Uma prova completa, com a mesma distribuição da FGV, mostra em quais disciplinas você já pontua e em quais está perdendo pontos. Com ela, o relatório indica suas 4 disciplinas de domínio e o cronograma é gerado.</p><a class="btn pri" href="#diagnostico">Fazer o diagnóstico</a></div>';
-    if (!S.dominio) return h + pesoProva() + '<div class="vazio"><h2>Escolha suas 4 disciplinas de domínio</h2><p>Seu relatório está pronto. Confirme as disciplinas e gere o cronograma.</p><a class="btn pri" href="#relatorio">Ver relatório</a></div>';
+    if (!S.perfil || !diagFeito() || !S.dominio) return h + jornada() + pesoProva();
     h += pesoProva();
     h += boletimDias() || boletimDiag();
     var c = crono(), hj = hojeISO(), dia = c.find(function (x) { return x.data >= hj; });
@@ -573,7 +573,34 @@
 
   // ---------- cronograma ----------
   var verTudo = false;
+  // checklist dos 3 passos de entrada (aparece no Painel e no Cronograma até tudo estar pronto)
+  function jornada() {
+    var passos = [
+      [!!S.perfil, 'Seu ponto de partida', 'Data da prova, horas por dia, dias de estudo e afinidades.', '#perfil', 'Preencher'],
+      [diagFeito(), 'Diagnóstico', 'Uma prova completa de 80 questões, na distribuição da FGV.', '#diagnostico', S.diag.ini && !S.diag.fim ? 'Continuar' : 'Fazer'],
+      [!!S.dominio, 'Relatório e disciplinas de domínio', 'Veja onde você pontua e confirme as 4 disciplinas que vão sustentar sua aprovação.', '#relatorio', 'Abrir']
+    ];
+    var prox = passos.findIndex(function (x) { return !x[0]; });
+    return '<div class="bloco" style="margin-bottom:16px"><h2>Sua largada</h2><p class="sub">Três etapas liberam seu cronograma personalizado.</p><ol class="passos-lista">' +
+      passos.map(function (x, i) {
+        return '<li><span class="n" style="' + (x[0] ? 'background:var(--verde);color:#fff' : i === prox ? '' : 'background:var(--linha);color:var(--tinta2)') + '">' + (x[0] ? '✓' : i + 1) + '</span><div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap"><div><b>' + x[1] + '</b><br><span class="sub peq">' + x[2] + '</span></div>' +
+          (x[0] ? '<span class="tag">concluído</span>' : i === prox ? '<a class="btn pri mini" href="' + x[3] + '">' + x[4] + '</a>' : '<span class="tag">depois</span>') + '</div></li>';
+      }).join('') + '</ol></div>';
+  }
+  function cronoExplica() {
+    var ex = [{p: 2, min: 25, txt: 'Estatuto e Código de Ética: 10 artigos e 5 questões'}, {p: 4, min: 50, txt: 'Sinopse da disciplina de domínio do dia e resumo de 1 página'},
+      {p: 3, min: 95, txt: 'Exercícios da mesma disciplina'}, {p: 5, min: 10, txt: 'Gravar 3 minutos explicando o tema'}];
+    return '<div class="cab"><div><h1>Seu cronograma</h1><p class="sub">Um plano dia a dia até a prova, montado com os 5 passos do método.</p></div></div>' + jornada() +
+      '<div class="grade g2"><div class="bloco"><h2>Como ele é montado</h2><ol class="passos-lista">' +
+      '<li><span class="n">1</span><div><b>Construção.</b> <span class="sub">Teoria e exercícios das suas 4 disciplinas de domínio, revezando as mais fracas com mais frequência.</span></div></li>' +
+      '<li><span class="n">2</span><div><b>Consolidação.</b> <span class="sub">Domínio em revisão e entrada dos pontos rápidos do Grupo C e do restante do Grupo B.</span></div></li>' +
+      '<li><span class="n">3</span><div><b>Revisão final.</b> <span class="sub">Últimas duas semanas: revisão de erros, sinopses e simulados.</span></div></li></ol>' +
+      '<p class="peq sub" style="margin-top:12px">Uma vez por semana há um simulado com uma das 10 últimas provas oficiais, corrigido pelo gabarito da FGV.</p></div>' +
+      '<div class="bloco"><h2>Exemplo de um dia (3 horas)</h2><div class="tarefas">' + ex.map(function (t) { return '<div class="tarefa"><span></span><span class="tx">' + passoTag(t.p) + ' ' + esc(t.txt) + ' <span class="sub">· ' + t.min + ' min</span></span><span></span></div>'; }).join('') +
+      '</div><p class="peq sub" style="margin-top:12px">O seu terá os dias da semana, as horas e as disciplinas que você escolher.</p></div></div>';
+  }
   R.cronograma = function () {
+    if (!S.perfil || !S.dominio) return cronoExplica();
     if (!S.dominio) return '<div class="vazio"><h1>Cronograma</h1><p>O cronograma é gerado a partir do relatório do diagnóstico.</p><a class="btn pri" href="' + (diagFeito() ? '#relatorio' : '#diagnostico') + '">' + (diagFeito() ? 'Ver relatório' : 'Fazer o diagnóstico') + '</a></div>';
     var c = crono();
     if (!c.length) return '<div class="vazio"><h1>Cronograma</h1><p>Não há dias de estudo entre hoje e a data da prova. Confira a data e os dias da semana no seu perfil.</p><a class="btn" href="#perfil">Abrir perfil</a></div>';
@@ -843,9 +870,8 @@
   var rota = '';
   function render() {
     var h = (location.hash || '#painel').slice(1).split('/'), r = h[0] || 'painel', arg = h[1];
-    var LIVRES = ['perfil', 'sinopses', 'exercicios', 'provas', 'estudio'];
     pedido = null;
-    if (!S.perfil && LIVRES.indexOf(r) < 0) { pedido = r; r = 'boasvindas'; }
+    if (!S.perfil && !location.hash) r = 'boasvindas';
     if (!R[r]) r = 'painel';
     if (r !== 'diagnostico') pararRelogio();
     if (cronOf) { clearInterval(cronOf); cronOf = null; }
