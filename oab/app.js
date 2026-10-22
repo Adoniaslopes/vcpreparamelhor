@@ -398,6 +398,8 @@
   // ---------- telas ----------
   var R = {};
 
+  var pedido = null; // aba que o aluno tentou abrir antes de preencher o perfil
+  var NOMES_ABA = {painel: 'o Painel', diagnostico: 'o Diagnóstico', relatorio: 'o Relatório', cronograma: 'o Cronograma'};
   R.boasvindas = function () {
     var p = S.perfil || {nome: (nuvem.nome || ''), prova: OAB.EXAME.data, dias: [1, 2, 3, 4, 5, 6], horas: 3, afin: []};
     var dias = SEMANA.map(function (s, i) { return '<button type="button" class="chip" data-dia="' + i + '" aria-pressed="' + (p.dias.indexOf(i) > -1) + '">' + s + '</button>'; }).join('');
@@ -407,17 +409,20 @@
     var horas = ''; for (var h = 1; h <= 8; h++) horas += '<option value="' + h + '"' + (h === p.horas ? ' selected' : '') + '>' + h + (h === 1 ? ' hora' : ' horas') + '</option>';
     return '<section class="hero" style="grid-template-columns:1fr"><div><div class="marca" style="color:#fff;margin-bottom:14px"><span class="bolha cheia"></span><span class="bolha"></span> Método Aprovação OAB</div>' +
       '<h1>Você não precisa saber tudo.<br>Precisa saber o certo.</h1>' +
-      '<p class="sub">O método que aprovou o Dr. Adonias Lopes há 10 anos — e que ele testou de novo refazendo as duas últimas provas sem estudar: 56 e 65 pontos de aproveitamento. Primeiro você faz uma prova completa; depois a plataforma mostra onde estão seus pontos e monta o seu cronograma.</p></div></section>' +
-      '<div class="grade g2"><div class="bloco"><h2>Como funciona</h2><ol class="passos-lista">' +
-      OAB.PASSOS.map(function (s) { return '<li><span class="n">' + s.n + '</span><div><b>' + esc(s.nome) + '.</b> <span class="sub">' + esc(s.txt) + '</span></div></li>'; }).join('') +
-      '</ol></div><form class="bloco" id="f-perfil"><h2>Seu ponto de partida</h2>' +
+      '<p class="sub">O método que aprovou o Dr. Adonias Lopes há 10 anos — e que ele testou de novo refazendo as duas últimas provas sem estudar: 56 e 65 pontos de aproveitamento. Primeiro você faz uma prova completa; depois a plataforma mostra onde estão seus pontos e monta o seu cronograma.</p>' +
+      (!S.perfil ? '<p style="margin:18px 0 0"><button class="btn ouro" data-act="ir-form">Preencher meu ponto de partida</button></p>' : '') + '</div></section>' +
+      (!S.perfil ? '<div class="aviso" role="status"><b>' + (pedido && NOMES_ABA[pedido] ? 'Para abrir ' + NOMES_ABA[pedido] + ', preencha primeiro o seu ponto de partida.' : 'Primeiro passo: preencha o seu ponto de partida.') + '</b> Leva 1 minuto. Sinopses, Exercícios, Provas anteriores e o Estúdio de áudio já estão liberados.</div>' : '') +
+      '<div class="grade g2"><form class="bloco" id="f-perfil"><h2>Seu ponto de partida</h2>' +
       '<label>Como podemos te chamar?<input id="p-nome" required value="' + esc(p.nome) + '"></label>' +
       '<label>Data da prova<input type="date" id="p-prova" required value="' + esc(p.prova) + '"></label>' +
       '<p class="peq sub" style="margin-top:-.6rem">Padrão: 1ª fase do ' + OAB.EXAME.nome + ', ' + fmtData(OAB.EXAME.data, true) + '.</p>' +
       '<label>Horas de estudo por dia<select id="p-horas">' + horas + '</select></label>' +
       '<div style="margin-bottom:1rem"><div style="font-weight:500;font-size:.9rem;margin-bottom:.4rem">Dias em que você estuda</div><div class="chips">' + dias + '</div></div>' +
       '<div style="margin-bottom:1rem"><div style="font-weight:500;font-size:.9rem">Disciplinas com que você tem mais afinidade</div><p class="peq sub" style="margin:.2rem 0 .5rem">Marque as que você gosta ou já domina. Ética entra para todos, todos os dias.</p><div class="chips">' + af + '</div></div>' +
-      '<button class="btn pri" type="submit">' + (S.perfil ? 'Salvar perfil' : 'Começar pelo diagnóstico') + '</button><p class="msg" id="p-msg"></p></form></div>';
+      '<button class="btn pri" type="submit">' + (S.perfil ? 'Salvar perfil' : 'Começar pelo diagnóstico') + '</button><p class="msg" id="p-msg"></p></form>' +
+      '<div class="bloco"><h2>Como funciona</h2><ol class="passos-lista">' +
+      OAB.PASSOS.map(function (s) { return '<li><span class="n">' + s.n + '</span><div><b>' + esc(s.nome) + '.</b> <span class="sub">' + esc(s.txt) + '</span></div></li>'; }).join('') +
+      '</ol></div></div>' + (S.perfil ? '' : pesoProva());
   };
   R.perfil = function () {
     return R.boasvindas() + '<div class="grade g2" style="margin-top:16px"><div class="bloco"><h2>Aparência</h2><div class="chips">' +
@@ -838,7 +843,9 @@
   var rota = '';
   function render() {
     var h = (location.hash || '#painel').slice(1).split('/'), r = h[0] || 'painel', arg = h[1];
-    if (!S.perfil && r !== 'perfil') r = 'boasvindas';
+    var LIVRES = ['perfil', 'sinopses', 'exercicios', 'provas', 'estudio'];
+    pedido = null;
+    if (!S.perfil && LIVRES.indexOf(r) < 0) { pedido = r; r = 'boasvindas'; }
     if (!R[r]) r = 'painel';
     if (r !== 'diagnostico') pararRelogio();
     if (cronOf) { clearInterval(cronOf); cronOf = null; }
@@ -846,7 +853,7 @@
     if (r !== 'exercicios' || (sess && sess.modo !== arg)) { if (r !== 'exercicios') sess = null; }
     var main = $('#main');
     main.innerHTML = R[r](arg);
-    $$('#menu a').forEach(function (a) { a.classList.toggle('on', a.dataset.r === r); });
+    $$('#menu a').forEach(function (a) { a.classList.toggle('on', a.dataset.r === (pedido || r)); });
     if (r === 'diagnostico' && S.diag.ini && !S.diag.fim) ligarRelogio();
     if (r === 'provas' && arg && oficial(arg) && !oficial(arg).fim) ligarRelogioOf(arg);
     var mud = rota !== location.hash; rota = location.hash;
@@ -888,6 +895,7 @@
     if (ds.auDel) { idbTx('readwrite', function (s) { return s.delete(+ds.auDel); }).then(listarAudios); return; }
     if (t.id === 'au-rec') { alternarGravacao(); return; }
     var a = ds.act; if (!a) return;
+    if (a === 'ir-form') { var fm = $('#f-perfil'); if (fm) { fm.scrollIntoView({behavior: 'smooth', block: 'start'}); setTimeout(function () { var i = $('#p-nome'); if (i) i.focus({preventScroll: true}); }, 400); } return; }
     if (a === 'of-iniciar') { S.oficiais = S.oficiais || {}; S.oficiais[ds.ex] = {resp: {}, ini: Date.now(), fim: null, seg: 0}; salvar(); render(); return; }
     if (a === 'of-corrigir') {
       var ofo = oficial(ds.ex), fz = 80 - Object.keys(ofo.resp).length;
