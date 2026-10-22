@@ -1318,13 +1318,23 @@
     entrando = true;
     var uid = session.user.id;
     var r = await sb.from('perfis').select('*').eq('id', uid).maybeSingle();
-    if (r.error || !r.data) { $('#e-tit').textContent = 'Cadastro incompleto'; $('#e-txt').textContent = 'Não encontramos seu perfil de aluno.' + contato(); acView('espera'); entrando = false; return; }
-    var p = r.data, vencido = p.expira_em && p.expira_em < hojeISO();
-    if (!p.admin && (p.status !== 'aprovado' || vencido)) {
-      $('#e-tit').textContent = p.status === 'pendente' ? 'Cadastro recebido' : vencido ? 'Acesso expirado' : 'Acesso suspenso';
-      $('#e-txt').textContent = (p.status === 'pendente' ? 'Seu acesso está aguardando liberação. Deixe esta página aberta: ela abre sozinha quando o acesso for aprovado.' : '') + contato();
+    var p = r.data || {nome: (session.user.user_metadata || {}).nome || ''};
+    // acesso vendido (Hotmart/Hubla) fica em acessos_oab; enquanto a tabela não existir, vale a aprovação manual do perfil
+    var email = String(session.user.email || '').toLowerCase();
+    var ac = await sb.from('acessos_oab').select('status, plano').eq('email', email).maybeSingle();
+    var semTabela = !!ac.error;
+    var comprou = !ac.error && ac.data && ac.data.status === 'ativo';
+    var cancelado = !ac.error && ac.data && ac.data.status === 'cancelado';
+    var vencido = p.expira_em && p.expira_em < hojeISO();
+    var liberadoManual = semTabela && r.data && p.status === 'aprovado' && !vencido;
+    if (!p.admin && !comprou && !liberadoManual) {
+      var vendas = location.pathname.replace(/[^/]*$/, '') + 'vendas/';
+      $('#e-tit').textContent = cancelado ? 'Acesso encerrado' : 'Falta ativar seu acesso';
+      $('#e-txt').innerHTML = (cancelado ? 'O acesso deste e-mail foi encerrado (reembolso ou cancelamento da compra).'
+        : 'Ainda não encontramos uma compra para <b>' + esc(email) + '</b>. Se você acabou de comprar, aguarde alguns minutos: esta página abre sozinha. Use o mesmo e-mail informado no pagamento.') +
+        '<br><br><a class="btn pri" href="' + vendas + '">Conhecer os planos</a><br><br>' + esc(contato());
       acView('espera'); entrando = false;
-      if (p.status === 'pendente') setTimeout(function () { entrar(session); }, 15000);
+      if (!cancelado) setTimeout(function () { entrar(session); }, 15000);
       return;
     }
     nuvem.ativo = true; nuvem.uid = uid; nuvem.admin = !!p.admin; nuvem.nome = p.nome || '';

@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Método Aprovação OAB · Chega de reprovar na 1ª fase</title>
+<meta name="description" content="Plataforma de treino para a 1ª fase da OAB: diagnóstico com prova oficial da FGV, relatório por disciplina, cronograma até a prova e as 10 últimas provas com correção na hora. Acesso até a sua aprovação.">
+<meta property="og:title" content="Chega de reprovar na 1ª fase da OAB">
+<meta property="og:description" content="Você não precisa estudar tudo. Precisa estudar o que a FGV cobra. Diagnóstico, cronograma e as 10 últimas provas oficiais.">
+<meta property="og:image" content="img/m-painel.webp">
+<meta name="theme-color" content="#081226">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2313284A'/%3E%3Ccircle cx='22' cy='32' r='8' fill='%23F5C542'/%3E%3Ccircle cx='42' cy='32' r='8' fill='none' stroke='%23F5F7FB' stroke-width='3'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+/* ===== CONFIGURAÇÃO DE VENDAS — troque pelos links de checkout da Hotmart ou da Hubla ===== */
+window.VENDAS = {
+  checkout1: '',   // link do checkout do plano "1ª fase · acesso até a aprovação" (12x R$ 19,99)
+  checkout2: '',   // link do checkout do plano "1ª e 2ª fase" (12x R$ 49,90)
+  whatsapp: '5562982712108',
+  plataforma: '../'
+};
+</script>
+<style>
+:root{--n0:#060E1F;--n1:#081226;--n2:#0F1D38;--n3:#12264B;--linha:rgba(157,176,211,.18);--txt:#EAF0FA;--sub:#AEBCD6;--ouro:#F5C542;--verm:#FF4D5E;--verde:#3DDC97;--ciano:#3EC5FF;--creme:#F6F1E7;--tinta:#141B2D;--r:22px}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--n1);color:var(--txt);line-height:1.5;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+a{color:inherit}
+.w{max-width:1120px;margin:0 auto;padding:0 20px}
+h1,h2,h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;letter-spacing:-.02em;line-height:1.02}
+h1{font-size:clamp(44px,8vw,88px)}h2{font-size:clamp(34px,5.4vw,58px)}h3{font-size:24px;line-height:1.15}
+h1 em,h2 em{font-style:normal;color:var(--ouro)}
+.creme h2 em{color:#D2263C}
+.sub{color:var(--sub);font-size:clamp(17px,2.2vw,21px);max-width:680px}
+.selo{display:inline-block;font-family:'Barlow Condensed',sans-serif;font-weight:800;letter-spacing:.16em;text-transform:uppercase;font-size:14px;padding:7px 14px;border-radius:999px;background:rgba(245,197,66,.14);color:var(--ouro);border:1.5px solid rgba(245,197,66,.45);margin-bottom:18px}
+.creme .selo{background:rgba(210,38,60,.08);color:#C4243A;border-color:rgba(196,36,58,.35)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:19px;padding:17px 28px;border-radius:999px;text-decoration:none;border:0;cursor:pointer;transition:transform .15s ease,box-shadow .15s ease}
+.btn:hover{transform:translateY(-2px)}
+.btn.pri{background:var(--verm);color:#fff;box-shadow:0 14px 34px rgba(255,77,94,.35)}
+.btn.sec{background:transparent;color:var(--txt);border:2px solid var(--linha)}
+.btn.ouro{background:var(--ouro);color:#1A1404;box-shadow:0 14px 34px rgba(245,197,66,.3)}
+.btn:focus-visible{outline:3px solid var(--ciano);outline-offset:3px}
+section{padding:88px 0}
+.creme{background:var(--creme);color:var(--tinta)}.creme .sub{color:#4A5266}
+/* topo */
+.topo{position:sticky;top:0;z-index:20;background:rgba(8,18,38,.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--linha)}
+.topo .w{display:flex;align-items:center;justify-content:space-between;height:64px}
+.marca{display:flex;align-items:center;gap:10px;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:18px;text-decoration:none}
+.marca i{width:14px;height:14px;border-radius:14px;background:var(--ouro);display:inline-block}.marca i+i{background:none;border:2.5px solid var(--txt);margin-left:-4px}
+.topo nav{display:flex;gap:10px;align-items:center}
+.topo nav a.link{font-size:15px;color:var(--sub);text-decoration:none;padding:8px 10px}
+.topo .btn{font-size:15px;padding:10px 18px}
+/* hero */
+.hero{padding:64px 0 80px;background:radial-gradient(90% 70% at 90% 0%,#1B3A72 0%,var(--n1) 60%,var(--n0) 100%);overflow:hidden}
+.hero .w{display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:center}
+.hero h1 span{display:block;color:var(--verm)}
+.hero .sub{margin-top:22px}
+.hero .acoes{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.provas{display:flex;flex-wrap:wrap;gap:12px;margin-top:34px}
+.pv{border:1.5px solid rgba(245,197,66,.45);border-radius:18px;padding:12px 18px;background:rgba(8,18,38,.6)}
+.pv b{display:block;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:40px;line-height:1;color:var(--ouro)}
+.pv small{font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.1em;font-size:13px;color:var(--sub);text-transform:uppercase}
+.pv.txt{display:flex;align-items:center;max-width:260px;font-size:15px;line-height:1.35}
+.cena{position:relative;height:560px}
+.cel{position:absolute;width:270px;border-radius:40px;padding:10px;background:#0B0F18;box-shadow:0 40px 80px rgba(0,0,0,.55),inset 0 0 0 2px #2A3550}
+.cel img{border-radius:31px}
+.cel.a{left:0;top:30px;transform:rotate(-5deg)}
+.cel.b{right:0;top:0;transform:rotate(5deg)}
+.carteira{position:absolute;left:38%;bottom:-10px;width:150px;transform:rotate(-10deg);border-radius:12px;box-shadow:0 24px 50px rgba(0,0,0,.6)}
+.contagem{margin-top:22px;font-size:15px;color:var(--sub)}.contagem b{color:var(--ouro)}
+/* dor */
+.cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:40px}
+.card{border-radius:var(--r);padding:26px;background:#fff;border:1.5px solid #E6DCC8}
+.card b{display:block;font-family:'Bricolage Grotesque',sans-serif;font-size:22px;margin-bottom:8px}
+.card p{color:#4A5266;font-size:16px}
+.card .n{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:52px;color:#D2263C;line-height:1}
+/* tese */
+.tese{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;margin-top:40px}
+.barras{display:flex;flex-direction:column;gap:6px}
+.br{display:grid;grid-template-columns:150px 1fr 26px;gap:12px;align-items:center;font-size:14px;color:var(--sub)}
+.br .tr{height:12px;border-radius:6px;background:rgba(255,255,255,.08);overflow:hidden}.br .tr i{display:block;height:100%;border-radius:6px}
+.br b{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;text-align:right}
+.conta{display:flex;flex-direction:column;gap:12px}
+.lin{display:grid;grid-template-columns:86px 1fr;gap:18px;align-items:center;padding:16px 20px;border-radius:18px;background:rgba(255,255,255,.05);border:1.5px solid var(--linha)}
+.lin b.n{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:48px;line-height:1;color:var(--ouro);text-align:center}
+.lin p{font-size:16px;color:var(--sub)}.lin p strong{color:var(--txt)}
+.lin.tot{background:linear-gradient(90deg,rgba(61,220,151,.2),rgba(61,220,151,.05));border-color:rgba(61,220,151,.55)}.lin.tot b.n{color:var(--verde)}
+.fonte{font-size:13px;color:#7F8DAA;margin-top:14px}
+/* recursos */
+.recursos{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:44px}
+.rec{border-radius:var(--r);background:var(--n2);border:1.5px solid var(--linha);overflow:hidden;display:flex;flex-direction:column}
+.rec .img{height:250px;overflow:hidden;background:var(--n0)}.rec .img img{width:100%;object-fit:cover;object-position:top}
+.rec .tx{padding:22px}
+.rec small{font-family:'Barlow Condensed',sans-serif;font-weight:800;letter-spacing:.14em;font-size:13px;color:var(--ouro);text-transform:uppercase}
+.rec h3{margin-top:6px}.rec p{color:var(--sub);font-size:15.5px;margin-top:8px}
+/* passos */
+.passos{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:40px;counter-reset:p}
+.ps{border-radius:var(--r);padding:24px;background:#fff;border:1.5px solid #E6DCC8}
+.ps b.n{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:46px;color:#D2263C;line-height:1}
+.ps h3{margin-top:8px;font-size:21px}.ps p{color:#4A5266;font-size:15px;margin-top:6px}
+/* autor */
+.autor{display:grid;grid-template-columns:.8fr 1.2fr;gap:44px;align-items:center}
+.autor .foto{border-radius:28px;padding:36px;background:linear-gradient(160deg,#1B3A72,var(--n2));border:1.5px solid var(--linha);display:grid;place-items:center}
+.autor .foto img{width:200px;transform:rotate(-6deg);border-radius:14px;box-shadow:0 26px 60px rgba(0,0,0,.6)}
+.autor p{color:var(--sub);font-size:18px;margin-top:16px}.autor p strong{color:var(--txt)}
+/* planos */
+.planos{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:44px;align-items:stretch}
+.pl{border-radius:28px;padding:32px;background:var(--n2);border:1.5px solid var(--linha);display:flex;flex-direction:column;position:relative}
+.pl.dest{background:linear-gradient(160deg,rgba(245,197,66,.16),rgba(245,197,66,.03) 60%),var(--n2);border:2.5px solid var(--ouro)}
+.pl .tag{position:absolute;top:-14px;left:28px;font-family:'Barlow Condensed',sans-serif;font-weight:800;letter-spacing:.14em;font-size:14px;background:var(--ouro);color:#1A1404;padding:6px 12px;border-radius:10px;text-transform:uppercase}
+.pl h3{font-size:27px}.pl .ds{color:var(--sub);font-size:16px;margin-top:8px}
+.pl ul{list-style:none;margin:20px 0 6px;display:flex;flex-direction:column;gap:9px}
+.pl li{padding-left:30px;position:relative;font-size:16px}
+.pl li:before{content:'';position:absolute;left:0;top:5px;width:18px;height:18px;border-radius:6px;background:var(--verde);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z'/%3E%3C/svg%3E") center/contain no-repeat}
+.pl li.mais{color:var(--ouro);font-weight:600}
+.preco{margin-top:auto;padding-top:22px}
+.preco .x{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px;color:var(--sub)}
+.preco .v{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:64px;line-height:1;color:var(--ouro)}
+.preco small{display:block;color:var(--sub);font-size:14px;margin-top:4px}
+.pl .btn{margin-top:20px;width:100%}
+.seguro{display:flex;flex-wrap:wrap;gap:18px;justify-content:center;margin-top:24px;color:var(--sub);font-size:14px}
+.seguro span{display:flex;align-items:center;gap:8px}.seguro svg{width:18px;height:18px;fill:var(--verde)}
+/* garantia */
+.gar{display:flex;gap:28px;align-items:center;border-radius:28px;padding:32px;background:rgba(61,220,151,.08);border:2px solid var(--verde);margin-top:40px}
+.gar b.n{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:96px;line-height:.9;color:var(--verde);text-align:center}.gar b.n small{display:block;font-size:22px;letter-spacing:.14em}
+.gar p{font-size:18px;color:var(--txt)}
+/* faq */
+.faq{margin-top:34px;display:flex;flex-direction:column;gap:10px;max-width:820px}
+details{border-radius:18px;background:#fff;border:1.5px solid #E6DCC8;padding:0 22px}
+summary{cursor:pointer;list-style:none;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:19px;padding:18px 30px 18px 0;position:relative}
+summary::-webkit-details-marker{display:none}
+summary:after{content:'+';position:absolute;right:0;top:12px;font-size:28px;color:#C4243A;font-weight:400}
+details[open] summary:after{content:'–'}
+details p{padding:0 0 18px;color:#4A5266;font-size:16px}
+/* final */
+.final{text-align:center;background:radial-gradient(80% 80% at 50% 0%,#FF7482,#E83346 55%,#B81E30);color:#fff}
+.final .sub{color:#FFE3E6;margin:16px auto 0}
+.final .btn{margin-top:28px;background:#fff;color:#B81E30}
+.ebook{display:flex;gap:16px;align-items:center;justify-content:center;flex-wrap:wrap;margin-top:22px;font-size:16px;color:#FFE3E6}
+.ebook a{color:#fff;font-weight:600}
+footer{padding:40px 0 100px;background:var(--n0);color:#7F8DAA;font-size:13.5px}
+footer .w{display:flex;flex-direction:column;gap:10px}
+footer b{color:var(--sub)}
+.fixo{position:fixed;left:12px;right:12px;bottom:12px;z-index:30;display:none}
+.fixo .btn{width:100%}
+@media (max-width:900px){
+  .hero .w,.tese,.autor,.planos{grid-template-columns:1fr}
+  .cena{height:460px;max-width:440px;margin:0 auto;width:100%}
+  .cel{width:215px}
+  .cards3,.recursos{grid-template-columns:1fr}
+  .passos{grid-template-columns:1fr 1fr}
+  .topo nav a.link{display:none}
+  .fixo{display:block}
+  section{padding:64px 0}
+  .gar{flex-direction:column;text-align:center}
+}
+@media (max-width:520px){.passos{grid-template-columns:1fr}.br{grid-template-columns:118px 1fr 22px;font-size:13px}.cel{width:180px}.cena{height:400px}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn{transition:none}}
+</style>
+</head>
+<body>
+
+<header class="topo">
+  <div class="w">
+    <a class="marca" href="#"><span><i></i><i></i></span>Método Aprovação OAB</a>
+    <nav>
+      <a class="link" href="#plataforma">A plataforma</a>
+      <a class="link" href="#planos">Planos</a>
+      <a class="link" href="#duvidas">Dúvidas</a>
+      <a class="link" id="entrar" href="../">Entrar</a>
+      <a class="btn pri" href="#planos">Quero começar</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<!-- HERO -->
+<section class="hero">
+  <div class="w">
+    <div>
+      <span class="selo">1ª fase do Exame de Ordem</span>
+      <h1>Chega de<span>reprovar.</span></h1>
+      <p class="sub">Você não precisa estudar as 20 disciplinas. Precisa estudar <b>o que a FGV cobra</b>, na ordem certa, até chegar aos <b>40 pontos</b>. A plataforma mostra onde você está e o que fazer hoje.</p>
+      <div class="acoes">
+        <a class="btn pri" href="#planos">Quero minha preparação →</a>
+        <a class="btn sec" href="ebook-chega-de-reprovar.pdf" download>Baixar o e-book grátis</a>
+      </div>
+      <div class="provas">
+        <div class="pv"><b>56%</b><small>45º Exame</small></div>
+        <div class="pv"><b>65%</b><small>46º Exame</small></div>
+        <div class="pv txt">O autor refez as duas provas 10 anos depois de aprovado, sem estudar.</div>
+      </div>
+      <p class="contagem" id="contagem"></p>
+    </div>
+    <div class="cena" aria-hidden="true">
+      <div class="cel a"><img src="img/m-painel.webp" alt=""></div>
+      <div class="cel b"><img src="img/c-acerto.webp" alt=""></div>
+      <img class="carteira" src="img/carteira.jpg" alt="">
+    </div>
+  </div>
+</section>
+
+<!-- DOR -->
+<section class="creme">
+  <div class="w">
+    <span class="selo">Se você já reprovou, leia isto</span>
+    <h2>Reprovar não é<br><em>falta de inteligência.</em></h2>
+    <p class="sub" style="margin-top:16px">É estudar tudo com a mesma força, quando a prova não pesa tudo igual.</p>
+    <div class="cards3">
+      <div class="card"><div class="n">20</div><b>disciplinas no edital</b><p>Tentar dominar todas leva ao cansaço e à sensação de nunca terminar.</p></div>
+      <div class="card"><div class="n">2</div><b>questões em 9 delas</b><p>Semanas em matérias que valem 2 pontos, enquanto as de 6 e 8 ficam para depois.</p></div>
+      <div class="card"><div class="n">40</div><b>acertos bastam</b><p>Não é uma prova para gabaritar. É uma prova para acertar o suficiente.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- TESE -->
+<section>
+  <div class="w">
+    <span class="selo">A tese do método</span>
+    <h2>Não é estudar menos.<br><em>É estudar onde está a nota.</em></h2>
+    <div class="tese">
+      <div>
+        <h3 style="margin-bottom:16px">Quantas questões cada disciplina vale</h3>
+        <div class="barras" id="barras"></div>
+        <p class="fonte">Distribuição observada nas 10 últimas provas da FGV (38º ao 47º Exame). A ordem e a quantidade não mudaram em nenhuma delas.</p>
+      </div>
+      <div>
+        <h3 style="margin-bottom:16px">A conta da aprovação</h3>
+        <div class="conta">
+          <div class="lin"><b class="n">32</b><p><strong>Ética + 4 disciplinas do Grupo A</strong> somam 32 das 80 questões.</p></div>
+          <div class="lin"><b class="n">24</b><p>Acertando <strong>3 de cada 4</strong> nelas, você faz 24 pontos.</p></div>
+          <div class="lin"><b class="n">16</b><p>Faltam 16 entre as outras 48: <strong>1 em cada 3</strong>.</p></div>
+          <div class="lin tot"><b class="n">40</b><p><strong>Aprovado para a 2ª fase</strong>, sem dominar as 20 disciplinas.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PLATAFORMA -->
+<section id="plataforma" style="background:var(--n0)">
+  <div class="w">
+    <span class="selo">A plataforma</span>
+    <h2>O Método dos 5 Passos,<br><em>transformado em treino.</em></h2>
+    <p class="sub" style="margin-top:16px">Cada passo do método virou uma ferramenta. Você abre no celular ou no computador, e seu progresso fica salvo.</p>
+    <div class="recursos">
+      <div class="rec"><div class="img"><img src="img/c-acerto.webp" alt="Questão do diagnóstico com resposta correta e explicação" loading="lazy"></div><div class="tx"><small>Passo 1 · Diagnóstico</small><h3>Uma prova oficial, com correção na hora</h3><p>Você responde e já vê se acertou, com a explicação e o artigo de lei. Pode pausar e continuar depois.</p></div></div>
+      <div class="rec"><div class="img"><img src="img/c-tv.webp" alt="Boletim de desempenho por disciplina" loading="lazy"></div><div class="tx"><small>Passo 3 · Relatório</small><h3>Seu raio-X nas 20 disciplinas</h3><p>Nota projetada, onde você já pontua, onde perde pontos e as 4 disciplinas de domínio sugeridas para você.</p></div></div>
+      <div class="rec"><div class="img"><img src="img/c-crono.webp" alt="Cronograma de estudos dia a dia" loading="lazy"></div><div class="tx"><small>Passo 2 e 4 · Cronograma</small><h3>Um GPS até o dia da prova</h3><p>Plano dia a dia com a missão diária de Ética, dividido em construção, consolidação e revisão final.</p></div></div>
+      <div class="rec"><div class="img"><img src="img/c-provas.webp" alt="Provas anteriores oficiais" loading="lazy"></div><div class="tx"><small>Passo 1 · Provas anteriores</small><h3>As 10 últimas provas da FGV</h3><p>Do 38º ao 47º Exame, com cartão-resposta e gabarito oficial. Cada novo diagnóstico usa outra prova: nunca repete.</p></div></div>
+      <div class="rec"><div class="img"><img src="img/c-radar.webp" alt="Radar de desempenho" loading="lazy"></div><div class="tx"><small>Passo 4 · Sinopses e exercícios</small><h3>O essencial de cada disciplina</h3><p>Sinopses de uma página com os temas que mais caem e as pegadinhas da banca, e exercícios por disciplina.</p></div></div>
+      <div class="rec"><div class="img"><img src="img/c-estudio.webp" alt="Estúdio de áudio" loading="lazy"></div><div class="tx"><small>Passo 5 · Estúdio de áudio</small><h3>Grave e ouça onde estiver</h3><p>Grave pelo celular explicando o tema, com roteiro na tela, e ouça no trajeto, na fila, antes de dormir.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- COMO FUNCIONA -->
+<section class="creme">
+  <div class="w">
+    <span class="selo">Como funciona</span>
+    <h2>Da compra ao diagnóstico<br><em>em 5 minutos.</em></h2>
+    <div class="passos">
+      <div class="ps"><b class="n">1</b><h3>Escolha seu plano</h3><p>Pague no checkout seguro, no cartão em até 12x ou no Pix.</p></div>
+      <div class="ps"><b class="n">2</b><h3>Receba o acesso</h3><p>A liberação é automática. Chega um e-mail para você criar sua senha.</p></div>
+      <div class="ps"><b class="n">3</b><h3>Faça o diagnóstico</h3><p>Uma prova oficial completa mostra sua nota hoje, disciplina por disciplina.</p></div>
+      <div class="ps"><b class="n">4</b><h3>Siga o plano</h3><p>Uma missão por dia e uma prova oficial por semana até os 40 pontos.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- AUTOR -->
+<section>
+  <div class="w autor">
+    <div class="foto"><img src="img/carteira.jpg" alt="Carteira da OAB do autor" loading="lazy"></div>
+    <div>
+      <span class="selo">Quem criou o método</span>
+      <h2>Adonias Lopes<br>de Araújo</h2>
+      <p>Advogado há mais de 10 anos, <strong>OAB/GO 50.607</strong>, com atuação em Direito Civil, do Consumidor, Trabalhista e Tributário.</p>
+      <p>Criei o método quando estudava para a OAB, treinando com provas anteriores. Passei. Dez anos depois, refiz as duas provas mais recentes <strong>sem estudar nada</strong> e tirei 56% e 65% — acima dos 50% que aprovam. Não foi sorte: foi saber onde estão os pontos. É esse caminho que a plataforma entrega.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PLANOS -->
+<section id="planos" style="background:radial-gradient(70% 60% at 50% 0%,#17305E,var(--n1) 70%)">
+  <div class="w">
+    <div style="text-align:center"><span class="selo">Planos</span>
+    <h2>Escolha como<br><em>quer chegar lá.</em></h2></div>
+    <div class="planos">
+      <div class="pl dest">
+        <span class="tag">Recomendado</span>
+        <h3>1ª fase · Acesso até a aprovação</h3>
+        <p class="ds">Seu acesso não vence enquanto você não passar na 1ª fase. Não passou neste exame? Continua treinando para o próximo, sem pagar de novo.</p>
+        <ul>
+          <li>Diagnóstico com prova oficial e relatório raio-X</li>
+          <li>As 10 últimas provas da FGV com correção na hora</li>
+          <li>Cronograma dia a dia até a data da prova</li>
+          <li>Sinopses e exercícios das 20 disciplinas</li>
+          <li>Estúdio de áudio</li>
+          <li>Acesso pelo celular e computador</li>
+        </ul>
+        <div class="preco"><span class="x">12x de</span> <span class="v">R$&nbsp;19,99</span><small>no cartão · ou à vista no Pix</small></div>
+        <a class="btn pri" data-checkout="1" href="#">Quero o acesso até a aprovação →</a>
+      </div>
+      <div class="pl">
+        <h3>Preparação completa · 1ª e 2ª fase</h3>
+        <p class="ds">Tudo do plano da 1ª fase e, depois da aprovação, a preparação para a prova prático-profissional da 2ª fase.</p>
+        <ul>
+          <li>Tudo do plano da 1ª fase</li>
+          <li class="mais">Preparação para a 2ª fase</li>
+          <li>Um só pagamento para as duas etapas</li>
+        </ul>
+        <div class="preco"><span class="x">12x de</span> <span class="v">R$&nbsp;49,90</span><small>no cartão · ou à vista no Pix</small></div>
+        <a class="btn ouro" data-checkout="2" href="#">Quero as duas fases →</a>
+      </div>
+    </div>
+    <div class="seguro">
+      <span><svg viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.4 9.7 8 11 4.6-1.3 8-6 8-11V5z"/></svg>Pagamento seguro</span>
+      <span><svg viewBox="0 0 24 24"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg>Liberação automática</span>
+      <span><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2m1 15h-2v-6h2zm0-8h-2V7h2z"/></svg>Garantia de 7 dias</span>
+    </div>
+    <div class="gar">
+      <b class="n">7<small>DIAS</small></b>
+      <p><b>Garantia incondicional.</b> Assine, faça seu diagnóstico e use a plataforma por 7 dias. Se não fizer sentido para a sua rotina, peça o reembolso direto na plataforma de pagamento — sem perguntas.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="creme" id="duvidas">
+  <div class="w">
+    <span class="selo">Dúvidas</span>
+    <h2>Perguntas<br><em>frequentes.</em></h2>
+    <div class="faq">
+      <details><summary>Como recebo o acesso depois de pagar?</summary><p>Automaticamente. Assim que o pagamento é aprovado, você recebe um e-mail com o link para criar sua senha. Use o mesmo e-mail que informou na compra. No Pix chega em poucos minutos; no cartão, assim que a operadora aprovar.</p></details>
+      <details><summary>O que significa "acesso até a aprovação"?</summary><p>Seu acesso ao plano da 1ª fase não vence enquanto você não for aprovado na 1ª fase. Se não passar em um exame, continua treinando para o próximo sem pagar de novo.</p></details>
+      <details><summary>As provas da plataforma são reais?</summary><p>Sim. São as 10 últimas provas da 1ª fase aplicadas pela FGV (38º ao 47º Exame), corrigidas pelo gabarito oficial, com as questões anuladas contadas a seu favor.</p></details>
+      <details><summary>Já reprovei mais de uma vez. Serve para mim?</summary><p>Foi feito para isso: para quem estudou tudo, cansou e precisa de prioridade, não de mais conteúdo.</p></details>
+      <details><summary>Preciso fazer cursinho junto?</summary><p>Não é obrigatório. O método funciona sozinho e também organiza o cursinho que você já faz.</p></details>
+      <details><summary>Funciona no celular?</summary><p>Sim. A plataforma abre no navegador do celular ou do computador, sem instalar nada, e guarda seu progresso.</p></details>
+      <details><summary>E se eu não gostar?</summary><p>Você tem 7 dias de garantia. Peça o reembolso pela plataforma de pagamento e recebe o valor de volta.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL -->
+<section class="final">
+  <div class="w">
+    <h2>A próxima prova pode ser<br>a última 1ª fase da sua vida.</h2>
+    <p class="sub">Comece hoje pelo diagnóstico e descubra quantos pontos faltam para os 40.</p>
+    <a class="btn" href="#planos">Quero começar agora →</a>
+    <div class="ebook">Ainda não está pronto? <a href="ebook-chega-de-reprovar.pdf" download>Baixe o e-book grátis "Chega de Reprovar"</a></div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="w">
+    <p><b>Método Aprovação OAB</b> · Adonias Lopes de Araújo · OAB/GO 50.607 · Goiânia/GO</p>
+    <p>Dúvidas: <a href="https://wa.me/5562982712108">WhatsApp (62) 98271-2108</a> · <a href="mailto:adoniaslopes.adv@gmail.com">adoniaslopes.adv@gmail.com</a></p>
+    <p>Material independente, sem vínculo com o Conselho Federal da OAB ou com a FGV. Este método é uma forma de organizar os estudos baseada na experiência do autor e não constitui promessa de aprovação: o resultado depende da dedicação de cada candidato.</p>
+    <p>Seus dados de compra são processados pela plataforma de pagamento e usados somente para liberar e manter o seu acesso.</p>
+    <p>© <span id="ano">2026</span> Adonias Lopes de Araújo. Todos os direitos reservados. Proibida a reprodução total ou parcial do conteúdo sem autorização (Lei nº 9.610/1998).</p>
+  </div>
+</footer>
+
+<div class="fixo"><a class="btn pri" href="#planos">Quero minha preparação · 12x R$&nbsp;19,99</a></div>
+
+<script>
+(function () {
+  var V = window.VENDAS || {};
+  // barras de peso
+  var D = [['Ética',8,'A'],['Civil',6,'A'],['Processo Civil',6,'A'],['Constitucional',6,'A'],['Penal',6,'A'],['Processo Penal',6,'A'],
+    ['Administrativo',5,'B'],['Trabalho',5,'B'],['Proc. do Trabalho',5,'B'],['Tributário',5,'B'],['Empresarial',4,'B'],
+    ['Direitos Humanos',2,'C'],['Consumidor',2,'C'],['ECA',2,'C'],['Ambiental',2,'C'],['Internacional',2,'C'],['Filosofia',2,'C'],['Eleitoral',2,'C'],['Financeiro',2,'C'],['Previdenciário',2,'C']];
+  var C = {A: '#FF4D5E', B: '#F5C542', C: '#3DDC97'};
+  document.getElementById('barras').innerHTML = D.map(function (d) {
+    return '<div class="br"><span>' + d[0] + '</span><div class="tr"><i style="width:' + (d[1] / 8 * 100) + '%;background:' + C[d[2]] + '"></i></div><b style="color:' + C[d[2]] + '">' + d[1] + '</b></div>';
+  }).join('');
+  // contagem até a prova (48º Exame, 1ª fase)
+  var prova = new Date('2027-01-10T13:00:00-03:00'), dias = Math.ceil((prova - new Date()) / 864e5);
+  if (dias > 0) document.getElementById('contagem').innerHTML = 'Faltam <b>' + dias + ' dias</b> para a 1ª fase do 48º Exame (10/01/2027).';
+  document.getElementById('ano').textContent = new Date().getFullYear();
+  document.getElementById('entrar').href = V.plataforma || '../';
+  // botões de checkout: link da plataforma de pagamento ou, enquanto não houver, WhatsApp
+  var nomes = {1: '1ª fase · acesso até a aprovação (12x R$ 19,99)', 2: '1ª e 2ª fase (12x R$ 49,90)'};
+  document.querySelectorAll('[data-checkout]').forEach(function (a) {
+    var n = a.getAttribute('data-checkout'), url = V['checkout' + n];
+    if (url) { a.href = url; a.rel = 'noopener'; }
+    else { a.href = 'https://wa.me/' + V.whatsapp + '?text=' + encodeURIComponent('Olá! Quero o plano ' + nomes[n] + ' do Método Aprovação OAB.'); a.target = '_blank'; a.rel = 'noopener'; }
+  });
+})();
+</script>
+</body>
+</html>
