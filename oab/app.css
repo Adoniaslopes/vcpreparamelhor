@@ -252,3 +252,12 @@ table.t { border-collapse: collapse; width: 100%; font-size: .9rem; }
 .tv-tx { flex: 1; min-width: 0; color: #fff; font-weight: 700; font-size: 1rem; letter-spacing: .03em; padding: 4px 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 8px; }
 .tv-tx i { font-style: normal; color: #E3262F; }
 @media (max-width: 560px) { .tv-cab, .tv-rolo { padding-left: 14px; padding-right: 14px; } .tv-lt, .tv-tick { margin-left: 14px; margin-right: 14px; } .tv-graf { height: 190px; } .tv-vl { font-size: 1.1rem; } }
+
+/* cartão-resposta da prova oficial */
+.cr h3 { display: flex; align-items: center; gap: 8px; }
+.cr-l { display: grid; grid-template-columns: 34px repeat(4, 40px); gap: 8px; align-items: center; padding: 4px 0; }
+.cr-l b { font-variant-numeric: tabular-nums; color: var(--tinta2); }
+.cr-b { width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--bolha); background: transparent; color: var(--tinta2); font: 700 .85rem var(--f-txt); cursor: pointer; }
+.cr-b:hover { border-color: var(--tinta2); }
+.cr-b.on { background: var(--tinta); border-color: var(--tinta); color: var(--papel2); }
+ul.caiu { list-style: none; padding: 0; margin: .4rem 0 0; display: flex; flex-direction: column; gap: 6px; font-size: .9rem; max-height: 340px; overflow-y: auto; }

@@ -82,7 +82,8 @@
   // "ate" (opcional) = carimbo de tempo: calcula o estado como estava naquele momento
   function treinoDisc(d, ate) {
     var h = S.hist.filter(function (x) { return QM[x.q] && QM[x.q].d === d && (ate == null || x.t <= ate); }).slice(-30);
-    return {n: h.length, ok: h.filter(function (x) { return x.ok; }).length};
+    var of = oficiaisDisc(d, ate);
+    return {n: h.length + of.n, ok: h.filter(function (x) { return x.ok; }).length + of.ok};
   }
   // domínio estimado: diagnóstico + treino recente (o treino pesa mais quando há volume)
   function dominio(d, ate, dgCache) {
@@ -163,8 +164,8 @@
       var it = [];
       if (simulado) {
         var ex = EXAMES[iEx++ % EXAMES.length];
-        it.push({p: 1, min: Math.min(M, 300), txt: (M >= 300 ? 'Resolva a prova do ' : 'Resolva metade (40 questões) da prova do ') + ex.n + 'º Exame (' + ex.ed + ') cronometrando, e lance seus acertos', link: '#provas'});
-        it.push({p: 4, min: Math.max(15, M - Math.min(M, 300) - au), txt: 'Corrija o simulado e anote no resumo os temas que errou', link: '#provas'});
+        it.push({p: 1, min: Math.min(M, 300), txt: (M >= 300 ? 'Resolva a prova do ' : 'Resolva metade (40 questões) da prova do ') + ex.n + 'º Exame (' + ex.ed + ') e marque no cartão-resposta', link: '#provas/' + ex.n});
+        it.push({p: 4, min: Math.max(15, M - Math.min(M, 300) - au), txt: 'Corrija pelo gabarito oficial e anote no resumo os assuntos que errou', link: '#provas/' + ex.n});
         it.push({p: 5, min: au, txt: 'Grave 3 minutos sobre o tema que mais errou no simulado', link: '#estudio'});
         out.push({data: dt, fase: fase, sim: true, it: it}); return;
       }
@@ -410,6 +411,7 @@
   function temasRevisar() {
     var er = errosAtuais(), cont = {};
     er.forEach(function (id) { var q = QM[id], k = q.d + '|' + q.t; cont[k] = (cont[k] || 0) + 1; });
+    errosOficiais().forEach(function (e) { var k = e.d + '|' + e.t + ' (' + e.ex + 'º Exame)'; cont[k] = (cont[k] || 0) + 1; });
     var l = Object.keys(cont).sort(function (a, b) { return cont[b] - cont[a]; }).slice(0, 6);
     if (!l.length) return '<p class="sub">Nenhum erro pendente. Continue treinando.</p>';
     return '<div class="pilha" style="font-size:.92rem">' + l.map(function (k) { var x = k.split('|'); return '<div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><span>' + tagDisc(x[0]) + ' ' + esc(x[1]) + '</span><a class="btn mini" href="#sinopses/' + x[0] + '">Revisar</a></div>'; }).join('') +
@@ -547,7 +549,7 @@
         s.tm.map(function (t) { return '<div class="tema"><h3>' + esc(t.t) + '</h3><ul>' + t.p.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>'; }).join('') +
         '</div><div class="pilha"><div class="peg"><h3>Pegadinhas da banca</h3><ul>' + s.pg.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>' +
         '<div class="bloco"><h3>Lei seca obrigatória</h3><ul style="padding-left:1.2rem;margin:0">' + s.lei.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>' +
-        '<div class="bloco"><h3>Passo 4 · seu resumo</h3><p class="peq">Depois de ler, escreva à mão uma página com o que você lembra. O que não veio à memória é o que você revisa amanhã.</p></div></div></div>';
+        blocoCaiu(arg) + '<div class="bloco"><h3>Passo 4 · seu resumo</h3><p class="peq">Depois de ler, escreva à mão uma página com o que você lembra. O que não veio à memória é o que você revisa amanhã.</p></div></div></div>';
     }
     return '<div class="cab"><div><h1>Sinopses</h1><p class="sub">Uma página por disciplina, com o que a FGV mais cobra. Ordenadas pelo peso na prova.</p></div></div>' +
       ['A', 'B', 'C'].map(function (g) {
@@ -614,29 +616,132 @@
       }).join('') + '</tbody></table></div>';
   };
 
-  // ---------- provas anteriores (Passo 1) ----------
-  R.provas = function () {
-    var reg = EXAMES.filter(function (e) { return S.provas[e.n] && S.provas[e.n].nota != null; });
-    var graf = '';
-    if (reg.length) {
-      var w = 560, hgt = 160, pts = reg.slice().reverse().map(function (e, i, a) { var x = a.length === 1 ? w / 2 : 30 + i * (w - 60) / (a.length - 1); return {x: x, y: hgt - 20 - (S.provas[e.n].nota / 80) * (hgt - 40), e: e}; });
-      var yc = hgt - 20 - (40 / 80) * (hgt - 40);
-      graf = '<svg viewBox="0 0 ' + w + ' ' + hgt + '" style="width:100%;max-width:640px;height:auto" role="img" aria-label="Evolução das notas nas provas anteriores">' +
-        '<line x1="20" x2="' + (w - 10) + '" y1="' + yc + '" y2="' + yc + '" stroke="var(--dourado)" stroke-dasharray="5 5"/><text x="22" y="' + (yc - 6) + '" font-size="12" fill="var(--tinta2)">40 = aprovação</text>' +
-        '<polyline fill="none" stroke="var(--tinta)" stroke-width="2.5" points="' + pts.map(function (p) { return p.x + ',' + p.y; }).join(' ') + '"/>' +
-        pts.map(function (p) { return '<circle cx="' + p.x + '" cy="' + p.y + '" r="5" fill="var(--papel2)" stroke="var(--tinta)" stroke-width="2.5"/><text x="' + p.x + '" y="' + (p.y - 10) + '" text-anchor="middle" font-size="12" font-weight="700" fill="var(--tinta)">' + S.provas[p.e.n].nota + '</text><text x="' + p.x + '" y="' + (hgt - 4) + '" text-anchor="middle" font-size="11" fill="var(--tinta2)">' + p.e.n + 'º</text>'; }).join('') + '</svg>';
+  // ---------- provas anteriores (Passo 1): treino com prova oficial ----------
+  // O aluno resolve no caderno oficial (Tipo 1) e marca aqui; a plataforma corrige pelo gabarito e desmonta por disciplina.
+  var LETRAS = 'ABCD';
+  function oficial(n) { S.oficiais = S.oficiais || {}; return S.oficiais[n] || null; }
+  function corrigirOficial(n) {
+    var p = OAB.PROVAS[n], o = oficial(n), porD = {}, nota = 0, erros = [];
+    D.forEach(function (d) { porD[d.id] = {n: 0, ok: 0}; });
+    for (var q = 1; q <= 80; q++) {
+      var g = p.gab[q - 1], r = o && o.resp[q], d = OAB.discDaQuestao(q), ok = g === 'X' || r === g;
+      porD[d].n++; if (ok) { porD[d].ok++; nota++; } else erros.push({q: q, d: d, r: r || '', g: g, t: p.temas.split('|')[q - 1]});
     }
-    var importadas = OAB.Q.filter(function (q) { return q.ex; }).length;
-    return '<div class="cab"><div><h1>Provas anteriores</h1><p class="sub">Passo 1 · Conheça seu inimigo. As 10 últimas provas da 1ª fase, do 38º ao 47º Exame.</p></div></div>' +
-      '<div class="grade g2"><div class="bloco"><p>Resolva uma prova por semana no tempo real (5 horas) e lance aqui quantas questões acertou. Os cadernos e gabaritos oficiais ficam no site da FGV.</p>' +
-      '<p><a class="btn" href="https://oab.fgv.br/" target="_blank" rel="noopener">Abrir o site da FGV · Exame de Ordem</a></p>' +
-      (importadas ? '<p class="peq sub">' + importadas + ' questões de provas oficiais já estão no banco de exercícios.</p>' : '') +
-      '<table class="t"><thead><tr><th>Exame</th><th>Edição</th><th>Seus acertos (de 80)</th></tr></thead><tbody>' +
-      EXAMES.map(function (e) { var v = S.provas[e.n] && S.provas[e.n].nota; return '<tr><td><b>' + e.n + 'º</b></td><td>' + e.ed + '</td><td><input type="number" min="0" max="80" inputmode="numeric" data-prova="' + e.n + '" value="' + (v == null ? '' : v) + '" style="max-width:110px;margin:0" aria-label="Acertos no ' + e.n + 'º Exame"></td></tr>'; }).join('') +
-      '</tbody></table></div><div class="bloco"><h2>Sua evolução</h2>' + (graf || '<p class="sub">Lance a nota da primeira prova resolvida para ver o gráfico.</p>') +
-      (nuvem.admin ? '<div style="margin-top:20px;border-top:1px solid var(--linha);padding-top:14px"><h3>Administração · importar questões oficiais</h3><p class="peq sub">Envie um arquivo questoes-provas.json (mesmo formato do banco, com o campo "ex" = número do exame). Questões anuladas devem ficar de fora.</p><input type="file" id="imp-provas" accept=".json"><p class="msg" id="imp-msg"></p></div>' : '') +
+    return {nota: nota, porD: porD, erros: erros};
+  }
+  // conta as provas oficiais concluídas como evidência de domínio por disciplina
+  function oficiaisDisc(d, ate) {
+    var r = {n: 0, ok: 0};
+    Object.keys(S.oficiais || {}).forEach(function (n) {
+      var o = S.oficiais[n]; if (!o.fim || (ate != null && o.fim > ate) || !OAB.PROVAS[n]) return;
+      var c = corrigirOficial(n).porD[d]; r.n += c.n; r.ok += c.ok;
+    });
+    return r;
+  }
+  function errosOficiais() {
+    var l = [];
+    Object.keys(S.oficiais || {}).forEach(function (n) { if (S.oficiais[n].fim) corrigirOficial(n).erros.forEach(function (e) { e.ex = n; l.push(e); }); });
+    return l;
+  }
+  function temasProvas(d) {
+    var l = [];
+    EXAMES.forEach(function (e) {
+      var p = OAB.PROVAS[e.n]; if (!p) return;
+      var t = p.temas.split('|');
+      OAB.FAIXAS.forEach(function (f) { if (f[0] !== d) return; for (var q = f[1]; q <= f[2]; q++) l.push({ex: e.n, q: q, t: t[q - 1], anulada: p.gab[q - 1] === 'X'}); });
+    });
+    return l;
+  }
+  function boletimOficial(n, res) {
+    var cols;
+    if (vistaDiag === 'grupos') {
+      cols = [['ÉTICA', 'Passo 2', ['etica']]].concat(['A', 'B', 'C'].map(function (g) {
+        return ['GRUPO ' + g, {A: 'decidem a prova', B: 'meio-campo', C: 'pontos rápidos'}[g], D.filter(function (d) { return d.g === g && d.id !== 'etica'; }).map(function (d) { return d.id; })];
+      })).map(function (x) {
+        var t = 0, ok = 0, m = 0, mq = 0;
+        x[2].forEach(function (id) { t += res.porD[id].n; ok += res.porD[id].ok; mq += DM[id].q; m += DM[id].q * metaDisc(DM[id]); });
+        return {rot: x[0], sub: x[1], a: ok / t, aTxt: pct(ok / t), b: m / mq, bTxt: pct(m / mq), ico: ok / t, leg: 'acertos', val: ok + '/' + t};
+      });
+    } else {
+      cols = D.filter(function (d) { return d.g === vistaDiag; }).map(function (d) {
+        var r = res.porD[d.id], p = r.ok / r.n;
+        return {rot: d.curto.toUpperCase(), sub: r.n + ' questões', a: p, aTxt: pct(p), b: metaDisc(d), bTxt: pct(metaDisc(d)), ico: p, leg: 'acertos', val: r.ok + '/' + r.n};
+      });
+    }
+    var abas = '<div class="tv-abas" role="tablist">' + [['grupos', 'Por grupo'], ['A', 'Grupo A'], ['B', 'Grupo B'], ['C', 'Grupo C']].map(function (x) {
+      return '<button role="tab" aria-selected="' + (vistaDiag === x[0]) + '" data-vdiag="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>';
+    return boletim({titulo: 'SUA PROVA DO ' + n + 'º EXAME', fonte: 'GABARITO OFICIAL DA FGV · CADERNO TIPO 1', legA: 'seu acerto', legB: 'sua meta', cols: cols, abas: abas,
+      tag: 'PROVA OFICIAL', manchete: 'NOTA ' + res.nota + ' DE 80: ' + (res.nota >= 40 ? 'APROVADO NA 1ª FASE' : 'FALTARAM ' + (40 - res.nota) + ' ACERTOS'),
+      linha: tempoTxt(D.map(function (d) { return {nome: d.curto, p: res.porD[d.id].ok / res.porD[d.id].n}; })),
+      ticker: D.map(function (d) { return d.curto.toUpperCase() + ' ' + res.porD[d.id].ok + '/' + res.porD[d.id].n; })});
+  }
+  function blocoCaiu(d) {
+    var l = temasProvas(d); if (!l.length) return '';
+    return '<div class="bloco"><h3>O que caiu nas últimas 10 provas</h3><p class="peq sub">Assunto de cada questão, do 47º ao 38º Exame (resumo aproximado).</p><ul class="caiu">' +
+      l.map(function (x) { return '<li><span class="tag">' + x.ex + 'º · q' + x.q + '</span> ' + esc(x.t) + '</li>'; }).join('') + '</ul></div>';
+  }
+  R.provas = function (arg) {
+    var n = arg && OAB.PROVAS[arg] ? +arg : null;
+    if (n) return telaProva(n);
+    var feitas = EXAMES.filter(function (e) { var o = oficial(e.n); return o && o.fim; });
+    var graf = '';
+    if (feitas.length) {
+      var w = 560, hgt = 170, l = feitas.slice().reverse();
+      var pts = l.map(function (e, i) { var nt = corrigirOficial(e.n).nota; return {x: l.length === 1 ? w / 2 : 40 + i * (w - 80) / (l.length - 1), y: hgt - 26 - (nt / 80) * (hgt - 50), nt: nt, e: e}; });
+      var yc = hgt - 26 - (40 / 80) * (hgt - 50);
+      graf = '<svg viewBox="0 0 ' + w + ' ' + hgt + '" style="width:100%;max-width:640px;height:auto" role="img" aria-label="Evolução das notas nas provas oficiais">' +
+        '<line x1="20" x2="' + (w - 10) + '" y1="' + yc + '" y2="' + yc + '" stroke="var(--dourado)" stroke-dasharray="5 5"/><text x="22" y="' + (yc - 6) + '" font-size="12" fill="var(--tinta2)">40 = aprovação</text>' +
+        (pts.length > 1 ? '<polyline fill="none" stroke="var(--tinta)" stroke-width="2.5" points="' + pts.map(function (p) { return p.x + ',' + p.y; }).join(' ') + '"/>' : '') +
+        pts.map(function (p) { return '<circle cx="' + p.x + '" cy="' + p.y + '" r="5" fill="var(--papel2)" stroke="var(--tinta)" stroke-width="2.5"/><text x="' + p.x + '" y="' + (p.y - 11) + '" text-anchor="middle" font-size="13" font-weight="700" fill="var(--tinta)">' + p.nt + '</text><text x="' + p.x + '" y="' + (hgt - 6) + '" text-anchor="middle" font-size="11" fill="var(--tinta2)">' + p.e.n + 'º</text>'; }).join('') + '</svg>';
+    }
+    return '<div class="cab"><div><h1>Provas anteriores</h1><p class="sub">Passo 1 · Conheça seu inimigo. As 10 últimas provas da 1ª fase, do 38º ao 47º Exame, corrigidas pelo gabarito oficial.</p></div></div>' +
+      '<div class="bloco" style="margin-bottom:16px"><h2>Como treinar com a prova oficial</h2><ol class="passos-lista">' +
+      '<li><span class="n">1</span><div>Abra o caderno <b>Tipo 1 (branco)</b> do exame escolhido.</div></li>' +
+      '<li><span class="n">2</span><div>Resolva em até 5 horas e marque suas respostas no cartão-resposta da plataforma.</div></li>' +
+      '<li><span class="n">3</span><div>Toque em <b>Corrigir</b>. Questões anuladas valem ponto para todos, como na prova real.</div></li>' +
+      '<li><span class="n">4</span><div>Veja o boletim por disciplina e os assuntos que você errou. Eles entram no seu relatório e no cronograma.</div></li></ol></div>' +
+      '<div class="grade g2"><div class="bloco"><table class="t"><thead><tr><th>Exame</th><th>Data</th><th>Situação</th><th></th></tr></thead><tbody>' +
+      EXAMES.map(function (e) {
+        var o = oficial(e.n), st = !o ? '<span class="sub">não iniciada</span>' : o.fim ? '<b>' + corrigirOficial(e.n).nota + '</b>/80' : '<span class="tag">em andamento · ' + Object.keys(o.resp).length + '/80</span>';
+        return '<tr><td><b>' + e.n + 'º</b></td><td>' + fmtData(OAB.PROVAS[e.n].data, true) + '</td><td>' + st + '</td><td><a class="btn mini" href="#provas/' + e.n + '">' + (!o ? 'Resolver' : o.fim ? 'Ver resultado' : 'Continuar') + '</a></td></tr>';
+      }).join('') + '</tbody></table></div><div class="bloco"><h2>Sua evolução</h2>' + (graf || '<p class="sub">Corrija a primeira prova para ver o gráfico.</p>') +
+      (nuvem.admin ? '<div style="margin-top:20px;border-top:1px solid var(--linha);padding-top:14px"><h3>Administração · importar questões</h3><p class="peq sub">Envie um arquivo questoes-provas.json (formato do banco, com o campo "ex" = número do exame).</p><input type="file" id="imp-provas" accept=".json"><p class="msg" id="imp-msg"></p></div>' : '') +
       '</div></div>';
   };
+  function telaProva(n) {
+    var p = OAB.PROVAS[n], o = oficial(n);
+    var links = '<a class="btn" href="https://jurisway.org.br/provas/oab/eou/' + n + '" target="_blank" rel="noopener">Abrir o caderno do ' + n + 'º Exame</a> <a class="btn" href="https://oab.fgv.br/" target="_blank" rel="noopener">Site da FGV</a>';
+    var topo = '<p class="noprint"><a href="#provas" class="link">Provas anteriores</a></p>';
+    if (!o) {
+      return topo + '<div class="cab"><div><h1>' + n + 'º Exame de Ordem</h1><p class="sub">Edição ' + p.ed + ' · aplicada em ' + fmtData(p.data, true) + '</p></div></div>' +
+        '<div class="bloco questao"><p>Use o caderno <b>Tipo 1 (branco)</b>. A ordem das questões dos outros tipos é diferente e a correção sairia errada.</p><p class="chips">' + links + '</p>' +
+        '<p class="peq sub">Gabarito: ' + esc(p.fonte) + '.</p><button class="btn pri" data-act="of-iniciar" data-ex="' + n + '">Começar a prova</button></div>';
+    }
+    if (o.fim) {
+      var res = corrigirOficial(n);
+      return topo + '<div class="cab"><div><h1>' + n + 'º Exame: ' + res.nota + ' de 80</h1><p class="sub">Corrigida em ' + fmtData(iso(new Date(o.fim)), true) + ' pelo gabarito oficial (caderno Tipo 1).</p></div>' +
+        '<div class="chips noprint"><button class="btn mini" data-act="of-refazer" data-ex="' + n + '">Refazer esta prova</button></div></div>' + boletimOficial(n, res) +
+        '<div class="bloco"><h2>Questões que você errou (' + res.erros.length + ')</h2>' + (res.erros.length ? '<div style="overflow-x:auto"><table class="t"><thead><tr><th>Nº</th><th>Disciplina</th><th>Assunto</th><th>Você</th><th>Gabarito</th><th></th></tr></thead><tbody>' +
+        res.erros.map(function (e) { return '<tr><td><b>' + e.q + '</b></td><td>' + tagDisc(e.d) + '</td><td>' + esc(e.t) + '</td><td>' + (e.r || '<span class="sub">branco</span>') + '</td><td><b>' + e.g + '</b></td><td><a class="btn mini" href="#sinopses/' + e.d + '">Sinopse</a></td></tr>'; }).join('') +
+        '</tbody></table></div><p class="peq sub" style="margin-top:10px">O assunto é um resumo aproximado. Releia a questão no caderno para entender o erro.</p>' : '<p>Gabaritou. Impressionante.</p>') + '</div>';
+    }
+    var resp = Object.keys(o.resp).length;
+    return topo + '<div class="cab"><div><h1 style="font-size:1.6rem">' + n + 'º Exame · cartão-resposta</h1><p class="sub">' + resp + ' de 80 marcadas · caderno Tipo 1</p></div><div class="sub" id="relogio-of">' + relogioOf(o) + '</div></div>' +
+      '<div class="prog"><i style="width:' + (resp / 80 * 100) + '%"></i></div><p class="chips noprint">' + links + '</p>' +
+      '<div class="grade g2">' + OAB.FAIXAS.map(function (f) {
+        var d = DM[f[0]], h = '<div class="bloco cr"><h3><span class="pt" style="background:' + d.cor + '"></span> ' + esc(d.nome) + '</h3>';
+        for (var q = f[1]; q <= f[2]; q++) {
+          h += '<div class="cr-l"><b>' + q + '</b>' + LETRAS.split('').map(function (L) { return '<button class="cr-b' + (o.resp[q] === L ? ' on' : '') + '" data-of="' + n + ':' + q + ':' + L + '" aria-label="Questão ' + q + ', letra ' + L + '" aria-pressed="' + (o.resp[q] === L) + '">' + L + '</button>'; }).join('') + '</div>';
+        }
+        return h + '</div>';
+      }).join('') + '</div><p style="margin-top:16px"><button class="btn ouro" data-act="of-corrigir" data-ex="' + n + '">Corrigir a prova</button></p>';
+  }
+  function relogioOf(o) { var s = o.seg || 0; return 'Tempo: ' + Math.floor(s / 3600) + 'h' + String(Math.floor(s / 60) % 60).padStart(2, '0') + ' de 5h00'; }
+  var cronOf = null;
+  function ligarRelogioOf(n) {
+    if (cronOf) clearInterval(cronOf);
+    cronOf = setInterval(function () { var o = oficial(n); if (!o || o.fim || document.hidden) return; o.seg = (o.seg || 0) + 1; var e = $('#relogio-of'); if (e) e.textContent = relogioOf(o); if (o.seg % 30 === 0) salvar(); }, 1000);
+  }
 
   // ---------- estúdio de áudio (Passo 5) ----------
   var gravador = null, pedacos = [];
@@ -686,12 +791,14 @@
     if (!S.perfil && r !== 'perfil') r = 'boasvindas';
     if (!R[r]) r = 'painel';
     if (r !== 'diagnostico') pararRelogio();
+    if (cronOf) { clearInterval(cronOf); cronOf = null; }
     if (r !== 'relatorio') escolha = null;
     if (r !== 'exercicios' || (sess && sess.modo !== arg)) { if (r !== 'exercicios') sess = null; }
     var main = $('#main');
     main.innerHTML = R[r](arg);
     $$('#menu a').forEach(function (a) { a.classList.toggle('on', a.dataset.r === r); });
     if (r === 'diagnostico' && S.diag.ini && !S.diag.fim) ligarRelogio();
+    if (r === 'provas' && arg && oficial(arg) && !oficial(arg).fim) ligarRelogioOf(arg);
     var mud = rota !== location.hash; rota = location.hash;
     if (mud) { window.scrollTo(0, 0); main.focus({preventScroll: true}); }
     ajustarGrades();
@@ -707,6 +814,14 @@
     if (ds.dia != null) { t.setAttribute('aria-pressed', t.getAttribute('aria-pressed') !== 'true'); return; }
     if (ds.af) { t.setAttribute('aria-pressed', t.getAttribute('aria-pressed') !== 'true'); return; }
     if (ds.vdiag) { vistaDiag = ds.vdiag; render(); return; }
+    if (ds.of) {
+      var pz = ds.of.split(':'), oo = oficial(pz[0]); if (!oo || oo.fim) return;
+      if (oo.resp[pz[1]] === pz[2]) delete oo.resp[pz[1]]; else oo.resp[pz[1]] = pz[2];
+      salvar();
+      $$('[data-of^="' + pz[0] + ':' + pz[1] + ':"]').forEach(function (b) { var on = oo.resp[pz[1]] === b.dataset.of.split(':')[2]; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
+      var nr = Object.keys(oo.resp).length, sb = $('.cab .sub'), pg = $('.prog i'); if (sb) sb.textContent = nr + ' de 80 marcadas · caderno Tipo 1'; if (pg) pg.style.width = (nr / 80 * 100) + '%';
+      return;
+    }
     if (ds.tema) { lsSet('ontop-tema', ds.tema); aplicarTema(); render(); return; }
     if (ds.dom) {
       var i = escolha.indexOf(ds.dom);
@@ -723,6 +838,14 @@
     if (ds.auDel) { idbTx('readwrite', function (s) { return s.delete(+ds.auDel); }).then(listarAudios); return; }
     if (t.id === 'au-rec') { alternarGravacao(); return; }
     var a = ds.act; if (!a) return;
+    if (a === 'of-iniciar') { S.oficiais = S.oficiais || {}; S.oficiais[ds.ex] = {resp: {}, ini: Date.now(), fim: null, seg: 0}; salvar(); render(); return; }
+    if (a === 'of-corrigir') {
+      var ofo = oficial(ds.ex), fz = 80 - Object.keys(ofo.resp).length;
+      var fecha = function () { ofo.fim = Date.now(); S.provas[ds.ex] = {nota: corrigirOficial(ds.ex).nota, t: Date.now()}; salvar(); window.scrollTo(0, 0); render(); };
+      if (fz) confirmar('Faltam ' + fz + ' questões sem marcação. Elas contam como erro (salvo as anuladas).', 'Corrigir mesmo assim', fecha); else fecha();
+      return;
+    }
+    if (a === 'of-refazer') { confirmar('Apagar suas respostas do ' + ds.ex + 'º Exame e começar de novo?', 'Refazer a prova', function () { delete S.oficiais[ds.ex]; delete S.provas[ds.ex]; salvar(); render(); }); return; }
     if (a === 'iniciar-diag') { S.diag.ini = Date.now(); S.diag.atual = 0; salvar(); render(); }
     else if (a === 'd-prox') { S.diag.atual = Math.min(79, S.diag.atual + 1); salvar(); render(); }
     else if (a === 'd-ant') { S.diag.atual = Math.max(0, S.diag.atual - 1); salvar(); render(); }
