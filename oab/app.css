@@ -261,3 +261,9 @@ table.t { border-collapse: collapse; width: 100%; font-size: .9rem; }
 .cr-b:hover { border-color: var(--tinta2); }
 .cr-b.on { background: var(--tinta); border-color: var(--tinta); color: var(--papel2); }
 ul.caiu { list-style: none; padding: 0; margin: .4rem 0 0; display: flex; flex-direction: column; gap: 6px; font-size: .9rem; max-height: 340px; overflow-y: auto; }
+
+/* peso das disciplinas (gráfico de Pareto) */
+.peso-graf { overflow-x: auto; }
+.peso-graf svg { width: 100%; min-width: 620px; height: auto; display: block; }
+.tese { border-left: 4px solid var(--dourado); background: var(--papel); border-radius: 0 var(--r-p) var(--r-p) 0; padding: 12px 16px; }
+.tese p { margin: 0 0 .5em; }

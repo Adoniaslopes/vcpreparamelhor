@@ -346,6 +346,55 @@
     return h;
   }
 
+
+  // ---------- quanto vale cada disciplina (a tese do método: não é preciso estudar tudo) ----------
+  function pesoProva() {
+    var pc = function (x) { return (Math.round(x * 1000) / 10).toString().replace('.', ',') + '%'; };
+    var ord = D.slice().sort(function (a, b) { return b.q - a.q || (a.g < b.g ? -1 : 1); });
+    var W = 760, H = 300, L = 44, R = 44, T = 34, B = 92, n = ord.length, bw = (W - L - R) / n, maxQ = 8;
+    var y = function (q) { return T + (H - T - B) * (1 - q / maxQ); }, yc = function (p) { return T + (H - T - B) * (1 - p); };
+    var acc = 0, pts = [], grupos = {A: [0, 0], B: [0, 0], C: [0, 0]};
+    var faixas = '', barras = '', rot = '';
+    ord.forEach(function (d, i) {
+      var x = L + i * bw; acc += d.q; pts.push({x: x + bw / 2, y: yc(acc / 80), p: acc / 80, d: d});
+      if (!grupos[d.g][1]) grupos[d.g][0] = i; grupos[d.g][1] = i + 1;
+      var dom = S.dominio && S.dominio.indexOf(d.id) > -1;
+      barras += '<rect x="' + (x + 3) + '" y="' + y(d.q) + '" width="' + (bw - 6) + '" height="' + (H - B - y(d.q)) + '" rx="3" fill="' + d.cor + '"' + (dom || d.id === 'etica' ? '' : ' fill-opacity=".55"') + '><title>' + esc(d.nome) + ': ' + d.q + ' questões</title></rect>' +
+        '<text x="' + (x + bw / 2) + '" y="' + (y(d.q) - 5) + '" text-anchor="middle" font-size="12" font-weight="700" fill="var(--tinta)">' + d.q + '</text>';
+      rot += '<text transform="translate(' + (x + bw / 2 + 4) + ' ' + (H - B + 10) + ') rotate(-55)" text-anchor="end" font-size="11" fill="var(--tinta2)">' + (dom || d.id === 'etica' ? '★ ' : '') + esc(d.curto) + '</text>';
+    });
+    ['A', 'B', 'C'].forEach(function (g) {
+      var x0 = L + grupos[g][0] * bw, x1 = L + grupos[g][1] * bw;
+      faixas += '<rect x="' + x0 + '" y="' + (T - 22) + '" width="' + (x1 - x0) + '" height="' + (H - B - T + 22) + '" fill="' + OAB.GRUPOS[g].cor + '" fill-opacity=".08"/>' +
+        '<text x="' + ((x0 + x1) / 2) + '" y="' + (T - 8) + '" text-anchor="middle" font-size="12" font-weight="700" fill="var(--tinta2)">Grupo ' + g + '</text>';
+    });
+    var linha = 'M' + pts.map(function (p) { return p.x + ' ' + p.y; }).join(' L');
+    var marcos = [grupos.A[1] - 1, grupos.B[1] - 1].map(function (i) { var p = pts[i]; return '<circle cx="' + p.x + '" cy="' + p.y + '" r="5" fill="var(--papel2)" stroke="var(--tinta)" stroke-width="2.5"/><text x="' + (p.x + 8) + '" y="' + (p.y + 16) + '" font-size="13" font-weight="800" fill="var(--tinta)">' + pc(p.p) + '</text>'; }).join('');
+    var eixoD = [0, 0.5, 1].map(function (p) { return '<text x="' + (W - R + 6) + '" y="' + (yc(p) + 4) + '" font-size="11" fill="var(--tinta2)">' + Math.round(p * 100) + '%</text><line x1="' + L + '" x2="' + (W - R) + '" y1="' + yc(p) + '" y2="' + yc(p) + '" stroke="var(--linha)" stroke-dasharray="' + (p ? '3 4' : '0') + '"/>'; }).join('');
+    var svg = '<div class="peso-graf"><svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Questões por disciplina e percentual acumulado da prova">' + faixas + eixoD + barras +
+      '<path d="' + linha + '" fill="none" stroke="var(--tinta)" stroke-width="2.5"/>' + marcos + rot +
+      '<text x="' + (L - 8) + '" y="' + (T + 4) + '" text-anchor="end" font-size="11" fill="var(--tinta2)">8</text><text x="' + (L - 8) + '" y="' + (H - B + 4) + '" text-anchor="end" font-size="11" fill="var(--tinta2)">0</text></svg></div>';
+    var soma = function (g) { return D.filter(function (d) { return d.g === g; }).reduce(function (s, d) { return s + d.q; }, 0); };
+    var qa = soma('A'), qb = soma('B'), qc = soma('C'), nC = D.filter(function (d) { return d.g === 'C'; }).length;
+    var cards = [['A', qa, D.filter(function (d) { return d.g === 'A'; }).length], ['B', qb, D.filter(function (d) { return d.g === 'B'; }).length], ['C', qc, nC]].map(function (x) {
+      return '<div class="kpi" style="border-top:4px solid ' + OAB.GRUPOS[x[0]].cor + '"><div class="num">' + x[1] + ' <span class="sub" style="font-size:1rem">pontos · ' + pc(x[1] / 80) + '</span></div><div class="sub">' + esc(OAB.GRUPOS[x[0]].nome) + ' · ' + x[2] + ' disciplinas</div></div>';
+    }).join('');
+    // a prova da tese, com as escolhas do aluno
+    var tese;
+    if (S.dominio && S.dominio.length) {
+      var qd = S.dominio.reduce(function (s, id) { return s + DM[id].q; }, 0), foco = 8 + qd, garante = Math.round(foco * 0.75), resto = 80 - foco, falta = Math.max(0, 40 - garante);
+      tese = '<p>Ética e as suas 4 disciplinas de domínio (' + S.dominio.map(function (id) { return esc(DM[id].curto); }).join(', ') + ') valem <b>' + foco + ' das 80 questões</b>. Acertando 3 de cada 4 nelas, você faz <b>' + garante + ' pontos</b>. ' +
+        (falta ? 'Faltam ' + falta + ' para os 40, e eles vêm das outras ' + resto + ' questões: basta acertar <b>' + Math.ceil(falta / resto * 100) + '% do restante</b>' + (falta / resto <= 0.25 ? ', menos do que o acerto de um chute (25%).' : ', um pouco acima do acerto de um chute (25%). As sinopses e os pontos rápidos do Grupo C cuidam disso.') : 'Só isso já garante a aprovação.') + '</p>';
+    } else {
+      tese = '<p>As 6 disciplinas do Grupo A valem ' + qa + ' questões. Somadas às 5 do Grupo B, chegam a ' + (qa + qb) + ' das 80. As ' + nC + ' disciplinas do Grupo C, juntas, valem só ' + qc + '.</p>';
+    }
+    return '<section class="bloco" style="margin:16px 0"><div class="cab" style="margin-bottom:10px"><div><h2 style="margin:0">Você não precisa estudar tudo. Precisa estudar o certo.</h2>' +
+      '<p class="sub">Cada questão vale 1 ponto, e o corte é 40. Veja quanto cada disciplina vale na prova da FGV.</p></div></div>' +
+      '<div class="kpis" style="margin-bottom:14px">' + cards + '</div>' + svg +
+      '<p class="peq sub" style="margin:6px 0 12px">Barras: questões por disciplina. Linha: quanto da prova você cobre somando da maior para a menor. ★ = Ética e suas disciplinas de domínio.</p>' +
+      '<div class="tese">' + tese + '<p class="peq sub" style="margin:0">As ' + nC + ' disciplinas do Grupo C somam ' + qc + ' questões, menos que Ética, Civil e Processo Civil juntas (' + (8 + DM.civil.q + DM.pcivil.q) + '). Estudar tudo por igual é gastar o mesmo tempo em matérias que valem 2 pontos e em matérias que valem 8.</p></div></section>';
+  }
+
   // ---------- telas ----------
   var R = {};
 
@@ -387,9 +436,10 @@
       '<div><span class="num" style="color:#E6C24E">40</span><small>para passar</small></div></div>' +
       (diagFeito() ? '' : '<p style="margin-top:18px"><a class="btn ouro" href="#diagnostico">Fazer o diagnóstico</a></p>') +
       '</div><div><p class="sub peq" style="margin-bottom:8px">As 80 questões da prova. Bolhas cheias são as que você já tende a acertar.</p>' + cartaoProva() + '</div></section>';
-    if (!diagFeito()) return h + '<div class="vazio"><h2>Comece pelo diagnóstico</h2><p>Uma prova completa, com a mesma distribuição da FGV, mostra em quais disciplinas você já pontua e em quais está perdendo pontos. Com ela, o relatório indica suas 4 disciplinas de domínio e o cronograma é gerado.</p><a class="btn pri" href="#diagnostico">Fazer o diagnóstico</a></div>';
-    if (!S.dominio) return h + '<div class="vazio"><h2>Escolha suas 4 disciplinas de domínio</h2><p>Seu relatório está pronto. Confirme as disciplinas e gere o cronograma.</p><a class="btn pri" href="#relatorio">Ver relatório</a></div>';
+    if (!diagFeito()) return h + pesoProva() + '<div class="vazio"><h2>Comece pelo diagnóstico</h2><p>Uma prova completa, com a mesma distribuição da FGV, mostra em quais disciplinas você já pontua e em quais está perdendo pontos. Com ela, o relatório indica suas 4 disciplinas de domínio e o cronograma é gerado.</p><a class="btn pri" href="#diagnostico">Fazer o diagnóstico</a></div>';
+    if (!S.dominio) return h + pesoProva() + '<div class="vazio"><h2>Escolha suas 4 disciplinas de domínio</h2><p>Seu relatório está pronto. Confirme as disciplinas e gere o cronograma.</p><a class="btn pri" href="#relatorio">Ver relatório</a></div>';
     h += boletimDias() || boletimDiag();
+    h += pesoProva();
     var c = crono(), hj = hojeISO(), dia = c.find(function (x) { return x.data >= hj; });
     var miss = '';
     if (!dia) miss = '<p>Seu cronograma terminou. Bom exame!</p>';
