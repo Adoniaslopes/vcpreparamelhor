@@ -248,8 +248,8 @@
   // o: {titulo, fonte, legA, legB, cols:[{rot, sub, a (0-1), aTxt, b (0-1), bTxt, ico (0-1), leg, val}], tag, manchete, linha, ticker:[...], abas}
   function boletim(o) {
     var n = o.cols.length;
-    var pa = o.cols.map(function (c, i) { return {x: (i + 0.5) / n * 100, y: 42 - Math.max(0, Math.min(1, c.a)) * 24}; });
-    var pb = o.cols.map(function (c, i) { return c.b == null ? null : {x: (i + 0.5) / n * 100, y: 90 - Math.max(0, Math.min(1, c.b)) * 24}; });
+    var pa = o.cols.map(function (c, i) { return {x: (i + 0.5) / n * 100, y: 47 - Math.max(0, Math.min(1, c.a)) * 24}; });
+    var pb = o.cols.map(function (c, i) { return c.b == null ? null : {x: (i + 0.5) / n * 100, y: 92 - Math.max(0, Math.min(1, c.b)) * 21}; });
     var pbOk = pb.filter(Boolean);
     var pontos = function (ps, txts, cls) {
       return ps.map(function (p, i) { return p ? '<span class="tv-pt ' + cls + '" style="left:' + p.x + '%;top:' + p.y + '%"></span><span class="tv-vl" style="left:' + p.x + '%;top:' + p.y + '%">' + esc(txts[i]) + '</span>' : ''; }).join('');
@@ -642,7 +642,7 @@
     if (g.fim) {
       var n = notaDiag(), dg = diagPorDisc(), vals = D.map(function (d) { return dg[d.id].ok / dg[d.id].n; });
       var fortes = D.filter(function (d, k) { return vals[k] >= 0.7; }), fracos = D.filter(function (d, k) { return vals[k] < 0.4; }).sort(function (a, b) { return b.q - a.q; });
-      return cena({selo: 'Diagnóstico concluído', titulo: 'Seu raio-X: ' + n + ' de 80',
+      return cena({selo: 'Diagnóstico concluído', titulo: 'Seu raio‑X: ' + n + ' de 80',
         lead: (n >= 40 ? 'Hoje você já passaria na 1ª fase. Agora o trabalho é proteger essa nota e abrir margem de segurança.' : 'Faltam ' + (40 - n) + ' acertos para a aprovação. Não é preciso dominar as 20 disciplinas: o radar mostra exatamente onde estão os pontos mais baratos de conquistar.') +
           ' Verde é ponto forte; vermelho é o que reforçar; a linha dourada é a sua meta.',
         extra: '<div class="chips" style="margin-top:14px"><a class="btn pri" href="#relatorio">Ver meu relatório</a><a class="btn" href="#cronograma">Montar meu plano</a></div>',
