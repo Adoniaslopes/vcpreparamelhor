@@ -586,6 +586,32 @@
       '<div class="coment">' + esc(q.x) + '</div>';
   }
 
+
+  // rodadas de diagnóstico: a 1ª com questões inéditas; as seguintes, cada uma com uma prova oficial diferente (47º, 46º, ...)
+  function proximaProvaDiag() {
+    var em = EXAMES.filter(function (e) { var o = (S.oficiais || {})[e.n]; return o && o.diag && !o.fim; })[0];
+    if (em) return em.n;
+    var livre = EXAMES.filter(function (e) { return !(S.oficiais || {})[e.n]; })[0];
+    return livre ? livre.n : null;
+  }
+  function rodadasDiag() {
+    var l = [];
+    if (diagFeito()) l.push({nome: 'Diagnóstico inédito', nota: notaDiag(), fim: S.diag.fim, porD: diagPorDisc(), link: '#diagnostico'});
+    Object.keys(S.oficiais || {}).forEach(function (n) {
+      var o = S.oficiais[n]; if (!o.diag || !o.fim || !OAB.PROVAS[n]) return;
+      var r = corrigirOficial(n); l.push({nome: 'Prova oficial do ' + n + 'º Exame', nota: r.nota, fim: o.fim, porD: r.porD, link: '#provas/' + n, ex: n});
+    });
+    return l.sort(function (a, b) { return a.fim - b.fim; });
+  }
+  function blocoRodadas() {
+    var l = rodadasDiag(), nx = proximaProvaDiag(), emAndamento = nx && S.oficiais && S.oficiais[nx] && !S.oficiais[nx].fim;
+    return '<div class="bloco"><h2>Seus diagnósticos</h2><p class="sub peq">Cada novo diagnóstico usa uma prova oficial diferente, sem repetir questões.</p>' +
+      '<table class="t"><thead><tr><th>Rodada</th><th>Prova</th><th>Nota</th><th>Data</th><th></th></tr></thead><tbody>' +
+      l.map(function (x, i) { return '<tr><td><b>' + (i + 1) + 'ª</b></td><td>' + esc(x.nome) + '</td><td><b style="color:' + (x.nota >= 40 ? 'var(--verde)' : 'var(--vermelho)') + '">' + x.nota + '</b>/80</td><td>' + fmtData(iso(new Date(x.fim))) + '</td><td><a class="btn mini" href="' + x.link + '">Ver</a></td></tr>'; }).join('') +
+      '</tbody></table><p style="margin:14px 0 0">' + (nx ? '<button class="btn pri" data-act="diag-novo">' + (emAndamento ? 'Continuar o diagnóstico do ' + nx + 'º Exame' : 'Fazer novo diagnóstico com o ' + nx + 'º Exame') + '</button>' : '<span class="sub">Você já usou as 10 provas oficiais.</span>') + '</p>' +
+      '<p class="peq sub" style="margin:10px 0 0">Nas rodadas com prova oficial, você abre o caderno Tipo 1 e marca no cartão-resposta. A correção aparece na hora, questão por questão.</p></div>';
+  }
+
   // ---------- telas ----------
   var R = {};
 
@@ -672,18 +698,18 @@
   R.diagnostico = function () {
     var g = S.diag;
     if (g.fim) {
-      var n = notaDiag(), dg = diagPorDisc(), vals = D.map(function (d) { return dg[d.id].ok / dg[d.id].n; });
+      var rods = rodadasDiag(), ult = rods[rods.length - 1], n = ult.nota, dg = ult.porD, vals = D.map(function (d) { return dg[d.id].n ? dg[d.id].ok / dg[d.id].n : 0; });
       var fortes = D.filter(function (d, k) { return vals[k] >= 0.7; }), fracos = D.filter(function (d, k) { return vals[k] < 0.4; }).sort(function (a, b) { return b.q - a.q; });
-      return cena({selo: 'Diagnóstico concluído', titulo: 'Seu raio‑X: ' + n + ' de 80',
+      return cena({selo: rods.length > 1 ? rods.length + 'ª rodada · ' + ult.nome : 'Diagnóstico concluído', titulo: 'Seu raio‑X: ' + n + ' de 80',
         lead: (n >= 40 ? 'Hoje você já passaria na 1ª fase. Agora o trabalho é proteger essa nota e abrir margem de segurança.' : 'Faltam ' + (40 - n) + ' acertos para a aprovação. Não é preciso dominar as 20 disciplinas: o radar mostra exatamente onde estão os pontos mais baratos de conquistar.') +
           ' Verde é ponto forte; vermelho é o que reforçar; a linha dourada é a sua meta.',
         extra: '<div class="chips" style="margin-top:14px"><a class="btn pri" href="#relatorio">Ver meu relatório</a><a class="btn" href="#cronograma">Montar meu plano</a></div>',
         arte: radar(vals, metaVet())}) +
         '<div class="grade g2"><div class="bloco forte"><h2>O que já é seu</h2>' + (fortes.length ? '<div class="chips">' + fortes.map(function (d) { return tagDisc(d.id); }).join('') + '</div><p class="peq sub" style="margin:10px 0 0">Mantenha com revisões curtas. Não gaste seu tempo principal aqui.</p>' : '<p class="sub">Nenhuma disciplina acima de 70% ainda. É normal no começo.</p>') + '</div>' +
         '<div class="bloco reforco"><h2>O que reforçar</h2>' + (fracos.length ? '<div class="chips">' + fracos.map(function (d) { return tagDisc(d.id); }).join('') + '</div><p class="peq sub" style="margin:10px 0 0">Ordenadas pelo peso na prova: as primeiras devolvem mais pontos.</p>' : '<p class="sub">Nenhuma disciplina abaixo de 40%.</p>') + '</div></div>' +
-        boletimDiag() +
-        '<div class="grade g2"><div class="bloco"><h2>Seu cartão-resposta</h2>' + cartaoDiag(true) + '<p class="peq sub" style="margin-top:12px">Verde: acerto. Vermelho: erro. Tracejado: marcou "não sei".</p></div>' +
-        '<div class="bloco"><h2>Medir de novo</h2><p>Depois de algumas semanas de plano, refaça o diagnóstico para ver o radar crescer. As alternativas mudam de ordem.</p><button class="btn mini" data-act="refazer-diag">Refazer diagnóstico</button></div></div>';
+        (ult.ex ? boletimOficial(ult.ex, corrigirOficial(ult.ex)) : boletimDiag()) +
+        '<div class="grade g2">' + (ult.ex ? '<div class="bloco"><h2>Rodada com prova oficial</h2><p>Os erros desta rodada, com o assunto de cada questão, estão na página da prova.</p><a class="btn" href="#provas/' + ult.ex + '">Ver questões erradas do ' + ult.ex + 'º Exame</a></div>' : '<div class="bloco"><h2>Seu cartão-resposta</h2>' + cartaoDiag(true) + '<p class="peq sub" style="margin-top:12px">Verde: acerto. Vermelho: erro. Tracejado: marcou "não sei".</p></div>') +
+        blocoRodadas() + '</div>';
     }
     if (!g.ini) {
       return cena({selo: 'Diagnóstico', titulo: 'Antes de estudar, a gente mede.',
@@ -699,7 +725,9 @@
     }
     var i = g.atual, q = QM[DIAG[i]], d = DM[q.d], o = ordemAlt(q), r = g.resp[q.id];
     var resp = Object.keys(g.resp).length;
-    return '<div class="cab"><div><h1 style="font-size:1.6rem">Diagnóstico</h1><p class="sub">Questão ' + (i + 1) + ' de 80 · ' + resp + ' respondidas</p></div><div class="sub" id="relogio" aria-live="off">' + relogio() + '</div></div>' +
+    var parc = DIAG.filter(function (id) { return g.resp[id] === QM[id].c; }).length;
+    return '<div class="cab"><div><h1 style="font-size:1.6rem">Diagnóstico</h1><p class="sub">Questão ' + (i + 1) + ' de 80 · ' + resp + ' respondidas · <b style="color:var(--verde)">' + parc + ' acertos</b> até aqui</p></div>' +
+      '<div class="chips"><span class="sub" id="relogio" aria-live="off">' + relogio() + '</span><button class="btn mini" data-act="pausar">Pausar e continuar depois</button></div></div>' +
       '<div class="prog"><i style="width:' + (resp / 80 * 100) + '%"></i></div>' +
       '<div class="grade" style="grid-template-columns:minmax(0,1fr) minmax(220px,300px);align-items:start" id="diag-grid"><div class="questao">' +
       '<p>' + tagDisc(q.d) + '</p><div class="enun">' + esc(q.e) + '</div><div class="alts">' +
@@ -1010,16 +1038,22 @@
         res.erros.map(function (e) { return '<tr><td><b>' + e.q + '</b></td><td>' + tagDisc(e.d) + '</td><td>' + esc(e.t) + '</td><td>' + (e.r || '<span class="sub">branco</span>') + '</td><td><b>' + e.g + '</b></td><td><a class="btn mini" href="#sinopses/' + e.d + '">Sinopse</a></td></tr>'; }).join('') +
         '</tbody></table></div><p class="peq sub" style="margin-top:10px">O assunto é um resumo aproximado. Releia a questão no caderno para entender o erro.</p>' : '<p>Gabaritou. Impressionante.</p>') + '</div>';
     }
-    var resp = Object.keys(o.resp).length;
-    return topo + '<div class="cab"><div><h1 style="font-size:1.6rem">' + n + 'º Exame · cartão-resposta</h1><p class="sub">' + resp + ' de 80 marcadas · caderno Tipo 1</p></div><div class="sub" id="relogio-of">' + relogioOf(o) + '</div></div>' +
+    var resp = Object.keys(o.resp).length, acertos = Object.keys(o.resp).filter(function (q) { return p.gab[q - 1] === 'X' || o.resp[q] === p.gab[q - 1]; }).length;
+    var temas = p.temas.split('|');
+    return topo + '<div class="cab"><div><h1 style="font-size:1.6rem">' + (o.diag ? 'Diagnóstico · ' : '') + n + 'º Exame · cartão-resposta</h1><p class="sub">' + resp + ' de 80 marcadas · <b style="color:var(--verde)">' + acertos + ' acertos</b> até aqui · caderno Tipo 1</p></div>' +
+      '<div class="chips"><span class="sub" id="relogio-of">' + relogioOf(o) + '</span><button class="btn mini" data-act="pausar">Pausar e continuar depois</button></div></div>' +
       '<div class="prog"><i style="width:' + (resp / 80 * 100) + '%"></i></div><p class="chips noprint">' + links + '</p>' +
-      '<div class="grade g2">' + OAB.FAIXAS.map(function (f) {
+      '<div class="grade crg">' + OAB.FAIXAS.map(function (f) {
         var d = DM[f[0]], h = '<div class="bloco cr"><h3><span class="pt" style="background:' + d.cor + '"></span> ' + esc(d.nome) + '</h3>';
         for (var q = f[1]; q <= f[2]; q++) {
-          h += '<div class="cr-l"><b>' + q + '</b>' + LETRAS.split('').map(function (L) { return '<button class="cr-b' + (o.resp[q] === L ? ' on' : '') + '" data-of="' + n + ':' + q + ':' + L + '" aria-label="Questão ' + q + ', letra ' + L + '" aria-pressed="' + (o.resp[q] === L) + '">' + L + '</button>'; }).join('') + '</div>';
+          var mr = o.resp[q], gb = p.gab[q - 1], certo = mr && (gb === 'X' || mr === gb);
+          h += '<div class="cr-l' + (mr ? ' cr-feita' : '') + '"><b>' + q + '</b>' + LETRAS.split('').map(function (L) {
+            var cls = !mr ? '' : L === mr ? (certo ? ' ok' : ' er') : (L === gb && !certo ? ' gab' : '');
+            return '<button class="cr-b' + cls + '" data-of="' + n + ':' + q + ':' + L + '" aria-label="Questão ' + q + ', letra ' + L + '"' + (mr ? ' disabled' : '') + '>' + L + '</button>'; }).join('') +
+            (mr ? '<span class="cr-fb ' + (certo ? 'ok' : 'er') + '">' + (gb === 'X' ? 'anulada: ponto para todos' : certo ? 'acertou!' : 'era ' + gb) + ' <i>' + esc(temas[q - 1]) + '</i></span>' : '') + '</div>';
         }
         return h + '</div>';
-      }).join('') + '</div><p style="margin-top:16px"><button class="btn ouro" data-act="of-corrigir" data-ex="' + n + '">Corrigir a prova</button></p>';
+      }).join('') + '</div><p style="margin-top:16px" class="chips"><button class="btn ouro" data-act="of-corrigir" data-ex="' + n + '">Encerrar e ver o resultado completo</button><button class="btn" data-act="pausar">Pausar e continuar depois</button></p>';
   }
   function relogioOf(o) { var s = o.seg || 0; return 'Tempo: ' + Math.floor(s / 3600) + 'h' + String(Math.floor(s / 60) % 60).padStart(2, '0') + ' de 5h00'; }
   var cronOf = null;
@@ -1107,9 +1141,8 @@
     }
     if (ds.vdiag) { vistaDiag = ds.vdiag; render(); return; }
     if (ds.of) {
-      var pz = ds.of.split(':'), oo = oficial(pz[0]); if (!oo || oo.fim) return;
-      if (oo.resp[pz[1]] === pz[2]) delete oo.resp[pz[1]]; else oo.resp[pz[1]] = pz[2];
-      salvar();
+      var pz = ds.of.split(':'), oo = oficial(pz[0]); if (!oo || oo.fim || oo.resp[pz[1]]) return;
+      oo.resp[pz[1]] = pz[2]; salvar(); render(); return;
       $$('[data-of^="' + pz[0] + ':' + pz[1] + ':"]').forEach(function (b) { var on = oo.resp[pz[1]] === b.dataset.of.split(':')[2]; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
       var nr = Object.keys(oo.resp).length, sb = $('.cab .sub'), pg = $('.prog i'); if (sb) sb.textContent = nr + ' de 80 marcadas · caderno Tipo 1'; if (pg) pg.style.width = (nr / 80 * 100) + '%';
       return;
@@ -1131,6 +1164,12 @@
     if (t.id === 'au-rec') { alternarGravacao(); return; }
     var a = ds.act; if (!a) return;
     if (a === 'ir-form') { var fm = $('#f-perfil'); if (fm) { fm.scrollIntoView({behavior: 'smooth', block: 'start'}); setTimeout(function () { var i = $('#p-nome'); if (i) i.focus({preventScroll: true}); }, 400); } return; }
+    if (a === 'pausar') { salvar(); toast('Pausado. Seu progresso está salvo: continue quando quiser.'); location.hash = '#painel'; return; }
+    if (a === 'diag-novo') {
+      var nx = proximaProvaDiag(); if (!nx) { toast('Você já usou as 10 provas oficiais.'); return; }
+      S.oficiais = S.oficiais || {}; if (!S.oficiais[nx]) S.oficiais[nx] = {resp: {}, ini: Date.now(), fim: null, seg: 0, diag: true};
+      salvar(); location.hash = '#provas/' + nx; return;
+    }
     if (a === 'of-iniciar') { S.oficiais = S.oficiais || {}; S.oficiais[ds.ex] = {resp: {}, ini: Date.now(), fim: null, seg: 0}; salvar(); render(); return; }
     if (a === 'of-corrigir') {
       var ofo = oficial(ds.ex), fz = 80 - Object.keys(ofo.resp).length;
