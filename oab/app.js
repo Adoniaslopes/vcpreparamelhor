@@ -481,27 +481,22 @@
       '<defs><linearGradient id="gm" x1="0" x2="1"><stop offset="0" stop-color="#FF4D5E"/><stop offset=".5" stop-color="#F5C542"/><stop offset="1" stop-color="#3DDC97"/></linearGradient></defs>' +
       '<path d="M' + (cx - R) + ' ' + cy + ' A' + R + ' ' + R + ' 0 0 1 ' + (cx + R) + ' ' + cy + '" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="16" stroke-linecap="round"/>' +
       (v == null ? '' : '<path class="medidor-v" d="M' + (cx - R) + ' ' + cy + ' A' + R + ' ' + R + ' 0 0 1 ' + (cx + R) + ' ' + cy + '" fill="none" stroke="url(#gm)" stroke-width="16" stroke-linecap="round" stroke-dasharray="' + (L * f).toFixed(1) + ' ' + L.toFixed(1) + '"/>') +
-      '<line x1="' + mx + '" y1="' + (my - 12) + '" x2="' + mx + '" y2="' + (my + 12) + '" stroke="#F5C542" stroke-width="3"/>' +
+      '<line x1="' + mx + '" y1="' + (my - 12) + '" x2="' + mx + '" y2="' + (my + (v == null ? 8 : 12)) + '" stroke="#F5C542" stroke-width="3"/>' +
       '<text x="' + mx + '" y="' + (my - 18) + '" text-anchor="middle" font-size="11" fill="#F5C542" font-weight="700">40</text>' +
       (v == null ? carteiraOAB(cx, cy) : '<text x="' + cx + '" y="' + (cy - 14) + '" text-anchor="middle" font-size="44" font-weight="800" fill="#fff" font-family="Bricolage Grotesque, sans-serif">' + Math.round(v) + '</text>' +
       '<text x="' + cx + '" y="' + (cy + 8) + '" text-anchor="middle" font-size="11" fill="#B9C7DE">nota projetada de 80</text>') + '</svg></div>';
   }
   // a carteira vermelha da OAB: o objetivo final do aluno (desenho próprio, sem o brasão oficial)
   function carteiraOAB(cx, cy) {
-    var w = 54, h = 72, x = cx - w / 2, y = cy - 72, g = '#E8C66A', m = x + w / 2;
-    var t = function (yy, txt, fs, wt, ls) { return '<text x="' + m + '" y="' + (y + yy) + '" text-anchor="middle" font-size="' + fs + '" font-weight="' + (wt || 600) + '" fill="' + g + '" letter-spacing="' + (ls || 0) + '" font-family="IBM Plex Sans, sans-serif">' + txt + '</text>'; };
-    var estrela = '', cxS = m, cyS = y + 27;
-    for (var k = 0; k < 10; k++) { var a = -Math.PI / 2 + k * Math.PI / 5, r = k % 2 ? 2.6 : 6; estrela += (k ? 'L' : 'M') + (cxS + Math.cos(a) * r).toFixed(2) + ' ' + (cyS + Math.sin(a) * r).toFixed(2); }
-    return '<g class="carteira"><rect x="' + (x + 3) + '" y="' + (y + 4) + '" width="' + w + '" height="' + h + '" rx="5" fill="rgba(0,0,0,.4)"/>' +
-      '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="5" fill="#8E1B24"/>' +
-      '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="5" fill="url(#brilho)" opacity=".35"/>' +
-      t(9, 'ORDEM DOS ADVOGADOS DO BRASIL', 3.1, 600, .1) +
-      '<circle cx="' + cxS + '" cy="' + cyS + '" r="10" fill="none" stroke="' + g + '" stroke-width=".9"/><circle cx="' + cxS + '" cy="' + cyS + '" r="8" fill="none" stroke="' + g + '" stroke-width=".4" stroke-dasharray="1 1"/><path d="' + estrela + 'Z" fill="' + g + '"/>' +
-      t(48, 'CARTEIRA DE IDENTIDADE', 4.1, 700) + t(55, 'DE', 4.1, 700) + t(65, 'ADVOGADO', 6.6, 800, .3) + '</g>' +
-      '<defs><linearGradient id="brilho" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".5"/><stop offset=".4" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>' +
-      '<text x="' + cx + '" y="' + (cy + 14) + '" text-anchor="middle" font-size="11" fill="#B9C7DE">sua meta é esta carteira</text>' +
-      '<text x="' + cx + '" y="' + (cy + 28) + '" text-anchor="middle" font-size="10" fill="#8FA3C7">faça o diagnóstico para medir a distância</text>';
+    var w = 62, h = 86, x = cx - w / 2, y = cy - 83;
+    var img = OAB.CARTEIRA ? '<image href="' + OAB.CARTEIRA + '" x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" preserveAspectRatio="xMidYMid slice" clip-path="url(#clipCart)"/>' :
+      '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="5" fill="#8E1B24"/>';
+    return '<defs><clipPath id="clipCart"><rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="5"/></clipPath></defs>' +
+      '<g class="carteira"><rect x="' + (x + 3) + '" y="' + (y + 4) + '" width="' + w + '" height="' + h + '" rx="5" fill="rgba(0,0,0,.45)"/>' + img + '</g>' +
+      '<text x="' + cx + '" y="' + (cy + 18) + '" text-anchor="middle" font-size="11" fill="#B9C7DE">sua meta é esta carteira</text>' +
+      '<text x="' + cx + '" y="' + (cy + 31) + '" text-anchor="middle" font-size="10" fill="#8FA3C7">faça o diagnóstico para medir a distância</text>';
   }
+
   // a rota da aprovação: onde o aluno está
   function rotaAprovacao() {
     var nOf = Object.keys(S.oficiais || {}).filter(function (n) { return S.oficiais[n].fim; }).length;
