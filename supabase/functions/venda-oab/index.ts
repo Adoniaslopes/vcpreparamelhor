@@ -1,4 +1,4 @@
-// Recebe o aviso de venda da Hotmart ou da Hubla e libera o acesso à plataforma Método Aprovação OAB sozinho.
+// Recebe o aviso de venda da Kiwify, da Hotmart ou da Hubla e libera o acesso à plataforma Método Aprovação OAB sozinho.
 // Publicação: Supabase > Edge Functions > nova função "venda-oab" (desligar "Verify JWT", pois quem chama é a plataforma de pagamento).
 // Segredos (Edge Functions > Secrets):
 //   VENDA_CHAVE         palavra secreta que vai no fim da URL do webhook (?chave=...)
@@ -42,15 +42,16 @@ Deno.serve(async (req) => {
   if (ehHotmart && hottok && tokRecebido !== hottok) return json({ erro: 'hottok inválido' }, 401);
 
   // 2) lê os dados da compra
-  const origem = ehHotmart ? 'hotmart' : 'hubla';
-  const evento = pega(corpo, ['event', 'type', 'evento', 'event.type', 'data.purchase.status', 'status', 'data.status', 'event.invoice.status']);
-  const status = pega(corpo, ['data.purchase.status', 'status', 'data.status', 'event.invoice.status', 'event.status']);
-  const email = pega(corpo, ['data.buyer.email', 'buyer.email', 'event.userEmail', 'event.user.email', 'event.payer.email', 'event.invoice.payer.email',
+  const ehKiwify = !ehHotmart && (corpo.webhook_event_type != null || corpo.order_status != null || corpo.Customer != null);
+  const origem = ehHotmart ? 'hotmart' : ehKiwify ? 'kiwify' : 'hubla';
+  const evento = pega(corpo, ['webhook_event_type', 'event', 'type', 'evento', 'event.type', 'data.purchase.status', 'status', 'data.status', 'event.invoice.status']);
+  const status = pega(corpo, ['order_status', 'data.purchase.status', 'status', 'data.status', 'event.invoice.status', 'event.status']);
+  const email = pega(corpo, ['Customer.email', 'data.buyer.email', 'buyer.email', 'event.userEmail', 'event.user.email', 'event.payer.email', 'event.invoice.payer.email',
     'data.customer.email', 'customer.email', 'payer.email', 'user.email', 'email']).trim().toLowerCase();
-  const nome = pega(corpo, ['data.buyer.name', 'buyer.name', 'event.userName', 'event.user.name', 'event.payer.name', 'event.invoice.payer.name',
+  const nome = pega(corpo, ['Customer.full_name', 'data.buyer.name', 'buyer.name', 'event.userName', 'event.user.name', 'event.payer.name', 'event.invoice.payer.name',
     'data.customer.name', 'customer.name', 'payer.name', 'user.name', 'name']);
-  const transacao = pega(corpo, ['data.purchase.transaction', 'transaction', 'event.invoice.id', 'event.transactionId', 'data.id', 'id']);
-  const produto = [pega(corpo, ['data.product.id', 'product.id', 'event.product.id', 'event.groupId', 'data.product.ucode']),
+  const transacao = pega(corpo, ['order_id', 'data.purchase.transaction', 'transaction', 'event.invoice.id', 'event.transactionId', 'data.id', 'id']);
+  const produto = [pega(corpo, ['Product.product_id', 'data.product.id', 'product.id', 'event.product.id', 'event.groupId', 'data.product.ucode']),
     pega(corpo, ['data.purchase.offer.code', 'offer.code', 'event.offer.id', 'event.invoice.offerId'])].filter(Boolean);
 
   const ids2 = (Deno.env.get('PRODUTOS_2FASES') || '').split(',').map((s) => s.trim()).filter(Boolean);
