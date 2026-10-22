@@ -1,4 +1,4 @@
-/* Método On Top OAB — plataforma de estudos para a 1ª fase do Exame de Ordem.
+/* Método Aprovação OAB — plataforma de estudos para a 1ª fase do Exame de Ordem.
    Fluxo: perfil → diagnóstico (prova completa de 80 questões) → relatório → escolha das 4 disciplinas
    de domínio → cronograma pelos 5 passos → painel, sinopses, exercícios, provas anteriores e estúdio de áudio. */
 (function () {
@@ -356,7 +356,7 @@
       return '<button type="button" class="chip" data-af="' + d.id + '" aria-pressed="' + (p.afin.indexOf(d.id) > -1) + '"><span class="pt" style="background:' + d.cor + '"></span>' + esc(d.curto) + '</button>';
     }).join('');
     var horas = ''; for (var h = 1; h <= 8; h++) horas += '<option value="' + h + '"' + (h === p.horas ? ' selected' : '') + '>' + h + (h === 1 ? ' hora' : ' horas') + '</option>';
-    return '<section class="hero" style="grid-template-columns:1fr"><div><div class="marca" style="color:#fff;margin-bottom:14px"><span class="bolha cheia"></span><span class="bolha"></span> Método On Top OAB</div>' +
+    return '<section class="hero" style="grid-template-columns:1fr"><div><div class="marca" style="color:#fff;margin-bottom:14px"><span class="bolha cheia"></span><span class="bolha"></span> Método Aprovação OAB</div>' +
       '<h1>Você não precisa saber tudo.<br>Precisa saber o certo.</h1>' +
       '<p class="sub">O método que aprovou o Dr. Adonias Lopes há 10 anos — e que ele testou de novo refazendo as duas últimas provas sem estudar: 56 e 65 pontos de aproveitamento. Primeiro você faz uma prova completa; depois a plataforma mostra onde estão seus pontos e monta o seu cronograma.</p></div></section>' +
       '<div class="grade g2"><div class="bloco"><h2>Como funciona</h2><ol class="passos-lista">' +
@@ -868,7 +868,7 @@
     else if (a === 'ex-novo') { novaSessao(sess.modo); render(); }
     else if (a === 'backup') {
       var b = new Blob([JSON.stringify(S)], {type: 'application/json'}), u = URL.createObjectURL(b), l = document.createElement('a');
-      l.href = u; l.download = 'on-top-oab-backup-' + hojeISO() + '.json'; document.body.appendChild(l); l.click(); l.remove();
+      l.href = u; l.download = 'metodo-aprovacao-oab-backup-' + hojeISO() + '.json'; document.body.appendChild(l); l.click(); l.remove();
     }
     else if (a === 'zerar') { confirmar('Apagar todo o seu progresso neste aparelho' + (nuvem.ativo ? ' e na sua conta' : '') + '?', 'Apagar tudo', function () { S = novoEstado(); invalidarCrono(); salvar(); location.hash = '#perfil'; render(); }); }
   });

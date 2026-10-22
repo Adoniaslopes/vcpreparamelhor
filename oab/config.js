@@ -1,4 +1,4 @@
-/* Configuração da plataforma Método On Top OAB.
+/* Configuração da plataforma Método Aprovação OAB.
    Com url e anonKey preenchidos, a plataforma exige login e usa o mesmo projeto Supabase
    da plataforma da Transpetro (tabelas perfis e progresso). Deixe em branco para modo local. */
 window.ONTOP_CONFIG = {

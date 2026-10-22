@@ -30,7 +30,7 @@ OAB.GRUPOS = {
   B: { nome: 'Grupo B — o meio-campo', cor: '#4C8DFF' },
   C: { nome: 'Grupo C — pontos rápidos', cor: '#5AD07A' }
 };
-/* Os 5 passos do Método On Top OAB */
+/* Os 5 passos do Método Aprovação OAB */
 OAB.PASSOS = [
   { n: 1, nome: 'Conheça seu inimigo', txt: 'Resolva as provas anteriores antes de qualquer teoria. A banca repete temas, estilos e pegadinhas.' },
   { n: 2, nome: 'Estatuto todos os dias', txt: 'Ética são 8 questões e a matéria mais previsível da prova. Lei 8.906/94 e Código de Ética, um pouco por dia, sem falhar.' },
