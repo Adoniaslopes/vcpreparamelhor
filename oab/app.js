@@ -438,8 +438,8 @@
       '</div><div><p class="sub peq" style="margin-bottom:8px">As 80 questões da prova. Bolhas cheias são as que você já tende a acertar.</p>' + cartaoProva() + '</div></section>';
     if (!diagFeito()) return h + pesoProva() + '<div class="vazio"><h2>Comece pelo diagnóstico</h2><p>Uma prova completa, com a mesma distribuição da FGV, mostra em quais disciplinas você já pontua e em quais está perdendo pontos. Com ela, o relatório indica suas 4 disciplinas de domínio e o cronograma é gerado.</p><a class="btn pri" href="#diagnostico">Fazer o diagnóstico</a></div>';
     if (!S.dominio) return h + pesoProva() + '<div class="vazio"><h2>Escolha suas 4 disciplinas de domínio</h2><p>Seu relatório está pronto. Confirme as disciplinas e gere o cronograma.</p><a class="btn pri" href="#relatorio">Ver relatório</a></div>';
-    h += boletimDias() || boletimDiag();
     h += pesoProva();
+    h += boletimDias() || boletimDiag();
     var c = crono(), hj = hojeISO(), dia = c.find(function (x) { return x.data >= hj; });
     var miss = '';
     if (!dia) miss = '<p>Seu cronograma terminou. Bom exame!</p>';
