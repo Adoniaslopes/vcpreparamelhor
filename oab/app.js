@@ -395,6 +395,78 @@
       '<div class="tese">' + tese + '<p class="peq sub" style="margin:0">As ' + nC + ' disciplinas do Grupo C somam ' + qc + ' questões, menos que Ética, Civil e Processo Civil juntas (' + (8 + DM.civil.q + DM.pcivil.q) + '). Estudar tudo por igual é gastar o mesmo tempo em matérias que valem 2 pontos e em matérias que valem 8.</p></div></section>';
   }
 
+
+  // ---------- perfil automático (sem formulário de entrada, como na plataforma da Transpetro) ----------
+  function garantirPerfil() {
+    if (!S.perfil) S.perfil = {nome: nuvem.nome || '', prova: OAB.EXAME.data, dias: [1, 2, 3, 4, 5, 6], horas: 3, afin: []};
+    if (!S.perfil.nome && nuvem.nome) S.perfil.nome = nuvem.nome;
+    return S.perfil;
+  }
+  // próximo passo único, no topo do painel
+  function proximoPasso() {
+    var t, x, b, l;
+    if (!diagFeito()) {
+      var andamento = S.diag.ini && !S.diag.fim;
+      t = andamento ? 'Termine o seu diagnóstico' : 'Comece pelo diagnóstico';
+      x = andamento ? 'Você já respondeu ' + Object.keys(S.diag.resp).length + ' de 80 questões. Ao terminar, o relatório mostra onde estão os seus pontos.' :
+        'Uma prova completa de 80 questões, na distribuição da FGV. Ela mostra em quais disciplinas você já pontua e onde está perdendo pontos.';
+      b = andamento ? 'Continuar o diagnóstico' : 'Fazer o diagnóstico'; l = '#diagnostico';
+    } else if (!S.dominio) {
+      t = 'Monte o seu cronograma'; x = 'Seu diagnóstico está pronto. Confirme as 4 disciplinas de domínio e os seus dias de estudo para gerar o plano até a prova.'; b = 'Montar cronograma'; l = '#cronograma';
+    } else return '';
+    return '<div class="bloco proximo"><div><h2>' + t + '</h2><p class="sub" style="margin:0">' + x + '</p></div><a class="btn pri" href="' + l + '">' + b + '</a></div>';
+  }
+
+  // ---------- cronograma: montar o plano dentro da própria aba ----------
+  var escolhaCr = null;
+  function planoForm() {
+    var p = garantirPerfil();
+    if (!escolhaCr) escolhaCr = (S.dominio || recomendar()).slice();
+    var rec = recomendar(), dg = diagFeito() ? diagPorDisc() : null;
+    var horas = ''; for (var h = 1; h <= 8; h++) horas += '<option value="' + h + '"' + (h === p.horas ? ' selected' : '') + '>' + h + (h === 1 ? ' hora' : ' horas') + '</option>';
+    var cand = D.filter(function (d) { return d.g !== 'C' && d.id !== 'etica'; });
+    return '<form class="bloco" id="f-plano"><h2>' + (S.dominio ? 'Ajustar o plano' : 'Montar o cronograma') + '</h2>' +
+      '<div class="grade g3" style="gap:12px"><label>Data da prova<input type="date" id="p-prova" required value="' + esc(p.prova) + '"></label>' +
+      '<label>Horas de estudo por dia<select id="p-horas">' + horas + '</select></label></div>' +
+      '<p class="peq sub" style="margin:-.4rem 0 .8rem">Padrão: 1ª fase do ' + OAB.EXAME.nome + ', ' + fmtData(OAB.EXAME.data, true) + '.</p>' +
+      '<div style="margin-bottom:1rem"><div class="rot">Dias em que você estuda</div><div class="chips">' +
+      SEMANA.map(function (s, i) { return '<button type="button" class="chip" data-dia="' + i + '" aria-pressed="' + (p.dias.indexOf(i) > -1) + '">' + s + '</button>'; }).join('') + '</div></div>' +
+      '<div style="margin-bottom:1rem"><div class="rot">Suas 4 disciplinas de domínio</div><p class="peq sub" style="margin:.1rem 0 .5rem">' +
+      (dg ? 'A sugestão (★) vem do seu diagnóstico e do peso de cada disciplina.' : 'Sem o diagnóstico, a sugestão (★) usa só o peso de cada disciplina. Fazer o diagnóstico antes deixa a escolha mais certeira.') + ' Ética entra todos os dias.</p><div class="chips">' +
+      cand.map(function (d) { return '<button type="button" class="chip" data-domc="' + d.id + '" aria-pressed="' + (escolhaCr.indexOf(d.id) > -1) + '"><span class="pt" style="background:' + d.cor + '"></span>' + esc(d.curto) + ' · ' + d.q + 'q' + (dg ? ' · ' + pct(dg[d.id].ok / dg[d.id].n) : '') + (rec.indexOf(d.id) > -1 ? ' ★' : '') + '</button>'; }).join('') +
+      '</div><p class="peq sub" style="margin-top:6px">' + escolhaCr.length + ' de 4 escolhidas</p></div>' +
+      '<button class="btn pri" type="submit"' + (escolhaCr.length !== 4 ? ' disabled' : '') + '>' + (S.dominio ? 'Atualizar cronograma' : 'Gerar cronograma') + '</button><p class="msg" id="p-msg"></p></form>';
+  }
+
+  // ---------- relatório: desempenho do aluno, de todas as fontes ----------
+  function pontosPerdidos() {
+    var l = D.map(function (d) { var x = dominio(d.id); return {d: d, x: x, perde: x == null ? null : d.q * (1 - x)}; }).filter(function (o) { return o.perde != null; });
+    if (!l.length) return '';
+    l.sort(function (a, b) { return b.perde - a.perde; });
+    var tot = l.reduce(function (s, o) { return s + o.perde; }, 0), max = l[0].perde || 1;
+    return '<div class="bloco" style="margin-top:16px"><h2>Onde você está deixando pontos</h2><p class="sub">Questões que você tende a errar em cada disciplina, considerando diagnóstico, treinos e provas oficiais. Somam ' + Math.round(tot) + ' pontos.</p><div class="barras">' +
+      l.slice(0, 8).map(function (o) {
+        return '<div class="barra"><span class="nm"><span class="pt" style="background:' + o.d.cor + '"></span>' + esc(o.d.curto) + (S.dominio && S.dominio.indexOf(o.d.id) > -1 ? ' <span class="dom-mark">★</span>' : '') + '</span><span class="trilho"><i style="width:' + Math.round(o.perde / max * 100) + '%;background:var(--vermelho)"></i></span><span class="vl">' + o.perde.toFixed(1).replace('.', ',') + '</span></div>';
+      }).join('') + '</div><p class="peq sub" style="margin:10px 0 0">Valor = pontos perdidos em média por prova. Recuperar os primeiros da lista rende mais que estudar o resto.</p></div>';
+  }
+  function relProvas() {
+    var feitas = EXAMES.filter(function (e) { var o = (S.oficiais || {})[e.n]; return o && o.fim; });
+    if (!feitas.length) return '';
+    var porD = {}; D.forEach(function (d) { porD[d.id] = {n: 0, ok: 0}; });
+    var linhas = feitas.map(function (e) { var r = corrigirOficial(e.n); D.forEach(function (d) { porD[d.id].n += r.porD[d.id].n; porD[d.id].ok += r.porD[d.id].ok; }); return '<tr><td><b>' + e.n + 'º</b></td><td>' + r.nota + '/80</td><td>' + (r.nota >= 40 ? '<span class="tag" style="color:var(--verde)">aprovado</span>' : '<span class="tag" style="color:var(--vermelho)">faltaram ' + (40 - r.nota) + '</span>') + '</td><td><a class="btn mini" href="#provas/' + e.n + '">Ver</a></td></tr>'; }).join('');
+    return '<div class="grade g2" style="margin-top:16px"><div class="bloco"><h2>Provas oficiais</h2><table class="t"><thead><tr><th>Exame</th><th>Nota</th><th>Resultado</th><th></th></tr></thead><tbody>' + linhas + '</tbody></table></div>' +
+      '<div class="bloco"><h2>Acerto nas provas oficiais</h2><p class="sub peq">Soma de todas as provas que você corrigiu.</p><div class="barras">' +
+      D.map(function (d) { var r = porD[d.id]; return barra(esc(d.curto), d.cor, r.n ? r.ok / r.n : null, metaDisc(d), ' <span class="sub peq">(' + r.ok + '/' + r.n + ')</span>'); }).join('') + '</div></div></div>';
+  }
+  function relTreinos() {
+    var h = S.hist.filter(function (x) { return QM[x.q]; });
+    if (!h.length) return '';
+    var porD = {}; h.forEach(function (x) { var d = QM[x.q].d; if (!porD[d]) porD[d] = {n: 0, ok: 0}; porD[d].n++; if (x.ok) porD[d].ok++; });
+    var ok = h.filter(function (x) { return x.ok; }).length;
+    return '<div class="bloco" style="margin-top:16px"><h2>Exercícios</h2><p class="sub">' + h.length + ' questões resolvidas · ' + pct(ok / h.length) + ' de acerto.</p><div class="barras">' +
+      D.filter(function (d) { return porD[d.id]; }).map(function (d) { var r = porD[d.id]; return barra(esc(d.curto), d.cor, r.ok / r.n, metaDisc(d), ' <span class="sub peq">(' + r.ok + '/' + r.n + ')</span>'); }).join('') + '</div></div>' + boletimDias();
+  }
+
   // ---------- telas ----------
   var R = {};
 
@@ -425,13 +497,15 @@
       '</ol></div></div>' + (S.perfil ? '' : pesoProva());
   };
   R.perfil = function () {
-    return R.boasvindas() + '<div class="grade g2" style="margin-top:16px"><div class="bloco"><h2>Aparência</h2><div class="chips">' +
+    var p = garantirPerfil();
+    return '<div class="cab"><div><h1>Meu perfil</h1><p class="sub">Seus dados e preferências. Data da prova, horas e dias de estudo ficam no Cronograma.</p></div></div>' +
+      '<div class="grade g2"><form class="bloco" id="f-nome"><h2>Como podemos te chamar?</h2><label>Nome<input id="p-nome" required value="' + esc(p.nome) + '"></label><button class="btn pri" type="submit">Salvar</button></form>' +
+      '<div class="bloco"><h2>Aparência</h2><div class="chips">' +
       ['auto', 'light', 'dark'].map(function (t) { return '<button class="chip" data-tema="' + t + '" aria-pressed="' + ((lsGet('ontop-tema') || 'auto') === t) + '">' + {auto: 'Automático', light: 'Claro', dark: 'Escuro'}[t] + '</button>'; }).join('') +
       '</div></div><div class="bloco"><h2>Seus dados</h2><p class="sub peq">' + (nuvem.ativo ? 'Seu progresso é salvo na sua conta.' : 'Seu progresso fica salvo neste navegador. Faça uma cópia de segurança de vez em quando.') + '</p>' +
       '<div class="chips">' + (ARTEFATO ? '' : '<button class="btn mini" data-act="backup">Baixar cópia</button>') + '<label class="btn mini" style="margin:0">Restaurar cópia<input type="file" id="restaurar" accept=".json" hidden></label>' +
       '<button class="btn mini" data-act="zerar">Apagar tudo e recomeçar</button></div></div></div>';
   };
-
   R.painel = function () {
     var p = S.perfil || {nome: nuvem.nome || '', prova: OAB.EXAME.data}, falta = diasAte(p.prova), proj = projecao();
     var nm = (p.nome || '').split(' ')[0];
@@ -440,9 +514,8 @@
       '<div class="meta-linha"><div><span class="num">' + (diagFeito() ? notaDiag() : '—') + '</span><small>no diagnóstico</small></div>' +
       '<div><span class="num">' + (diagFeito() ? Math.round(proj) : '—') + '</span><small>nota projetada hoje</small></div>' +
       '<div><span class="num" style="color:#E6C24E">40</span><small>para passar</small></div></div>' +
-      (diagFeito() ? '' : '<p style="margin-top:18px"><a class="btn ouro" href="#diagnostico">Fazer o diagnóstico</a></p>') +
       '</div><div><p class="sub peq" style="margin-bottom:8px">As 80 questões da prova. Bolhas cheias são as que você já tende a acertar.</p>' + cartaoProva() + '</div></section>';
-    if (!S.perfil || !diagFeito() || !S.dominio) return h + jornada() + pesoProva();
+    if (!diagFeito() || !S.dominio) return h + proximoPasso() + (diagFeito() ? boletimDiag() : '') + pesoProva();
     h += pesoProva();
     h += boletimDias() || boletimDiag();
     var c = crono(), hj = hojeISO(), dia = c.find(function (x) { return x.data >= hj; });
@@ -492,7 +565,6 @@
         '<p style="margin-top:18px" class="peq sub">Quer medir de novo depois de semanas de estudo? Você pode refazer o diagnóstico. As alternativas mudam de ordem.</p><button class="btn mini" data-act="refazer-diag">Refazer diagnóstico</button></div></div>';
     }
     if (!g.ini) {
-      var dist = D.map(function (d) { return '<span class="tag"><span class="pt" style="background:' + d.cor + '"></span>' + esc(d.curto) + ' · ' + d.q + '</span>'; }).join(' ');
       return '<div class="cab"><div><h1>Diagnóstico</h1><p class="sub">Uma prova completa de 80 questões, na distribuição da FGV.</p></div></div>' +
         '<div class="grade g2"><div class="bloco"><h2>Antes de começar</h2><ul style="padding-left:1.2rem;margin:0">' +
         '<li>Responda como no dia da prova. São 5 horas na prova real; aqui o tempo é só uma referência.</li>' +
@@ -500,7 +572,7 @@
         '<li>Pode parar e continuar depois: suas respostas ficam salvas.</li>' +
         '<li>As questões são inéditas, escritas sobre os temas que a FGV mais repete.</li></ul>' +
         '<p style="margin-top:16px"><button class="btn pri" data-act="iniciar-diag">Começar a prova</button></p></div>' +
-        '<div class="bloco"><h2>Distribuição</h2><div class="chips">' + dist + '</div></div></div>';
+        '<div class="bloco"><h2>O que o diagnóstico entrega</h2><ul style="padding-left:1.2rem;margin:0"><li>Sua nota de 0 a 80, comparada com o corte de 40.</li><li>Acerto por grupo e por disciplina, no boletim do desempenho.</li><li>A sugestão das 4 disciplinas de domínio.</li><li>A base para o seu cronograma.</li></ul></div></div>' + pesoProva();
     }
     var i = g.atual, q = QM[DIAG[i]], d = DM[q.d], o = ordemAlt(q), r = g.resp[q.id];
     var resp = Object.keys(g.resp).length;
@@ -531,6 +603,13 @@
   // ---------- relatório ----------
   var escolha = null;
   R.relatorio = function () {
+    var extra = pontosPerdidos() + relProvas() + relTreinos();
+    if (diagFeito()) return relDiag() + extra;
+    return '<div class="cab"><div><h1>Seu relatório</h1><p class="sub">Seu desempenho no diagnóstico, nos exercícios e nas provas oficiais.</p></div></div>' +
+      '<div class="bloco proximo"><div><h2>Falta o diagnóstico</h2><p class="sub" style="margin:0">É ele que mostra sua nota de partida, o acerto por disciplina e as 4 disciplinas de domínio sugeridas.' + (extra ? ' Enquanto isso, veja abaixo o que você já fez.' : '') + '</p></div><a class="btn pri" href="#diagnostico">Fazer o diagnóstico</a></div>' +
+      (extra || '<div class="vazio" style="margin-top:16px"><p style="margin:0">Quando você resolver exercícios ou corrigir uma prova oficial, o resultado aparece aqui.</p></div>');
+  };
+  function relDiag() {
     if (!diagFeito()) return '<div class="vazio"><h1>Relatório</h1><p>O relatório aparece depois do diagnóstico.</p><a class="btn pri" href="#diagnostico">Fazer o diagnóstico</a></div>';
     var dg = diagPorDisc(), n = notaDiag(), passa = n >= 40;
     if (!escolha) escolha = (S.dominio || recomendar()).slice();
@@ -569,7 +648,7 @@
       '<div class="termo total"><small>Nota-meta</small><span class="num">' + Math.round(tot) + '</span></div></div>' +
       '<p class="peq sub" style="margin-top:10px">Com 40 acertos você passa. A meta deixa margem de segurança sem exigir que você domine tudo.</p>' +
       '<p style="margin-top:16px" class="noprint"><button class="btn pri" data-act="gerar-crono"' + (escolha.length !== 4 ? ' disabled' : '') + '>' + (S.dominio ? 'Atualizar meu cronograma' : 'Gerar meu cronograma') + '</button></p></div>';
-  };
+  }
 
   // ---------- cronograma ----------
   var verTudo = false;
@@ -590,7 +669,7 @@
   function cronoExplica() {
     var ex = [{p: 2, min: 25, txt: 'Estatuto e Código de Ética: 10 artigos e 5 questões'}, {p: 4, min: 50, txt: 'Sinopse da disciplina de domínio do dia e resumo de 1 página'},
       {p: 3, min: 95, txt: 'Exercícios da mesma disciplina'}, {p: 5, min: 10, txt: 'Gravar 3 minutos explicando o tema'}];
-    return '<div class="cab"><div><h1>Seu cronograma</h1><p class="sub">Um plano dia a dia até a prova, montado com os 5 passos do método.</p></div></div>' + jornada() +
+    return '<div class="cab"><div><h1>Seu cronograma</h1><p class="sub">Um plano dia a dia até a prova, montado com os 5 passos do método.</p></div></div>' + planoForm() + '<div style="height:16px"></div>' +
       '<div class="grade g2"><div class="bloco"><h2>Como ele é montado</h2><ol class="passos-lista">' +
       '<li><span class="n">1</span><div><b>Construção.</b> <span class="sub">Teoria e exercícios das suas 4 disciplinas de domínio, revezando as mais fracas com mais frequência.</span></div></li>' +
       '<li><span class="n">2</span><div><b>Consolidação.</b> <span class="sub">Domínio em revisão e entrada dos pontos rápidos do Grupo C e do restante do Grupo B.</span></div></li>' +
@@ -600,10 +679,10 @@
       '</div><p class="peq sub" style="margin-top:12px">O seu terá os dias da semana, as horas e as disciplinas que você escolher.</p></div></div>';
   }
   R.cronograma = function () {
-    if (!S.perfil || !S.dominio) return cronoExplica();
+    if (!S.dominio) return cronoExplica();
     if (!S.dominio) return '<div class="vazio"><h1>Cronograma</h1><p>O cronograma é gerado a partir do relatório do diagnóstico.</p><a class="btn pri" href="' + (diagFeito() ? '#relatorio' : '#diagnostico') + '">' + (diagFeito() ? 'Ver relatório' : 'Fazer o diagnóstico') + '</a></div>';
     var c = crono();
-    if (!c.length) return '<div class="vazio"><h1>Cronograma</h1><p>Não há dias de estudo entre hoje e a data da prova. Confira a data e os dias da semana no seu perfil.</p><a class="btn" href="#perfil">Abrir perfil</a></div>';
+    if (!c.length) return '<div class="cab"><div><h1>Seu cronograma</h1><p class="sub">Não há dias de estudo entre hoje e a data da prova. Confira a data e os dias abaixo.</p></div></div>' + planoForm();
     var hj = hojeISO(), tot = 0, fe = 0;
     c.forEach(function (x) { x.it.forEach(function (_, i) { tot++; if (S.feito[x.data + ':' + i]) fe++; }); });
     var fases = [1, 2, 3].map(function (f) { var ds = c.filter(function (x) { return x.fase === f; }); return ds.length ? '<span class="fase">' + ['', 'Construção', 'Consolidação', 'Revisão final'][f] + ': ' + fmtData(ds[0].data) + ' a ' + fmtData(ds[ds.length - 1].data) + '</span>' : ''; }).join(' ');
@@ -613,6 +692,7 @@
     return '<div class="cab"><div><h1>Seu cronograma</h1><p class="sub">' + c.length + ' dias de estudo até ' + fmtData(S.perfil.prova, true) + ' · ' + S.perfil.horas + 'h por dia · ' + pct(tot ? fe / tot : 0) + ' concluído</p></div>' +
       '<div class="chips noprint"><button class="btn mini" data-act="ver-tudo">' + (verTudo ? 'Ver só as próximas semanas' : 'Ver o cronograma inteiro') + '</button>' + (ARTEFATO ? '' : '<button class="btn mini" data-act="imprimir">Imprimir</button>') + '</div></div>' +
       '<div class="bloco" style="margin-bottom:16px"><div class="chips">' + fases + '</div><p class="peq sub" style="margin:10px 0 0">Domínio: ' + S.dominio.map(tagDisc).join(' ') + ' · Legenda: ' + [1, 2, 3, 4, 5].map(function (n) { return passoTag(n) + ' ' + esc(OAB.PASSOS[n - 1].nome); }).join(' · ') + '</p></div>' +
+      '<details class="bloco ajuste noprint"><summary>Ajustar o plano (data da prova, horas, dias e disciplinas de domínio)</summary>' + planoForm() + '</details>' +
       ordem.map(function (k) {
         return '<div class="bloco semana"><h3><span>Semana de ' + fmtData(k) + '</span></h3>' + sem[k].map(function (x) {
           var d = dataDe(x.data);
@@ -688,7 +768,7 @@
         '<div class="barra-q">' + (r == null ? '<button class="btn" data-ex-alt="-1">Não sei</button><span></span>' : '<a class="btn mini" href="#sinopses/' + q.d + '">Ver sinopse</a><button class="btn pri" data-act="ex-prox">' + (sess.i + 1 < sess.l.length ? 'Próxima' : 'Ver resultado') + '</button>') + '</div></div>';
     }
     var er = errosAtuais().length;
-    return '<div class="cab"><div><h1>Exercícios</h1><p class="sub">Questões no estilo FGV com comentário e fundamento legal.</p></div></div>' +
+    return '<div class="cab"><div><h1>Exercícios</h1><p class="sub">Questões no estilo FGV com comentário e fundamento legal.</p></div></div>' + boletimSessao() +
       '<div class="grade g3" style="margin-bottom:22px"><a class="disc-card" href="#exercicios/mix" style="--c:var(--dourado)"><h3>Treino do dia</h3><span class="sub peq">10 questões, com mais peso nas suas disciplinas de domínio e em Ética.</span></a>' +
       '<a class="disc-card" href="#exercicios/erros" style="--c:var(--vermelho)"><h3>Revisão de erros</h3><span class="sub peq">' + er + ' questões que você errou na última tentativa.</span></a></div>' +
       '<div class="bloco"><table class="t"><thead><tr><th>Disciplina</th><th>Na prova</th><th>Banco</th><th>Domínio</th><th></th></tr></thead><tbody>' +
@@ -870,8 +950,9 @@
   var rota = '';
   function render() {
     var h = (location.hash || '#painel').slice(1).split('/'), r = h[0] || 'painel', arg = h[1];
-    pedido = null;
-    if (!S.perfil && !location.hash) r = 'boasvindas';
+    pedido = null; garantirPerfil();
+    if (r === 'boasvindas') r = 'painel';
+    if (r !== 'cronograma') escolhaCr = null;
     if (!R[r]) r = 'painel';
     if (r !== 'diagnostico') pararRelogio();
     if (cronOf) { clearInterval(cronOf); cronOf = null; }
@@ -896,6 +977,11 @@
     var ds = t.dataset;
     if (ds.dia != null) { t.setAttribute('aria-pressed', t.getAttribute('aria-pressed') !== 'true'); return; }
     if (ds.af) { t.setAttribute('aria-pressed', t.getAttribute('aria-pressed') !== 'true'); return; }
+    if (ds.domc) {
+      var k = escolhaCr.indexOf(ds.domc);
+      if (k > -1) escolhaCr.splice(k, 1); else if (escolhaCr.length < 4) escolhaCr.push(ds.domc); else { toast('Escolha no máximo 4. Desmarque uma antes.'); return; }
+      guardarPlano(); render(); return;
+    }
     if (ds.vdiag) { vistaDiag = ds.vdiag; render(); return; }
     if (ds.of) {
       var pz = ds.of.split(':'), oo = oficial(pz[0]); if (!oo || oo.fim) return;
@@ -966,18 +1052,24 @@
     }
     if (t.id === 'imp-provas' && t.files[0]) { nuvem.importar(t.files[0]); }
   });
+  // guarda o que o aluno já mexeu no formulário do plano antes de redesenhar a tela
+  function guardarPlano() {
+    var f = $('#f-plano'); if (!f) return;
+    var p = garantirPerfil(), dias = $$('#f-plano [data-dia][aria-pressed="true"]').map(function (b) { return +b.dataset.dia; });
+    if ($('#p-prova').value) p.prova = $('#p-prova').value; p.horas = +$('#p-horas').value; if (dias.length) p.dias = dias;
+  }
   document.addEventListener('submit', function (ev) {
-    if (ev.target.id !== 'f-perfil') return;
+    if (ev.target.id === 'f-nome') { ev.preventDefault(); garantirPerfil().nome = $('#p-nome').value.trim(); salvar(); toast('Nome salvo.'); render(); return; }
+    if (ev.target.id !== 'f-plano') return;
     ev.preventDefault();
-    var dias = $$('[data-dia][aria-pressed="true"]').map(function (b) { return +b.dataset.dia; });
-    var afin = $$('[data-af][aria-pressed="true"]').map(function (b) { return b.dataset.af; });
+    var dias = $$('#f-plano [data-dia][aria-pressed="true"]').map(function (b) { return +b.dataset.dia; });
     var prova = $('#p-prova').value, m = $('#p-msg');
     if (!dias.length) { m.className = 'msg bad'; m.textContent = 'Escolha pelo menos um dia de estudo.'; return; }
-    if (diasAte(prova) < 1) { m.className = 'msg bad'; m.textContent = 'A data da prova precisa ser depois de hoje.'; return; }
-    var novo = !S.perfil;
-    S.perfil = {nome: $('#p-nome').value.trim(), prova: prova, dias: dias, horas: +$('#p-horas').value, afin: afin};
-    invalidarCrono(); salvar();
-    if (novo) location.hash = '#diagnostico'; else { toast('Perfil salvo.'); render(); }
+    if (!prova || diasAte(prova) < 1) { m.className = 'msg bad'; m.textContent = 'A data da prova precisa ser depois de hoje.'; return; }
+    if (escolhaCr.length !== 4) { m.className = 'msg bad'; m.textContent = 'Escolha 4 disciplinas de domínio.'; return; }
+    var p = garantirPerfil(); p.prova = prova; p.dias = dias; p.horas = +$('#p-horas').value;
+    S.dominio = escolhaCr.slice(); S.crono = {ini: hojeISO(), at: Date.now()}; escolhaCr = null;
+    invalidarCrono(); salvar(); toast('Cronograma gerado.'); window.scrollTo(0, 0); render();
   });
 
   function aplicarTema() { var t = lsGet('ontop-tema') || 'auto'; if (t === 'auto') document.documentElement.removeAttribute('data-theme'); else document.documentElement.setAttribute('data-theme', t); }
