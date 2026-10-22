@@ -488,14 +488,17 @@
   }
   // a carteira vermelha da OAB: o objetivo final do aluno (desenho próprio, sem o brasão oficial)
   function carteiraOAB(cx, cy) {
-    var x = cx - 25, y = cy - 66;
-    return '<g class="carteira"><rect x="' + (x + 3) + '" y="' + (y + 3) + '" width="50" height="64" rx="5" fill="rgba(0,0,0,.35)"/>' +
-      '<rect x="' + x + '" y="' + y + '" width="50" height="64" rx="5" fill="#B5121B"/><rect x="' + x + '" y="' + y + '" width="7" height="64" rx="3" fill="#8E0E15"/>' +
-      '<rect x="' + (x + 11) + '" y="' + (y + 5) + '" width="35" height="54" rx="3" fill="none" stroke="#E9C46A" stroke-width=".8" opacity=".7"/>' +
-      '<text x="' + (x + 28.5) + '" y="' + (y + 17) + '" text-anchor="middle" font-size="10" font-weight="800" fill="#F2D27A" font-family="Bricolage Grotesque, sans-serif" letter-spacing="1">OAB</text>' +
-      '<g stroke="#F2D27A" stroke-width="1.3" fill="none" stroke-linecap="round"><path d="M' + (x + 28.5) + ' ' + (y + 24) + 'v18M' + (x + 19) + ' ' + (y + 27) + 'h19M' + (x + 23) + ' ' + (y + 46) + 'h11"/>' +
-      '<path d="M' + (x + 19) + ' ' + (y + 27) + 'l-4 8h8zM' + (x + 38) + ' ' + (y + 27) + 'l-4 8h8z"/></g>' +
-      '<text x="' + (x + 28.5) + '" y="' + (y + 56) + '" text-anchor="middle" font-size="4.6" fill="#F2D27A" letter-spacing=".6">ADVOGADO</text></g>' +
+    var w = 54, h = 72, x = cx - w / 2, y = cy - 72, g = '#E8C66A', m = x + w / 2;
+    var t = function (yy, txt, fs, wt, ls) { return '<text x="' + m + '" y="' + (y + yy) + '" text-anchor="middle" font-size="' + fs + '" font-weight="' + (wt || 600) + '" fill="' + g + '" letter-spacing="' + (ls || 0) + '" font-family="IBM Plex Sans, sans-serif">' + txt + '</text>'; };
+    var estrela = '', cxS = m, cyS = y + 27;
+    for (var k = 0; k < 10; k++) { var a = -Math.PI / 2 + k * Math.PI / 5, r = k % 2 ? 2.6 : 6; estrela += (k ? 'L' : 'M') + (cxS + Math.cos(a) * r).toFixed(2) + ' ' + (cyS + Math.sin(a) * r).toFixed(2); }
+    return '<g class="carteira"><rect x="' + (x + 3) + '" y="' + (y + 4) + '" width="' + w + '" height="' + h + '" rx="5" fill="rgba(0,0,0,.4)"/>' +
+      '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="5" fill="#8E1B24"/>' +
+      '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="5" fill="url(#brilho)" opacity=".35"/>' +
+      t(9, 'ORDEM DOS ADVOGADOS DO BRASIL', 3.1, 600, .1) +
+      '<circle cx="' + cxS + '" cy="' + cyS + '" r="10" fill="none" stroke="' + g + '" stroke-width=".9"/><circle cx="' + cxS + '" cy="' + cyS + '" r="8" fill="none" stroke="' + g + '" stroke-width=".4" stroke-dasharray="1 1"/><path d="' + estrela + 'Z" fill="' + g + '"/>' +
+      t(48, 'CARTEIRA DE IDENTIDADE', 4.1, 700) + t(55, 'DE', 4.1, 700) + t(65, 'ADVOGADO', 6.6, 800, .3) + '</g>' +
+      '<defs><linearGradient id="brilho" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".5"/><stop offset=".4" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>' +
       '<text x="' + cx + '" y="' + (cy + 14) + '" text-anchor="middle" font-size="11" fill="#B9C7DE">sua meta é esta carteira</text>' +
       '<text x="' + cx + '" y="' + (cy + 28) + '" text-anchor="middle" font-size="10" fill="#8FA3C7">faça o diagnóstico para medir a distância</text>';
   }
