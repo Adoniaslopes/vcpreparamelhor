@@ -350,3 +350,32 @@ details.ajuste form.bloco { box-shadow: none; border: 0; padding: 0; }
 .bloco.forte { border-top: 4px solid var(--verde); } .bloco.reforco { border-top: 4px solid var(--vermelho); }
 .bloco.missao { border-top: 4px solid var(--ciano); }
 .grade + .grade, .grade + section, .grade + .bloco { margin-top: 16px; }
+
+/* ===== retorno imediato da questão ===== */
+.retorno { position: relative; display: flex; gap: 14px; align-items: center; margin-top: 16px; padding: 14px 16px; border-radius: var(--r-m); border: 1px solid; overflow: hidden; animation: surge .35s cubic-bezier(.2,.8,.2,1) both; }
+.retorno > div > b { display: block; font-family: var(--f-tit); font-size: 1.15rem; }
+.retorno span:not(.r-arte):not(.confete) { display: block; color: var(--tinta2); font-size: .92rem; margin-top: 2px; }
+.r-arte { flex: none; width: 54px; height: 54px; }
+.r-arte svg { width: 100%; height: 100%; display: block; }
+.r-ok { background: rgba(61,220,151,.10); border-color: rgba(61,220,151,.45); }
+.r-ok > div > b { color: var(--verde); }
+.r-ok .r-arte { animation: pula .6s cubic-bezier(.3,1.6,.5,1) .1s both; }
+.r-er { background: rgba(255,77,94,.08); border-color: rgba(255,77,94,.4); }
+.r-er > div > b { color: var(--vermelho); }
+.r-ns { background: rgba(62,197,255,.08); border-color: rgba(62,197,255,.4); }
+.r-ns > div > b { color: var(--ciano); }
+.retorno + .coment { margin-top: 10px; }
+.confete { position: absolute; inset: 0; pointer-events: none; }
+.confete i { position: absolute; top: 50%; left: 40px; width: 7px; height: 7px; border-radius: 2px; opacity: 0; animation: confete .9s ease-out .15s forwards; }
+.confete i:nth-child(1) { background: #F5C542; --dx: 90px; --dy: -34px; }
+.confete i:nth-child(2) { background: #3EC5FF; --dx: 140px; --dy: 20px; }
+.confete i:nth-child(3) { background: #FF4D5E; --dx: 60px; --dy: 30px; }
+.confete i:nth-child(4) { background: #3DDC97; --dx: 190px; --dy: -22px; }
+.confete i:nth-child(5) { background: #F5C542; --dx: 240px; --dy: 16px; }
+.confete i:nth-child(6) { background: #B678FF; --dx: 120px; --dy: -40px; }
+.confete i:nth-child(7) { background: #3EC5FF; --dx: 280px; --dy: -30px; }
+.confete i:nth-child(8) { background: #FF9F43; --dx: 330px; --dy: 24px; }
+@keyframes confete { 0% { opacity: 1; transform: translate(0,0) rotate(0); } 100% { opacity: 0; transform: translate(var(--dx), var(--dy)) rotate(260deg); } }
+@keyframes pula { 0% { transform: scale(.4); } 100% { transform: scale(1); } }
+@keyframes surge { from { opacity: 0; transform: translateY(6px); } }
+@media (prefers-reduced-motion: reduce) { .retorno, .r-ok .r-arte, .confete i { animation: none; } .confete { display: none; } }

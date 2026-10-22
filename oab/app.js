@@ -70,7 +70,12 @@
 
   // ---------- estatística ----------
   var DIAG = [];
-  function montarDiag() { DIAG = []; D.forEach(function (d) { OAB.Q.forEach(function (q) { if (q.d === d.id && q.diag) DIAG.push(q.id); }); }); }
+  // ordem idêntica à da prova da FGV (a mesma nas 10 últimas provas, inclusive no 47º Exame)
+  function montarDiag() {
+    DIAG = [];
+    var ordem = OAB.FAIXAS ? OAB.FAIXAS.map(function (f) { return f[0]; }) : D.map(function (d) { return d.id; });
+    ordem.forEach(function (id) { OAB.Q.forEach(function (q) { if (q.d === id && q.diag) DIAG.push(q.id); }); });
+  }
   montarDiag();
   function diagFeito() { return !!S.diag.fim; }
   function diagPorDisc() {
@@ -565,6 +570,22 @@
       '<text x="30" y="198" font-size="11" fill="#9DB0D3">hoje</text></svg>';
   }
 
+
+  // retorno imediato: acertou, errou ou não sabia (com ilustração própria e incentivo)
+  var MSG_OK = ['Parabéns, você acertou!', 'Mandou bem! Mais um ponto garantido.', 'Isso aí! A banca não te pegou.', 'Acertou em cheio. Continue assim!'];
+  var MSG_ER = ['Infelizmente não foi dessa vez. Continue treinando!', 'Quase! Leia o comentário e guarde essa pegadinha.', 'Não foi dessa vez, mas agora você não erra mais essa.'];
+  function retorno(q, r, o) {
+    var ok = r === q.c, ns = r === -1, k = hash(q.id + String(r)) % 4;
+    var arte = ok ? '<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#3DDC97"/><path d="M20 30h6v16h-6zM28 46V29l7-11c2-3 6-1 5 2l-2 7h9c2 0 4 2 3 5l-3 11c-1 2-2 3-4 3z" fill="#062216"/></svg>' :
+      ns ? '<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#3EC5FF"/><path d="M32 16a10 10 0 0 0-10 10h6a4 4 0 1 1 6 3.5c-3 1.6-5 4-5 7.5v2h6v-1.5c0-2 1-3 3-4.2A10 10 0 0 0 32 16zm-3 28h6v6h-6z" fill="#04121F"/></svg>' :
+      '<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#FF4D5E"/><circle cx="32" cy="32" r="18" fill="none" stroke="#2A0508" stroke-width="4"/><circle cx="32" cy="32" r="8" fill="#2A0508"/><path d="M44 20l10-10M48 10h6v6" stroke="#2A0508" stroke-width="4" fill="none" stroke-linecap="round"/></svg>';
+    var tit = ok ? MSG_OK[k % MSG_OK.length] : ns ? 'Tudo bem não saber. Agora você sabe.' : MSG_ER[k % MSG_ER.length];
+    var sub = ok ? '' : 'A resposta certa é a letra <b>' + 'ABCD'[o.indexOf(q.c)] + '</b>.';
+    return '<div class="retorno ' + (ok ? 'r-ok' : ns ? 'r-ns' : 'r-er') + '" role="status">' + (ok ? '<span class="confete" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>' : '') +
+      '<span class="r-arte">' + arte + '</span><div><b>' + tit + '</b>' + (sub ? '<span>' + sub + '</span>' : '') + '</div></div>' +
+      '<div class="coment">' + esc(q.x) + '</div>';
+  }
+
   // ---------- telas ----------
   var R = {};
 
@@ -682,9 +703,9 @@
       '<div class="prog"><i style="width:' + (resp / 80 * 100) + '%"></i></div>' +
       '<div class="grade" style="grid-template-columns:minmax(0,1fr) minmax(220px,300px);align-items:start" id="diag-grid"><div class="questao">' +
       '<p>' + tagDisc(q.d) + '</p><div class="enun">' + esc(q.e) + '</div><div class="alts">' +
-      o.map(function (oi, k) { return '<button class="alt' + (r === oi ? ' sel' : '') + '" data-diag-alt="' + oi + '"><span class="lt">' + 'ABCD'[k] + '</span><span>' + esc(q.a[oi]) + '</span></button>'; }).join('') +
-      '</div><div class="barra-q"><div class="chips"><button class="btn" data-act="d-ant"' + (i === 0 ? ' disabled' : '') + '>Anterior</button><button class="btn" data-diag-alt="-1"' + (r === -1 ? ' style="border-color:var(--tinta)"' : '') + '>Não sei</button></div>' +
-      (i < 79 ? '<button class="btn pri" data-act="d-prox">Próxima</button>' : '<button class="btn ouro" data-act="d-fim">Entregar a prova</button>') + '</div></div>' +
+      o.map(function (oi, k) { var cls = r == null ? '' : oi === q.c ? ' cert' : oi === r ? ' errd' : ''; return '<button class="alt' + cls + '" data-diag-alt="' + oi + '"' + (r != null ? ' disabled' : '') + '><span class="lt">' + 'ABCD'[k] + '</span><span>' + esc(q.a[oi]) + '</span></button>'; }).join('') +
+      '</div>' + (r != null ? retorno(q, r, o) : '') + '<div class="barra-q"><div class="chips"><button class="btn" data-act="d-ant"' + (i === 0 ? ' disabled' : '') + '>Anterior</button>' + (r == null ? '<button class="btn" data-diag-alt="-1">Não sei</button>' : '') + '</div>' +
+      (i < 79 ? '<button class="btn pri" data-act="d-prox">' + (r == null ? 'Pular' : 'Próxima questão') + '</button>' : '<button class="btn ouro" data-act="d-fim">Entregar a prova</button>') + '</div></div>' +
       '<div class="bloco"><h3>Cartão-resposta</h3>' + cartaoDiag(false) + '<p style="margin:14px 0 0"><button class="btn mini" data-act="d-fim">Entregar a prova</button></p></div></div>';
   };
   function relogio() { var s = S.diag.seg || 0; return 'Tempo: ' + Math.floor(s / 3600) + 'h' + String(Math.floor(s / 60) % 60).padStart(2, '0') + ' de 5h00'; }
@@ -692,7 +713,7 @@
     return '<div class="cartao">' + DIAG.map(function (id, i) {
       var r = S.diag.resp[id], cls = '';
       if (final) cls = r === QM[id].c ? 'ok' : r === -1 ? 'er ns' : 'er';
-      else { if (r != null) cls = r === -1 ? 'ns' : 'resp'; if (i === S.diag.atual) cls += ' atual'; }
+      else { if (r != null) cls = r === QM[id].c ? 'ok' : r === -1 ? 'er ns' : 'er'; if (i === S.diag.atual) cls += ' atual'; }
       return final ? '<span class="' + cls + '" title="' + esc(DM[QM[id].d].curto) + '">' + (i + 1) + '</span>' : '<button class="' + cls + '" data-ir-q="' + i + '" aria-label="Questão ' + (i + 1) + '">' + (i + 1) + '</button>';
     }).join('') + '</div>';
   }
@@ -866,7 +887,7 @@
           var cls = r == null ? '' : oi === q.c ? ' cert' : oi === r ? ' errd' : '';
           return '<button class="alt' + cls + '" data-ex-alt="' + oi + '"' + (r != null ? ' disabled' : '') + '><span class="lt">' + 'ABCD'[k] + '</span><span>' + esc(q.a[oi]) + '</span></button>';
         }).join('') + '</div>' +
-        (r != null ? '<div class="coment"><b>' + (r === q.c ? 'Correto.' : 'A resposta é a letra ' + 'ABCD'[o.indexOf(q.c)] + '.') + '</b> ' + esc(q.x) + '</div>' : '') +
+        (r != null ? retorno(q, r, o) : '') +
         '<div class="barra-q">' + (r == null ? '<button class="btn" data-ex-alt="-1">Não sei</button><span></span>' : '<a class="btn mini" href="#sinopses/' + q.d + '">Ver sinopse</a><button class="btn pri" data-act="ex-prox">' + (sess.i + 1 < sess.l.length ? 'Próxima' : 'Ver resultado') + '</button>') + '</div></div>';
     }
     var er = errosAtuais().length;
@@ -1099,7 +1120,7 @@
       if (i > -1) escolha.splice(i, 1); else if (escolha.length < 4) escolha.push(ds.dom); else { toast('Escolha no máximo 4. Desmarque uma antes.'); return; }
       render(); return;
     }
-    if (ds.diagAlt != null) { S.diag.resp[DIAG[S.diag.atual]] = +ds.diagAlt; if (S.diag.atual < 79) S.diag.atual++; salvar(); render(); return; }
+    if (ds.diagAlt != null) { if (S.diag.resp[DIAG[S.diag.atual]] != null) return; S.diag.resp[DIAG[S.diag.atual]] = +ds.diagAlt; salvar(); render(); var rt = $('.retorno'); if (rt) rt.scrollIntoView({behavior: 'smooth', block: 'nearest'}); return; }
     if (ds.irQ != null) { S.diag.atual = +ds.irQ; salvar(); render(); return; }
     if (ds.exAlt != null) {
       var id = sess.l[sess.i], q = QM[id], r = +ds.exAlt; sess.resp[id] = r; if (r === q.c) sess.ok++;
