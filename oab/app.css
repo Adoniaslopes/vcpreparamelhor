@@ -567,3 +567,16 @@ details.ajuste form.bloco { box-shadow: none; border: 0; padding: 0; }
 .cmb-leg .m { font-weight: 700; color: var(--tinta); }
 .cmb-ver { margin: 14px 0 8px; line-height: 1.55; }
 @media (prefers-reduced-motion: reduce) { .cmb-barra span { transition: none; } }
+.cmb-conta { display: grid; gap: 6px; margin: 4px 0 14px; }
+.cmb-conta > div { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 10px; background: color-mix(in srgb, var(--tinta) 4%, transparent); }
+.cmb-conta span { font-size: .9rem; line-height: 1.3; }
+.cmb-conta small { color: var(--tinta2); }
+.cmb-conta b { font-family: var(--f-tit); font-size: 1.5rem; }
+.cmb-conta .tot.ok { background: color-mix(in srgb, var(--verde) 16%, transparent); border: 1px solid var(--verde); }
+.cmb-conta .tot.ok b { color: var(--verde); }
+.cmb-conta .tot.no { background: color-mix(in srgb, var(--vermelho) 12%, transparent); border: 1px solid var(--vermelho); }
+.cmb-conta .tot.no b { color: var(--vermelho); }
+.cmb-resto { background: var(--ciano); border-radius: 0 !important; }
+.cmb-leg .q3 { background: var(--ciano); }
+.cmb-ok { color: var(--verde); }
+.cmb-no { color: var(--vermelho); }

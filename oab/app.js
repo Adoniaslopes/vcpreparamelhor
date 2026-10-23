@@ -364,18 +364,20 @@
     {n: 'Só o Grupo A', l: ['civil', 'pcivil', 'const', 'penal']},
     {n: 'Mesclando A e B', l: ['const', 'civil', 'adm', 'trab']},
     {n: 'Direito Público + Civil', l: ['const', 'adm', 'trib', 'civil']},
-    {n: 'Quem gosta de Trabalho', l: ['trab', 'ptrab', 'const', 'adm']}
+    {n: 'Quem gosta de Trabalho', l: ['trab', 'ptrab', 'const', 'civil']}
   ];
+  // conta do método: núcleo (Ética + escolhidas) acertando 3 de 4, restante da prova acertando 1 de 3
   function cmbCalc(l) {
-    var qd = l.reduce(function (s, id) { return s + DM[id].q; }, 0), foco = 8 + qd, garante = Math.round(foco * 0.75), resto = 80 - foco, falta = Math.max(0, 40 - garante);
-    return {foco: foco, garante: garante, resto: resto, falta: falta, pct: resto ? Math.ceil(falta / resto * 100) : 0};
+    var qd = l.reduce(function (s, id) { return s + DM[id].q; }, 0), foco = 8 + qd, resto = 80 - foco;
+    var pn = Math.round(foco * 0.75), pr = Math.round(resto / 3), tot = pn + pr;
+    return {foco: foco, resto: resto, pn: pn, pr: pr, tot: tot, ok: tot >= 40};
   }
   function combinaGrupos() {
-    if (!cmbSel) cmbSel = (S.dominio && S.dominio.length === 4) ? S.dominio.slice() : CMB_PRONTOS[2].l.slice();
+    if (!cmbSel) cmbSel = (S.dominio && S.dominio.length >= 4) ? S.dominio.slice(0, 5) : CMB_PRONTOS[2].l.slice();
     return '<section class="bloco cmb" id="cmb" style="margin:16px 0">' + cmbMiolo() + '</section>';
   }
   function cmbMiolo() {
-    var c = cmbCalc(cmbSel), cor = {A: '#C8102E', B: '#F5C542', C: '#7BC043'};
+    var c = cmbCalc(cmbSel), cor = {A: '#C8102E', B: '#F5C542', C: '#7BC043'}, n = cmbSel.length;
     var chips = ['A', 'B', 'C'].map(function (g) {
       return '<div class="cmb-g"><span class="cmb-gt" style="--c:' + cor[g] + '">Grupo ' + g + '</span><div class="cmb-chips">' +
         D.filter(function (d) { return d.g === g && d.id !== 'etica'; }).sort(function (a, b) { return b.q - a.q; }).map(function (d) {
@@ -383,17 +385,23 @@
           return '<button class="cmb-chip' + (on ? ' on' : '') + '" style="--c:' + cor[g] + '" data-cmb="' + d.id + '" aria-pressed="' + on + '">' + esc(d.curto) + ' <b>' + d.q + '</b></button>';
         }).join('') + '</div></div>';
     }).join('');
-    var w = function (n) { return (n / 80 * 100).toFixed(2) + '%'; };
-    var barra = '<div class="cmb-barra" aria-hidden="true"><span class="cmb-nucleo" style="width:' + w(c.foco) + '"></span><span class="cmb-ganho" style="width:' + w(c.garante) + '"></span><i class="cmb-meta"></i></div>' +
-      '<div class="cmb-leg"><span><i class="q1"></i>Núcleo: ' + c.foco + ' questões</span><span><i class="q2"></i>Acertando 3 de 4: ' + c.garante + ' pontos</span><span class="m">Meta: 40</span></div>';
-    var veredito = c.falta === 0 ? 'Só o seu núcleo já garante os 40.' :
-      'Faltam <b>' + c.falta + '</b> para os 40, que vêm das outras ' + c.resto + ' questões: basta acertar <b>' + c.pct + '%</b> delas' + (c.pct <= 25 ? ', menos do que o acerto de um chute (25%).' : c.pct <= 35 ? ', cerca de 1 em cada 3. As sinopses e as provas anteriores cuidam disso.' : '. Dá, mas fica mais apertado: troque uma disciplina leve por uma de mais peso.');
+    var w = function (x) { return (Math.min(x, 80) / 80 * 100).toFixed(2) + '%'; };
+    var barra = '<div class="cmb-barra" aria-hidden="true"><span class="cmb-ganho" style="width:' + w(c.pn) + '"></span><span class="cmb-resto" style="left:' + w(c.pn) + ';width:' + w(c.pr) + '"></span><i class="cmb-meta"></i></div>' +
+      '<div class="cmb-leg"><span><i class="q2"></i>Pontos do núcleo</span><span><i class="q3"></i>Pontos do restante</span><span class="m">Meta: 40</span></div>';
+    var conta = '<div class="cmb-conta">' +
+      '<div><span>Núcleo: ' + c.foco + ' questões<br><small>acertando 3 de cada 4</small></span><b>' + c.pn + '</b></div>' +
+      '<div><span>Restante: ' + c.resto + ' questões<br><small>acertando só 1 de cada 3</small></span><b>+ ' + c.pr + '</b></div>' +
+      '<div class="tot' + (c.ok ? ' ok' : ' no') + '"><span>Total</span><b>= ' + c.tot + '</b></div></div>';
+    var ver;
+    if (n < 4) ver = 'Escolha pelo menos ' + (4 - n) + ' disciplina' + (4 - n === 1 ? '' : 's') + ' a mais para montar o seu núcleo.';
+    else if (c.ok) ver = '<b class="cmb-ok">✓ A conta fecha: ' + c.tot + ' pontos, aprovado.</b> Dominando o seu núcleo e acertando 1 em cada 3 no resto, que é pouco mais do que um chute, você passa.';
+    else ver = '<b class="cmb-no">' + (40 - c.tot === 1 ? 'Falta 1 ponto' : 'Faltam ' + (40 - c.tot) + ' pontos') + ' para fechar.</b> ' + (n < 5 ? 'Acrescente mais uma disciplina (você pode ter até 5 além de Ética) ou troque uma de 2 questões por uma de 5 ou 6.' : 'Troque uma disciplina de 2 questões por uma de 5 ou 6.');
     return '<div class="cmb-topo"><div><h2 style="margin:0">Monte a sua combinação</h2>' +
-      '<p class="sub">Você não precisa ficar preso ao Grupo A. Pegue um núcleo duro, com as disciplinas que mais valem, e misture com as que você tem mais afinidade, de qualquer grupo. Ética entra sempre: são 8 questões. Escolha mais 4 e veja se a conta fecha.</p></div></div>' +
+      '<p class="sub">Você não precisa ficar preso ao Grupo A. Pegue um núcleo duro, com as disciplinas que mais valem, e misture com as que você tem mais afinidade, de qualquer grupo. Ética entra sempre: são 8 questões. Escolha de 4 a 5 disciplinas e veja a conta fechar nos 40.</p></div></div>' +
       '<div class="cmb-corpo"><div class="cmb-esq"><div class="cmb-fixa"><b>Ética Profissional · 8</b><span>sempre no seu núcleo</span></div>' + chips +
       '<div class="cmb-prontos"><span class="sub peq">Exemplos:</span>' + CMB_PRONTOS.map(function (p, i) { return '<button class="btn mini" data-cmbp="' + i + '">' + esc(p.n) + '</button>'; }).join('') + '</div></div>' +
-      '<div class="cmb-dir"><div class="cmb-num"><b>' + c.foco + '</b><span>questões no seu núcleo<br>(Ética + ' + cmbSel.length + ' disciplina' + (cmbSel.length === 1 ? '' : 's') + ')</span></div>' + barra +
-      '<p class="cmb-ver">' + (cmbSel.length < 4 ? 'Escolha mais ' + (4 - cmbSel.length) + ' disciplina' + (4 - cmbSel.length === 1 ? '' : 's') + '. ' : '') + veredito + '</p>' +
+      '<div class="cmb-dir"><div class="cmb-num"><b>' + c.foco + '</b><span>questões no seu núcleo<br>(Ética + ' + n + ' disciplina' + (n === 1 ? '' : 's') + ')</span></div>' + conta + barra +
+      '<p class="cmb-ver">' + ver + '</p>' +
       '<p class="sub peq">O segredo não é saber tudo: é dominar o núcleo que você escolheu e pegar o resto com estratégia. Depois do diagnóstico, o relatório sugere a melhor combinação para você.</p></div></div>';
   }
   function pesoProva() {
@@ -1584,7 +1592,7 @@
     }
     if (ds.cmb || ds.cmbp != null) {
       if (ds.cmbp != null) cmbSel = CMB_PRONTOS[+ds.cmbp].l.slice();
-      else { var ci = cmbSel.indexOf(ds.cmb); if (ci > -1) cmbSel.splice(ci, 1); else if (cmbSel.length < 4) cmbSel.push(ds.cmb); else { toast('Já são 4. Desmarque uma para trocar.'); return; } }
+      else { var ci = cmbSel.indexOf(ds.cmb); if (ci > -1) cmbSel.splice(ci, 1); else if (cmbSel.length < 5) cmbSel.push(ds.cmb); else { toast('Já são 5, o máximo além de Ética. Desmarque uma para trocar.'); return; } }
       var ce = $('#cmb'); if (ce) ce.innerHTML = cmbMiolo(); return;
     }
     if (ds.vdiag) { vistaDiag = ds.vdiag; render(); return; }
