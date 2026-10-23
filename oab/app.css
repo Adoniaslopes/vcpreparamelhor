@@ -473,3 +473,7 @@ details.ajuste form.bloco { box-shadow: none; border: 0; padding: 0; }
 .gq tfoot td { background: rgba(157,176,211,.14); font-weight: 800; font-family: var(--f-tit); text-align: center !important; font-size: 1.05rem; border-left: 0 !important; width: auto !important; }
 .gq tfoot td:last-child { text-align: center; }
 @media (max-width: 900px) { .grupos3 { grid-template-columns: 1fr; } }
+
+.conquista { margin: 10px 0 0; padding: 12px 16px; border-radius: 14px; background: linear-gradient(90deg, rgba(245,197,66,.2), rgba(245,197,66,.05)); border: 1px solid rgba(245,197,66,.55); font-size: 1.02rem; animation: conq .6s cubic-bezier(.2,.9,.3,1.4) both; }
+@keyframes conq { from { transform: scale(.9); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .conquista { animation: none; } }

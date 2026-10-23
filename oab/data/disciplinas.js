@@ -32,9 +32,9 @@ OAB.GRUPOS = {
 };
 /* Os 5 passos do Método Aprovação OAB */
 OAB.PASSOS = [
-  { n: 1, nome: 'Conheça seu inimigo', txt: 'Resolva as provas anteriores antes de qualquer teoria. A banca repete temas, estilos e pegadinhas.' },
-  { n: 2, nome: 'Estatuto todos os dias', txt: 'Ética são 8 questões e a matéria mais previsível da prova. Lei 8.906/94 e Código de Ética, um pouco por dia, sem falhar.' },
-  { n: 3, nome: '4 disciplinas de domínio', txt: 'Você não precisa saber tudo. Escolha 4 disciplinas de peso em que tem afinidade e torne-se forte nelas.' },
+  { n: 1, nome: 'Conheça seu examinador', txt: 'Resolva as provas anteriores antes de qualquer teoria. A banca repete temas, estilos e pegadinhas.' },
+  { n: 2, nome: 'Estatuto todos os dias', txt: 'Ética vale 8 questões e é a matéria mais previsível da prova. Lei 8.906/94 e Código de Ética, um pouco por dia, sem falhar.' },
+  { n: 3, nome: '4 disciplinas de domínio', txt: 'Você não precisa saber tudo. Escolha 4 disciplinas de peso com as quais você tem afinidade e torne-se forte nelas.' },
   { n: 4, nome: 'Resumos inteligentes', txt: 'Uma página por tema, com o que a banca cobra. Revisar a sinopse vale mais que reler o livro.' },
   { n: 5, nome: 'Grave o que estudou', txt: 'Explique em áudio, com suas palavras, o tema do dia. Ouça no trânsito, na fila, antes de dormir.' }
 ];

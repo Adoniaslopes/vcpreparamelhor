@@ -560,7 +560,7 @@
       {t: 'Seus pontos', d: 'O que já é seu e o que reforçar', ok: diagFeito() && !!S.dominio, l: '#relatorio', b: 'Ver relatório'},
       {t: 'Seu plano', d: 'Ética + 4 disciplinas de domínio', ok: !!S.dominio, l: '#cronograma', b: 'Montar plano'},
       {t: 'Treino diário', d: 'Uma missão por dia', ok: S.hist.length >= 50, l: '#cronograma', b: 'Missão de hoje'},
-      {t: 'Provas oficiais', d: 'Um simulado FGV por semana', ok: nOf >= 3, l: '#provas', b: 'Resolver prova'},
+      {t: 'Provas oficiais', d: 'Um simulado da FGV por semana', ok: nOf >= 3, l: '#provas', b: 'Resolver prova'},
       {t: '40 pontos', d: 'Passaporte para a 2ª fase', ok: pr != null && pr >= 44 && nOf >= 3, l: '#relatorio', b: 'Ver projeção'}
     ];
     var at = et.findIndex(function (e) { return !e.ok; }); if (at < 0) at = et.length - 1;
@@ -587,7 +587,7 @@
       ['47,5%', 'Seis matérias decidem', 'Ética, Civil, Processo Civil, Constitucional, Penal e Processo Penal somam 38 das 80 questões.'],
       ['8', 'Ética em todas as provas', 'É a matéria mais previsível: uma lei e um código respondem por 10% da prova, todas as vezes.']
     ];
-    return '<section class="bloco fatos-box"><h2>Como a banca se comporta</h2><p class="sub">O método nasce de olhar a prova como ela é, não como os cursinhos vendem.</p><div class="fatos">' +
+    return '<section class="bloco fatos-box"><h2>Como a banca se comporta</h2><p class="sub">O método nasce de olhar a prova como ela é, e não como os cursinhos a vendem.</p><div class="fatos">' +
       f.map(function (x) { return '<div class="fato"><span class="fato-n">' + x[0] + '</span><b>' + x[1] + '</b><p>' + x[2] + '</p></div>'; }).join('') + '</div></section>';
   }
   // dois caminhos: estudar tudo x estudar o certo
@@ -630,8 +630,18 @@
 
   // retorno imediato: acertou, errou ou não sabia (com ilustração própria e incentivo)
   var MSG_OK = ['Parabéns, você acertou!', 'Mandou bem! Mais um ponto garantido.', 'Isso aí! A banca não te pegou.', 'Acertou em cheio. Continue assim!'];
-  var MSG_ER = ['Infelizmente não foi dessa vez. Continue treinando!', 'Quase! Leia o comentário e guarde essa pegadinha.', 'Não foi dessa vez, mas agora você não erra mais essa.'];
-  function retorno(q, r, o) {
+  var MSG_ER = ['Infelizmente, não foi desta vez. Continue treinando!', 'Quase! Leia o comentário e guarde essa pegadinha.', 'Não foi desta vez, mas agora você não erra mais essa.'];
+  // conquistas no caminho: sequência de acertos e marcos rumo aos 40 (o cérebro gosta de recompensa)
+  function conquistaDiag(i) {
+    var id = DIAG[i], q = QM[id]; if (S.diag.resp[id] !== q.c) return '';
+    var seq = 0; for (var k = i; k >= 0; k--) { var x = S.diag.resp[DIAG[k]]; if (x == null || x !== QM[DIAG[k]].c) break; seq++; }
+    var tot = DIAG.filter(function (d) { return S.diag.resp[d] === QM[d].c; }).length, m = [];
+    if (tot === 40) m.push('🏆 <b>40 acertos!</b> Você alcançou a meta da aprovação.');
+    else if (tot % 10 === 0) m.push('🏅 <b>' + tot + ' acertos.</b> Faltam ' + (40 - tot) + ' para a meta.');
+    if (seq >= 3) m.push('🔥 <b>' + seq + ' acertos seguidos!</b>');
+    return m.length ? '<div class="conquista">' + m.join('<br>') + '</div>' : '';
+  }
+  function retorno(q, r, o, extra) {
     var ok = r === q.c, ns = r === -1, k = hash(q.id + String(r)) % 4;
     var arte = ok ? '<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#3DDC97"/><path d="M20 30h6v16h-6zM28 46V29l7-11c2-3 6-1 5 2l-2 7h9c2 0 4 2 3 5l-3 11c-1 2-2 3-4 3z" fill="#062216"/></svg>' :
       ns ? '<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#3EC5FF"/><path d="M32 16a10 10 0 0 0-10 10h6a4 4 0 1 1 6 3.5c-3 1.6-5 4-5 7.5v2h6v-1.5c0-2 1-3 3-4.2A10 10 0 0 0 32 16zm-3 28h6v6h-6z" fill="#04121F"/></svg>' :
@@ -639,7 +649,7 @@
     var tit = ok ? MSG_OK[k % MSG_OK.length] : ns ? 'Tudo bem não saber. Agora você sabe.' : MSG_ER[k % MSG_ER.length];
     var sub = ok ? '' : 'A resposta certa é a letra <b>' + 'ABCD'[o.indexOf(q.c)] + '</b>.';
     return '<div class="retorno ' + (ok ? 'r-ok' : ns ? 'r-ns' : 'r-er') + '" role="status">' + (ok ? '<span class="confete" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>' : '') +
-      '<span class="r-arte">' + arte + '</span><div><b>' + tit + '</b>' + (sub ? '<span>' + sub + '</span>' : '') + '</div></div>' +
+      '<span class="r-arte">' + arte + '</span><div><b>' + tit + '</b>' + (sub ? '<span>' + sub + '</span>' : '') + '</div></div>' + (extra || '') +
       '<div class="coment">' + esc(q.x) + '</div>';
   }
 
@@ -683,7 +693,7 @@
     var horas = ''; for (var h = 1; h <= 8; h++) horas += '<option value="' + h + '"' + (h === p.horas ? ' selected' : '') + '>' + h + (h === 1 ? ' hora' : ' horas') + '</option>';
     return '<section class="hero" style="grid-template-columns:1fr"><div><div class="marca" style="color:#fff;margin-bottom:14px"><span class="bolha cheia"></span><span class="bolha"></span> Método Aprovação OAB</div>' +
       '<h1>Você não precisa saber tudo.<br>Precisa saber o certo.</h1>' +
-      '<p class="sub">O método que aprovou o Dr. Adonias Lopes há 10 anos — e que ele testou de novo refazendo as duas últimas provas sem estudar: 56 e 65 pontos de aproveitamento. Primeiro você faz uma prova completa; depois a plataforma mostra onde estão seus pontos e monta o seu cronograma.</p>' +
+      '<p class="sub">O método que aprovou o Dr. Adonias Lopes há mais de 10 anos — e que ele testou de novo, refazendo o 45º e o 46º Exame sem estudar: 56% e 65% de aproveitamento. Primeiro você faz uma prova completa; depois a plataforma mostra onde estão seus pontos e monta o seu cronograma.</p>' +
       (!S.perfil ? '<p style="margin:18px 0 0"><button class="btn ouro" data-act="ir-form">Preencher meu ponto de partida</button></p>' : '') + '</div></section>' +
       (!S.perfil ? '<div class="aviso" role="status"><b>' + (pedido && NOMES_ABA[pedido] ? 'Para abrir ' + NOMES_ABA[pedido] + ', preencha primeiro o seu ponto de partida.' : 'Primeiro passo: preencha o seu ponto de partida.') + '</b> Leva 1 minuto. Sinopses, Exercícios, Provas anteriores e o Estúdio de áudio já estão liberados.</div>' : '') +
       '<div class="grade g2"><form class="bloco" id="f-perfil"><h2>Seu ponto de partida</h2>' +
@@ -692,7 +702,7 @@
       '<p class="peq sub" style="margin-top:-.6rem">Padrão: 1ª fase do ' + OAB.EXAME.nome + ', ' + fmtData(OAB.EXAME.data, true) + '.</p>' +
       '<label>Horas de estudo por dia<select id="p-horas">' + horas + '</select></label>' +
       '<div style="margin-bottom:1rem"><div style="font-weight:500;font-size:.9rem;margin-bottom:.4rem">Dias em que você estuda</div><div class="chips">' + dias + '</div></div>' +
-      '<div style="margin-bottom:1rem"><div style="font-weight:500;font-size:.9rem">Disciplinas com que você tem mais afinidade</div><p class="peq sub" style="margin:.2rem 0 .5rem">Marque as que você gosta ou já domina. Ética entra para todos, todos os dias.</p><div class="chips">' + af + '</div></div>' +
+      '<div style="margin-bottom:1rem"><div style="font-weight:500;font-size:.9rem">Disciplinas com que você tem mais afinidade</div><p class="peq sub" style="margin:.2rem 0 .5rem">Marque as que você gosta ou já domina. Ética entra no plano de todos, todos os dias.</p><div class="chips">' + af + '</div></div>' +
       '<button class="btn pri" type="submit">' + (S.perfil ? 'Salvar perfil' : 'Começar pelo diagnóstico') + '</button><p class="msg" id="p-msg"></p></form>' +
       '<div class="bloco"><h2>Como funciona</h2><ol class="passos-lista">' +
       OAB.PASSOS.map(function (s) { return '<li><span class="n">' + s.n + '</span><div><b>' + esc(s.nome) + '.</b> <span class="sub">' + esc(s.txt) + '</span></div></li>'; }).join('') +
@@ -711,8 +721,8 @@
   R.painel = function () {
     var p = garantirPerfil(), falta = diasAte(p.prova), pr = diagFeito() ? projecao() : null;
     var nm = (p.nome || '').trim().split(' ')[0]; nm = nm ? nm.charAt(0).toUpperCase() + nm.slice(1).toLowerCase() : '';
-    var h = cena({cls: 'cena-painel', titulo: 'Parabéns' + (nm ? ', ' + esc(nm) : '') + '.<br>Você acaba de fazer a melhor escolha da sua vida.',
-      lead: 'Esta plataforma vai te guiar até a aprovação, com a preparação completa das duas fases, organizada e distribuída dia a dia. Lembre-se: você não precisa saber tudo — precisa saber o caminho. A prova cobra 20 disciplinas, e quem tenta estudar todas por igual se perde no meio do caminho. Aqui não é concurso público, em que só entra quem tira a maior nota: no Exame de Ordem, passa quem cumpre a meta. <b>E o mapa até ela está nas suas mãos.</b>',
+    var h = cena({cls: 'cena-painel', titulo: 'Parabéns' + (nm ? ', ' + esc(nm) : '') + '!<br>Você acaba de fazer a melhor escolha da sua vida.',
+      lead: 'A partir de agora, esta plataforma vai guiar você até a aprovação, com a preparação completa para as duas fases, organizada e distribuída dia a dia. E lembre-se: para passar, você não precisa saber tudo; precisa conhecer o caminho. A prova cobra 20 disciplinas, e quem tenta estudar todas com a mesma intensidade acaba se perdendo. O Exame de Ordem não é um concurso público, em que só são aprovados os que tiram as maiores notas: aqui, é aprovado quem atinge a meta de 40 acertos. <b>O mapa para chegar lá está nas suas mãos.</b>',
       extra: '<div class="cena-nums"><div><span class="num">' + (falta > 0 ? falta : 0) + '</span><small>dias até a prova</small></div><div><span class="num">' + (diagFeito() ? notaDiag() : '—') + '</span><small>no diagnóstico</small></div><div><span class="num" style="color:var(--dourado)">40</span><small>para passar</small></div></div>',
       arte: medidorAtual('painel')});
     h += rotaAprovacao();
@@ -762,14 +772,14 @@
           ' Verde é ponto forte; vermelho é o que reforçar; a linha dourada é a sua meta.',
         extra: '<div class="chips" style="margin-top:14px"><a class="btn pri" href="#relatorio">Ver meu relatório</a><a class="btn" href="#cronograma">Montar meu plano</a></div>',
         arte: radar(vals, metaVet())}) +
-        '<div class="grade g2"><div class="bloco forte"><h2>O que já é seu</h2>' + (fortes.length ? '<div class="chips">' + fortes.map(function (d) { return tagDisc(d.id); }).join('') + '</div><p class="peq sub" style="margin:10px 0 0">Mantenha com revisões curtas. Não gaste seu tempo principal aqui.</p>' : '<p class="sub">Nenhuma disciplina acima de 70% ainda. É normal no começo.</p>') + '</div>' +
+        '<div class="grade g2"><div class="bloco forte"><h2>O que já é seu</h2>' + (fortes.length ? '<div class="chips">' + fortes.map(function (d) { return tagDisc(d.id); }).join('') + '</div><p class="peq sub" style="margin:10px 0 0">Mantenha essas disciplinas com revisões curtas e não gaste aqui o seu tempo principal.</p>' : '<p class="sub">Nenhuma disciplina acima de 70% ainda. É normal no começo.</p>') + '</div>' +
         '<div class="bloco reforco"><h2>O que reforçar</h2>' + (fracos.length ? '<div class="chips">' + fracos.map(function (d) { return tagDisc(d.id); }).join('') + '</div><p class="peq sub" style="margin:10px 0 0">Ordenadas pelo peso na prova: as primeiras devolvem mais pontos.</p>' : '<p class="sub">Nenhuma disciplina abaixo de 40%.</p>') + '</div></div>' +
         (ult.ex ? boletimOficial(ult.ex, corrigirOficial(ult.ex)) : boletimDiag()) +
         '<div class="grade g2">' + (ult.ex ? '<div class="bloco"><h2>Rodada com prova oficial</h2><p>Os erros desta rodada, com o assunto de cada questão, estão na página da prova.</p><a class="btn" href="#provas/' + ult.ex + '">Ver questões erradas do ' + ult.ex + 'º Exame</a></div>' : '<div class="bloco"><h2>Seu cartão-resposta</h2>' + cartaoDiag(true) + '<p class="peq sub" style="margin-top:12px">Verde: acerto. Vermelho: erro. Tracejado: marcou "não sei".</p></div>') +
         blocoRodadas() + '</div>';
     }
     if (!g.ini) {
-      return cena({selo: 'Diagnóstico', titulo: 'Antes de estudar, a gente mede.',
+      return cena({selo: 'Diagnóstico', titulo: 'Antes de estudar, vamos medir.',
         lead: 'Em 80 questões, na mesma distribuição da FGV, o diagnóstico faz o seu raio-X: mostra o que você já domina e onde estão os pontos que estão escapando. É a partir dele que o método decide onde vale a pena colocar o seu tempo.',
         extra: '<div class="meta-faixa"><b>Nossa meta:</b> levar você aos 40 acertos, o passaporte para a 2ª fase.</div><p style="margin:16px 0 0"><button class="btn pri" data-act="iniciar-diag">Começar o diagnóstico</button></p>',
         arte: radar(null, null)}) +
@@ -789,7 +799,7 @@
       '<div class="grade" style="grid-template-columns:minmax(0,1fr) minmax(220px,300px);align-items:start" id="diag-grid"><div class="questao">' +
       '<p>' + tagDisc(q.d) + '</p><div class="enun">' + esc(q.e) + '</div><div class="alts">' +
       o.map(function (oi, k) { var cls = r == null ? '' : oi === q.c ? ' cert' : oi === r ? ' errd' : ''; return '<button class="alt' + cls + '" data-diag-alt="' + oi + '"' + (r != null ? ' disabled' : '') + '><span class="lt">' + 'ABCD'[k] + '</span><span>' + esc(q.a[oi]) + '</span></button>'; }).join('') +
-      '</div>' + (r != null ? retorno(q, r, o) : '') + '<div class="barra-q"><div class="chips"><button class="btn" data-act="d-ant"' + (i === 0 ? ' disabled' : '') + '>Anterior</button>' + (r == null ? '<button class="btn" data-diag-alt="-1">Não sei</button>' : '') + '</div>' +
+      '</div>' + (r != null ? retorno(q, r, o, conquistaDiag(i)) : '') + '<div class="barra-q"><div class="chips"><button class="btn" data-act="d-ant"' + (i === 0 ? ' disabled' : '') + '>Anterior</button>' + (r == null ? '<button class="btn" data-diag-alt="-1">Não sei</button>' : '') + '</div>' +
       (i < 79 ? '<button class="btn pri" data-act="d-prox">' + (r == null ? 'Pular' : 'Próxima questão') + '</button>' : '<button class="btn ouro" data-act="d-fim">Entregar a prova</button>') + '</div></div>' +
       '<div class="pilha"><div class="bloco medidor-box">' + medidorAtual('diag', true) + '</div><div class="bloco"><h3>Cartão-resposta</h3>' + cartaoDiag(false) + '<p style="margin:14px 0 0"><button class="btn mini" data-act="d-fim">Entregar a prova</button></p></div></div></div>';
   };
@@ -843,10 +853,10 @@
       '<div class="kpis" style="margin-bottom:16px">' + grupos + '</div>' +
       '<div class="grade g2"><div class="bloco"><h2>Acerto por disciplina</h2><div class="barras">' +
       D.map(function (d) { return barra(esc(d.curto), d.cor, dg[d.id].ok / dg[d.id].n, null, ' <span class="sub peq">(' + dg[d.id].ok + '/' + dg[d.id].n + ')</span>'); }).join('') + '</div></div>' +
-      '<div class="pilha"><div class="bloco"><h3>Onde você já pontua</h3>' + (fortes.length ? '<div class="chips">' + fortes.map(function (d) { return tagDisc(d.id); }).join('') + '</div>' : '<p class="sub">Nenhuma disciplina acima de 70% ainda. Normal no começo.</p>') + '</div>' +
+      '<div class="pilha"><div class="bloco"><h3>Onde você já pontua</h3>' + (fortes.length ? '<div class="chips">' + fortes.map(function (d) { return tagDisc(d.id); }).join('') + '</div>' : '<p class="sub">Nenhuma disciplina acima de 70% ainda. É normal no começo.</p>') + '</div>' +
       '<div class="bloco"><h3>Onde está perdendo mais pontos</h3>' + (fracos.length ? '<p class="peq sub">Ordenadas pelo peso na prova.</p><div class="chips">' + fracos.map(function (d) { return tagDisc(d.id); }).join('') + '</div>' : '<p class="sub">Nenhuma disciplina abaixo de 40%.</p>') + '</div>' +
       '<div class="bloco"><h3>Ética: ' + dg.etica.ok + ' de 8</h3><p class="peq">' + (dg.etica.ok >= 6 ? 'Ótimo começo na disciplina mais previsível da prova. O Passo 2 mantém isso todos os dias.' : 'Ética vale 8 questões e é a mais previsível da prova. O Passo 2 coloca o Estatuto na sua rotina diária.') + '</p></div></div></div>' +
-      '<div class="bloco" style="margin-top:16px"><h2>Suas 4 disciplinas de domínio</h2><p>Escolha 4 disciplinas de peso para se tornar forte. A sugestão combina seu desempenho no diagnóstico, suas afinidades e o número de questões de cada uma. Você pode trocar.</p><div class="chips" id="dom-chips">' +
+      '<div class="bloco" style="margin-top:16px"><h2>Suas 4 disciplinas de domínio</h2><p>Escolha 4 disciplinas de peso nas quais você vai se tornar forte. A sugestão combina seu desempenho no diagnóstico, suas afinidades e o número de questões de cada uma. Você pode trocar.</p><div class="chips" id="dom-chips">' +
       cand.map(function (d) { return '<button class="chip" data-dom="' + d.id + '" aria-pressed="' + (escolha.indexOf(d.id) > -1) + '"><span class="pt" style="background:' + d.cor + '"></span>' + esc(d.curto) + ' · ' + d.q + 'q · ' + pct(dg[d.id].ok / dg[d.id].n) + (rec.indexOf(d.id) > -1 ? ' ★' : '') + '</button>'; }).join('') +
       '</div><p class="peq sub" style="margin-top:8px">★ sugestão da plataforma · ' + escolha.length + ' de 4 escolhidas</p>' +
       '<h3 style="margin-top:20px">A fórmula da aprovação</h3><div class="formula">' +
@@ -880,7 +890,7 @@
     return cena({selo: 'Cronograma', titulo: 'Seu GPS até a prova', lead: 'Quem estuda sem rota se perde: um dia Civil, no outro Penal, e na semana seguinte não lembra de nada. O cronograma decide o que estudar em cada dia, na ordem que mais devolve pontos. O seu trabalho é só cumprir a missão.', arte: gpsArte()}) + planoForm() + '<div style="height:16px"></div>' +
       '<div class="grade g2"><div class="bloco"><h2>Como ele é montado</h2><ol class="passos-lista">' +
       '<li><span class="n">1</span><div><b>Construção.</b> <span class="sub">Teoria e exercícios das suas 4 disciplinas de domínio, revezando as mais fracas com mais frequência.</span></div></li>' +
-      '<li><span class="n">2</span><div><b>Consolidação.</b> <span class="sub">Domínio em revisão e entrada dos pontos rápidos do Grupo C e do restante do Grupo B.</span></div></li>' +
+      '<li><span class="n">2</span><div><b>Consolidação.</b> <span class="sub">Revisão das disciplinas de domínio e entrada dos pontos rápidos: o restante do Grupo B e o Grupo C.</span></div></li>' +
       '<li><span class="n">3</span><div><b>Revisão final.</b> <span class="sub">Últimas duas semanas: revisão de erros, sinopses e simulados.</span></div></li></ol>' +
       '<p class="peq sub" style="margin-top:12px">Uma vez por semana há um simulado com uma das 10 últimas provas oficiais, corrigido pelo gabarito da FGV.</p></div>' +
       '<div class="bloco"><h2>Exemplo de um dia (3 horas)</h2><div class="tarefas">' + ex.map(function (t) { return '<div class="tarefa"><span></span><span class="tx">' + passoTag(t.p) + ' ' + esc(t.txt) + ' <span class="sub">· ' + t.min + ' min</span></span><span></span></div>'; }).join('') +
@@ -1156,7 +1166,7 @@
   R.exercicios = function (arg) {
     if (arg) {
       if (!sess || sess.modo !== arg) novaSessao(arg);
-      if (!sess.l.length) return '<p><a class="link" href="#exercicios">Voltar</a></p><div class="vazio"><h2>Nada por aqui</h2><p>' + (arg === 'erros' ? 'Você não tem questões erradas pendentes.' : 'Sem questões nesta disciplina ainda.') + '</p></div>';
+      if (!sess.l.length) return '<p><a class="link" href="#exercicios">Voltar</a></p><div class="vazio"><h2>Nada por aqui</h2><p>' + (arg === 'erros' ? 'Você não tem questões erradas pendentes.' : 'Ainda não há questões nesta disciplina.') + '</p></div>';
       if (sess.i >= sess.l.length) {
         var n = Object.keys(sess.resp).length;
         if (!sess.registrada && n) {
@@ -1178,7 +1188,7 @@
         '<div class="barra-q">' + (r == null ? '<button class="btn" data-ex-alt="-1">Não sei</button><span></span>' : '<a class="btn mini" href="#sinopses/' + q.d + '">Ver sinopse</a><button class="btn pri" data-act="ex-prox">' + (sess.i + 1 < sess.l.length ? 'Próxima' : 'Ver resultado') + '</button>') + '</div></div>';
     }
     var er = errosAtuais().length;
-    return cena({selo: 'Exercícios', titulo: 'Treino que vira ponto', lead: 'Questões no estilo FGV, com comentário e fundamento legal. Cada resposta alimenta o seu radar, a sua nota projetada e os seus temas para revisar.'}) + boletimSessao() +
+    return cena({selo: 'Exercícios', titulo: 'Treino que vira ponto', lead: 'Questões no estilo da FGV, com comentário e fundamento legal. Cada resposta alimenta o seu radar, a sua nota projetada e os seus temas para revisar.'}) + boletimSessao() +
       '<div class="grade g3" style="margin-bottom:22px"><a class="disc-card" href="#exercicios/mix" style="--c:var(--dourado)"><h3>Treino do dia</h3><span class="sub peq">10 questões, com mais peso nas suas disciplinas de domínio e em Ética.</span></a>' +
       '<a class="disc-card" href="#exercicios/erros" style="--c:var(--vermelho)"><h3>Revisão de erros</h3><span class="sub peq">' + er + ' questões que você errou na última tentativa.</span></a></div>' +
       '<div class="bloco"><table class="t"><thead><tr><th>Disciplina</th><th>Na prova</th><th>Banco</th><th>Domínio</th><th></th></tr></thead><tbody>' +
@@ -1266,7 +1276,7 @@
         (pts.length > 1 ? '<polyline fill="none" stroke="var(--tinta)" stroke-width="2.5" points="' + pts.map(function (p) { return p.x + ',' + p.y; }).join(' ') + '"/>' : '') +
         pts.map(function (p) { return '<circle cx="' + p.x + '" cy="' + p.y + '" r="5" fill="var(--papel2)" stroke="var(--tinta)" stroke-width="2.5"/><text x="' + p.x + '" y="' + (p.y - 11) + '" text-anchor="middle" font-size="13" font-weight="700" fill="var(--tinta)">' + p.nt + '</text><text x="' + p.x + '" y="' + (hgt - 6) + '" text-anchor="middle" font-size="11" fill="var(--tinta2)">' + p.e.n + 'º</text>'; }).join('') + '</svg>';
     }
-    return cena({selo: 'Passo 1 · Provas anteriores', titulo: 'Conheça seu inimigo', lead: 'A FGV repete o roteiro. Resolver as 10 últimas provas, do 38º ao 47º Exame, é a forma mais rápida de entender como ela pergunta. Você marca no cartão-resposta e a plataforma corrige pelo gabarito oficial.'}) +
+    return cena({selo: 'Passo 1 · Provas anteriores', titulo: 'Conheça seu examinador', lead: 'A FGV repete o roteiro. Resolver as 10 últimas provas, do 38º ao 47º Exame, é a forma mais rápida de entender como ela pergunta. Você marca no cartão-resposta e a plataforma corrige pelo gabarito oficial.'}) +
       '<div class="bloco" style="margin-bottom:16px"><h2>Como treinar com a prova oficial</h2><ol class="passos-lista">' +
       '<li><span class="n">1</span><div>Abra o caderno <b>Tipo 1 (branco)</b> do exame escolhido.</div></li>' +
       '<li><span class="n">2</span><div>Resolva em até 5 horas e marque suas respostas no cartão-resposta da plataforma.</div></li>' +
