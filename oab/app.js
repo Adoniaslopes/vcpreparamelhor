@@ -175,8 +175,9 @@
       var it = [];
       if (simulado) {
         var ex = EXAMES[iEx++ % EXAMES.length];
+        it.push({p: 2, min: et, d: 'etica', txt: 'Ética do dia: leia 10 artigos do Estatuto e do Código de Ética', link: '#sinopses/etica'});
         it.push({p: 1, min: Math.min(M, 300), txt: (M >= 300 ? 'Resolva a prova do ' : 'Resolva metade (40 questões) da prova do ') + ex.n + 'º Exame (' + ex.ed + ') e marque no cartão-resposta', link: '#provas/' + ex.n});
-        it.push({p: 4, min: Math.max(15, M - Math.min(M, 300) - au), txt: 'Corrija pelo gabarito oficial e anote no resumo os assuntos que errou', link: '#provas/' + ex.n});
+        it.push({p: 4, min: Math.max(15, M - Math.min(M, 300) - au - et), txt: 'Corrija pelo gabarito oficial e anote no resumo os assuntos que errou', link: '#provas/' + ex.n});
         it.push({p: 5, min: au, txt: 'Grave 3 minutos sobre o tema que mais errou no simulado', link: '#estudio'});
         out.push({data: dt, fase: fase, sim: true, it: it}); return;
       }
