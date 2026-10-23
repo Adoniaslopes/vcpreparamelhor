@@ -285,6 +285,19 @@ footer b{color:var(--nevoa)}
 .vs-c.novo li:before{content:'✓';position:absolute;left:4px;color:var(--folha);font-weight:700}
 .vs-fim{text-align:center;margin-top:34px;font-family:'Newsreader',serif;font-size:clamp(24px,3vw,30px);color:var(--tinta);font-weight:500}
 @media (max-width:700px){.vs,.calc-res{grid-template-columns:1fr}.calc label{flex-direction:column;align-items:flex-start;gap:8px}.calc{padding:20px}}
+/* balões de pensamento coloridos */
+.vozes{gap:30px;margin:44px 0 54px}
+.bal{position:relative;border:0 !important;border-radius:999px !important;padding:18px 30px !important;color:#fff !important;font-weight:500;box-shadow:0 14px 34px rgba(0,0,0,.35);animation:flutua 6s ease-in-out infinite}
+.bal:before,.bal:after{content:'';position:absolute;border-radius:50%;background:inherit;box-shadow:0 6px 14px rgba(0,0,0,.3)}
+.bal:before{width:22px;height:22px;bottom:-16px;left:34px}
+.bal:after{width:12px;height:12px;bottom:-32px;left:22px}
+.bal.d:before{left:auto;right:34px}.bal.d:after{left:auto;right:22px}
+.vozes .bal:nth-child(1){background:linear-gradient(135deg,#FF4D5E,#C8102E)}
+.vozes .bal:nth-child(2){background:linear-gradient(135deg,#B678FF,#6A3FD1);animation-delay:-1.5s}
+.vozes .bal:nth-child(3){background:linear-gradient(135deg,#FF9F43,#E2611B);animation-delay:-3s}
+.vozes .bal:nth-child(4){background:linear-gradient(135deg,#3EC5FF,#1C6FD6);animation-delay:-4.5s}
+@keyframes flutua{50%{transform:translateY(-6px)}}
+@media (prefers-reduced-motion:reduce){.bal{animation:none}}
 </style>
 </head>
 <body>
