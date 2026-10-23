@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Eu também reprovei na OAB · Método Aprovação</title>
-<meta name="description" content="Um advogado que reprovou, mudou a fórmula e passou. Dez anos depois, refez duas provas sem estudar e teria passado nas duas. O método de 5 passos para os 40 acertos, numa plataforma que guia você até a aprovação.">
+<meta name="description" content="Um advogado que reprovou, mudou a fórmula e passou. Dez anos depois, refez duas provas sem estudar e teria passado nas duas. O método de 5 passos para os 40 acertos, numa plataforma que guia você pelas duas fases até a aprovação.">
 <meta property="og:title" content="Eu também reprovei na OAB. O problema não era eu. Era a fórmula.">
-<meta property="og:description" content="O método de 5 passos para chegar aos 40 acertos na 1ª fase, numa plataforma que guia você até a aprovação.">
+<meta property="og:description" content="O método de 5 passos para chegar aos 40 acertos na 1ª fase, numa plataforma que guia você pelas duas fases até a aprovação.">
 <meta property="og:image" content="img/carteira.jpg">
 <meta name="theme-color" content="#04091A">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2313284A'/%3E%3Ccircle cx='22' cy='32' r='8' fill='%23F5C542'/%3E%3Ccircle cx='42' cy='32' r='8' fill='none' stroke='%23F5F7FB' stroke-width='3'/%3E%3C/svg%3E">
@@ -16,8 +16,7 @@
 <script>
 /* ===== CONFIGURAÇÃO DE VENDAS — troque pelos links de checkout da Hubla ou da Hotmart ===== */
 window.VENDAS = {
-  checkout1: '',   // plano "1ª fase · acesso até a aprovação" (12x R$ 19,99)
-  checkout2: '',   // plano "1ª e 2ª fase" (12x R$ 49,90)
+  checkout1: '',   // acesso completo 1ª e 2ª fase, até passar (12x R$ 69,90) — cole aqui o link da Kiwify
   whatsapp: '5562982712108',
   prova: '2027-01-10T13:00:00-03:00'   // 1ª fase do 48º Exame
 };
@@ -248,6 +247,15 @@ footer b{color:var(--nevoa)}
 .peq-n{font-size:15px !important;color:var(--tinta2) !important;margin-top:14px;font-style:italic}
 @media (max-width:1000px){.passos5{grid-template-columns:1fr 1fr}.p5:last-child{grid-column:1/-1}}
 @media (max-width:700px){.passos5,.pq{grid-template-columns:1fr}.bal{max-width:100%}}
+
+.inclui-2{max-width:860px;margin:40px auto 0;display:grid;grid-template-columns:1fr 1fr;gap:18px;font-family:'IBM Plex Sans',sans-serif}
+.ic{padding:24px 26px;border-radius:22px;background:rgba(255,255,255,.03);border:1px solid var(--linha)}
+.ic h3{font-size:22px;color:var(--ouro);margin-bottom:8px}
+.ic ul{list-style:none}
+.ic li{padding:9px 0 9px 28px;position:relative;font-size:16px;color:#D7DDEA;border-top:1px solid var(--linha);line-height:1.45}
+.ic li:before{content:'✓';position:absolute;left:3px;color:var(--folha);font-weight:700}
+.planos.um{grid-template-columns:minmax(0,560px);justify-content:center}
+@media (max-width:700px){.inclui-2{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -263,7 +271,7 @@ footer b{color:var(--nevoa)}
     <img class="carteira" src="img/carteira.jpg" alt="Carteira vermelha da OAB">
     <h1>Eu também reprovei.<br>E descobri que o problema <em>não era eu.</em></h1>
     <p class="sub">Era a fórmula. Quando troquei a forma de estudar, passei. Dez anos depois, refiz duas provas sem estudar nada e teria passado nas duas. Este é o método que eu usei, agora numa plataforma que segura a sua mão até os 40 acertos.</p>
-    <div class="cta-abre"><a class="btn pri" data-checkout="1" href="#">Quero estudar do jeito certo · 12x R$&nbsp;19,99</a><span class="miudo">Acesso até a aprovação · liberação automática · 7 dias de garantia</span></div>
+    <div class="cta-abre"><a class="btn pri" data-checkout="1" href="#">Quero estudar do jeito certo · 12x R$&nbsp;69,90</a><span class="miudo">1ª e 2ª fase · acesso até passar · liberação automática · 7 dias de garantia</span></div>
     <div class="autor-mini"><span class="av">AL</span><span><b>Adonias Lopes de Araújo</b><br>Advogado há mais de 10 anos · OAB/GO 50.607</span></div>
     <div class="desce">continue lendo<span>↓</span></div>
   </div>
@@ -319,7 +327,7 @@ footer b{color:var(--nevoa)}
       <div class="rg-leg"><span>0</span><span class="m">40 · aprovado</span><span>80</span></div>
     </div>
     <p>Quem entende essa conta para de estudar com medo e começa a estudar com estratégia.</p>
-    <div class="cta-meio"><a class="btn pri" data-checkout="1" href="#">Quero o plano para os 40 acertos →</a><span class="miudo">12x de R$ 19,99 · acesso até a aprovação</span></div>
+    <div class="cta-meio"><a class="btn pri" data-checkout="1" href="#">Quero o plano para os 40 acertos →</a><span class="miudo">12x de R$ 69,90 · 1ª e 2ª fase até passar</span></div>
   </div>
 </section>
 
@@ -444,39 +452,36 @@ footer b{color:var(--nevoa)}
   <div class="larga">
     <div class="intro">
       <span class="kicker">O seu próximo passo</span>
-      <h2 class="serif-t">Eu fico com você até você passar.</h2>
-      <p>O plano principal não é de três meses, nem de seis. É <b style="color:#fff;font-weight:500">até a sua aprovação na 1ª fase</b>. Se este exame não for o seu, o acesso continua para o próximo, sem pagar de novo.</p>
+      <h2 class="serif-t">Eu pego na sua mão e só solto na carteira.</h2>
+      <p>Não é um plano de três meses, nem de seis. É <b style="color:#fff;font-weight:500">um único acesso às duas fases, até você passar.</b> Se este exame não for o seu, você continua no próximo, sem pagar de novo. Passou na 1ª fase? A 2ª já está liberada, no mesmo acesso.</p>
     </div>
-    <ul class="inclui">
-      <li>Diagnóstico com prova oficial da FGV e ponteiro ao vivo</li>
-      <li>Relatório raio-X das 20 disciplinas</li>
-      <li>As 10 últimas provas (38º ao 47º Exame), com correção</li>
-      <li>Cronograma diário que se refaz sozinho</li>
-      <li>Sinopses explicadas de todas as disciplinas</li>
-      <li>Exercícios por disciplina, com a lei</li>
-      <li>Estúdio para ler, gravar e ouvir</li>
-      <li>Acesso até a sua aprovação</li>
-    </ul>
-    <div class="planos">
+    <div class="inclui-2">
+      <div class="ic"><h3>1ª fase</h3><ul>
+        <li>Diagnóstico com prova oficial da FGV e ponteiro ao vivo</li>
+        <li>Raio-X das 20 disciplinas</li>
+        <li>As 10 últimas provas, com correção e a lei</li>
+        <li>Cronograma diário que se refaz sozinho</li>
+        <li>Sinopses explicadas e exercícios de todas as disciplinas</li>
+        <li>Estúdio para ler, gravar e ouvir</li></ul></div>
+      <div class="ic"><h3>2ª fase</h3><ul>
+        <li>As 7 áreas da prova prático-profissional</li>
+        <li>Provas no formato da FGV: 4 questões e a peça</li>
+        <li>Folha de respostas numerada, como no dia da prova</li>
+        <li>Espelho, resposta-modelo e correção depois de entregar</li>
+        <li>Roteiro de estrutura da peça, passo a passo</li></ul></div>
+    </div>
+    <div class="planos um">
       <div class="pl dest">
-        <span class="tag">Recomendado</span>
-        <h3>1ª fase · Acesso até a aprovação</h3>
-        <p class="ds">Tudo o que está acima, até o dia em que você vir o seu nome na lista.</p>
-        <div class="preco"><small>12x de</small><b>R$&nbsp;19,99</b></div>
-        <div class="dia">Menos de R$ 0,70 por dia</div>
-        <a class="btn pri" data-checkout="1" href="#">Quero começar minha aprovação →</a>
-        <span class="miudo">Liberação automática no seu e-mail · 7 dias de garantia</span>
-      </div>
-      <div class="pl">
-        <h3>Até a carteira · 1ª e 2ª fase</h3>
-        <p class="ds">Tudo do plano da 1ª fase e mais a 2ª fase nas 7 áreas: provas no formato da FGV, folha de respostas, peça e questões, com espelho, resposta-modelo e correção depois de entregar.</p>
-        <div class="preco"><small>12x de</small><b>R$&nbsp;49,90</b></div>
-        <div class="dia">Da 1ª fase até a carteira</div>
-        <a class="btn ouro" data-checkout="2" href="#">Quero ir até a carteira →</a>
+        <span class="tag">Acesso completo</span>
+        <h3>1ª e 2ª fase · até você passar</h3>
+        <p class="ds">Tudo o que está acima, num só acesso, do diagnóstico de hoje até a sua carteira. Com <b style="color:#fff;font-weight:500">atualização semestral</b>: a cada exame, as provas anteriores novas entram na plataforma.</p>
+        <div class="preco"><small>12x de</small><b>R$&nbsp;69,90</b></div>
+        <div class="dia">Menos do que uma pizza de fim de semana por mês</div>
+        <a class="btn pri" data-checkout="1" href="#">Quero ir até a carteira →</a>
         <span class="miudo">Liberação automática no seu e-mail · 7 dias de garantia</span>
       </div>
     </div>
-    <p class="ancora">Uma nova inscrição no Exame custa <b>R$ 350</b>, além de mais seis meses de espera.<br>O acesso até a aprovação custa menos do que uma única inscrição.</p>
+    <p class="ancora">Por mês, o preço de um lanche de sábado.<br>Reprovar de novo custa <b>outra inscrição de R$ 350</b> e mais seis meses longe da advocacia.</p>
   </div>
 </section>
 
@@ -501,7 +506,7 @@ footer b{color:var(--nevoa)}
     <details><summary>"Eu trabalho o dia todo. Não tenho tempo."</summary><p>É justamente para isso que o método existe. Você não vai estudar 20 disciplinas: vai dominar 5 e ver o essencial das outras. O cronograma é montado com as horas que você realmente tem, e o áudio aproveita até o trajeto.</p></details>
     <details><summary>"Já paguei cursinho e não adiantou."</summary><p>Isto não é mais um cursinho com centenas de aulas. É um método de prioridade e treino na prova real: diagnóstico, plano diário e correção. Muita gente usa junto com o material que já tem e finalmente entende o que fazer com ele.</p></details>
     <details><summary>"Preciso mesmo estudar só 5 matérias?"</summary><p>Você foca em 5 e não abandona as outras. As sinopses e os exercícios cobrem as 20 disciplinas, e as provas anteriores te fazem aprender o resto pelo jeito que a FGV pergunta. É isso que garante os acertos que faltam para chegar aos 40.</p></details>
-    <details><summary>"E se eu não passar neste exame?"</summary><p>No plano da 1ª fase, o seu acesso continua até a aprovação. Você segue treinando para o próximo, sem pagar de novo.</p></details>
+    <details><summary>"E se eu não passar neste exame?"</summary><p>O seu acesso continua até você passar. Você segue treinando para o próximo exame, sem pagar de novo, e as provas novas entram na plataforma a cada semestre.</p></details>
     <details><summary>"Como recebo o acesso?"</summary><p>Automaticamente. Assim que o pagamento é aprovado, chega um e-mail para você criar a sua senha. Use o mesmo e-mail da compra. Funciona no celular e no computador, sem instalar nada.</p></details>
   </div>
 </section>
@@ -519,8 +524,8 @@ footer b{color:var(--nevoa)}
     <p>Eu já estive dos dois lados. <em class="o">O segundo caminho é bem mais curto.</em></p>
   </div>
   <div class="larga" style="margin-top:46px">
-    <a class="btn pri grande-btn" data-checkout="1" href="#">Quero começar agora · 12x R$&nbsp;19,99 →</a>
-    <span class="miudo">Acesso até a aprovação · liberação automática · 7 dias de garantia</span>
+    <a class="btn pri grande-btn" data-checkout="1" href="#">Quero começar agora · 12x R$&nbsp;69,90 →</a>
+    <span class="miudo">1ª e 2ª fase · acesso até passar · liberação automática · 7 dias de garantia</span>
   </div>
   <div class="ps">
     <p><b>P.S.</b> A aprovação não exige saber tudo. Exige 40 acertos no dia da prova. Você não precisa ser outra pessoa para passar. Precisa de outra fórmula.</p>
@@ -539,7 +544,7 @@ footer b{color:var(--nevoa)}
   </div>
 </footer>
 
-<div class="fixo"><span class="fx-txt"><b>Acesso até a aprovação</b> · 12x R$&nbsp;19,99</span><a class="btn pri" data-checkout="1" href="#">Garantir meu acesso →</a></div>
+<div class="fixo"><span class="fx-txt"><b>1ª e 2ª fase até passar</b> · 12x R$&nbsp;69,90</span><a class="btn pri" data-checkout="1" href="#">Garantir meu acesso →</a></div>
 
 <script>
 (function () {
@@ -554,7 +559,7 @@ footer b{color:var(--nevoa)}
     document.getElementById('faixa').innerHTML = 'Faltam <b>' + d + ' dias</b> para a 1ª fase do 48º Exame de Ordem · 10/01/2027';
   }
   tick(); setInterval(tick, 30000);
-  var nomes = {1: '1ª fase · acesso até a aprovação (12x R$ 19,99)', 2: '1ª e 2ª fase (12x R$ 49,90)'};
+  var nomes = {1: 'acesso completo, 1ª e 2ª fase até passar (12x R$ 69,90)'};
   document.querySelectorAll('[data-checkout]').forEach(function (a) {
     var n = a.getAttribute('data-checkout'), url = V['checkout' + n];
     if (url) { a.href = url; a.rel = 'noopener'; }

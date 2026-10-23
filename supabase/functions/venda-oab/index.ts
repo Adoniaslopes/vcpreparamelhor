@@ -55,7 +55,8 @@ Deno.serve(async (req) => {
     pega(corpo, ['data.purchase.offer.code', 'offer.code', 'event.offer.id', 'event.invoice.offerId'])].filter(Boolean);
 
   const ids2 = (Deno.env.get('PRODUTOS_2FASES') || '').split(',').map((s) => s.trim()).filter(Boolean);
-  const plano = produto.some((p) => ids2.includes(p)) ? '2fases' : '1fase';
+  // Oferta única (1ª e 2ª fase): sem PRODUTOS_2FASES configurado, toda compra libera as duas fases.
+  const plano = !ids2.length || produto.some((p) => ids2.includes(p)) ? '2fases' : '1fase';
   const sinal = evento + ' ' + status;
 
   const log = async (resultado: string) => {
