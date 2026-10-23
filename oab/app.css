@@ -581,3 +581,16 @@ details.ajuste form.bloco { box-shadow: none; border: 0; padding: 0; }
 .cmb-ok { color: var(--verde); }
 .cmb-no { color: var(--vermelho); }
 .cmb-aviso { display: block; margin-top: 10px; padding: 10px 12px; border-radius: 10px; font-size: .9rem; color: var(--tinta); background: color-mix(in srgb, var(--dourado) 12%, transparent); border: 1px solid color-mix(in srgb, var(--dourado) 45%, var(--linha)); }
+/* simulador em fundo claro, para leitura mais fácil */
+.bloco.cmb { --papel2: #FFFFFF; --tinta: #13284A; --tinta2: #4A5D7E; --linha: #D5DCE8; --dourado: #A87400; --verde: #1E8E5A; --ciano: #1C8FD6; --vermelho: #C8102E;
+  background: #F4F7FC; color: var(--tinta); border-color: #DCE3EE; }
+.bloco.cmb h2 { color: var(--tinta); }
+.bloco.cmb .sub { color: var(--tinta2); }
+.cmb .cmb-dir { box-shadow: 0 6px 18px rgba(19, 40, 74, .08); }
+.cmb .cmb-chip { background: #fff; }
+.cmb .cmb-chip.on { background: color-mix(in srgb, var(--c) 14%, #fff); color: var(--tinta); }
+.cmb .cmb-fixa { background: #FFF6DB; border-color: #E8CF84; }
+.cmb .cmb-conta > div { background: #F1F4F9; }
+.cmb .cmb-barra { background: #E3E8F0; }
+.cmb .btn.mini { background: #fff; color: var(--tinta); border-color: var(--linha); }
+.cmb .cmb-aviso { background: #FFF6DB; border-color: #E8CF84; }

@@ -377,7 +377,7 @@
     return '<section class="bloco cmb" id="cmb" style="margin:16px 0">' + cmbMiolo() + '</section>';
   }
   function cmbMiolo() {
-    var c = cmbCalc(cmbSel), cor = {A: '#C8102E', B: '#F5C542', C: '#7BC043'}, n = cmbSel.length;
+    var c = cmbCalc(cmbSel), cor = {A: '#C8102E', B: '#A87400', C: '#3E8E1E'}, n = cmbSel.length;
     var chips = ['A', 'B', 'C'].map(function (g) {
       return '<div class="cmb-g"><span class="cmb-gt" style="--c:' + cor[g] + '">Grupo ' + g + '</span><div class="cmb-chips">' +
         D.filter(function (d) { return d.g === g && d.id !== 'etica'; }).sort(function (a, b) { return b.q - a.q; }).map(function (d) {
