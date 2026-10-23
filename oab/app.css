@@ -403,3 +403,8 @@ details.ajuste form.bloco { box-shadow: none; border: 0; padding: 0; }
 .hoje-box { border: 1px solid rgba(62,197,255,.45); box-shadow: 0 0 0 4px rgba(62,197,255,.08); margin-bottom: 16px; }
 .hoje-box h2 { margin: 8px 0 4px; }
 @media (max-width: 760px) { .rota::after { background: linear-gradient(180deg, #FF4D5E, var(--cor-trilha, var(--verde))) !important; } }
+
+.medidor .alvo { transform-box: fill-box; transform-origin: center; }
+.medidor .alvo.chegou { filter: drop-shadow(0 0 8px rgba(61,220,151,.9)); animation: alvoPulso 2.4s ease-in-out infinite; }
+@keyframes alvoPulso { 50% { transform: scale(1.06); } }
+@media (prefers-reduced-motion: reduce) { .medidor .alvo.chegou { animation: none; } }

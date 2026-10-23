@@ -514,17 +514,24 @@
     var cor = v == null ? '#FF4D5E' : corMeta(v), falta = v == null ? 40 : Math.max(0, 40 - Math.round(v));
     var corDe = medAnt[chave + ':c'] || '#FF4D5E'; if (v != null) medAnt[chave + ':c'] = cor;
     var status = v == null ? '' : falta ? 'faltam ' + falta + ' para os 40' : 'acima do corte de 40';
-    return '<div class="medidor' + (o.mini ? ' mini' : '') + '"><svg viewBox="0 0 240 ' + (v == null ? 152 : 164) + '" role="img" aria-label="' + (v == null ? 'A carteira da OAB: faça o diagnóstico para medir a distância até ela' : Math.round(v) + ' ' + (o.rot || 'nota projetada de 80') + ', ' + status) + '">' +
+    return '<div class="medidor' + (o.mini ? ' mini' : '') + '"><svg viewBox="' + (v == null ? '0 0 240 152' : '0 -82 240 246') + '" role="img" aria-label="' + (v == null ? 'A carteira da OAB: faça o diagnóstico para medir a distância até ela' : Math.round(v) + ' ' + (o.rot || 'nota projetada de 80') + ', ' + status) + '">' +
       '<path d="M' + (cx - R) + ' ' + cy + ' A' + R + ' ' + R + ' 0 0 1 ' + (cx + R) + ' ' + cy + '" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="16" stroke-linecap="round"/>' +
       (v == null ? '' : '<path class="medidor-v" style="--de:' + (L * de).toFixed(1) + 'px;--cor-de:' + corDe + '" d="M' + (cx - R) + ' ' + cy + ' A' + R + ' ' + R + ' 0 0 1 ' + (cx + R) + ' ' + cy + '" fill="none" stroke="' + cor + '" stroke-width="16" stroke-linecap="round" stroke-dasharray="' + (L * f).toFixed(1) + ' ' + L.toFixed(1) + '"/>') +
       '<line x1="' + mx + '" y1="' + (my - 12) + '" x2="' + mx + '" y2="' + (my + (v == null ? 8 : 12)) + '" stroke="#F5C542" stroke-width="3"/>' +
       '<text x="' + mx + '" y="' + (my - 18) + '" text-anchor="middle" font-size="11" fill="#F5C542" font-weight="700">40</text>' +
-      (v == null ? carteiraOAB(cx, cy) : '<text x="' + cx + '" y="' + (cy - 16) + '" text-anchor="middle" font-size="44" font-weight="800" fill="' + cor + '" font-family="Bricolage Grotesque, sans-serif">' + Math.round(v) + '</text>' +
+      (v == null ? carteiraOAB(cx, cy) : alvoCarteira(cx, my - 30, f >= 0.5) + '<text x="' + cx + '" y="' + (cy - 16) + '" text-anchor="middle" font-size="44" font-weight="800" fill="' + cor + '" font-family="Bricolage Grotesque, sans-serif">' + Math.round(v) + '</text>' +
       '<text x="' + cx + '" y="' + (cy + 4) + '" text-anchor="middle" font-size="11" fill="#B9C7DE">' + esc(o.rot || 'nota projetada de 80') + '</text>' +
       '<text x="' + cx + '" y="' + (cy + 22) + '" text-anchor="middle" font-size="11.5" font-weight="700" fill="' + cor + '">' + status + '</text>' +
       (o.sub ? '<text x="' + cx + '" y="' + (cy + 37) + '" text-anchor="middle" font-size="10" fill="#8FA3C7">' + esc(o.sub) + '</text>' : '')) + '</svg></div>';
   }
   function medidorAtual(chave, mini) { var m = leituraMedidor(); return m ? medidor(m.v, {rot: m.rot, sub: m.sub, chave: chave, mini: mini}) : medidor(null); }
+  // a carteira pequena em cima da marca dos 40: o alvo fica sempre à vista
+  function alvoCarteira(cx, base, chegou) {
+    var w = 50, h = 69, x = cx - w / 2, y = base - h;
+    var img = OAB.CARTEIRA ? '<image href="' + OAB.CARTEIRA + '" x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" preserveAspectRatio="xMidYMid slice" clip-path="url(#clipAlvo)"/>' : '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="3" fill="#8E1B24"/>';
+    return '<defs><clipPath id="clipAlvo"><rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="3"/></clipPath></defs>' +
+      '<g class="alvo' + (chegou ? ' chegou' : '') + '"><rect x="' + (x + 2) + '" y="' + (y + 3) + '" width="' + w + '" height="' + h + '" rx="3" fill="rgba(0,0,0,.45)"/>' + img + '</g>';
+  }
   // a carteira vermelha da OAB: o objetivo final do aluno (desenho próprio, sem o brasão oficial)
   function carteiraOAB(cx, cy) {
     var w = 62, h = 86, x = cx - w / 2, y = cy - 83;
@@ -1338,7 +1345,11 @@
 
   if (!cfg.url || !cfg.anonKey || !window.supabase) { iniciarApp(); return; }
 
-  var sb = window.supabase.createClient(cfg.url, cfg.anonKey, {auth: {persistSession: true, autoRefreshToken: true, detectSessionInUrl: true}});
+  // login obrigatório a cada acesso: a sessão fica só nesta aba (fechou o navegador ou a aba, pede login de novo)
+  var armazemSessao = {getItem: function (k) { try { return sessionStorage.getItem(k); } catch (e) { return null; } },
+    setItem: function (k, v) { try { sessionStorage.setItem(k, v); } catch (e) { /* sem armazenamento */ } },
+    removeItem: function (k) { try { sessionStorage.removeItem(k); } catch (e) { /* sem armazenamento */ } }};
+  var sb = window.supabase.createClient(cfg.url, cfg.anonKey, {auth: {persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, storage: armazemSessao, storageKey: 'oab-sessao'}});
   nuvem.sb = sb;
   var recuperando = /type=recovery/.test(location.hash + location.search), entrando = false;
   $('#acesso').hidden = false; acView(recuperando ? 'nova' : 'login');
