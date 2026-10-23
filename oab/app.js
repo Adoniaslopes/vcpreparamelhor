@@ -397,8 +397,8 @@
     } else {
       tese = '<p>As 6 disciplinas do Grupo A valem ' + qa + ' questões. Somadas às 5 do Grupo B, chegam a ' + (qa + qb) + ' das 80. As ' + nC + ' disciplinas do Grupo C, juntas, valem só ' + qc + '.</p>';
     }
-    return '<section class="bloco" style="margin:16px 0"><div class="cab" style="margin-bottom:10px"><div><h2 style="margin:0">Você não precisa estudar tudo. Precisa estudar o certo.</h2>' +
-      '<p class="sub">Cada questão vale 1 ponto, e o corte é 40. Veja quanto cada disciplina vale na prova da FGV.</p></div></div>' +
+    return '<section class="bloco" style="margin:16px 0"><div class="cab" style="margin-bottom:10px"><div><h2 style="margin:0">Entenda a matemática da aprovação</h2>' +
+      '<p class="sub">Cada questão vale 1 ponto e a meta é 40. Veja quanto cada disciplina vale na prova da FGV — é daqui que sai o caminho mais curto até a sua aprovação.</p></div></div>' +
       '<div class="kpis" style="margin-bottom:14px">' + cards + '</div>' + svg +
       '<p class="peq sub" style="margin:6px 0 12px">Barras: questões por disciplina. Linha: quanto da prova você cobre somando da maior para a menor. ★ = Ética e suas disciplinas de domínio.</p>' +
       '<div class="tese">' + tese + '<p class="peq sub" style="margin:0">As ' + nC + ' disciplinas do Grupo C somam ' + qc + ' questões, menos que Ética, Civil e Processo Civil juntas (' + (8 + DM.civil.q + DM.pcivil.q) + '). Estudar tudo por igual é gastar o mesmo tempo em matérias que valem 2 pontos e em matérias que valem 8.</p></div></section>';
@@ -702,9 +702,9 @@
   };
   R.painel = function () {
     var p = garantirPerfil(), falta = diasAte(p.prova), pr = diagFeito() ? projecao() : null;
-    var nm = (p.nome || '').split(' ')[0];
-    var h = cena({cls: 'cena-painel', titulo: 'Olá' + (nm ? ', ' + esc(nm) : '') + '.<br>Este é o mapa da sua aprovação.',
-      lead: 'Você não precisa estudar tudo. Precisa estudar o certo. Esta plataforma mostra o caminho mais curto até os 40 pontos: como a banca cobra, onde você está agora e o que fazer hoje. Menos horas jogadas fora, mais foco no que dá ponto.',
+    var nm = (p.nome || '').trim().split(' ')[0]; nm = nm ? nm.charAt(0).toUpperCase() + nm.slice(1).toLowerCase() : '';
+    var h = cena({cls: 'cena-painel', titulo: 'Parabéns' + (nm ? ', ' + esc(nm) : '') + '.<br>Você acaba de fazer a melhor escolha da sua vida.',
+      lead: 'Esta plataforma vai te guiar até a aprovação, com a preparação completa das duas fases, organizada e distribuída dia a dia. Lembre-se: você não precisa saber tudo — precisa saber o caminho. A prova cobra 20 disciplinas, e quem tenta estudar todas por igual se perde no meio do caminho. Aqui não é concurso público, em que só entra quem tira a maior nota: no Exame de Ordem, passa quem cumpre a meta. <b>E o mapa até ela está nas suas mãos.</b>',
       extra: '<div class="cena-nums"><div><span class="num">' + (falta > 0 ? falta : 0) + '</span><small>dias até a prova</small></div><div><span class="num">' + (diagFeito() ? notaDiag() : '—') + '</span><small>no diagnóstico</small></div><div><span class="num" style="color:var(--dourado)">40</span><small>para passar</small></div></div>',
       arte: medidorAtual('painel')});
     h += rotaAprovacao();
