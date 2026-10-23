@@ -606,3 +606,11 @@ details.ajuste form.bloco { box-shadow: none; border: 0; padding: 0; }
 .sim-r { padding: 8px 12px; border-radius: 10px; margin: 6px 0; }
 .sim-r.ok { background: color-mix(in srgb, var(--verde) 14%, transparent); }
 .sim-r.er { background: color-mix(in srgb, var(--vermelho) 12%, transparent); }
+.cr-fixa { margin: 0 0 10px; max-width: 520px; }
+.cr-fixa .pt { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; }
+.cr-conta { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; margin-top: 10px; padding: 10px 14px; border-radius: 12px; font-size: .92rem; }
+.cr-conta.ok { background: color-mix(in srgb, var(--verde) 14%, transparent); border: 1px solid color-mix(in srgb, var(--verde) 55%, transparent); }
+.cr-conta.no { background: color-mix(in srgb, var(--vermelho) 12%, transparent); border: 1px solid color-mix(in srgb, var(--vermelho) 50%, transparent); }
+.cr-conta .t { font-weight: 800; }
+.cr-conta.ok .t { color: var(--verde); }
+.cr-conta.no .t { color: var(--vermelho); }
