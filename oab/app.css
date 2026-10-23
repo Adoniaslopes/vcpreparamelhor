@@ -580,3 +580,4 @@ details.ajuste form.bloco { box-shadow: none; border: 0; padding: 0; }
 .cmb-leg .q3 { background: var(--ciano); }
 .cmb-ok { color: var(--verde); }
 .cmb-no { color: var(--vermelho); }
+.cmb-aviso { display: block; margin-top: 10px; padding: 10px 12px; border-radius: 10px; font-size: .9rem; color: var(--tinta); background: color-mix(in srgb, var(--dourado) 12%, transparent); border: 1px solid color-mix(in srgb, var(--dourado) 45%, var(--linha)); }

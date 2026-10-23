@@ -395,9 +395,10 @@
     var ver;
     if (n < 4) ver = 'Escolha pelo menos ' + (4 - n) + ' disciplina' + (4 - n === 1 ? '' : 's') + ' a mais para montar o seu núcleo.';
     else if (c.ok) ver = '<b class="cmb-ok">✓ A conta fecha: ' + c.tot + ' pontos, aprovado.</b> Dominando o seu núcleo e acertando 1 em cada 3 no resto, que é pouco mais do que um chute, você passa.';
-    else ver = '<b class="cmb-no">' + (40 - c.tot === 1 ? 'Falta 1 ponto' : 'Faltam ' + (40 - c.tot) + ' pontos') + ' para fechar.</b> ' + (n < 5 ? 'Acrescente mais uma disciplina (você pode ter até 5 além de Ética) ou troque uma de 2 questões por uma de 5 ou 6.' : 'Troque uma disciplina de 2 questões por uma de 5 ou 6.');
+    else ver = '<b class="cmb-no">' + (40 - c.tot === 1 ? 'Falta 1 ponto' : 'Faltam ' + (40 - c.tot) + ' pontos') + ' para fechar.</b> ' + 'Acrescente mais uma disciplina ou troque uma de 2 questões por uma de 5 ou 6.';
+    if (n > 5) ver += '<span class="cmb-aviso">Você escolheu ' + n + ' disciplinas além de Ética. O método sugere até 5, para você estudar menos, mas a escolha é sua: mais disciplinas significam mais conteúdo para estudar.</span>';
     return '<div class="cmb-topo"><div><h2 style="margin:0">Monte a sua combinação</h2>' +
-      '<p class="sub">Você não precisa ficar preso ao Grupo A. Pegue um núcleo duro, com as disciplinas que mais valem, e misture com as que você tem mais afinidade, de qualquer grupo. Ética entra sempre: são 8 questões. Escolha de 4 a 5 disciplinas e veja a conta fechar nos 40.</p></div></div>' +
+      '<p class="sub">Você não precisa ficar preso ao Grupo A. Pegue um núcleo duro, com as disciplinas que mais valem, e misture com as que você tem mais afinidade, de qualquer grupo. Ética entra sempre: são 8 questões. O método sugere de 4 a 5 disciplinas, mas a escolha é livre: marque quantas quiser e veja a conta fechar nos 40.</p></div></div>' +
       '<div class="cmb-corpo"><div class="cmb-esq"><div class="cmb-fixa"><b>Ética Profissional · 8</b><span>sempre no seu núcleo</span></div>' + chips +
       '<div class="cmb-prontos"><span class="sub peq">Exemplos:</span>' + CMB_PRONTOS.map(function (p, i) { return '<button class="btn mini" data-cmbp="' + i + '">' + esc(p.n) + '</button>'; }).join('') + '</div></div>' +
       '<div class="cmb-dir"><div class="cmb-num"><b>' + c.foco + '</b><span>questões no seu núcleo<br>(Ética + ' + n + ' disciplina' + (n === 1 ? '' : 's') + ')</span></div>' + conta + barra +
@@ -1592,7 +1593,7 @@
     }
     if (ds.cmb || ds.cmbp != null) {
       if (ds.cmbp != null) cmbSel = CMB_PRONTOS[+ds.cmbp].l.slice();
-      else { var ci = cmbSel.indexOf(ds.cmb); if (ci > -1) cmbSel.splice(ci, 1); else if (cmbSel.length < 5) cmbSel.push(ds.cmb); else { toast('Já são 5, o máximo além de Ética. Desmarque uma para trocar.'); return; } }
+      else { var ci = cmbSel.indexOf(ds.cmb); if (ci > -1) cmbSel.splice(ci, 1); else cmbSel.push(ds.cmb); }
       var ce = $('#cmb'); if (ce) ce.innerHTML = cmbMiolo(); return;
     }
     if (ds.vdiag) { vistaDiag = ds.vdiag; render(); return; }
