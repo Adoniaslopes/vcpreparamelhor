@@ -390,3 +390,16 @@ details.ajuste form.bloco { box-shadow: none; border: 0; padding: 0; }
 @media (max-width: 420px) { .cr-l { grid-template-columns: 28px repeat(4, 36px) minmax(0, 1fr); gap: 6px; } .cr-b { width: 34px; height: 34px; } }
 
 .grade.crg { grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr)); align-items: start; }
+
+/* medidor vivo: enche a partir do valor anterior e muda de cor (vermelho → amarelo → verde nos 40) */
+.medidor-v { animation: enche 1.1s cubic-bezier(.2,.8,.2,1) both; transition: stroke .6s; }
+@keyframes enche { from { stroke-dasharray: var(--de) 1000; stroke: var(--cor-de); } }
+.medidor.mini svg { max-width: 240px; margin: 0 auto; }
+.medidor-box { padding: 14px 14px 6px; text-align: center; }
+/* rota: a trilha colorida avança dentro da etapa atual */
+.rota::after { background: linear-gradient(90deg, #FF4D5E, var(--cor-trilha, var(--verde))) !important; transition: width .8s; }
+.rota li.agora .ponto { border: 0; background: radial-gradient(closest-side, var(--papel2) 76%, transparent 79% 100%), conic-gradient(var(--ciano) calc(var(--p, 0) * 1%), rgba(157,176,211,.25) 0); }
+/* cronograma: bloco de hoje */
+.hoje-box { border: 1px solid rgba(62,197,255,.45); box-shadow: 0 0 0 4px rgba(62,197,255,.08); margin-bottom: 16px; }
+.hoje-box h2 { margin: 8px 0 4px; }
+@media (max-width: 760px) { .rota::after { background: linear-gradient(180deg, #FF4D5E, var(--cor-trilha, var(--verde))) !important; } }

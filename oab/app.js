@@ -61,9 +61,12 @@
     if (nuvem.ativo) { clearTimeout(syncT); syncT = setTimeout(nuvem.enviar, 1500); }
   }
 
-  // alternativas embaralhadas de forma estável por aluno (a banca não tem letra preferida)
+  // alternativas embaralhadas: a ordem muda cada vez que o aluno volta ao diagnóstico ou aos exercícios
+  // (assim ele não decora "era a letra B"); dentro da mesma visita a ordem fica estável
+  var MIX = Math.floor(Math.random() * 1e9);
+  function novaMistura() { MIX = Math.floor(Math.random() * 1e9); }
   function ordemAlt(q) {
-    var r = rng(hash(q.id + ':' + S.seed)), o = [0, 1, 2, 3];
+    var r = rng(hash(q.id + ':' + S.seed + ':' + MIX)), o = [0, 1, 2, 3];
     for (var i = 3; i > 0; i--) { var j = Math.floor(r() * (i + 1)); var t = o[i]; o[i] = o[j]; o[j] = t; }
     return o;
   }
@@ -142,7 +145,8 @@
   }
   function gerarCrono() {
     var p = S.perfil; if (!p || !S.dominio) return [];
-    var ini = S.crono && S.crono.ini ? S.crono.ini : hojeISO();
+    // o plano é refeito a cada dia a partir de hoje: os dias que passaram saem, as fases se reajustam até a prova
+    var ini = hojeISO();
     var fim = dataDe(p.prova); fim.setDate(fim.getDate() - 1);
     var datas = [];
     for (var d = dataDe(ini); d <= fim; d.setDate(d.getDate() + 1)) if (p.dias.indexOf(d.getDay()) > -1) datas.push(iso(d));
@@ -478,19 +482,49 @@
     return '<section class="cena' + (o.cls ? ' ' + o.cls : '') + '"><div class="cena-txt">' + (o.selo ? '<span class="selo">' + o.selo + '</span>' : '') +
       '<h1>' + o.titulo + '</h1><p class="lead">' + o.lead + '</p>' + (o.extra || '') + '</div>' + (o.arte ? '<div class="cena-arte">' + o.arte + '</div>' : '') + '</section>';
   }
-  // velocímetro da aprovação: nota projetada contra os 40 pontos
-  function medidor(v) {
+  // velocímetro da aprovação: sobe a cada acerto; vermelho longe dos 40, amarelo chegando perto, verde ao passar
+  function corMeta(v) {
+    var t = Math.max(0, Math.min(1, v / 40)), a, b, k;
+    var C = [[255, 77, 94], [255, 159, 67], [245, 197, 66], [61, 220, 151]];
+    if (t >= 1) return 'rgb(61,220,151)';
+    var seg = t * 3, i = Math.min(2, Math.floor(seg)); k = seg - i; a = C[i]; b = C[i + 1];
+    return 'rgb(' + [0, 1, 2].map(function (j) { return Math.round(a[j] + (b[j] - a[j]) * k); }).join(',') + ')';
+  }
+  var medAnt = {};
+  // estado atual do aluno para o medidor: diagnóstico em andamento (acertos ao vivo) ou nota projetada
+  function leituraMedidor() {
+    var nx = proximaProvaDiag(), of = nx && S.oficiais && S.oficiais[nx];
+    if (of && of.diag && !of.fim && Object.keys(of.resp || {}).length) {
+      var gab = OAB.PROVAS[nx].gab, ok = 0, n = 0;
+      Object.keys(of.resp).forEach(function (q) { n++; if (gab[q - 1] === 'X' || of.resp[q] === gab[q - 1]) ok++; });
+      return {v: ok, rot: 'acertos até agora', sub: n + ' de 80 respondidas · ' + nx + 'º Exame'};
+    }
+    if (S.diag.ini && !S.diag.fim) {
+      var resp = Object.keys(S.diag.resp).length, ac = DIAG.filter(function (id) { return S.diag.resp[id] === QM[id].c; }).length;
+      return {v: ac, rot: 'acertos até agora', sub: resp + ' de 80 respondidas'};
+    }
+    if (diagFeito()) return {v: projecao(), rot: 'nota projetada de 80', sub: null};
+    return null;
+  }
+  function medidor(v, o) {
+    o = o || {};
     var R = 92, cx = 120, cy = 118, L = Math.PI * R, f = v == null ? 0 : Math.max(0, Math.min(1, v / 80));
-    var mx = cx, my = cy - R;
-    return '<div class="medidor"><svg viewBox="0 0 240 152" role="img" aria-label="' + (v == null ? 'A carteira da OAB: faça o diagnóstico para medir a distância até ela' : 'Nota projetada: ' + Math.round(v) + ' de 80') + '">' +
-      '<defs><linearGradient id="gm" x1="0" x2="1"><stop offset="0" stop-color="#FF4D5E"/><stop offset=".5" stop-color="#F5C542"/><stop offset="1" stop-color="#3DDC97"/></linearGradient></defs>' +
+    var mx = cx, my = cy - R, chave = o.chave || 'painel', de = medAnt[chave] == null ? 0 : medAnt[chave];
+    if (v != null) medAnt[chave] = f;
+    var cor = v == null ? '#FF4D5E' : corMeta(v), falta = v == null ? 40 : Math.max(0, 40 - Math.round(v));
+    var corDe = medAnt[chave + ':c'] || '#FF4D5E'; if (v != null) medAnt[chave + ':c'] = cor;
+    var status = v == null ? '' : falta ? 'faltam ' + falta + ' para os 40' : 'acima do corte de 40';
+    return '<div class="medidor' + (o.mini ? ' mini' : '') + '"><svg viewBox="0 0 240 ' + (v == null ? 152 : 164) + '" role="img" aria-label="' + (v == null ? 'A carteira da OAB: faça o diagnóstico para medir a distância até ela' : Math.round(v) + ' ' + (o.rot || 'nota projetada de 80') + ', ' + status) + '">' +
       '<path d="M' + (cx - R) + ' ' + cy + ' A' + R + ' ' + R + ' 0 0 1 ' + (cx + R) + ' ' + cy + '" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="16" stroke-linecap="round"/>' +
-      (v == null ? '' : '<path class="medidor-v" d="M' + (cx - R) + ' ' + cy + ' A' + R + ' ' + R + ' 0 0 1 ' + (cx + R) + ' ' + cy + '" fill="none" stroke="url(#gm)" stroke-width="16" stroke-linecap="round" stroke-dasharray="' + (L * f).toFixed(1) + ' ' + L.toFixed(1) + '"/>') +
+      (v == null ? '' : '<path class="medidor-v" style="--de:' + (L * de).toFixed(1) + 'px;--cor-de:' + corDe + '" d="M' + (cx - R) + ' ' + cy + ' A' + R + ' ' + R + ' 0 0 1 ' + (cx + R) + ' ' + cy + '" fill="none" stroke="' + cor + '" stroke-width="16" stroke-linecap="round" stroke-dasharray="' + (L * f).toFixed(1) + ' ' + L.toFixed(1) + '"/>') +
       '<line x1="' + mx + '" y1="' + (my - 12) + '" x2="' + mx + '" y2="' + (my + (v == null ? 8 : 12)) + '" stroke="#F5C542" stroke-width="3"/>' +
       '<text x="' + mx + '" y="' + (my - 18) + '" text-anchor="middle" font-size="11" fill="#F5C542" font-weight="700">40</text>' +
-      (v == null ? carteiraOAB(cx, cy) : '<text x="' + cx + '" y="' + (cy - 14) + '" text-anchor="middle" font-size="44" font-weight="800" fill="#fff" font-family="Bricolage Grotesque, sans-serif">' + Math.round(v) + '</text>' +
-      '<text x="' + cx + '" y="' + (cy + 8) + '" text-anchor="middle" font-size="11" fill="#B9C7DE">nota projetada de 80</text>') + '</svg></div>';
+      (v == null ? carteiraOAB(cx, cy) : '<text x="' + cx + '" y="' + (cy - 16) + '" text-anchor="middle" font-size="44" font-weight="800" fill="' + cor + '" font-family="Bricolage Grotesque, sans-serif">' + Math.round(v) + '</text>' +
+      '<text x="' + cx + '" y="' + (cy + 4) + '" text-anchor="middle" font-size="11" fill="#B9C7DE">' + esc(o.rot || 'nota projetada de 80') + '</text>' +
+      '<text x="' + cx + '" y="' + (cy + 22) + '" text-anchor="middle" font-size="11.5" font-weight="700" fill="' + cor + '">' + status + '</text>' +
+      (o.sub ? '<text x="' + cx + '" y="' + (cy + 37) + '" text-anchor="middle" font-size="10" fill="#8FA3C7">' + esc(o.sub) + '</text>' : '')) + '</svg></div>';
   }
+  function medidorAtual(chave, mini) { var m = leituraMedidor(); return m ? medidor(m.v, {rot: m.rot, sub: m.sub, chave: chave, mini: mini}) : medidor(null); }
   // a carteira vermelha da OAB: o objetivo final do aluno (desenho próprio, sem o brasão oficial)
   function carteiraOAB(cx, cy) {
     var w = 62, h = 86, x = cx - w / 2, y = cy - 83;
@@ -515,11 +549,19 @@
       {t: '40 pontos', d: 'Passaporte para a 2ª fase', ok: pr != null && pr >= 44 && nOf >= 3, l: '#relatorio', b: 'Ver projeção'}
     ];
     var at = et.findIndex(function (e) { return !e.ok; }); if (at < 0) at = et.length - 1;
+    // quanto da etapa atual já foi feito (a trilha colorida avança até o próximo passo)
+    var nRespDiag = S.diag.ini && !S.diag.fim ? Object.keys(S.diag.resp).length : 0;
+    var nxr = proximaProvaDiag(), ofr = nxr && S.oficiais && S.oficiais[nxr];
+    if (ofr && ofr.diag && !ofr.fim) nRespDiag = Math.max(nRespDiag, Object.keys(ofr.resp || {}).length);
+    var frac = [nRespDiag / 80, S.dominio ? 1 : 0.5, 0, Math.min(1, S.hist.length / 50), Math.min(1, nOf / 3), pr == null ? 0 : Math.min(1, pr / 44)][at] || 0;
+    if (et[at].ok) frac = 1;
+    frac = Math.max(0, Math.min(0.98, frac));
+    var av = Math.min(et.length - 1, at + frac);
     return '<section class="rota-box"><div class="rota-cab"><h2>Você está aqui</h2><p class="sub">A rota mais curta até a aprovação tem 6 paradas. A plataforma conduz você por elas.</p></div>' +
-      '<ol class="rota" style="--at:' + at + ';--n:' + et.length + '">' + et.map(function (e, i) {
+      '<ol class="rota" style="--at:' + av.toFixed(3) + ';--n:' + et.length + ';--cor-trilha:' + corMeta(40 * (av / (et.length - 1))) + '">' + et.map(function (e, i) {
         var st = e.ok ? 'feito' : i === at ? 'agora' : 'depois';
-        return '<li class="' + st + '"><span class="ponto">' + (e.ok ? '✓' : i + 1) + '</span><div><b>' + e.t + '</b><small>' + e.d + '</small>' +
-          (st === 'agora' ? '<span class="aqui">você está aqui</span><a class="btn pri mini" href="' + e.l + '">' + e.b + '</a>' : '') + '</div></li>';
+        return '<li class="' + st + '"' + (st === 'agora' ? ' style="--p:' + Math.round(frac * 100) + '"' : '') + '><span class="ponto">' + (e.ok ? '✓' : i + 1) + '</span><div><b>' + e.t + '</b><small>' + e.d + '</small>' +
+          (st === 'agora' ? '<span class="aqui">você está aqui' + (frac > 0 ? ' · ' + Math.round(frac * 100) + '%' : '') + '</span><a class="btn pri mini" href="' + e.l + '">' + e.b + '</a>' : '') + '</div></li>';
       }).join('') + '</ol></section>';
   }
   // como a banca se comporta — fatos verificados nas 10 últimas provas
@@ -657,7 +699,7 @@
     var h = cena({cls: 'cena-painel', titulo: 'Olá' + (nm ? ', ' + esc(nm) : '') + '.<br>Este é o mapa da sua aprovação.',
       lead: 'Você não precisa estudar tudo. Precisa estudar o certo. Esta plataforma mostra o caminho mais curto até os 40 pontos: como a banca cobra, onde você está agora e o que fazer hoje. Menos horas jogadas fora, mais foco no que dá ponto.',
       extra: '<div class="cena-nums"><div><span class="num">' + (falta > 0 ? falta : 0) + '</span><small>dias até a prova</small></div><div><span class="num">' + (diagFeito() ? notaDiag() : '—') + '</span><small>no diagnóstico</small></div><div><span class="num" style="color:var(--dourado)">40</span><small>para passar</small></div></div>',
-      arte: medidor(pr)});
+      arte: medidorAtual('painel')});
     h += rotaAprovacao();
     if (S.dominio) {
       var c = crono(), hj = hojeISO(), dia = c.find(function (x) { return x.data >= hj; });
@@ -734,7 +776,7 @@
       o.map(function (oi, k) { var cls = r == null ? '' : oi === q.c ? ' cert' : oi === r ? ' errd' : ''; return '<button class="alt' + cls + '" data-diag-alt="' + oi + '"' + (r != null ? ' disabled' : '') + '><span class="lt">' + 'ABCD'[k] + '</span><span>' + esc(q.a[oi]) + '</span></button>'; }).join('') +
       '</div>' + (r != null ? retorno(q, r, o) : '') + '<div class="barra-q"><div class="chips"><button class="btn" data-act="d-ant"' + (i === 0 ? ' disabled' : '') + '>Anterior</button>' + (r == null ? '<button class="btn" data-diag-alt="-1">Não sei</button>' : '') + '</div>' +
       (i < 79 ? '<button class="btn pri" data-act="d-prox">' + (r == null ? 'Pular' : 'Próxima questão') + '</button>' : '<button class="btn ouro" data-act="d-fim">Entregar a prova</button>') + '</div></div>' +
-      '<div class="bloco"><h3>Cartão-resposta</h3>' + cartaoDiag(false) + '<p style="margin:14px 0 0"><button class="btn mini" data-act="d-fim">Entregar a prova</button></p></div></div>';
+      '<div class="pilha"><div class="bloco medidor-box">' + medidorAtual('diag', true) + '</div><div class="bloco"><h3>Cartão-resposta</h3>' + cartaoDiag(false) + '<p style="margin:14px 0 0"><button class="btn mini" data-act="d-fim">Entregar a prova</button></p></div></div></div>';
   };
   function relogio() { var s = S.diag.seg || 0; return 'Tempo: ' + Math.floor(s / 3600) + 'h' + String(Math.floor(s / 60) % 60).padStart(2, '0') + ' de 5h00'; }
   function cartaoDiag(final) {
@@ -836,13 +878,21 @@
     if (!c.length) return '<div class="cab"><div><h1>Seu cronograma</h1><p class="sub">Não há dias de estudo entre hoje e a data da prova. Confira a data e os dias abaixo.</p></div></div>' + planoForm();
     var hj = hojeISO(), tot = 0, fe = 0;
     c.forEach(function (x) { x.it.forEach(function (_, i) { tot++; if (S.feito[x.data + ':' + i]) fe++; }); });
+    var feitosAntes = Object.keys(S.feito || {}).filter(function (k) { return S.feito[k] && k.slice(0, 10) < hj; }).length;
+    tot += feitosAntes; fe += feitosAntes;
+    var hoje = c[0] && c[0].data === hj ? c[0] : null, prox = hoje || c[0];
+    var faltaDias = diasAte(S.perfil.prova);
+    var hojeHTML = '<div class="bloco hoje-box"><div class="hoje-cab"><div><span class="selo">Hoje · ' + SEMANA[new Date().getDay()] + ', ' + fmtData(hj) + '</span>' +
+      '<h2>' + (hoje ? 'Sua missão de hoje' : 'Hoje é dia de descanso') + '</h2><p class="sub peq">' + (faltaDias > 0 ? 'Faltam <b>' + faltaDias + ' dias</b> para a prova · ' : '') + 'o plano se reajusta sozinho a cada dia' +
+      (hoje ? '' : ' · próximo dia de estudo: ' + SEMANA[dataDe(prox.data).getDay()] + ', ' + fmtData(prox.data)) + '</p></div></div>' + (hoje ? tarefasHTML(hoje) : '') + '</div>';
     var fases = [1, 2, 3].map(function (f) { var ds = c.filter(function (x) { return x.fase === f; }); return ds.length ? '<span class="fase">' + ['', 'Construção', 'Consolidação', 'Revisão final'][f] + ': ' + fmtData(ds[0].data) + ' a ' + fmtData(ds[ds.length - 1].data) + '</span>' : ''; }).join(' ');
-    var lista = verTudo ? c : c.filter(function (x) { return x.data >= hj; }).slice(0, S.perfil.dias.length * 2);
+    var lista = verTudo ? c : c.filter(function (x) { return x.data > hj; }).slice(0, S.perfil.dias.length * 2);
     var sem = {}, ordem = [];
     lista.forEach(function (x) { var d = dataDe(x.data); d.setDate(d.getDate() - d.getDay()); var k = iso(d); if (!sem[k]) { sem[k] = []; ordem.push(k); } sem[k].push(x); });
     return '<div class="cab"><div><h1>Seu cronograma</h1><p class="sub">' + c.length + ' dias de estudo até ' + fmtData(S.perfil.prova, true) + ' · ' + S.perfil.horas + 'h por dia · ' + pct(tot ? fe / tot : 0) + ' concluído</p></div>' +
       '<div class="chips noprint"><button class="btn mini" data-act="ver-tudo">' + (verTudo ? 'Ver só as próximas semanas' : 'Ver o cronograma inteiro') + '</button>' + (ARTEFATO ? '' : '<button class="btn mini" data-act="imprimir">Imprimir</button>') + '</div></div>' +
       '<div class="bloco" style="margin-bottom:16px"><div class="chips">' + fases + '</div><p class="peq sub" style="margin:10px 0 0">Domínio: ' + S.dominio.map(tagDisc).join(' ') + ' · Legenda: ' + [1, 2, 3, 4, 5].map(function (n) { return passoTag(n) + ' ' + esc(OAB.PASSOS[n - 1].nome); }).join(' · ') + '</p></div>' +
+      hojeHTML +
       '<details class="bloco ajuste noprint"><summary>Ajustar o plano (data da prova, horas, dias e disciplinas de domínio)</summary>' + planoForm() + '</details>' +
       ordem.map(function (k) {
         return '<div class="bloco semana"><h3><span>Semana de ' + fmtData(k) + '</span></h3>' + sem[k].map(function (x) {
@@ -1105,6 +1155,7 @@
 
   // ---------- roteador ----------
   var rota = '';
+  var rotaBase = null, cronoDia = null;
   function render() {
     var h = (location.hash || '#painel').slice(1).split('/'), r = h[0] || 'painel', arg = h[1];
     pedido = null; garantirPerfil();
@@ -1115,6 +1166,9 @@
     if (cronOf) { clearInterval(cronOf); cronOf = null; }
     if (r !== 'relatorio') escolha = null;
     if (r !== 'exercicios' || (sess && sess.modo !== arg)) { if (r !== 'exercicios') sess = null; }
+    if ((r === 'diagnostico' || r === 'exercicios') && rotaBase !== r) novaMistura();
+    rotaBase = r;
+    if (cronoDia !== hojeISO()) { cronoDia = hojeISO(); invalidarCrono(); }
     var main = $('#main');
     main.innerHTML = R[r](arg);
     $$('#menu a').forEach(function (a) { a.classList.toggle('on', a.dataset.r === (pedido || r)); });
@@ -1179,6 +1233,7 @@
     }
     if (a === 'of-refazer') { confirmar('Apagar suas respostas do ' + ds.ex + 'º Exame e começar de novo?', 'Refazer a prova', function () { delete S.oficiais[ds.ex]; delete S.provas[ds.ex]; salvar(); render(); }); return; }
     if (a === 'iniciar-diag') { S.diag.ini = Date.now(); S.diag.atual = 0; salvar(); render(); }
+    else if (a === 'pausar-mix') { novaMistura(); }
     else if (a === 'd-prox') { S.diag.atual = Math.min(79, S.diag.atual + 1); salvar(); render(); }
     else if (a === 'd-ant') { S.diag.atual = Math.max(0, S.diag.atual - 1); salvar(); render(); }
     else if (a === 'd-fim') {
