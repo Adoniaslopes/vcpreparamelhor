@@ -358,6 +358,44 @@
 
 
   // ---------- quanto vale cada disciplina (a tese do método: não é preciso estudar tudo) ----------
+  // ---------- simulador: combine os grupos (diagnóstico) ----------
+  var cmbSel = null;
+  var CMB_PRONTOS = [
+    {n: 'Só o Grupo A', l: ['civil', 'pcivil', 'const', 'penal']},
+    {n: 'Mesclando A e B', l: ['const', 'civil', 'adm', 'trab']},
+    {n: 'Direito Público + Civil', l: ['const', 'adm', 'trib', 'civil']},
+    {n: 'Quem gosta de Trabalho', l: ['trab', 'ptrab', 'const', 'adm']}
+  ];
+  function cmbCalc(l) {
+    var qd = l.reduce(function (s, id) { return s + DM[id].q; }, 0), foco = 8 + qd, garante = Math.round(foco * 0.75), resto = 80 - foco, falta = Math.max(0, 40 - garante);
+    return {foco: foco, garante: garante, resto: resto, falta: falta, pct: resto ? Math.ceil(falta / resto * 100) : 0};
+  }
+  function combinaGrupos() {
+    if (!cmbSel) cmbSel = (S.dominio && S.dominio.length === 4) ? S.dominio.slice() : CMB_PRONTOS[2].l.slice();
+    return '<section class="bloco cmb" id="cmb" style="margin:16px 0">' + cmbMiolo() + '</section>';
+  }
+  function cmbMiolo() {
+    var c = cmbCalc(cmbSel), cor = {A: '#C8102E', B: '#F5C542', C: '#7BC043'};
+    var chips = ['A', 'B', 'C'].map(function (g) {
+      return '<div class="cmb-g"><span class="cmb-gt" style="--c:' + cor[g] + '">Grupo ' + g + '</span><div class="cmb-chips">' +
+        D.filter(function (d) { return d.g === g && d.id !== 'etica'; }).sort(function (a, b) { return b.q - a.q; }).map(function (d) {
+          var on = cmbSel.indexOf(d.id) > -1;
+          return '<button class="cmb-chip' + (on ? ' on' : '') + '" style="--c:' + cor[g] + '" data-cmb="' + d.id + '" aria-pressed="' + on + '">' + esc(d.curto) + ' <b>' + d.q + '</b></button>';
+        }).join('') + '</div></div>';
+    }).join('');
+    var w = function (n) { return (n / 80 * 100).toFixed(2) + '%'; };
+    var barra = '<div class="cmb-barra" aria-hidden="true"><span class="cmb-nucleo" style="width:' + w(c.foco) + '"></span><span class="cmb-ganho" style="width:' + w(c.garante) + '"></span><i class="cmb-meta"></i></div>' +
+      '<div class="cmb-leg"><span><i class="q1"></i>Núcleo: ' + c.foco + ' questões</span><span><i class="q2"></i>Acertando 3 de 4: ' + c.garante + ' pontos</span><span class="m">Meta: 40</span></div>';
+    var veredito = c.falta === 0 ? 'Só o seu núcleo já garante os 40.' :
+      'Faltam <b>' + c.falta + '</b> para os 40, que vêm das outras ' + c.resto + ' questões: basta acertar <b>' + c.pct + '%</b> delas' + (c.pct <= 25 ? ', menos do que o acerto de um chute (25%).' : c.pct <= 35 ? ', cerca de 1 em cada 3. As sinopses e as provas anteriores cuidam disso.' : '. Dá, mas fica mais apertado: troque uma disciplina leve por uma de mais peso.');
+    return '<div class="cmb-topo"><div><h2 style="margin:0">Monte a sua combinação</h2>' +
+      '<p class="sub">Você não precisa ficar preso ao Grupo A. Pegue um núcleo duro, com as disciplinas que mais valem, e misture com as que você tem mais afinidade, de qualquer grupo. Ética entra sempre: são 8 questões. Escolha mais 4 e veja se a conta fecha.</p></div></div>' +
+      '<div class="cmb-corpo"><div class="cmb-esq"><div class="cmb-fixa"><b>Ética Profissional · 8</b><span>sempre no seu núcleo</span></div>' + chips +
+      '<div class="cmb-prontos"><span class="sub peq">Exemplos:</span>' + CMB_PRONTOS.map(function (p, i) { return '<button class="btn mini" data-cmbp="' + i + '">' + esc(p.n) + '</button>'; }).join('') + '</div></div>' +
+      '<div class="cmb-dir"><div class="cmb-num"><b>' + c.foco + '</b><span>questões no seu núcleo<br>(Ética + ' + cmbSel.length + ' disciplina' + (cmbSel.length === 1 ? '' : 's') + ')</span></div>' + barra +
+      '<p class="cmb-ver">' + (cmbSel.length < 4 ? 'Escolha mais ' + (4 - cmbSel.length) + ' disciplina' + (4 - cmbSel.length === 1 ? '' : 's') + '. ' : '') + veredito + '</p>' +
+      '<p class="sub peq">O segredo não é saber tudo: é dominar o núcleo que você escolheu e pegar o resto com estratégia. Depois do diagnóstico, o relatório sugere a melhor combinação para você.</p></div></div>';
+  }
   function pesoProva() {
     var pc = function (x) { return (Math.round(x * 1000) / 10).toString().replace('.', ',') + '%'; };
     var ord = D.slice().sort(function (a, b) { return b.q - a.q || (a.g < b.g ? -1 : 1); });
@@ -790,7 +828,7 @@
         '<li>Se não fizer ideia da resposta, use <b>Não sei</b> em vez de chutar. O raio-X fica mais fiel.</li>' +
         '<li>Pode parar e continuar depois: suas respostas ficam salvas.</li>' +
         '<li>As questões são inéditas, escritas sobre os temas que a FGV mais repete.</li></ul></div>' +
-        '<div class="bloco"><h2>O que você recebe</h2><ul style="padding-left:1.2rem;margin:0"><li>Sua nota de 0 a 80, comparada com o corte de 40.</li><li>O radar das 20 disciplinas: pontos fortes e o que reforçar.</li><li>A sugestão das 4 disciplinas de domínio.</li><li>A base do seu cronograma.</li></ul></div></div>' + pesoProva();
+        '<div class="bloco"><h2>O que você recebe</h2><ul style="padding-left:1.2rem;margin:0"><li>Sua nota de 0 a 80, comparada com o corte de 40.</li><li>O radar das 20 disciplinas: pontos fortes e o que reforçar.</li><li>A sugestão das 4 disciplinas de domínio.</li><li>A base do seu cronograma.</li></ul></div></div>' + combinaGrupos();
     }
     var i = g.atual, q = QM[DIAG[i]], d = DM[q.d], o = ordemAlt(q), r = g.resp[q.id];
     var resp = Object.keys(g.resp).length;
@@ -1543,6 +1581,11 @@
       var k = escolhaCr.indexOf(ds.domc);
       if (k > -1) escolhaCr.splice(k, 1); else if (escolhaCr.length < 4) escolhaCr.push(ds.domc); else { toast('Escolha no máximo 4. Desmarque uma antes.'); return; }
       guardarPlano(); render(); return;
+    }
+    if (ds.cmb || ds.cmbp != null) {
+      if (ds.cmbp != null) cmbSel = CMB_PRONTOS[+ds.cmbp].l.slice();
+      else { var ci = cmbSel.indexOf(ds.cmb); if (ci > -1) cmbSel.splice(ci, 1); else if (cmbSel.length < 4) cmbSel.push(ds.cmb); else { toast('Já são 4. Desmarque uma para trocar.'); return; } }
+      var ce = $('#cmb'); if (ce) ce.innerHTML = cmbMiolo(); return;
     }
     if (ds.vdiag) { vistaDiag = ds.vdiag; render(); return; }
     if (ds.of) {
