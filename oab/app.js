@@ -377,12 +377,12 @@
     return '<section class="bloco cmb" id="cmb" style="margin:16px 0">' + cmbMiolo() + '</section>';
   }
   function cmbMiolo() {
-    var c = cmbCalc(cmbSel), cor = {A: '#C8102E', B: '#A87400', C: '#3E8E1E'}, n = cmbSel.length;
+    var c = cmbCalc(cmbSel), cor = {A: '#C8102E', B: '#F5C542', C: '#5BAE2E'}, n = cmbSel.length;
     var chips = ['A', 'B', 'C'].map(function (g) {
       return '<div class="cmb-g"><span class="cmb-gt" style="--c:' + cor[g] + '">Grupo ' + g + '</span><div class="cmb-chips">' +
         D.filter(function (d) { return d.g === g && d.id !== 'etica'; }).sort(function (a, b) { return b.q - a.q; }).map(function (d) {
           var on = cmbSel.indexOf(d.id) > -1;
-          return '<button class="cmb-chip' + (on ? ' on' : '') + '" style="--c:' + cor[g] + '" data-cmb="' + d.id + '" aria-pressed="' + on + '">' + esc(d.curto) + ' <b>' + d.q + '</b></button>';
+          return '<button class="cmb-chip ' + g.toLowerCase() + (on ? ' on' : '') + '" style="--c:' + cor[g] + '" data-cmb="' + d.id + '" aria-pressed="' + on + '">' + esc(d.curto) + ' <b>' + d.q + '</b></button>';
         }).join('') + '</div></div>';
     }).join('');
     var w = function (x) { return (Math.min(x, 80) / 80 * 100).toFixed(2) + '%'; };

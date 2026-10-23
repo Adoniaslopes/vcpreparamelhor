@@ -581,16 +581,18 @@ details.ajuste form.bloco { box-shadow: none; border: 0; padding: 0; }
 .cmb-ok { color: var(--verde); }
 .cmb-no { color: var(--vermelho); }
 .cmb-aviso { display: block; margin-top: 10px; padding: 10px 12px; border-radius: 10px; font-size: .9rem; color: var(--tinta); background: color-mix(in srgb, var(--dourado) 12%, transparent); border: 1px solid color-mix(in srgb, var(--dourado) 45%, var(--linha)); }
-/* simulador em fundo claro, para leitura mais fácil */
-.bloco.cmb { --papel2: #FFFFFF; --tinta: #13284A; --tinta2: #4A5D7E; --linha: #D5DCE8; --dourado: #A87400; --verde: #1E8E5A; --ciano: #1C8FD6; --vermelho: #C8102E;
-  background: #F4F7FC; color: var(--tinta); border-color: #DCE3EE; }
-.bloco.cmb h2 { color: var(--tinta); }
-.bloco.cmb .sub { color: var(--tinta2); }
-.cmb .cmb-dir { box-shadow: 0 6px 18px rgba(19, 40, 74, .08); }
-.cmb .cmb-chip { background: #fff; }
-.cmb .cmb-chip.on { background: color-mix(in srgb, var(--c) 14%, #fff); color: var(--tinta); }
-.cmb .cmb-fixa { background: #FFF6DB; border-color: #E8CF84; }
-.cmb .cmb-conta > div { background: #F1F4F9; }
-.cmb .cmb-barra { background: #E3E8F0; }
-.cmb .btn.mini { background: #fff; color: var(--tinta); border-color: var(--linha); }
-.cmb .cmb-aviso { background: #FFF6DB; border-color: #E8CF84; }
+/* simulador: só o fundo claro; disciplinas e resultado mantêm as cores */
+.bloco.cmb { background: #EEF2F8; border-color: #D5DCE8; color: #13284A; }
+.bloco.cmb h2 { color: #13284A; }
+.bloco.cmb .cmb-topo .sub, .bloco.cmb .cmb-prontos .sub { color: #4A5D7E; }
+.cmb .cmb-gt { filter: saturate(1.1); }
+.cmb .cmb-chip { background: #fff; color: #13284A; border: 1.5px solid color-mix(in srgb, var(--c) 55%, #fff); }
+.cmb .cmb-chip.on { background: var(--c); border-color: var(--c); color: #fff; }
+.cmb .cmb-chip.on b { opacity: .9; }
+.cmb .cmb-chip.on.b { color: #1A1404; }
+.cmb .cmb-fixa { background: #F5C542; border-color: #F5C542; color: #1A1404; }
+.cmb .cmb-fixa span { color: #5A4500; }
+.cmb .btn.mini { background: #13284A; color: #fff; border-color: #13284A; }
+.cmb .cmb-dir { background: #13284A; border-color: #13284A; color: #EEF3FF; box-shadow: 0 10px 26px rgba(19, 40, 74, .22); }
+.cmb .cmb-dir .sub { color: #9DB0D3; }
+.cmb .cmb-g:nth-of-type(2) .cmb-gt { color: #A87400; }
