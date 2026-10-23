@@ -767,7 +767,8 @@
     if (g.fim) {
       var rods = rodadasDiag(), ult = rods[rods.length - 1], n = ult.nota, dg = ult.porD, vals = D.map(function (d) { return dg[d.id].n ? dg[d.id].ok / dg[d.id].n : 0; });
       var fortes = D.filter(function (d, k) { return vals[k] >= 0.7; }), fracos = D.filter(function (d, k) { return vals[k] < 0.4; }).sort(function (a, b) { return b.q - a.q; });
-      return cena({selo: rods.length > 1 ? rods.length + 'ª rodada · ' + ult.nome : 'Diagnóstico concluído', titulo: 'Seu raio‑X: ' + n + ' de 80',
+      return (n >= 40 ? '<div class="aprovado-faixa">' + confetes(40) + '<span>🏆</span><div><b>Aprovado na 1ª fase!</b> Com ' + n + ' acertos você passaria para a 2ª fase. Continue treinando para chegar à prova com margem de segurança.</div></div>' : '') +
+        cena({selo: rods.length > 1 ? rods.length + 'ª rodada · ' + ult.nome : 'Diagnóstico concluído', titulo: 'Seu raio‑X: ' + n + ' de 80',
         lead: (n >= 40 ? 'Hoje você já passaria na 1ª fase. Agora o trabalho é proteger essa nota e abrir margem de segurança.' : 'Faltam ' + (40 - n) + ' acertos para a aprovação. Não é preciso dominar as 20 disciplinas: o radar mostra exatamente onde estão os pontos mais baratos de conquistar.') +
           ' Verde é ponto forte; vermelho é o que reforçar; a linha dourada é a sua meta.',
         extra: '<div class="chips" style="margin-top:14px"><a class="btn pri" href="#relatorio">Ver meu relatório</a><a class="btn" href="#cronograma">Montar meu plano</a></div>',
@@ -947,6 +948,56 @@
         }).join('') + '</div>';
       }).join('');
   };
+
+
+  // ---------- festa da aprovação: confetes quando o aluno chega aos 40 acertos ----------
+  function confetes(n) {
+    var cores = ['#F5C542', '#3DDC97', '#FF4D5E', '#3EC5FF', '#B678FF', '#FFFFFF'], h = '';
+    for (var i = 0; i < n; i++) {
+      var x = Math.random() * 100, d = 2.6 + Math.random() * 2.4, a = Math.random() * 1.4, w = 6 + Math.random() * 8, r = Math.random() * 360;
+      h += '<i style="left:' + x.toFixed(1) + '%;width:' + w.toFixed(0) + 'px;height:' + (w * 0.45).toFixed(0) + 'px;background:' + cores[i % cores.length] + ';animation-duration:' + d.toFixed(2) + 's;animation-delay:' + a.toFixed(2) + 's;transform:rotate(' + r.toFixed(0) + 'deg)"></i>';
+    }
+    return '<div class="chuva-confete" aria-hidden="true">' + h + '</div>';
+  }
+  function festaAprovacao(o) {
+    if (document.querySelector('.festa')) return;
+    var el = document.createElement('div'); el.className = 'festa'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true');
+    el.innerHTML = confetes(140) + '<div class="festa-c"><div class="festa-trofeu" aria-hidden="true">🏆</div>' +
+      (OAB.CARTEIRA ? '<img class="festa-cart" src="' + OAB.CARTEIRA + '" alt="">' : '') +
+      '<h2>' + o.titulo + '</h2><p>' + o.texto + '</p><div class="chips" style="justify-content:center">' +
+      o.botoes.map(function (b, i) { return '<a class="btn ' + (i ? '' : 'pri') + '" href="' + b[1] + '" data-festa-fecha>' + b[0] + '</a>'; }).join('') + '</div></div>';
+    document.body.appendChild(el);
+    el.addEventListener('click', function (e) { if (e.target === el || e.target.closest('[data-festa-fecha]')) el.remove(); });
+    setTimeout(function () { var f = el.querySelector('.btn'); if (f) f.focus(); }, 50);
+  }
+  function verificarFesta(r, arg) {
+    var nm = ((S.perfil && S.perfil.nome) || '').trim().split(' ')[0]; nm = nm ? nm.charAt(0).toUpperCase() + nm.slice(1).toLowerCase() : '';
+    if (r === 'diagnostico') {
+      var nx = proximaProvaDiag(), of = nx && S.oficiais && S.oficiais[nx];
+      if (S.diag.ini && !S.diag.fim) {
+        var ac = DIAG.filter(function (id) { return S.diag.resp[id] === QM[id].c; }).length;
+        if (ac >= 40 && !S.diag.festa40) { S.diag.festa40 = true; salvar(); festaAprovacao(festaDurante(nm, ac, '#diagnostico')); }
+      } else if (S.diag.fim && notaDiag() >= 40 && !S.diag.festaFim && !(of && of.diag)) {
+        S.diag.festaFim = true; salvar(); festaAprovacao(festaFinal(nm, notaDiag()));
+      }
+    }
+    if (r === 'provas' && arg && S.oficiais && S.oficiais[arg]) {
+      var o = S.oficiais[arg], gab = OAB.PROVAS[arg].gab, ok = 0;
+      Object.keys(o.resp || {}).forEach(function (q) { if (gab[q - 1] === 'X' || o.resp[q] === gab[q - 1]) ok++; });
+      if (!o.fim && ok >= 40 && !o.festa40) { o.festa40 = true; salvar(); festaAprovacao(festaDurante(nm, ok, '#provas/' + arg)); }
+      else if (o.fim && corrigirOficial(arg).nota >= 40 && !o.festaFim) { o.festaFim = true; salvar(); festaAprovacao(festaFinal(nm, corrigirOficial(arg).nota, '#provas/' + arg)); }
+    }
+  }
+  function festaDurante(nm, ac, volta) {
+    return {titulo: 'Parabéns' + (nm ? ', ' + esc(nm) : '') + '! Você foi aprovado para a 2ª fase!',
+      texto: 'Você chegou a <b>' + ac + ' acertos</b> — na prova real, isso já garante a sua vaga na 2ª fase. Agora continue treinando: termine as questões para ver o seu raio-X completo, onde você é bom e onde ainda precisa melhorar.',
+      botoes: [['Continuar e terminar', volta], ['Ver o painel', '#painel']]};
+  }
+  function festaFinal(nm, nota, volta) {
+    return {titulo: 'Parabéns' + (nm ? ', ' + esc(nm) : '') + '! Aprovado na 1ª fase!',
+      texto: 'Você fez <b>' + nota + ' de 80</b>, acima dos 40 que aprovam. Agora veja o seu diagnóstico: onde você já é forte e onde precisa melhorar para chegar à prova com margem de segurança.',
+      botoes: [['Ver meu diagnóstico', volta || '#relatorio'], ['Montar meu plano', '#cronograma']]};
+  }
 
   // ---------- 2ª fase: prova simulada (caderno + folha de respostas; orientação só depois da entrega) ----------
   var F2 = OAB.F2 || {AREAS: [], ITENS: [], ESTRUTURA: [], PROVA: {}};
@@ -1398,6 +1449,7 @@
     var mud = rota !== location.hash; rota = location.hash;
     if (mud) { window.scrollTo(0, 0); main.focus({preventScroll: true}); }
     ajustarGrades();
+    setTimeout(function () { verificarFesta(r, arg); }, 450);
   }
   function ajustarGrades() { ['#diag-grid', '#sin-grid'].forEach(function (s) { var g = $(s); if (g && window.innerWidth < 860) g.style.gridTemplateColumns = '1fr'; }); }
   window.addEventListener('hashchange', render);
