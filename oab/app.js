@@ -394,7 +394,7 @@
       var ds = D.filter(function (d) { return d.g === g; }).sort(function (a, b) { return b.q - a.q; }), tot = soma(g);
       return '<div class="gq"><div class="gq-cab" style="background:' + CORG[g][0] + ';color:' + CORG[g][1] + '"><b>Grupo ' + g + '</b><span>(representa ' + pc(tot / 80) + ' da sua prova)</span></div>' +
         '<table><tbody>' + ds.map(function (d) { var dom = (S.dominio && S.dominio.indexOf(d.id) > -1) || (S.dominio && d.id === 'etica'); return '<tr><td>' + (dom ? '★ ' : '') + esc(d.nome) + '</td><td>' + d.q + '</td></tr>'; }).join('') +
-        '</tbody><tfoot><tr><td colspan="2">TOTAL '</tbody><tfoot><tr><td>TOTAL</td><td>' + tot + ' questões</td></tr></tfoot></table></div>';nbsp; ' + tot + ' questões</td></tr></tfoot></table></div>';
+        '</tbody><tfoot><tr><td colspan="2">TOTAL &nbsp; ' + tot + ' questões</td></tr></tfoot></table></div>';
     }).join('') + '</div>';
     // a prova da tese, com as escolhas do aluno
     var tese;
