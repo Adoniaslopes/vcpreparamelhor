@@ -530,3 +530,10 @@ details.ajuste form.bloco { box-shadow: none; border: 0; padding: 0; }
 .au-passos { margin: 14px 0 0; padding-left: 1.2rem; color: var(--tinta2); }
 .au-passos li { margin-bottom: .3rem; }
 .au-item + .au-item { border-top: 1px solid var(--linha); padding-top: 10px; }
+
+/* marca: emblema próprio (balança) + nome em duas linhas */
+.marca { gap: 10px; line-height: 1.1; }
+.marca-ic { width: 40px; height: 40px; flex: none; }
+.marca-txt { display: flex; flex-direction: column; min-width: 0; }
+.marca-txt b { font-size: 1.08rem; white-space: nowrap; }
+.marca-txt small { font-family: var(--f-txt); font-weight: 600; font-size: .68rem; letter-spacing: .06em; text-transform: uppercase; color: var(--dourado); margin-top: 3px; white-space: nowrap; }
