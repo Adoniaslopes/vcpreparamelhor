@@ -388,6 +388,14 @@
     var cards = [['A', qa, D.filter(function (d) { return d.g === 'A'; }).length], ['B', qb, D.filter(function (d) { return d.g === 'B'; }).length], ['C', qc, nC]].map(function (x) {
       return '<div class="kpi" style="border-top:4px solid ' + OAB.GRUPOS[x[0]].cor + '"><div class="num">' + x[1] + ' <span class="sub" style="font-size:1rem">pontos · ' + pc(x[1] / 80) + '</span></div><div class="sub">' + esc(OAB.GRUPOS[x[0]].nome) + ' · ' + x[2] + ' disciplinas</div></div>';
     }).join('');
+    // três quadros separados, um por grupo
+    var CORG = {A: ['#C8102E', '#fff'], B: ['#FFC20E', '#1A1404'], C: ['#7DC243', '#0E2205']};
+    var grupos3 = '<div class="grupos3">' + ['A', 'B', 'C'].map(function (g) {
+      var ds = D.filter(function (d) { return d.g === g; }).sort(function (a, b) { return b.q - a.q; }), tot = soma(g);
+      return '<div class="gq"><div class="gq-cab" style="background:' + CORG[g][0] + ';color:' + CORG[g][1] + '"><b>Grupo ' + g + '</b><span>(representa ' + pc(tot / 80) + ' da sua prova)</span></div>' +
+        '<table><tbody>' + ds.map(function (d) { var dom = (S.dominio && S.dominio.indexOf(d.id) > -1) || (S.dominio && d.id === 'etica'); return '<tr><td>' + (dom ? '★ ' : '') + esc(d.nome) + '</td><td>' + d.q + '</td></tr>'; }).join('') +
+        '</tbody><tfoot><tr><td colspan="2">TOTAL '</tbody><tfoot><tr><td>TOTAL</td><td>' + tot + ' questões</td></tr></tfoot></table></div>';nbsp; ' + tot + ' questões</td></tr></tfoot></table></div>';
+    }).join('') + '</div>';
     // a prova da tese, com as escolhas do aluno
     var tese;
     if (S.dominio && S.dominio.length) {
@@ -399,8 +407,8 @@
     }
     return '<section class="bloco" style="margin:16px 0"><div class="cab" style="margin-bottom:10px"><div><h2 style="margin:0">Entenda a matemática da aprovação</h2>' +
       '<p class="sub">Cada questão vale 1 ponto e a meta é 40. Veja quanto cada disciplina vale na prova da FGV — é daqui que sai o caminho mais curto até a sua aprovação.</p></div></div>' +
-      '<div class="kpis" style="margin-bottom:14px">' + cards + '</div>' + svg +
-      '<p class="peq sub" style="margin:6px 0 12px">Barras: questões por disciplina. Linha: quanto da prova você cobre somando da maior para a menor. ★ = Ética e suas disciplinas de domínio.</p>' +
+      grupos3 +
+      '<p class="peq sub" style="margin:10px 0 12px">Quantidade de questões por disciplina nas 10 últimas provas da FGV (38º ao 47º Exame).' + (S.dominio ? ' ★ = Ética e suas disciplinas de domínio.' : '') + '</p>' +
       '<div class="tese">' + tese + '<p class="peq sub" style="margin:0">As ' + nC + ' disciplinas do Grupo C somam ' + qc + ' questões, menos que Ética, Civil e Processo Civil juntas (' + (8 + DM.civil.q + DM.pcivil.q) + '). Estudar tudo por igual é gastar o mesmo tempo em matérias que valem 2 pontos e em matérias que valem 8.</p></div></section>';
   }
 

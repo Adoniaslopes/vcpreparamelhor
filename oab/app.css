@@ -459,3 +459,17 @@ details.ajuste form.bloco { box-shadow: none; border: 0; padding: 0; }
 .f2-modelo { white-space: pre-line; background: #FBF8F1; color: #1C2131; border-radius: 12px; padding: 16px 18px; font: .98rem/1.65 Georgia, serif; }
 .f2-ok { color: var(--verde); }
 @media (max-width: 900px) { .prova2 { grid-template-columns: 1fr; } .prova2-cad { position: static; max-height: none; } }
+
+/* matemática da aprovação: três quadros separados */
+.grupos3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; align-items: start; margin-top: 6px; }
+.gq { border-radius: 14px; overflow: hidden; border: 1px solid var(--linha); background: var(--papel2); box-shadow: var(--sombra); }
+.gq-cab { text-align: center; padding: 14px 10px 12px; }
+.gq-cab b { display: block; font-family: var(--f-tit); font-size: 1.6rem; line-height: 1.1; }
+.gq-cab span { font-size: .92rem; opacity: .92; }
+.gq table { width: 100%; border-collapse: collapse; }
+.gq td { padding: 11px 14px; border-top: 1px solid var(--linha); font-size: .95rem; }
+.gq td:last-child { text-align: center; font-weight: 700; width: 34%; border-left: 1px solid var(--linha); }
+.gq tbody tr:nth-child(even) td { background: rgba(255,255,255,.03); }
+.gq tfoot td { background: rgba(157,176,211,.14); font-weight: 800; font-family: var(--f-tit); text-align: center !important; font-size: 1.05rem; border-left: 0 !important; width: auto !important; }
+.gq tfoot td:last-child { text-align: center; }
+@media (max-width: 900px) { .grupos3 { grid-template-columns: 1fr; } }
