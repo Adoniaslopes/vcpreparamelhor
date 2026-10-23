@@ -256,6 +256,35 @@ footer b{color:var(--nevoa)}
 .ic li:before{content:'✓';position:absolute;left:3px;color:var(--folha);font-weight:700}
 .planos.um{grid-template-columns:minmax(0,560px);justify-content:center}
 @media (max-width:700px){.inclui-2{grid-template-columns:1fr}}
+
+.custo{background:linear-gradient(180deg,var(--noite2),#0B0C16)}
+.custo p{color:#C9D3E5}
+.calc{margin:34px 0 40px;padding:28px;border-radius:26px;background:#0F1D38;border:1px solid var(--linha);font-family:'IBM Plex Sans',sans-serif}
+.calc label{display:flex;justify-content:space-between;align-items:center;gap:16px;font-size:16.5px;color:#D7DDEA;padding:12px 0;border-bottom:1px solid var(--linha)}
+.campo{display:inline-flex;align-items:center;gap:8px;flex:none}
+.campo i{font-style:normal;color:var(--nevoa);font-size:15px}
+.calc input{width:110px;font:600 18px 'IBM Plex Sans',sans-serif;color:var(--luz);background:#081226;border:1px solid #34507F;border-radius:12px;padding:10px 12px;text-align:right}
+.calc input:focus{outline:2px solid var(--ouro);outline-offset:1px}
+.calc-res{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:22px;text-align:center}
+.calc-res div{padding:18px 8px;border-radius:16px;background:rgba(255,77,94,.08);border:1px solid rgba(255,77,94,.3)}
+.calc-res b{display:block;white-space:nowrap;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:clamp(26px,3.4vw,34px);line-height:1;color:#fff}
+.calc-res span{display:block;font-size:13.5px;color:var(--nevoa);margin-top:6px;line-height:1.35}
+.calc-frase{margin-top:18px !important;text-align:center;font-family:'Newsreader',serif;font-style:italic;font-size:22px;color:var(--ouro) !important}
+.treino{padding-top:100px}
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:960px;margin:0 auto;font-family:'IBM Plex Sans',sans-serif}
+.vs-c{border-radius:24px;padding:30px}
+.vs-c.velho{background:#EFEAE0;border:1.5px solid #DDD3C2}
+.vs-c.novo{background:#13284A;border:2px solid var(--ouro);box-shadow:0 24px 60px rgba(19,40,74,.25)}
+.vs-c h3{font-size:24px;margin-bottom:12px}
+.vs-c.velho h3{color:#6B6455}.vs-c.novo h3{color:var(--ouro)}
+.vs-c ul{list-style:none}
+.vs-c li{padding:11px 0 11px 30px;position:relative;font-size:16.5px;line-height:1.45}
+.vs-c.velho li{color:#6B6455;border-top:1px solid #DDD3C2}
+.vs-c.velho li:before{content:'✕';position:absolute;left:4px;color:#A08F7A}
+.vs-c.novo li{color:#E3E8F3;border-top:1px solid rgba(255,255,255,.1)}
+.vs-c.novo li:before{content:'✓';position:absolute;left:4px;color:var(--folha);font-weight:700}
+.vs-fim{text-align:center;margin-top:34px;font-family:'Newsreader',serif;font-size:clamp(24px,3vw,30px);color:var(--tinta);font-weight:500}
+@media (max-width:700px){.vs,.calc-res{grid-template-columns:1fr}.calc label{flex-direction:column;align-items:flex-start;gap:8px}.calc{padding:20px}}
 </style>
 </head>
 <body>
@@ -313,6 +342,29 @@ footer b{color:var(--nevoa)}
   </div>
 </section>
 
+<!-- 3b. O CUSTO DE CONTINUAR BACHAREL -->
+<section class="custo">
+  <div class="col">
+    <span class="kicker">Ninguém faz Direito para ser bacharel</span>
+    <h2 class="serif-t">Quanto já custou chegar até aqui? E quanto custa ficar parado na porta?</h2>
+    <p>Faça a conta com os seus números. Ela leva dez segundos e costuma doer mais do que qualquer reprovação.</p>
+    <div class="calc" id="calc">
+      <label>Quanto você pagava de mensalidade na faculdade?<span class="campo"><i>R$</i><input id="c-mens" type="number" inputmode="numeric" min="0" step="50" value="900"></span></label>
+      <label>Quantos anos de curso?<span class="campo"><input id="c-anos" type="number" inputmode="numeric" min="1" max="10" value="5"><i>anos</i></span></label>
+      <label>Quantas vezes você já fez o Exame de Ordem?<span class="campo"><input id="c-vezes" type="number" inputmode="numeric" min="0" max="30" value="2"><i>vezes</i></span></label>
+      <div class="calc-res" aria-live="polite">
+        <div><b id="r-curso">R$ 54.000</b><span>investidos na formação</span></div>
+        <div><b id="r-taxas">R$ 700</b><span>em inscrições do Exame, a R$ 350 cada</span></div>
+        <div><b id="r-tempo">8 meses</b><span>de espera entre uma prova e outra</span></div>
+      </div>
+      <p class="calc-frase" id="r-frase">Tudo isso para continuar sendo chamado de bacharel.</p>
+    </div>
+    <p>E a conta não para aí. São três exames por ano. Cada reprovação é mais uma inscrição, mais um cursinho para renovar e mais quatro meses sem poder assinar uma petição. Tem gente que fica assim por dois, três, quatro, até dez exames.</p>
+    <p class="citacao">Você não precisa de mais um ano de aula. Precisa de 40 acertos.</p>
+    <p class="fonte" style="color:#7685A3 !important">Inscrição de R$ 350 no 47º e no 48º Exame. Os demais valores são os que você informou.</p>
+  </div>
+</section>
+
 <!-- 4. O MITO -->
 <section class="mito">
   <div class="col">
@@ -328,6 +380,31 @@ footer b{color:var(--nevoa)}
     </div>
     <p>Quem entende essa conta para de estudar com medo e começa a estudar com estratégia.</p>
     <div class="cta-meio"><a class="btn pri" data-checkout="1" href="#">Quero o plano para os 40 acertos →</a><span class="miudo">12x de R$ 69,90 · 1ª e 2ª fase até passar</span></div>
+  </div>
+</section>
+
+<!-- 4b. TREINO, NÃO AULA -->
+<section class="papel treino">
+  <div class="larga">
+    <div class="intro-c"><span class="kicker">Por que isto é diferente</span><h2 class="serif-t" style="color:var(--tinta)">Treino, não aula.</h2>
+    <p style="color:#2B3143">Ninguém quer voltar para a graduação para fazer uma prova. Você já teve cinco anos de aula. Agora precisa de outra coisa: mirar no alvo e treinar até acertar.</p></div>
+    <div class="vs">
+      <div class="vs-c velho"><h3>O cursinho tradicional</h3><ul>
+        <li>As 20 disciplinas, todas com o mesmo peso</li>
+        <li>Centenas de horas de videoaula para assistir</li>
+        <li>Você assiste e torce para lembrar no dia</li>
+        <li>Plano genérico, igual para todo mundo</li>
+        <li>Muitos planos vencem a cada exame ou em 12 meses</li>
+        <li>Dormir na frente de mais uma aula de três horas</li></ul></div>
+      <div class="vs-c novo"><h3>O Método Aprovação</h3><ul>
+        <li>Ética e no máximo 5 disciplinas que você escolhe pela afinidade</li>
+        <li>Questões reais da FGV desde o primeiro dia</li>
+        <li>Você pratica e vê o ponteiro subir rumo aos 40</li>
+        <li>Cronograma que se refaz com a sua rotina</li>
+        <li>Um acesso só, até você passar, sem renovar nada</li>
+        <li>No celular, de casa, no trajeto, no seu ritmo</li></ul></div>
+    </div>
+    <p class="vs-fim">O objetivo é o mesmo: a carteira. O caminho é muito mais curto.</p>
   </div>
 </section>
 
@@ -559,6 +636,20 @@ footer b{color:var(--nevoa)}
     document.getElementById('faixa').innerHTML = 'Faltam <b>' + d + ' dias</b> para a 1ª fase do 48º Exame de Ordem · 10/01/2027';
   }
   tick(); setInterval(tick, 30000);
+  // calculadora: quanto custou chegar até aqui
+  function brl(n) { return 'R$ ' + Math.round(n).toLocaleString('pt-BR'); }
+  function calc() {
+    var m = Math.max(0, +document.getElementById('c-mens').value || 0), a = Math.max(0, +document.getElementById('c-anos').value || 0), v = Math.max(0, Math.round(+document.getElementById('c-vezes').value || 0));
+    document.getElementById('r-curso').textContent = brl(m * 12 * a);
+    document.getElementById('r-taxas').textContent = brl(v * 350);
+    var meses = v * 4;
+    var an = Math.floor(meses / 12), rm = meses % 12, pa = an ? an + (an === 1 ? ' ano' : ' anos') : '', pm = rm ? rm + (rm === 1 ? ' mês' : ' meses') : '';
+    document.getElementById('r-tempo').textContent = (pa && pm ? pa + ' e ' + pm : pa || pm || '0 meses');
+    document.getElementById('r-frase').textContent = v ? 'Tudo isso para continuar sendo chamado de bacharel.' : 'Você ainda não fez a prova. Que tal passar de primeira?';
+  }
+  ['c-mens', 'c-anos', 'c-vezes'].forEach(function (id) { document.getElementById(id).addEventListener('input', calc); });
+  calc();
+
   var nomes = {1: 'acesso completo, 1ª e 2ª fase até passar (12x R$ 69,90)'};
   document.querySelectorAll('[data-checkout]').forEach(function (a) {
     var n = a.getAttribute('data-checkout'), url = V['checkout' + n];
