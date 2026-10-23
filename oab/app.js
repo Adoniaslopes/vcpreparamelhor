@@ -1796,7 +1796,7 @@
     } catch (e) { /* sem provas importadas */ }
   }
   // conteúdo protegido: só é entregue (pela função do servidor) a quem está logado e com acesso ativo
-  var CADS = [47];
+  var CADS = [47, 46];
   var PRIVADOS = ['q1', 'q2', 'q3', 'q4', 'sinopses', 'sinopses-ext1', 'sinopses-ext2', 'provas', 'fase2'].concat(CADS.map(function (n) { return 'cad' + n; })), conteudoOk = false;
   async function carregarConteudo(token) {
     if (conteudoOk) return;
