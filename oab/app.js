@@ -968,7 +968,8 @@
     var fr = Math.min(1, hits / need); return {nota: Math.round(t.v * fr * 20) / 20, fr: fr};
   }
   function estruturaPeca(txt, item) {
-    return F2.ESTRUTURA.filter(function (e) { return !e.so || e.so.indexOf(item.pecaTipo) > -1; }).map(function (e) {
+    var tipos = [].concat(item.pecaTipo);
+    return F2.ESTRUTURA.filter(function (e) { return !e.so || e.so.some(function (t) { return tipos.indexOf(t) > -1; }); }).map(function (e) {
       var ok;
       if (e.id === 'peca') ok = item.pecaChaves.some(function (c) { return achou(txt, c); });
       else if (e.min) { var m = String(txt).match(new RegExp(e.re, 'gi')); ok = !!m && m.length >= e.min; }

@@ -308,5 +308,292 @@ OAB.F2.ITENS = [
     roteiro: [
       {passo: 'Duas prescrições', como: 'Primeiro verifique a bienal (2 anos da extinção); depois limite as parcelas aos 5 anos anteriores à ação.', fundamento: 'Art. 7º, XXIX, CF; art. 11 da CLT'},
       {passo: 'FGTS', como: 'Cite a mudança do STF e a súmula do TST com a modulação.', fundamento: 'ARE 709.212; Súmula 362 do TST'}
+    ]},
+  /* ============================== DIREITO ADMINISTRATIVO ============================== */
+  {id: 'adm-p1', area: 'administrativo', tipo: 'peca', pecaTipo: ['inicial', 'recurso'],
+    titulo: 'Aprovada dentro das vagas e não nomeada',
+    enunciado: 'Paula foi aprovada em 1º lugar no concurso público para o cargo de Analista Administrativo do Município Alfa, cujo edital previa 2 vagas. O resultado foi homologado e publicado em 01/09/2024, com validade de 2 anos, sem prorrogação. O prazo de validade terminou em 01/09/2026 sem que Paula fosse nomeada. Em agosto de 2026, ainda durante a validade, o Prefeito publicou edital de novo concurso para o mesmo cargo e contratou servidores temporários para as mesmas funções. Paula guarda o edital, a publicação da homologação com a sua classificação e as publicações do novo concurso e das contratações. Hoje é 20/10/2026.',
+    comando: 'Na qualidade de advogado(a) de Paula, elabore a peça processual adequada para garantir a sua nomeação com a maior rapidez possível, considerando que toda a prova é documental.',
+    pecaCorreta: 'Mandado de segurança com pedido liminar',
+    opcoesPeca: ['Mandado de segurança com pedido liminar', 'Ação popular', 'Ação civil pública', 'Habeas data', 'Mandado de injunção'],
+    pecaChaves: ['mandado de seguran[cç]a', '12\\.?016'],
+    topicos: [
+      {t: 'Endereçamento: Juízo da Vara da Fazenda Pública da Comarca do Município Alfa', v: 0.20, ch: ['fazenda p[uú]blica', 'munic[ií]pio alfa', 'vara']},
+      {t: 'Qualificação da impetrante, indicação da autoridade coatora (Prefeito) e da pessoa jurídica interessada (Município) — art. 6º da Lei 12.016/2009', v: 0.40, ch: ['autoridade coatora', 'prefeito', 'munic[ií]pio', 'art\\.? ?6']},
+      {t: 'Nome da peça: mandado de segurança com pedido liminar (art. 5º, LXIX, CF e art. 1º da Lei 12.016/2009)', v: 0.40, ch: ['mandado de seguran[cç]a', 'lxix', '12\\.?016', 'liminar']},
+      {t: 'Tempestividade: impetração dentro de 120 dias do fim da validade do concurso (art. 23 da Lei 12.016/2009)', v: 0.30, ch: ['120 dias', 'cento e vinte', 'art\\.? ?23', 'decad']},
+      {t: 'Direito líquido e certo comprovado por documentos (edital, homologação e classificação)', v: 0.40, ch: ['l[ií]quido e certo', 'prova documental', 'pr[eé]-constitu', 'documento']},
+      {t: 'Mérito: o aprovado dentro do número de vagas tem direito subjetivo à nomeação (STF, RE 598.099, Tema 161)', v: 1.10, ch: ['direito subjetivo', 'n[uú]mero de vagas', '598\\.?099', 'tema 161', 'nomea']},
+      {t: 'Preterição: novo concurso e contratação temporária para as mesmas funções durante a validade (art. 37, IV, CF)', v: 0.40, ch: ['preteri', 'art\\.? ?37,? ?iv', 'tempor[aá]ri', 'novo concurso']},
+      {t: 'Princípios: vinculação ao edital, boa-fé, segurança jurídica e proteção da confiança (art. 37, caput, CF)', v: 0.40, ch: ['boa-f[eé]', 'seguran[cç]a jur[ií]dica', 'confian[cç]a', 'vincula[cç][aã]o ao edital', 'moralidade']},
+      {t: 'Liminar: fundamento relevante e risco de ineficácia da medida, para nomeação ou reserva da vaga (art. 7º, III, da Lei 12.016/2009)', v: 0.50, ch: ['art\\.? ?7', 'fundamento relevante', 'inefic', 'periculum', 'fumus', 'reserva']},
+      {t: 'Pedidos: notificação da autoridade (art. 7º, I), ciência ao órgão de representação do Município (art. 7º, II), oitiva do MP (art. 12), concessão da segurança para nomeação e posse; sem pedido de honorários (art. 25)', v: 0.60, ch: ['notifica', 'ci[eê]ncia', 'minist[eé]rio p[uú]blico', 'art\\.? ?12', 'concess[aã]o da seguran', 'posse']},
+      {t: 'Valor da causa e fechamento: local, data, advogado, OAB', v: 0.30, ch: ['valor da causa', 'oab', 'nestes termos']}
+    ],
+    roteiro: [
+      {passo: 'Identifique a peça', como: 'Prova toda documental, ato de autoridade e pedido de rapidez: mandado de segurança com liminar.', fundamento: 'Art. 5º, LXIX, CF; Lei 12.016/2009'},
+      {passo: 'Competência e partes', como: 'Vara da Fazenda Pública Municipal; impetrado é o Prefeito (autoridade coatora), e o Município é a pessoa jurídica interessada.', fundamento: 'Art. 6º da Lei 12.016/2009'},
+      {passo: 'Mostre o prazo', como: 'A validade acabou em 01/09/2026; a impetração em outubro está dentro dos 120 dias.', fundamento: 'Art. 23 da Lei 12.016/2009'},
+      {passo: 'Tese central', como: 'Aprovada dentro das vagas tem direito subjetivo à nomeação; a preterição por temporários e novo concurso reforça o direito.', fundamento: 'STF, RE 598.099; art. 37, IV, CF'},
+      {passo: 'Peça a liminar', como: 'Fundamento relevante (documentos) e risco de ineficácia (vaga ocupada por terceiros).', fundamento: 'Art. 7º, III, da Lei 12.016/2009'},
+      {passo: 'Pedidos e fechamento', como: 'Notificação, ciência ao Município, MP, concessão da segurança; não peça honorários. Valor da causa e "Local..., Data..., Advogado..., OAB...".', fundamento: 'Arts. 7º, 12 e 25 da Lei 12.016/2009'}
+    ],
+    modelo: 'EXCELENTÍSSIMO SENHOR DOUTOR JUIZ DE DIREITO DA VARA DA FAZENDA PÚBLICA DA COMARCA DO MUNICÍPIO ALFA. PAULA..., nacionalidade..., estado civil..., profissão..., CPF..., endereço..., por seu advogado, vem impetrar MANDADO DE SEGURANÇA COM PEDIDO LIMINAR, com fundamento no art. 5º, LXIX, da CF e na Lei 12.016/2009, contra ato omissivo do PREFEITO DO MUNICÍPIO ALFA, vinculado ao MUNICÍPIO ALFA (art. 6º). I – DA TEMPESTIVIDADE (art. 23). II – DOS FATOS. III – DO DIREITO LÍQUIDO E CERTO: aprovação dentro das vagas e direito subjetivo à nomeação (RE 598.099); preterição (art. 37, IV, CF); boa-fé e proteção da confiança. IV – DA LIMINAR (art. 7º, III). V – DOS PEDIDOS: notificação da autoridade (art. 7º, I); ciência ao Município (art. 7º, II); oitiva do MP (art. 12); concessão da segurança para nomeação e posse. Valor da causa: R$ ... Nestes termos, pede deferimento. Local..., Data..., Advogado..., OAB...'
+  },
+  {id: 'adm-q1', area: 'administrativo', tipo: 'questao', titulo: 'Viatura que bateu no carro',
+    enunciado: 'Uma viatura da Polícia Militar do Estado Alfa, conduzida pelo soldado Bruno em alta velocidade, sem estar em ocorrência, colidiu com o carro de Laura, causando danos materiais. Laura quer ser indenizada e pretende processar diretamente o soldado.',
+    itens: [
+      {letra: 'A', p: 'Qual a natureza da responsabilidade do Estado neste caso? Fundamente.', v: 0.60, esp: 'Responsabilidade objetiva, baseada na teoria do risco administrativo: basta provar a conduta do agente, o dano e o nexo causal, sem discutir culpa (art. 37, §6º, da CF).', ch: ['objetiva', '37,? ?§ ?6', 'risco administrativo', 'nexo']},
+      {letra: 'B', p: 'Laura pode ajuizar a ação diretamente contra o soldado? Fundamente.', v: 0.65, esp: 'Não. A ação deve ser proposta contra o Estado, e não contra o agente (STF, Tema 940 — tese da dupla garantia). O Estado, condenado, pode cobrar do soldado em ação regressiva se provar dolo ou culpa (art. 37, §6º, parte final).', ch: ['940', 'dupla garantia', 'regress', 'dolo ou culpa']}
+    ],
+    roteiro: [
+      {passo: 'Item A', como: 'Diga "objetiva", cite o artigo e liste os elementos: conduta, dano e nexo.', fundamento: 'Art. 37, §6º, CF'},
+      {passo: 'Item B', como: 'Responda "não", explique a dupla garantia e a ação regressiva por dolo ou culpa.', fundamento: 'STF, Tema 940'}
+    ]},
+  {id: 'adm-q2', area: 'administrativo', tipo: 'questao', titulo: 'Contratação sem licitação',
+    enunciado: 'O Município Beta quer contratar uma cantora consagrada pela crítica para o show de aniversário da cidade, por meio do seu empresário exclusivo. Meses depois, uma enchente destruiu uma ponte e o Município precisa contratar com urgência uma empresa para a obra emergencial.',
+    itens: [
+      {letra: 'A', p: 'A contratação da cantora exige licitação? Fundamente.', v: 0.60, esp: 'Não. É caso de inexigibilidade de licitação, por inviabilidade de competição, na contratação de profissional do setor artístico consagrado pela crítica ou pela opinião pública, diretamente ou por empresário exclusivo (art. 74, II, da Lei 14.133/2021).', ch: ['inexigibilidade', 'art\\.? ?74', '14\\.?133', 'empres[aá]rio exclusivo', 'consagrad']},
+      {letra: 'B', p: 'Como fica a contratação da obra emergencial e qual o seu prazo máximo? Fundamente.', v: 0.65, esp: 'É hipótese de dispensa de licitação por emergência (art. 75, VIII, da Lei 14.133/2021), para obras concluídas em no máximo 1 ano a partir da emergência, vedadas a prorrogação e a recontratação da mesma empresa com base na mesma situação.', ch: ['dispensa', 'art\\.? ?75', 'viii', 'emerg', 'um ano', '1 ano', 'prorroga']}
+    ],
+    roteiro: [
+      {passo: 'Separe as figuras', como: 'Inexigibilidade (competição inviável) e dispensa (competição possível, mas a lei dispensa).', fundamento: 'Arts. 74 e 75 da Lei 14.133/2021'},
+      {passo: 'Item B', como: 'Cite o prazo máximo de 1 ano e as vedações.', fundamento: 'Art. 75, VIII, da Lei 14.133/2021'}
+    ]},
+  {id: 'adm-q3', area: 'administrativo', tipo: 'questao', titulo: 'Improbidade e culpa',
+    enunciado: 'Um secretário municipal, por falta de cuidado, deixou de conferir uma planilha e assinou um pagamento em duplicidade a uma empresa, causando prejuízo ao erário. Não houve intenção de causar dano. O fato ocorreu em março de 2022 e a ação de improbidade foi ajuizada em 2026.',
+    itens: [
+      {letra: 'A', p: 'A conduta culposa configura ato de improbidade administrativa? Fundamente.', v: 0.65, esp: 'Não. Após a Lei 14.230/2021, todos os atos de improbidade exigem dolo, inclusive os que causam lesão ao erário (art. 1º, §§1º a 3º, e art. 10 da Lei 8.429/1992). A modalidade culposa foi extinta (STF, Tema 1.199). O ressarcimento pode ser buscado por outra via.', ch: ['dolo', '14\\.?230', '1\\.?199', 'culposa', 'art\\.? ?10']},
+      {letra: 'B', p: 'A ação foi ajuizada dentro do prazo prescricional? Fundamente.', v: 0.60, esp: 'Sim. A ação de improbidade prescreve em 8 anos, contados da ocorrência do fato ou, nas infrações permanentes, do dia em que cessou a permanência (art. 23 da Lei 8.429/1992). Fato de 2022 e ação em 2026: dentro do prazo.', ch: ['8 anos', 'oito anos', 'art\\.? ?23', 'ocorr[eê]ncia do fato', 'prescri']}
+    ],
+    roteiro: [
+      {passo: 'Item A', como: 'Afirme a exigência de dolo e cite a mudança legal e o tema do STF.', fundamento: 'Lei 14.230/2021; STF, Tema 1.199'},
+      {passo: 'Item B', como: 'Prazo de 8 anos contados do fato; aplique às datas do enunciado.', fundamento: 'Art. 23 da Lei 8.429/1992'}
+    ]},
+  {id: 'adm-q4', area: 'administrativo', tipo: 'questao', titulo: 'Anular ou revogar',
+    enunciado: 'Em 2019, a Administração Federal concedeu a João uma gratificação por ato que, depois se descobriu, contrariava a lei. João recebeu os valores de boa-fé. Em 2026, a Administração quer anular o ato. Em outro caso, quer desfazer uma autorização válida que deixou de ser conveniente.',
+    itens: [
+      {letra: 'A', p: 'Qual a diferença entre anular e revogar um ato administrativo? Fundamente.', v: 0.60, esp: 'A anulação desfaz ato ilegal, com efeitos retroativos, e pode ser feita pela Administração ou pelo Judiciário. A revogação desfaz ato válido por conveniência e oportunidade, com efeitos para o futuro, e só pela Administração (Súmula 473 do STF; art. 53 da Lei 9.784/1999).', ch: ['473', 'art\\.? ?53', '9\\.?784', 'conveni[eê]ncia', 'ilegal', 'ex tunc', 'ex nunc']},
+      {letra: 'B', p: 'A Administração ainda pode anular a gratificação de João? Fundamente.', v: 0.65, esp: 'Não. O direito da Administração de anular atos que geram efeitos favoráveis ao destinatário decai em 5 anos, salvo comprovada má-fé (art. 54 da Lei 9.784/1999). De 2019 a 2026 passaram mais de 5 anos e João estava de boa-fé.', ch: ['art\\.? ?54', 'cinco anos', '5 anos', 'decad', 'm[aá]-f[eé]', 'boa-f[eé]']}
+    ],
+    roteiro: [
+      {passo: 'Item A', como: 'Compare motivo, efeitos e quem pode praticar cada um.', fundamento: 'Súmula 473 do STF; art. 53 da Lei 9.784/1999'},
+      {passo: 'Item B', como: 'Decadência de 5 anos e boa-fé do servidor.', fundamento: 'Art. 54 da Lei 9.784/1999'}
+    ]},
+
+  /* ============================== DIREITO CONSTITUCIONAL ============================== */
+  {id: 'con-p1', area: 'constitucional', tipo: 'peca', pecaTipo: 'controle',
+    titulo: 'Lei estadual de trânsito',
+    enunciado: 'A Assembleia Legislativa do Estado Alfa aprovou, e o Governador sancionou, a Lei Estadual nº 1.234/2026, que autoriza os motoristas a converter à direita com o semáforo vermelho em todas as vias do Estado e reduz os limites de velocidade nas rodovias estaduais. A lei entrou em vigor na data da publicação e já gera acidentes e autuações conflitantes com o Código de Trânsito Brasileiro. Não existe lei complementar federal que autorize os Estados a legislar sobre o tema. O Partido Político Gama, com representação no Congresso Nacional, procura você para questionar a lei como um todo, diretamente no tribunal competente.',
+    comando: 'Na qualidade de advogado(a) do Partido Gama, elabore a peça processual cabível para retirar a lei do ordenamento jurídico com efeitos gerais e com a maior urgência possível.',
+    pecaCorreta: 'Ação direta de inconstitucionalidade com pedido de medida cautelar',
+    opcoesPeca: ['Ação direta de inconstitucionalidade com pedido de medida cautelar', 'Ação declaratória de constitucionalidade', 'Arguição de descumprimento de preceito fundamental', 'Mandado de segurança', 'Ação popular'],
+    pecaChaves: ['a[cç][aã]o direta de inconstitucionalidade', '\\badi\\b', '9\\.?868'],
+    topicos: [
+      {t: 'Endereçamento: Excelentíssimo Senhor Ministro Presidente do Supremo Tribunal Federal', v: 0.20, ch: ['supremo tribunal federal', '\\bstf\\b', 'ministro presidente']},
+      {t: 'Legitimidade ativa: partido político com representação no Congresso Nacional, legitimado universal (art. 103, VIII, CF; art. 2º, VIII, da Lei 9.868/1999)', v: 0.50, ch: ['art\\.? ?103', 'viii', 'partido pol[ií]tico', 'legitimad', 'universal']},
+      {t: 'Indicação dos requeridos: Assembleia Legislativa e Governador do Estado Alfa', v: 0.30, ch: ['assembleia legislativa', 'governador']},
+      {t: 'Nome da peça: ação direta de inconstitucionalidade com pedido de medida cautelar (art. 102, I, "a", CF e Lei 9.868/1999)', v: 0.40, ch: ['a[cç][aã]o direta de inconstitucionalidade', '102', '9\\.?868', 'cautelar']},
+      {t: 'Cabimento: lei estadual contestada em face da Constituição Federal, no controle concentrado do STF', v: 0.30, ch: ['lei estadual', 'controle concentrado', 'cab[ií]vel', 'cabimento']},
+      {t: 'Mérito: inconstitucionalidade formal orgânica — competência privativa da União para legislar sobre trânsito e transporte (art. 22, XI, CF)', v: 1.10, ch: ['art\\.? ?22', '\\bxi\\b', 'privativa da uni[aã]o', 'tr[aâ]nsito', 'formal', 'org[aâ]nica']},
+      {t: 'Ausência de lei complementar autorizando os Estados (art. 22, parágrafo único, CF)', v: 0.40, ch: ['lei complementar', 'par[aá]grafo [uú]nico']},
+      {t: 'Medida cautelar: plausibilidade do direito e perigo da demora, com acidentes e autuações conflitantes (art. 10 da Lei 9.868/1999)', v: 0.50, ch: ['art\\.? ?10', 'cautelar', 'periculum', 'fumus', 'plausib', 'perigo']},
+      {t: 'Pedidos: informações dos requeridos (art. 6º), manifestação do AGU e do PGR (art. 8º), concessão da cautelar e procedência para declarar a inconstitucionalidade da lei', v: 0.70, ch: ['informa[cç][oõ]es', 'advogado-geral da uni[aã]o', '\\bagu\\b', 'procurador-geral da rep[uú]blica', '\\bpgr\\b', 'proced', 'art\\.? ?8']},
+      {t: 'Procuração com poderes específicos e cópia da lei impugnada (art. 3º, parágrafo único, da Lei 9.868/1999)', v: 0.30, ch: ['poderes espec[ií]ficos', 'art\\.? ?3', 'c[oó]pia da lei']},
+      {t: 'Fechamento: local, data, advogado, OAB', v: 0.30, ch: ['nestes termos', 'pede deferimento', 'oab']}
+    ],
+    roteiro: [
+      {passo: 'Identifique a peça', como: 'Lei estadual contra a CF, efeitos gerais, no tribunal, com urgência: ADI com medida cautelar no STF.', fundamento: 'Art. 102, I, "a", CF; Lei 9.868/1999'},
+      {passo: 'Mostre a legitimidade', como: 'Partido com representação no Congresso é legitimado universal: não precisa provar pertinência temática.', fundamento: 'Art. 103, VIII, CF'},
+      {passo: 'Indique os requeridos', como: 'Assembleia Legislativa (que aprovou) e Governador (que sancionou).', fundamento: ''},
+      {passo: 'Tese', como: 'Trânsito e transporte são competência privativa da União; sem lei complementar delegando, o Estado não pode legislar: inconstitucionalidade formal orgânica.', fundamento: 'Art. 22, XI e parágrafo único, CF'},
+      {passo: 'Cautelar', como: 'Plausibilidade (vício evidente) e perigo (acidentes, autuações em conflito com o CTB).', fundamento: 'Art. 10 da Lei 9.868/1999'},
+      {passo: 'Pedidos e documentos', como: 'Informações, AGU, PGR, cautelar, procedência; procuração com poderes específicos e cópia da lei. Não há valor da causa.', fundamento: 'Arts. 3º, 6º e 8º da Lei 9.868/1999'}
+    ],
+    modelo: 'EXCELENTÍSSIMO SENHOR MINISTRO PRESIDENTE DO SUPREMO TRIBUNAL FEDERAL. PARTIDO POLÍTICO GAMA, com representação no Congresso Nacional, CNPJ..., por seu advogado (procuração com poderes específicos — art. 3º, parágrafo único, da Lei 9.868/1999), vem propor AÇÃO DIRETA DE INCONSTITUCIONALIDADE COM PEDIDO DE MEDIDA CAUTELAR, com fundamento no art. 102, I, "a", e no art. 103, VIII, da CF, e na Lei 9.868/1999, em face da Lei Estadual nº 1.234/2026, editada pela ASSEMBLEIA LEGISLATIVA e pelo GOVERNADOR DO ESTADO ALFA. I – DA LEGITIMIDADE (legitimado universal). II – DO CABIMENTO. III – DA INCONSTITUCIONALIDADE FORMAL ORGÂNICA: competência privativa da União (art. 22, XI, CF) e ausência de lei complementar (art. 22, parágrafo único). IV – DA MEDIDA CAUTELAR (art. 10). V – DOS PEDIDOS: informações (art. 6º); oitiva do AGU e do PGR (art. 8º); cautelar para suspender a lei; procedência para declarar sua inconstitucionalidade. Nestes termos, pede deferimento. Local..., Data..., Advogado..., OAB...'
+  },
+  {id: 'con-q1', area: 'constitucional', tipo: 'questao', titulo: 'Informações negadas',
+    enunciado: 'Carlos pediu ao órgão estadual de segurança pública acesso às informações sobre ele registradas em um banco de dados, por suspeitar que haja um registro errado que o impede de tomar posse em um cargo. O pedido administrativo foi negado sem justificativa.',
+    itens: [
+      {letra: 'A', p: 'Qual a ação constitucional adequada? Fundamente.', v: 0.65, esp: 'Habeas data, para assegurar o conhecimento de informações relativas à pessoa do impetrante constantes de registros ou bancos de dados de entidades governamentais, e para retificá-las (art. 5º, LXXII, "a" e "b", da CF; Lei 9.507/1997).', ch: ['habeas data', 'lxxii', '9\\.?507']},
+      {letra: 'B', p: 'Era necessário o pedido administrativo prévio? Fundamente.', v: 0.60, esp: 'Sim. A petição inicial deve ser instruída com a prova da recusa ao acesso às informações (art. 8º, parágrafo único, da Lei 9.507/1997; Súmula 2 do STJ). No caso, a recusa existiu, o que permite a impetração.', ch: ['recusa', 'art\\.? ?8', 's[uú]mula 2', 'pr[eé]vio']}
+    ],
+    roteiro: [
+      {passo: 'Item A', como: 'Nomeie o remédio, o inciso e a finalidade (conhecer e retificar).', fundamento: 'Art. 5º, LXXII, CF'},
+      {passo: 'Item B', como: 'Explique o interesse de agir pela recusa administrativa.', fundamento: 'Art. 8º da Lei 9.507/1997; Súmula 2 do STJ'}
+    ]},
+  {id: 'con-q2', area: 'constitucional', tipo: 'questao', titulo: 'Brasileiro naturalizado',
+    enunciado: 'Ahmed se naturalizou brasileiro em 2018. Em 2026, um país estrangeiro pediu a sua extradição por um crime de roubo cometido lá em 2016. Ahmed também pretende, no futuro, ser Ministro do Supremo Tribunal Federal.',
+    itens: [
+      {letra: 'A', p: 'É possível a extradição de Ahmed? Fundamente.', v: 0.65, esp: 'Sim. O brasileiro naturalizado pode ser extraditado por crime comum praticado antes da naturalização, ou por comprovado envolvimento em tráfico de drogas (art. 5º, LI, da CF). O roubo é crime comum e foi cometido antes de 2018.', ch: ['\\bli\\b', 'antes da naturaliza', 'crime comum', 'naturalizado']},
+      {letra: 'B', p: 'Ahmed pode ser Ministro do STF? Fundamente.', v: 0.60, esp: 'Não. O cargo de Ministro do STF é privativo de brasileiro nato (art. 12, §3º, IV, da CF).', ch: ['12,? ?§ ?3', 'nato', 'privativ']}
+    ],
+    roteiro: [
+      {passo: 'Item A', como: 'Regra (nato não é extraditado) e as duas exceções do naturalizado.', fundamento: 'Art. 5º, LI, CF'},
+      {passo: 'Item B', como: 'Cite o rol de cargos privativos de brasileiro nato.', fundamento: 'Art. 12, §3º, CF'}
+    ]},
+  {id: 'con-q3', area: 'constitucional', tipo: 'questao', titulo: 'Iniciativa de lei e medida provisória',
+    enunciado: 'Um deputado federal apresentou projeto de lei que cria 200 cargos no Ministério da Saúde. O projeto foi aprovado e sancionado pelo Presidente da República. No mesmo ano, o Presidente editou medida provisória criando um novo tipo penal.',
+    itens: [
+      {letra: 'A', p: 'A lei que criou os cargos é constitucional? A sanção presidencial corrige o problema? Fundamente.', v: 0.65, esp: 'Não. É da iniciativa privativa do Presidente a lei que cria cargos na administração direta (art. 61, §1º, II, "a", da CF). O vício de iniciativa é formal e não é sanado pela sanção, segundo o STF.', ch: ['61', 'iniciativa privativa', 'v[ií]cio de iniciativa', 'san[cç][aã]o', 'formal']},
+      {letra: 'B', p: 'A medida provisória pode criar tipo penal? Fundamente.', v: 0.60, esp: 'Não. É vedada a edição de medida provisória sobre direito penal (art. 62, §1º, I, "b", da CF).', ch: ['62', 'vedad', 'direito penal']}
+    ],
+    roteiro: [
+      {passo: 'Item A', como: 'Iniciativa privativa e a orientação de que a sanção não convalida.', fundamento: 'Art. 61, §1º, II, "a", CF'},
+      {passo: 'Item B', como: 'Limite material das medidas provisórias.', fundamento: 'Art. 62, §1º, I, "b", CF'}
+    ]},
+  {id: 'con-q4', area: 'constitucional', tipo: 'questao', titulo: 'Controle difuso no tribunal',
+    enunciado: 'Uma Câmara do Tribunal de Justiça do Estado Beta, composta por 3 desembargadores, afastou a aplicação de uma lei estadual em um recurso, sem declará-la expressamente inconstitucional, mas por entender que ela contraria a Constituição. Em outro caso, o STF declarou incidentalmente a inconstitucionalidade de uma lei federal em recurso extraordinário.',
+    itens: [
+      {letra: 'A', p: 'A decisão da Câmara foi válida? Fundamente.', v: 0.65, esp: 'Não. Os tribunais só podem declarar a inconstitucionalidade de lei pelo voto da maioria absoluta dos membros ou do órgão especial (cláusula de reserva de plenário — art. 97 da CF). Afastar a lei sem declarar expressamente também viola a regra (Súmula Vinculante 10).', ch: ['art\\.? ?97', 'reserva de plen[aá]rio', 'vinculante 10', 'maioria absoluta', '[oó]rg[aã]o especial']},
+      {letra: 'B', p: 'Qual o papel do Senado Federal após a decisão do STF em controle difuso? Fundamente.', v: 0.60, esp: 'O Senado pode suspender, no todo ou em parte, a execução da lei declarada inconstitucional por decisão definitiva do STF (art. 52, X, da CF), estendendo os efeitos a todos.', ch: ['52', '\\bx\\b', 'suspend', 'senado']}
+    ],
+    roteiro: [
+      {passo: 'Item A', como: 'Reserva de plenário e a súmula vinculante sobre o "afastamento" disfarçado.', fundamento: 'Art. 97 da CF; Súmula Vinculante 10'},
+      {passo: 'Item B', como: 'Competência do Senado para suspender a lei.', fundamento: 'Art. 52, X, CF'}
+    ]},
+
+  /* ============================== DIREITO EMPRESARIAL ============================== */
+  {id: 'emp-p1', area: 'empresarial', tipo: 'peca', pecaTipo: 'inicial',
+    titulo: 'Duplicatas protestadas',
+    enunciado: 'Alfa Tecidos Ltda., sociedade empresária regularmente registrada na Junta Comercial, vendeu mercadorias a Beta Confecções Ltda., cujo único estabelecimento fica em Goiânia/GO. Beta aceitou três duplicatas que somam R$ 120.000,00, vencidas há mais de 90 dias, e não as pagou. Os títulos foram protestados para fins falimentares, com a identificação de quem recebeu a intimação do protesto. Beta não apresentou nenhuma justificativa para o não pagamento e continua em funcionamento. O valor supera 40 salários mínimos. Alfa procura você querendo a medida judicial mais eficaz para receber o crédito, inclusive com a possibilidade de afastar a devedora do mercado.',
+    comando: 'Na qualidade de advogado(a) de Alfa Tecidos Ltda., elabore a peça processual adequada, com base exclusivamente na impontualidade da devedora.',
+    pecaCorreta: 'Pedido de falência',
+    opcoesPeca: ['Pedido de falência', 'Ação monitória', 'Execução de título extrajudicial', 'Habilitação de crédito', 'Ação de cobrança'],
+    pecaChaves: ['pedido de fal[eê]ncia', 'requerimento de fal[eê]ncia', 'decreta[cç][aã]o da fal[eê]ncia', 'fal[eê]ncia'],
+    topicos: [
+      {t: 'Endereçamento: Juízo da Vara de Falências (ou Cível) da Comarca de Goiânia/GO, local do principal estabelecimento da devedora (art. 3º da Lei 11.101/2005)', v: 0.30, ch: ['goi[aâ]nia', 'principal estabelecimento', 'art\\.? ?3', 'fal[eê]ncias']},
+      {t: 'Qualificação da credora e da devedora', v: 0.20, ch: ['cnpj', 'sede', 'qualific']},
+      {t: 'Nome da peça: pedido de falência com fundamento no art. 94, I, da Lei 11.101/2005', v: 0.50, ch: ['pedido de fal[eê]ncia', 'requer.*fal[eê]ncia', '94', '11\\.?101']},
+      {t: 'Legitimidade ativa do credor (art. 97, IV) e certidão de regularidade da credora empresária na Junta Comercial (art. 97, §1º)', v: 0.40, ch: ['art\\.? ?97', 'legitim', 'certid[aã]o', 'regularidade', 'junta comercial']},
+      {t: 'Impontualidade: obrigação líquida em títulos executivos protestados, acima de 40 salários mínimos, sem relevante razão de direito (art. 94, I)', v: 1.10, ch: ['impontualidade', '40 sal[aá]rios', 'quarenta sal[aá]rios', 'l[ií]quida', 'relevante raz[aã]o', 'protestad']},
+      {t: 'Duplicatas aceitas são títulos executivos extrajudiciais (art. 15 da Lei 5.474/1968)', v: 0.40, ch: ['5\\.?474', 'art\\.? ?15', 'duplicata', 't[ií]tulo executivo']},
+      {t: 'Protesto para fim falimentar e instrução com os títulos e instrumentos de protesto (art. 94, §3º; Súmula 361 do STJ)', v: 0.50, ch: ['94,? ?§ ?3', '361', 'instrumento de protesto', 'fim falimentar', 'fins falimentares']},
+      {t: 'Pedidos: citação da devedora para contestar em 10 dias, com a faculdade do depósito elisivo (art. 98 e parágrafo único)', v: 0.60, ch: ['art\\.? ?98', '10 dias', 'dez dias', 'dep[oó]sito elisivo', 'cita[cç][aã]o']},
+      {t: 'Pedido de decretação da falência e das providências do art. 99', v: 0.40, ch: ['decreta[cç][aã]o da fal[eê]ncia', 'art\\.? ?99', 'decretar']},
+      {t: 'Valor da causa: valor do crédito', v: 0.30, ch: ['valor da causa', '120\\.000']},
+      {t: 'Fechamento: local, data, advogado, OAB', v: 0.30, ch: ['nestes termos', 'pede deferimento', 'oab']}
+    ],
+    roteiro: [
+      {passo: 'Identifique a peça', como: 'Credor, títulos protestados acima de 40 salários mínimos, sem justificativa, e o pedido de afastar a devedora do mercado: pedido de falência por impontualidade.', fundamento: 'Art. 94, I, da Lei 11.101/2005'},
+      {passo: 'Competência', como: 'Juízo do local do principal estabelecimento da devedora: Goiânia.', fundamento: 'Art. 3º da Lei 11.101/2005'},
+      {passo: 'Legitimidade e documentos', como: 'Credor tem legitimidade; sendo empresário, junta certidão da Junta Comercial. Junte os títulos e os instrumentos de protesto.', fundamento: 'Art. 97, IV e §1º; art. 94, §3º'},
+      {passo: 'Fundamente a impontualidade', como: 'Obrigação líquida, títulos executivos (duplicatas aceitas), protesto, valor acima de 40 salários mínimos e ausência de relevante razão de direito.', fundamento: 'Art. 94, I; Lei 5.474/1968; Súmula 361 do STJ'},
+      {passo: 'Pedidos', como: 'Citação para contestar em 10 dias ou fazer o depósito elisivo; decretação da falência; valor da causa e fechamento.', fundamento: 'Arts. 98 e 99 da Lei 11.101/2005'}
+    ],
+    modelo: 'EXCELENTÍSSIMO SENHOR DOUTOR JUIZ DE DIREITO DA VARA DE FALÊNCIAS E RECUPERAÇÕES JUDICIAIS (OU CÍVEL) DA COMARCA DE GOIÂNIA/GO. ALFA TECIDOS LTDA., CNPJ..., sede..., por seu advogado, vem formular PEDIDO DE FALÊNCIA de BETA CONFECÇÕES LTDA., CNPJ..., com estabelecimento em Goiânia/GO, com fundamento no art. 94, I, da Lei 11.101/2005. I – DA COMPETÊNCIA (art. 3º). II – DA LEGITIMIDADE (art. 97, IV e §1º — certidão da Junta Comercial anexa). III – DOS FATOS. IV – DO DIREITO: impontualidade — duplicatas aceitas (Lei 5.474/1968), líquidas, protestadas para fim falimentar (art. 94, §3º; Súmula 361 do STJ), acima de 40 salários mínimos, sem relevante razão de direito. V – DOS PEDIDOS: citação para contestar em 10 dias, facultado o depósito elisivo (art. 98); decretação da falência (art. 99). Valor da causa: R$ 120.000,00. Nestes termos, pede deferimento. Local..., Data..., Advogado..., OAB...'
+  },
+  {id: 'emp-q1', area: 'empresarial', tipo: 'questao', titulo: 'Sócios da limitada',
+    enunciado: 'A sociedade Delta Ltda. tem três sócios: Ana (50% das quotas), Bruno (30%) e Caio (20%). O capital social ainda não foi totalmente integralizado, pois Caio não pagou suas quotas. A sociedade tem dívidas com fornecedores. Ana e Bruno querem excluir Caio, que vem praticando atos de inegável gravidade que põem em risco a empresa. O contrato social prevê exclusão por justa causa.',
+    itens: [
+      {letra: 'A', p: 'Os sócios podem ser cobrados pelas dívidas da sociedade? Em que limite? Fundamente.', v: 0.60, esp: 'Na limitada, a responsabilidade de cada sócio é restrita ao valor de suas quotas, mas todos respondem solidariamente pela integralização do capital social (art. 1.052 do CC). Enquanto as quotas de Caio não forem pagas, todos respondem pelo valor que falta integralizar.', ch: ['1\\.?052', 'solidari', 'integraliza']},
+      {letra: 'B', p: 'Caio pode ser excluído extrajudicialmente? Como? Fundamente.', v: 0.65, esp: 'Sim. A maioria dos sócios, representativa de mais da metade do capital, pode excluir sócio que pratica atos de inegável gravidade, por alteração do contrato social, se houver previsão de exclusão por justa causa (art. 1.085 do CC), com reunião ou assembleia convocada para esse fim e ciência do acusado para exercer a defesa (art. 1.085, parágrafo único).', ch: ['1\\.?085', 'metade do capital', 'justa causa', 'altera[cç][aã]o do contrato', 'defesa']}
+    ],
+    roteiro: [
+      {passo: 'Item A', como: 'Limite das quotas e solidariedade pela integralização.', fundamento: 'Art. 1.052 do CC'},
+      {passo: 'Item B', como: 'Requisitos da exclusão extrajudicial: maioria do capital, previsão contratual, atos graves e direito de defesa.', fundamento: 'Art. 1.085 do CC'}
+    ]},
+  {id: 'emp-q2', area: 'empresarial', tipo: 'questao', titulo: 'Cheque sem fundos',
+    enunciado: 'Rita recebeu um cheque emitido na mesma praça de pagamento em 10/01/2025, mas só o apresentou ao banco em 30/03/2025, quando foi devolvido por falta de fundos. Rita quer cobrar o valor em 2026.',
+    itens: [
+      {letra: 'A', p: 'Qual era o prazo de apresentação do cheque e qual a consequência do atraso para a cobrança do emitente? Fundamente.', v: 0.60, esp: 'O prazo de apresentação é de 30 dias da emissão, quando o cheque é da mesma praça (art. 33 da Lei 7.357/1985). Perdido o prazo, o portador ainda pode cobrar o emitente; só perde o direito contra os endossantes (art. 47, II), e a prescrição da execução corre do fim do prazo de apresentação.', ch: ['30 dias', 'trinta dias', 'art\\.? ?33', '7\\.?357', 'mesma pra[cç]a', 'art\\.? ?47']},
+      {letra: 'B', p: 'Rita ainda pode executar o cheque em 2026? Que alternativa ela tem? Fundamente.', v: 0.65, esp: 'Não. A execução prescreve em 6 meses contados do fim do prazo de apresentação (art. 59 da Lei 7.357/1985). Ela pode usar a ação de locupletamento em 2 anos (art. 61) ou a ação monitória em 5 anos, contados do dia seguinte à data de emissão (Súmula 503 do STJ).', ch: ['6 meses', 'seis meses', 'art\\.? ?59', 'monit[oó]ria', '503', 'locupletamento', 'art\\.? ?61']}
+    ],
+    roteiro: [
+      {passo: 'Item A', como: 'Prazo de 30 ou 60 dias conforme a praça e o efeito do atraso.', fundamento: 'Arts. 33 e 47 da Lei 7.357/1985'},
+      {passo: 'Item B', como: 'Prescrição da execução e as duas ações que restam.', fundamento: 'Arts. 59 e 61 da Lei 7.357/1985; Súmula 503 do STJ'}
+    ]},
+  {id: 'emp-q3', area: 'empresarial', tipo: 'questao', titulo: 'Pedido de recuperação judicial',
+    enunciado: 'A Sigma Indústria Ltda., registrada há 3 anos na Junta Comercial, enfrenta crise financeira e quer pedir recuperação judicial. Um dos credores é um banco que tem alienação fiduciária sobre máquinas da empresa.',
+    itens: [
+      {letra: 'A', p: 'A Sigma preenche o requisito temporal para pedir recuperação judicial? Fundamente.', v: 0.60, esp: 'Sim. Pode requerer recuperação judicial o devedor que exerce regularmente suas atividades há mais de 2 anos (art. 48 da Lei 11.101/2005), além de não ser falido e de não ter obtido recuperação nos últimos 5 anos.', ch: ['art\\.? ?48', '2 anos', 'dois anos', 'regularmente']},
+      {letra: 'B', p: 'O crédito do banco com alienação fiduciária se submete à recuperação? Fundamente.', v: 0.65, esp: 'Não. O credor titular da posição de proprietário fiduciário não se submete aos efeitos da recuperação judicial (art. 49, §3º, da Lei 11.101/2005), mas não pode retirar do estabelecimento bens de capital essenciais à atividade durante o prazo de suspensão de 180 dias (art. 6º, §4º).', ch: ['49,? ?§ ?3', 'fiduci', 'n[aã]o se submete', '180 dias', 'bens de capital', 'essencia']}
+    ],
+    roteiro: [
+      {passo: 'Item A', como: 'Requisito dos 2 anos e os demais impedimentos.', fundamento: 'Art. 48 da Lei 11.101/2005'},
+      {passo: 'Item B', como: 'Crédito fiduciário fora da recuperação e a ressalva dos bens essenciais.', fundamento: 'Art. 49, §3º; art. 6º, §4º'}
+    ]},
+  {id: 'emp-q4', area: 'empresarial', tipo: 'questao', titulo: 'Desconsideração da personalidade',
+    enunciado: 'Em uma execução contra a Ômega Comércio Ltda., o credor descobriu que os sócios pagavam despesas pessoais com a conta da empresa e transferiam bens da sociedade para os próprios nomes, sem contrapartida. A sociedade não tem mais bens.',
+    itens: [
+      {letra: 'A', p: 'É possível atingir o patrimônio dos sócios? Com qual fundamento? Fundamente.', v: 0.65, esp: 'Sim. Há abuso da personalidade jurídica por confusão patrimonial (art. 50, §2º, do CC), o que autoriza a desconsideração para estender os efeitos das obrigações aos bens dos sócios beneficiados (teoria maior, art. 50, caput).', ch: ['art\\.? ?50', 'confus[aã]o patrimonial', 'abuso', 'desvio de finalidade', 'teoria maior']},
+      {letra: 'B', p: 'Qual o procedimento processual para isso? Fundamente.', v: 0.60, esp: 'O incidente de desconsideração da personalidade jurídica (arts. 133 a 137 do CPC), cabível em qualquer fase do processo, inclusive na execução, que suspende o processo (art. 134, §3º) e garante a citação dos sócios para se manifestarem em 15 dias (art. 135).', ch: ['incidente', '133', '134', '135', 'cita[cç][aã]o dos s[oó]cios', '15 dias']}
+    ],
+    roteiro: [
+      {passo: 'Item A', como: 'Identifique o abuso (confusão patrimonial) e a teoria maior do Código Civil.', fundamento: 'Art. 50 do CC'},
+      {passo: 'Item B', como: 'Nomeie o incidente e os seus efeitos.', fundamento: 'Arts. 133 a 137 do CPC'}
+    ]},
+
+  /* ============================== DIREITO TRIBUTÁRIO ============================== */
+  {id: 'tri-p1', area: 'tributario', tipo: 'peca', pecaTipo: ['inicial', 'recurso'],
+    titulo: 'IPTU antigo cobrado de quem já vendeu',
+    enunciado: 'Marcos vendeu um imóvel em Goiânia/GO em novembro de 2014, com escritura pública registrada na matrícula em dezembro de 2014. O Município de Goiânia lançou de ofício o IPTU de 2015 em nome de Marcos, com notificação e vencimento em março de 2015. A execução fiscal só foi ajuizada em maio de 2024, contra Marcos. Uma conta bancária de Marcos foi penhorada no valor integral da dívida, e ele foi intimado da penhora em 05/10/2026. Não houve nenhuma causa de suspensão ou interrupção da prescrição antes do ajuizamento.',
+    comando: 'Na qualidade de advogado(a) de Marcos, elabore a peça processual adequada para a defesa dos interesses do cliente na execução, considerando que o juízo está garantido e que há necessidade de produzir prova documental.',
+    pecaCorreta: 'Embargos à execução fiscal',
+    opcoesPeca: ['Embargos à execução fiscal', 'Exceção de pré-executividade', 'Ação anulatória de débito fiscal', 'Mandado de segurança', 'Repetição de indébito'],
+    pecaChaves: ['embargos [aà] execu[cç][aã]o fiscal', 'embargos [aà] execu[cç][aã]o', '6\\.?830'],
+    topicos: [
+      {t: 'Endereçamento: Juízo da Vara da Fazenda Pública Municipal da Comarca de Goiânia/GO, por dependência à execução fiscal', v: 0.30, ch: ['fazenda p[uú]blica', 'goi[aâ]nia', 'depend[eê]ncia']},
+      {t: 'Qualificação do embargante e do embargado (Município de Goiânia)', v: 0.20, ch: ['munic[ií]pio de goi[aâ]nia', 'embargad', 'cpf']},
+      {t: 'Nome da peça: embargos à execução fiscal (art. 16 da Lei 6.830/1980)', v: 0.50, ch: ['embargos [aà] execu[cç][aã]o', '6\\.?830', 'art\\.? ?16']},
+      {t: 'Tempestividade e garantia do juízo: 30 dias da intimação da penhora (art. 16, III, e §1º, da Lei 6.830/1980)', v: 0.50, ch: ['30 dias', 'trinta dias', 'intima[cç][aã]o da penhora', 'garantia', 'garantido', 'tempestiv']},
+      {t: 'Prescrição: mais de 5 anos entre a constituição definitiva do crédito (2015) e o ajuizamento (2024) — art. 174 do CTN; extinção do crédito (art. 156, V, do CTN)', v: 1.00, ch: ['art\\.? ?174', 'prescri', 'cinco anos', '5 anos', '156', 'constitui[cç][aã]o definitiva']},
+      {t: 'Ilegitimidade passiva: imóvel vendido e registrado em 2014; o contribuinte é o proprietário (art. 34 do CTN) e o crédito se sub-roga no adquirente (art. 130 do CTN)', v: 0.80, ch: ['ilegitimidade', 'art\\.? ?34', 'art\\.? ?130', 'sub-roga', 'adquirente', 'propriet[aá]rio']},
+      {t: 'Pedido de efeito suspensivo: juízo garantido e requisitos da tutela provisória (art. 919, §1º, do CPC)', v: 0.40, ch: ['efeito suspensivo', '919']},
+      {t: 'Pedidos: intimação da Fazenda para impugnar em 30 dias (art. 17 da Lei 6.830/1980), procedência, extinção da execução, levantamento da penhora e honorários', v: 0.60, ch: ['art\\.? ?17', 'impugna', 'proced', 'extin', 'levantamento', 'honor[aá]rios']},
+      {t: 'Provas: escritura e matrícula do imóvel juntadas com a inicial (art. 16, §2º, da Lei 6.830/1980)', v: 0.20, ch: ['escritura', 'matr[ií]cula', 'provas']},
+      {t: 'Valor da causa: valor da execução', v: 0.20, ch: ['valor da causa']},
+      {t: 'Fechamento: local, data, advogado, OAB', v: 0.30, ch: ['nestes termos', 'pede deferimento', 'oab']}
+    ],
+    roteiro: [
+      {passo: 'Identifique a peça', como: 'Execução fiscal em curso, juízo garantido pela penhora e necessidade de prova: embargos à execução fiscal (a exceção de pré-executividade não admite produção de prova).', fundamento: 'Art. 16 da Lei 6.830/1980'},
+      {passo: 'Prazo e competência', como: '30 dias da intimação da penhora (05/10/2026); distribuição por dependência à execução, na Vara da Fazenda Pública Municipal.', fundamento: 'Art. 16, III, da Lei 6.830/1980'},
+      {passo: 'Tese 1: prescrição', como: 'Constituição definitiva em 2015 e ajuizamento em 2024: mais de 5 anos, sem causa interruptiva. Extinção do crédito.', fundamento: 'Arts. 174 e 156, V, do CTN'},
+      {passo: 'Tese 2: ilegitimidade', como: 'Em 2015 Marcos já não era proprietário; o IPTU se sub-roga no adquirente.', fundamento: 'Arts. 34 e 130 do CTN'},
+      {passo: 'Efeito suspensivo', como: 'Juízo garantido e risco de levantamento do dinheiro penhorado.', fundamento: 'Art. 919, §1º, do CPC'},
+      {passo: 'Pedidos e fechamento', como: 'Intimação da Fazenda para impugnar, procedência, extinção, levantamento da penhora, honorários; provas; valor da causa e fechamento.', fundamento: 'Art. 17 da Lei 6.830/1980'}
+    ],
+    modelo: 'EXCELENTÍSSIMO SENHOR DOUTOR JUIZ DE DIREITO DA VARA DA FAZENDA PÚBLICA MUNICIPAL DA COMARCA DE GOIÂNIA/GO. Distribuição por dependência aos autos da Execução Fiscal nº... MARCOS..., nacionalidade..., estado civil..., profissão..., CPF..., endereço..., por seu advogado, vem opor EMBARGOS À EXECUÇÃO FISCAL, com fundamento no art. 16 da Lei 6.830/1980, em face do MUNICÍPIO DE GOIÂNIA. I – DA TEMPESTIVIDADE E DA GARANTIA DO JUÍZO (art. 16, III e §1º). II – DOS FATOS. III – DO DIREITO: 1. Prescrição (art. 174 do CTN) e extinção do crédito (art. 156, V). 2. Ilegitimidade passiva (arts. 34 e 130 do CTN). IV – DO EFEITO SUSPENSIVO (art. 919, §1º, do CPC). V – DOS PEDIDOS: intimação do embargado para impugnar em 30 dias (art. 17); procedência para extinguir a execução e levantar a penhora; honorários; provas (escritura e matrícula anexas). Valor da causa: R$ ... Nestes termos, pede deferimento. Local..., Data..., Advogado..., OAB...'
+  },
+  {id: 'tri-q1', area: 'tributario', tipo: 'questao', titulo: 'Aumento do IPTU',
+    enunciado: 'O Município Teta publicou em 15/12/2025 uma lei que aumentou a alíquota do IPTU. Em outra lei, publicada em 20/12/2025, atualizou a planta de valores, elevando a base de cálculo (valor venal) dos imóveis.',
+    itens: [
+      {letra: 'A', p: 'A partir de quando o aumento da alíquota pode ser cobrado? Fundamente.', v: 0.65, esp: 'Devem ser observadas a anterioridade anual e a nonagesimal (art. 150, III, "b" e "c", da CF). O aumento só pode ser cobrado a partir de 15/03/2026, 90 dias após a publicação, pois é a data mais tardia entre as duas regras.', ch: ['150', 'anterioridade', 'nonagesimal', 'noventena', '90 dias', 'noventa dias', '15/03']},
+      {letra: 'B', p: 'E o aumento da base de cálculo? Fundamente.', v: 0.60, esp: 'A fixação da base de cálculo do IPTU é exceção à noventena (art. 150, §1º, da CF), mas respeita a anterioridade anual: pode ser cobrada a partir de 01/01/2026.', ch: ['150,? ?§ ?1', 'exce[cç][aã]o', 'base de c[aá]lculo', '01/01', '1º de janeiro', 'anterioridade anual']}
+    ],
+    roteiro: [
+      {passo: 'Item A', como: 'Aplique as duas anterioridades e escolha a data mais distante.', fundamento: 'Art. 150, III, "b" e "c", CF'},
+      {passo: 'Item B', como: 'Cite a exceção da base de cálculo do IPTU à noventena.', fundamento: 'Art. 150, §1º, CF'}
+    ]},
+  {id: 'tri-q2', area: 'tributario', tipo: 'questao', titulo: 'Imunidades',
+    enunciado: 'Uma igreja aluga um imóvel de sua propriedade e aplica todo o aluguel na manutenção de seus templos. O Município exige IPTU sobre o imóvel alugado. Uma editora, por sua vez, foi cobrada de ICMS sobre a venda de livros digitais e de aparelhos leitores de livros eletrônicos.',
+    itens: [
+      {letra: 'A', p: 'É devido o IPTU sobre o imóvel alugado da igreja? Fundamente.', v: 0.60, esp: 'Não. A imunidade dos templos (art. 150, VI, "b", da CF) alcança o patrimônio, a renda e os serviços relacionados às finalidades essenciais (art. 150, §4º). O imóvel alugado continua imune quando o aluguel é aplicado nessas finalidades (Súmula Vinculante 52).', ch: ['150', 'templo', 'vinculante 52', 'finalidades essenciais', '§ ?4']},
+      {letra: 'B', p: 'A venda dos livros digitais e dos leitores é imune? Fundamente.', v: 0.65, esp: 'Sim. A imunidade de livros (art. 150, VI, "d", da CF) alcança os livros eletrônicos e os suportes próprios exclusivamente utilizados para fixá-los, como os leitores de livros eletrônicos (Súmula Vinculante 57).', ch: ['vinculante 57', 'livro eletr[oô]nico', 'e-book', '\\bd\\b', 'suportes']}
+    ],
+    roteiro: [
+      {passo: 'Item A', como: 'Imunidade religiosa, a regra do §4º e a súmula vinculante.', fundamento: 'Art. 150, VI, "b", e §4º, CF; SV 52'},
+      {passo: 'Item B', como: 'Imunidade cultural ampliada ao livro digital e ao leitor.', fundamento: 'Art. 150, VI, "d", CF; SV 57'}
+    ]},
+  {id: 'tri-q3', area: 'tributario', tipo: 'questao', titulo: 'Redirecionamento ao sócio',
+    enunciado: 'A empresa Lambda Ltda. deixou de pagar ICMS por dificuldades financeiras. Meses depois, encerrou as atividades sem baixa nos órgãos competentes e o oficial de justiça certificou que ela não funciona mais no endereço cadastrado. A Fazenda pede o redirecionamento da execução ao sócio-gerente.',
+    itens: [
+      {letra: 'A', p: 'O simples não pagamento do tributo permite responsabilizar o sócio-gerente? Fundamente.', v: 0.60, esp: 'Não. O inadimplemento da obrigação tributária pela sociedade, por si só, não gera a responsabilidade solidária do sócio-gerente (Súmula 430 do STJ). É preciso ato praticado com excesso de poderes ou infração de lei, contrato social ou estatutos (art. 135, III, do CTN).', ch: ['430', 'inadimplemento', 'art\\.? ?135', 'excesso de poderes', 'infra[cç][aã]o de lei']},
+      {letra: 'B', p: 'E a dissolução irregular? Fundamente.', v: 0.65, esp: 'Presume-se dissolvida irregularmente a empresa que deixa de funcionar no seu domicílio fiscal sem comunicar aos órgãos competentes, o que legitima o redirecionamento da execução ao sócio-gerente (Súmula 435 do STJ; art. 135, III, do CTN).', ch: ['435', 'dissolu[cç][aã]o irregular', 'redirecion', 'art\\.? ?135']}
+    ],
+    roteiro: [
+      {passo: 'Item A', como: 'Mero inadimplemento não basta: cite a súmula e o artigo do CTN.', fundamento: 'Súmula 430 do STJ; art. 135, III, CTN'},
+      {passo: 'Item B', como: 'Dissolução irregular presumida e o redirecionamento.', fundamento: 'Súmula 435 do STJ'}
+    ]},
+  {id: 'tri-q4', area: 'tributario', tipo: 'questao', titulo: 'Restituição de tributo pago a mais',
+    enunciado: 'A empresa Kappa pagou ISS indevidamente em março de 2021 e quer pedir a restituição em outubro de 2026. Em outro caso, um comerciante quer restituir ICMS pago a maior, cujo valor foi repassado no preço aos consumidores.',
+    itens: [
+      {letra: 'A', p: 'A Kappa ainda pode pedir a restituição do ISS? Fundamente.', v: 0.60, esp: 'Não. O direito de pleitear a restituição se extingue em 5 anos contados da extinção do crédito tributário, ou seja, do pagamento (art. 168, I, do CTN; art. 3º da LC 118/2005). O prazo terminou em março de 2026.', ch: ['168', 'cinco anos', '5 anos', '118', 'pagamento']},
+      {letra: 'B', p: 'O comerciante pode pedir a restituição do ICMS? Em que condições? Fundamente.', v: 0.65, esp: 'Só se provar que assumiu o encargo financeiro do tributo ou, no caso de tê-lo transferido a terceiro, estiver por este expressamente autorizado a recebê-lo (art. 166 do CTN; Súmula 546 do STF).', ch: ['166', '546', 'encargo', 'autoriza', 'repercuss']}
+    ],
+    roteiro: [
+      {passo: 'Item A', como: 'Prazo de 5 anos do pagamento e aplicação às datas.', fundamento: 'Art. 168, I, CTN; LC 118/2005'},
+      {passo: 'Item B', como: 'Tributo indireto: prova do encargo ou autorização de quem o suportou.', fundamento: 'Art. 166 do CTN; Súmula 546 do STF'}
     ]}
 ];
+
