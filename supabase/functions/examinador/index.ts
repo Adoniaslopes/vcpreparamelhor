@@ -65,7 +65,7 @@ const TOOL_DISC = {
         items: {
           type: 'object',
           properties: {
-            nota: { type: 'number', description: 'Nota do tópico, de 0 ao valor do tópico, em múltiplos de 0,25.' },
+            nota: { type: 'number', description: 'Nota do tópico, de 0 ao valor indicado para o tópico (múltiplos de 0,25; em tópicos de valor menor que 0,25, use múltiplos de 0,05).' },
             aproveitado: { ...lista, description: 'O que a resposta acertou neste tópico (ideias e fundamentos corretos), em frases curtas.' },
             errado: { ...lista, description: 'Afirmações juridicamente incorretas ou contrárias ao espelho, explicando o erro.' },
             faltou: { ...lista, description: 'Ideias ou dispositivos do espelho que não apareceram.' },
@@ -104,13 +104,15 @@ async function corrigeDiscursiva(pasta: string, id: string, resposta: string, ba
   const r = (rows as any[]).find((x) => x.id === id);
   if (!r) throw new Error('Caso não encontrado.');
   const vale = Number(r.pontos) || 2.5;
+  const valores: number[] = Array.isArray(r.valores) && r.valores.length === r.topicos.length ? r.valores.map((v: any) => Number(v) || vale) : r.topicos.map(() => vale);
+  const pecaTxt = r.peca_correta ? `\nPEÇA CABÍVEL (se o candidato fizer outra peça, a peça é inadequada e os tópicos de conteúdo valem zero): ${r.peca_correta}` : '';
   const user = `BANCA: ${banca || 'Cesgranrio'}
 CASO: ${r.titulo}
 ${r.caso}
 
 COMANDO: ${r.comando}
-TÓPICOS (cada um vale ${vale} pontos):
-${r.topicos.map((t: string, i: number) => `${i + 1}. ${t}`).join('\n')}
+TÓPICOS (com o valor de cada um):
+${r.topicos.map((t: string, i: number) => `${i + 1}. ${t} — vale ${valores[i]} ponto(s)`).join('\n')}${pecaTxt}
 LIMITE: ${r.linhas_min} a ${r.linhas_max} linhas.
 
 ESPELHO DE CORREÇÃO:
@@ -124,10 +126,11 @@ RESPOSTA DO CANDIDATO:
 ${resposta}
 """`;
   const { dados, uso } = await claude(SYS_DISC, user, TOOL_DISC, 7000);
-  const q = (v: number) => Math.round(Math.max(0, Math.min(vale, Number(v) || 0)) * 4) / 4;
-  const topicos = (dados.topicos || []).slice(0, r.topicos.length).map((t: any) => ({ ...t, nota: q(t.nota) }));
+  const passo = r.valores ? 0.05 : 0.25;
+  const q = (v: number, max: number) => Math.round(Math.max(0, Math.min(max, Number(v) || 0)) / passo) * passo;
+  const topicos = (dados.topicos || []).slice(0, r.topicos.length).map((t: any, i: number) => ({ ...t, nota: q(t.nota, valores[i]) }));
   while (topicos.length < r.topicos.length) topicos.push({ nota: 0, aproveitado: [], errado: [], faltou: ['Tópico não avaliado.'], melhorar: [] });
-  return { ...dados, topicos, vale, uso };
+  return { ...dados, topicos, vale, valores, uso };
 }
 
 // ---------- questão objetiva ----------
@@ -326,9 +329,16 @@ Deno.serve(async (req) => {
     const p = await admin.from('perfis').select('status, expira_em, admin').eq('id', uid).maybeSingle();
     const hoje = new Date().toISOString().slice(0, 10);
     const ehAdmin = !!p.data?.admin;
-    if (!ehAdmin && (!p.data || p.data.status !== 'aprovado' || (p.data.expira_em && p.data.expira_em < hoje))) return json({ erro: 'Acesso não liberado.' }, 403);
-
     const body = await req.json();
+    const pastaReq = String(body.pasta || '');
+    let liberado = !!p.data && p.data.status === 'aprovado' && !(p.data.expira_em && p.data.expira_em < hoje);
+    if (pastaReq.startsWith('oab')) {
+      // plataforma da OAB: vale a compra registrada em acessos_oab; a 2ª fase exige o plano das duas fases
+      const ac = await admin.from('acessos_oab').select('status, plano').eq('email', String(u.data.user.email || '').toLowerCase()).maybeSingle();
+      if (!ac.error && ac.data) liberado = ac.data.status === 'ativo' && (pastaReq !== 'oab-2fase' || ac.data.plano === '2fases');
+    }
+    if (!ehAdmin && !liberado) return json({ erro: 'Acesso não liberado para este recurso.' }, 403);
+
     const tipo = ['questao', 'ingles', 'diagnostico', 'roteiro', 'chat'].includes(body.tipo) ? body.tipo : 'discursiva';
     const pasta = String(body.pasta || '').replace(/[^a-z0-9_-]/gi, '');
 
