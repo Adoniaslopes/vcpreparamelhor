@@ -1380,8 +1380,12 @@
         (pts.length > 1 ? '<polyline fill="none" stroke="var(--tinta)" stroke-width="2.5" points="' + pts.map(function (p) { return p.x + ',' + p.y; }).join(' ') + '"/>' : '') +
         pts.map(function (p) { return '<circle cx="' + p.x + '" cy="' + p.y + '" r="5" fill="var(--papel2)" stroke="var(--tinta)" stroke-width="2.5"/><text x="' + p.x + '" y="' + (p.y - 11) + '" text-anchor="middle" font-size="13" font-weight="700" fill="var(--tinta)">' + p.nt + '</text><text x="' + p.x + '" y="' + (hgt - 6) + '" text-anchor="middle" font-size="11" fill="var(--tinta2)">' + p.e.n + 'º</text>'; }).join('') + '</svg>';
     }
-    return cena({selo: 'Passo 1 · Provas anteriores', titulo: 'Conheça seu examinador', lead: 'A FGV repete o roteiro. Resolver as 10 últimas provas, do 38º ao 47º Exame, é a forma mais rápida de entender como ela pergunta. Você marca no cartão-resposta e a plataforma corrige pelo gabarito oficial.'}) +
-      '<div class="bloco" style="margin-bottom:16px"><h2>Como treinar com a prova oficial</h2><ol class="passos-lista">' +
+    return cena({selo: 'Passo 1 · Simulados', titulo: 'Simulados com as provas anteriores', lead: 'A FGV repete o roteiro. Resolver as últimas provas, do 38º ao 47º Exame, é a forma mais rápida de entender como ela pergunta. Você faz a prova real aqui mesmo, questão por questão, e a plataforma corrige pelo gabarito oficial.'}) +
+      '<div class="bloco" style="margin-bottom:16px"><h2>Como funciona</h2><ol class="passos-lista">' +
+      '<li><span class="n">1</span><div>Escolha um exame marcado como <b>simulado completo</b>: a prova real, com o texto integral das 80 questões, direto aqui na plataforma.</div></li>' +
+      '<li><span class="n">2</span><div>Responda em até 5 horas. A cada questão, você vê se acertou. Pode pausar e continuar depois.</div></li>' +
+      '<li><span class="n">3</span><div>Ao entregar, recebe a nota, o raio-X por disciplina e as questões que errou, com a resposta certa. Tudo entra no seu relatório e no cronograma.</div></li></ol>' +
+      '<p class="peq sub" style="margin:12px 0 0">Nos exames ainda sem o caderno na plataforma, você resolve pelo caderno oficial Tipo 1 (branco) e marca no cartão-resposta.</p></div><div style="display:none"><ol>' +
       '<li><span class="n">1</span><div>Abra o caderno <b>Tipo 1 (branco)</b> do exame escolhido.</div></li>' +
       '<li><span class="n">2</span><div>Resolva em até 5 horas e marque suas respostas no cartão-resposta da plataforma.</div></li>' +
       '<li><span class="n">3</span><div>Toque em <b>Corrigir</b>. Questões anuladas valem ponto para todos, como na prova real.</div></li>' +
@@ -1389,15 +1393,70 @@
       '<div class="grade g2"><div class="bloco"><table class="t"><thead><tr><th>Exame</th><th>Data</th><th>Situação</th><th></th></tr></thead><tbody>' +
       EXAMES.map(function (e) {
         var o = oficial(e.n), st = !o ? '<span class="sub">não iniciada</span>' : o.fim ? '<b>' + corrigirOficial(e.n).nota + '</b>/80' : '<span class="tag">em andamento · ' + Object.keys(o.resp).length + '/80</span>';
-        return '<tr><td><b>' + e.n + 'º</b></td><td>' + fmtData(OAB.PROVAS[e.n].data, true) + '</td><td>' + st + '</td><td><a class="btn mini" href="#provas/' + e.n + '">' + (!o ? 'Resolver' : o.fim ? 'Ver resultado' : 'Continuar') + '</a></td></tr>';
+        return '<tr><td><b>' + e.n + 'º</b>' + (caderno(e.n) ? ' <span class="tag sim-tag">simulado completo</span>' : '') + '</td><td>' + fmtData(OAB.PROVAS[e.n].data, true) + '</td><td>' + st + '</td><td><a class="btn mini' + (caderno(e.n) && !o ? ' pri' : '') + '" href="#provas/' + e.n + '">' + (!o ? (caderno(e.n) ? 'Fazer o simulado' : 'Resolver') : o.fim ? 'Ver resultado' : 'Continuar') + '</a></td></tr>';
       }).join('') + '</tbody></table></div><div class="bloco"><h2>Sua evolução</h2>' + (graf || '<p class="sub">Corrija a primeira prova para ver o gráfico.</p>') +
       (nuvem.admin ? '<div style="margin-top:20px;border-top:1px solid var(--linha);padding-top:14px"><h3>Administração · importar questões</h3><p class="peq sub">Envie um arquivo questoes-provas.json (formato do banco, com o campo "ex" = número do exame).</p><input type="file" id="imp-provas" accept=".json"><p class="msg" id="imp-msg"></p><h3 style="margin-top:16px">Administração · 2ª fase</h3><p class="peq sub">Envia as peças e questões da 2ª fase para o examinador corrigir.</p><button class="btn mini" data-act="f2-publicar">Publicar 2ª fase no examinador</button><p class="msg" id="f2-pub-msg"></p></div>' : '') +
       '</div></div>';
   };
+  // ---------- simulado com o caderno completo (texto integral das questões) ----------
+  function caderno(n) { return OAB.CADERNOS && OAB.CADERNOS[n] ? OAB.CADERNOS[n] : null; }
+  function paragrafos(t) { return String(t).split(/\n\s*\n/).map(function (x) { return '<p>' + esc(x.replace(/\s*\n\s*/g, ' ').trim()) + '</p>'; }).join(''); }
+  function ordemSim(n, q) {
+    var r = rng(hash('sim:' + n + ':' + q + ':' + S.seed + ':' + MIX)), o = [0, 1, 2, 3];
+    for (var i = 3; i > 0; i--) { var j = Math.floor(r() * (i + 1)); var t = o[i]; o[i] = o[j]; o[j] = t; }
+    return o;
+  }
+  function telaSimulado(n) {
+    var p = OAB.PROVAS[n], o = oficial(n), cad = caderno(n);
+    var q = o.atual || 1, it = cad[q - 1], gb = p.gab[q - 1], mr = o.resp[q], d = DM[OAB.discDaQuestao(q)], ord = ordemSim(n, q);
+    var resp = Object.keys(o.resp).length, acertos = Object.keys(o.resp).filter(function (k) { return p.gab[k - 1] === 'X' || o.resp[k] === p.gab[k - 1]; }).length;
+    var alts = ord.map(function (oi, k) {
+      var L = LETRAS[oi], cls = !mr ? '' : (gb === 'X' ? (L === mr ? ' cert' : '') : L === gb ? ' cert' : L === mr ? ' errd' : '');
+      return '<button class="alt' + cls + '" data-sim="' + n + ':' + q + ':' + L + '"' + (mr ? ' disabled' : '') + '><span class="lt">' + 'ABCD'[k] + '</span><span>' + esc(it.a[oi]) + '</span></button>';
+    }).join('');
+    var certo = mr && (gb === 'X' || mr === gb), kCorreta = ord.indexOf(LETRAS.indexOf(gb));
+    var fb = !mr ? '' : '<div class="retorno ' + (certo ? 'ok' : 'er') + '"><b>' + (gb === 'X' ? 'Questão anulada pela FGV: o ponto vale para todos.' : certo ? 'Acertou!' : 'Não foi dessa vez. A resposta certa é a alternativa ' + 'ABCD'[kCorreta] + '.') + '</b>' +
+      (gb !== 'X' && !certo ? '<p style="margin:.4rem 0 0">' + esc(it.a[LETRAS.indexOf(gb)]) + '</p>' : '') + '</div>';
+    var mapa = '<div class="cartao">' + cad.map(function (x, i) {
+      var k = i + 1, r = o.resp[k], cls = r ? ((p.gab[i] === 'X' || r === p.gab[i]) ? 'ok' : 'er') : '';
+      if (k === q) cls += ' atual';
+      return '<button class="' + cls + '" data-sim-ir="' + k + '" aria-label="Questão ' + k + '">' + k + '</button>';
+    }).join('') + '</div>';
+    return '<p class="noprint"><a href="#provas" class="link">Simulados</a></p>' +
+      '<div class="cab"><div><h1 style="font-size:1.6rem">Simulado · ' + n + 'º Exame de Ordem</h1><p class="sub">Questão ' + q + ' de 80 · ' + resp + ' respondidas · <b style="color:var(--verde)">' + acertos + ' acertos</b> até aqui · prova oficial da FGV</p></div>' +
+      '<div class="chips"><span class="sub" id="relogio-of">' + relogioOf(o) + '</span><button class="btn mini" data-act="pausar">Pausar e continuar depois</button></div></div>' +
+      '<div class="prog"><i style="width:' + (resp / 80 * 100) + '%"></i></div>' +
+      '<div class="grade" style="grid-template-columns:minmax(0,1fr) minmax(220px,300px);align-items:start" id="diag-grid"><div class="questao">' +
+      '<p>' + tagDisc(d.id) + ' <span class="sub peq">Questão ' + q + ' do caderno oficial</span></p><div class="enun">' + paragrafos(it.e) + '</div><div class="alts">' + alts + '</div>' + fb +
+      '<div class="barra-q"><div class="chips"><button class="btn" data-act="sim-ant"' + (q === 1 ? ' disabled' : '') + '>Anterior</button></div>' +
+      (q < 80 ? '<button class="btn pri" data-act="sim-prox">' + (mr ? 'Próxima questão' : 'Pular') + '</button>' : '<button class="btn ouro" data-act="of-corrigir" data-ex="' + n + '">Entregar o simulado</button>') + '</div></div>' +
+      '<div class="pilha"><div class="bloco medidor-box">' + medidor(acertos, {rot: 'acertos até aqui', sub: resp + ' de 80 respondidas', chave: 'sim' + n, mini: true}) + '</div>' +
+      '<div class="bloco"><h3>Cartão-resposta</h3>' + mapa + '<p style="margin:14px 0 0"><button class="btn mini" data-act="of-corrigir" data-ex="' + n + '">Entregar o simulado</button></p></div></div></div>';
+  }
+  function errosSimulado(n, res) {
+    var cad = caderno(n);
+    return '<div class="bloco"><h2>Questões que você errou (' + res.erros.length + ')</h2>' + (res.erros.length ? '<p class="peq sub">Toque em uma questão para rever o enunciado e a resposta certa.</p><div class="pilha">' +
+      res.erros.map(function (e) {
+        var it = cad[e.q - 1], gi = LETRAS.indexOf(e.g), ri = LETRAS.indexOf(e.r);
+        return '<details class="sim-err"><summary><b>Questão ' + e.q + '</b> ' + tagDisc(e.d) + ' <span class="sub peq">' + esc(e.t) + '</span></summary><div class="enun">' + paragrafos(it.e) + '</div>' +
+          (ri > -1 ? '<p class="sim-r er"><b>Você marcou:</b> ' + esc(it.a[ri]) + '</p>' : '<p class="sim-r er"><b>Você deixou em branco.</b></p>') +
+          '<p class="sim-r ok"><b>Resposta certa:</b> ' + esc(it.a[gi]) + '</p><p><a class="btn mini" href="#sinopses/' + e.d + '">Revisar a sinopse</a></p></details>';
+      }).join('') + '</div>' : '<p>Gabaritou. Impressionante.</p>') + '</div>';
+  }
   function telaProva(n) {
     var p = OAB.PROVAS[n], o = oficial(n);
+    if (caderno(n)) {
+      if (!o) return '<p class="noprint"><a href="#provas" class="link">Simulados</a></p><div class="cab"><div><h1>Simulado · ' + n + 'º Exame de Ordem</h1><p class="sub">Prova oficial da FGV · edição ' + p.ed + ' · aplicada em ' + fmtData(p.data, true) + '</p></div></div>' +
+        '<div class="bloco questao"><p>As <b>80 questões da prova real</b>, com o texto integral, na ordem do caderno oficial. Responda como no dia da prova: são 5 horas, e você pode pausar e continuar depois.</p>' +
+        '<ul style="padding-left:1.2rem"><li>A cada resposta, você vê na hora se acertou e qual era a alternativa certa.</li><li>As alternativas mudam de posição a cada vez que você volta, para você não decorar a letra.</li><li>Questão anulada pela FGV vale ponto para todos, como na prova real.</li><li>No fim, você recebe a nota, o raio-X por disciplina e a lista do que errou.</li></ul>' +
+        '<p class="peq sub">Gabarito: ' + esc(p.fonte) + '.</p><button class="btn pri" data-act="of-iniciar" data-ex="' + n + '">Começar o simulado</button></div>';
+      if (!o.fim) return telaSimulado(n);
+      var rs = corrigirOficial(n);
+      return '<p class="noprint"><a href="#provas" class="link">Simulados</a></p><div class="cab"><div><h1>Simulado do ' + n + 'º Exame: ' + rs.nota + ' de 80</h1><p class="sub">Entregue em ' + fmtData(iso(new Date(o.fim)), true) + ' · corrigido pelo gabarito oficial da FGV.</p></div>' +
+        '<div class="chips noprint"><button class="btn mini" data-act="of-refazer" data-ex="' + n + '">Refazer este simulado</button></div></div>' + boletimOficial(n, rs) + errosSimulado(n, rs);
+    }
     var links = '<a class="btn" href="https://jurisway.org.br/provas/oab/eou/' + n + '" target="_blank" rel="noopener">Abrir o caderno do ' + n + 'º Exame</a> <a class="btn" href="https://oab.fgv.br/" target="_blank" rel="noopener">Site da FGV</a>';
-    var topo = '<p class="noprint"><a href="#provas" class="link">Provas anteriores</a></p>';
+    var topo = '<p class="noprint"><a href="#provas" class="link">Simulados</a></p>';
     if (!o) {
       return topo + '<div class="cab"><div><h1>' + n + 'º Exame de Ordem</h1><p class="sub">Edição ' + p.ed + ' · aplicada em ' + fmtData(p.data, true) + '</p></div></div>' +
         '<div class="bloco questao"><p>Use o caderno <b>Tipo 1 (branco)</b>. A ordem das questões dos outros tipos é diferente e a correção sairia errada.</p><p class="chips">' + links + '</p>' +
@@ -1563,7 +1622,7 @@
     if (f2Rel) { clearInterval(f2Rel); f2Rel = null; }
     if (r !== 'relatorio') escolha = null;
     if (r !== 'exercicios' || (sess && sess.modo !== arg)) { if (r !== 'exercicios') sess = null; }
-    if ((r === 'diagnostico' || r === 'exercicios') && rotaBase !== r) novaMistura();
+    if ((r === 'diagnostico' || r === 'exercicios' || r === 'provas') && rotaBase !== r) novaMistura();
     rotaBase = r;
     if (cronoDia !== hojeISO()) { cronoDia = hojeISO(); invalidarCrono(); }
     var main = $('#main');
@@ -1597,6 +1656,11 @@
       var ce = $('#cmb'); if (ce) ce.innerHTML = cmbMiolo(); return;
     }
     if (ds.vdiag) { vistaDiag = ds.vdiag; render(); return; }
+    if (ds.sim) {
+      var sz = ds.sim.split(':'), so = oficial(sz[0]); if (!so || so.fim || so.resp[sz[1]]) return;
+      so.resp[sz[1]] = sz[2]; salvar(); render(); var rs2 = $('.retorno'); if (rs2) rs2.scrollIntoView({behavior: 'smooth', block: 'nearest'}); return;
+    }
+    if (ds.simIr) { var si = oficial(location.hash.split('/')[1]); if (si) { si.atual = +ds.simIr; salvar(); render(); window.scrollTo(0, 0); } return; }
     if (ds.of) {
       var pz = ds.of.split(':'), oo = oficial(pz[0]); if (!oo || oo.fim || oo.resp[pz[1]]) return;
       oo.resp[pz[1]] = pz[2]; salvar(); render(); return;
@@ -1631,6 +1695,7 @@
       S.oficiais = S.oficiais || {}; if (!S.oficiais[nx]) S.oficiais[nx] = {resp: {}, ini: Date.now(), fim: null, seg: 0, diag: true};
       salvar(); location.hash = '#provas/' + nx; return;
     }
+    if (a === 'sim-ant' || a === 'sim-prox') { var sp = oficial(location.hash.split('/')[1]); if (sp) { sp.atual = Math.max(1, Math.min(80, (sp.atual || 1) + (a === 'sim-prox' ? 1 : -1))); salvar(); render(); window.scrollTo(0, 0); } return; }
     if (a === 'of-iniciar') { S.oficiais = S.oficiais || {}; S.oficiais[ds.ex] = {resp: {}, ini: Date.now(), fim: null, seg: 0}; salvar(); render(); return; }
     if (a === 'of-corrigir') {
       var ofo = oficial(ds.ex), fz = 80 - Object.keys(ofo.resp).length;
@@ -1731,7 +1796,8 @@
     } catch (e) { /* sem provas importadas */ }
   }
   // conteúdo protegido: só é entregue (pela função do servidor) a quem está logado e com acesso ativo
-  var PRIVADOS = ['q1', 'q2', 'q3', 'q4', 'sinopses', 'sinopses-ext1', 'sinopses-ext2', 'provas', 'fase2'], conteudoOk = false;
+  var CADS = [47];
+  var PRIVADOS = ['q1', 'q2', 'q3', 'q4', 'sinopses', 'sinopses-ext1', 'sinopses-ext2', 'provas', 'fase2'].concat(CADS.map(function (n) { return 'cad' + n; })), conteudoOk = false;
   async function carregarConteudo(token) {
     if (conteudoOk) return;
     var textos = await Promise.all(PRIVADOS.map(async function (n) {

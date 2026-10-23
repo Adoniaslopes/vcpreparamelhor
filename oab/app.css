@@ -596,3 +596,13 @@ details.ajuste form.bloco { box-shadow: none; border: 0; padding: 0; }
 .cmb .cmb-dir { background: #13284A; border-color: #13284A; color: #EEF3FF; box-shadow: 0 10px 26px rgba(19, 40, 74, .22); }
 .cmb .cmb-dir .sub { color: #9DB0D3; }
 .cmb .cmb-g:nth-of-type(2) .cmb-gt { color: #A87400; }
+
+/* simulados com o caderno completo */
+.sim-tag { background: color-mix(in srgb, var(--verde) 18%, transparent); color: var(--verde); border-color: color-mix(in srgb, var(--verde) 45%, transparent); }
+.enun p { margin: 0 0 .7rem; }
+.sim-err { border: 1px solid var(--linha); border-radius: var(--r-m); padding: 12px 14px; background: var(--papel2); }
+.sim-err summary { cursor: pointer; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.sim-err[open] summary { margin-bottom: 10px; }
+.sim-r { padding: 8px 12px; border-radius: 10px; margin: 6px 0; }
+.sim-r.ok { background: color-mix(in srgb, var(--verde) 14%, transparent); }
+.sim-r.er { background: color-mix(in srgb, var(--vermelho) 12%, transparent); }

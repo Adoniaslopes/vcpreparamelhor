@@ -3,6 +3,7 @@
 const SB_URL = 'https://nzzgfxctuulmudztfdab.supabase.co';
 const ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56emdmeGN0dXVsbXVkenRmZGFiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE4Mjk2NzUsImV4cCI6MjEwNzQwNTY3NX0.fMTVwtQNLWvwPwg6bvN0WNq8uQnGKhRhWD4fcknX7Sw';
 const PERMITIDOS = new Set(['q1', 'q2', 'q3', 'q4', 'sinopses', 'sinopses-ext1', 'sinopses-ext2', 'provas', 'fase2']);
+const permitido = (n) => PERMITIDOS.has(n) || /^cad\d{2}$/.test(n);
 
 const nega = (status) => new Response(status === 401 ? 'Faça login para acessar.' : 'Acesso não liberado para este e-mail.', {
   status, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' }
@@ -15,7 +16,7 @@ export async function onRequestGet(ctx) {
 
 async function entregar({ request, params, env }) {
   const nome = String(params.arquivo || '').replace(/\.js$/, '');
-  if (!PERMITIDOS.has(nome)) return new Response('Não encontrado', { status: 404 });
+  if (!permitido(nome)) return new Response('Não encontrado', { status: 404 });
 
   const auth = request.headers.get('Authorization') || '';
   const token = auth.startsWith('Bearer ') ? auth.slice(7) : '';
