@@ -435,3 +435,27 @@ details.ajuste form.bloco { box-shadow: none; border: 0; padding: 0; }
 .f2-qfb.ok { border-left-color: var(--verde); } .f2-qfb.meio { border-left-color: var(--dourado); } .f2-qfb.er { border-left-color: var(--vermelho); }
 .f2-qfb h3, .f2-qfb h4 { margin: 0 0 6px; } .f2-qfb p { margin: 4px 0 0; }
 .f2-ia { margin-top: 14px; padding: 16px; border-radius: 14px; border: 1px solid rgba(245,197,66,.45); background: rgba(245,197,66,.06); }
+
+/* 2ª fase · caderno e folha de respostas */
+.f2-nav { position: sticky; top: 0; z-index: 5; padding: 8px 0; background: var(--papel); margin-bottom: 12px; }
+.prova2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 18px; align-items: start; }
+.prova2-cad { position: sticky; top: 56px; max-height: calc(100vh - 70px); overflow: auto; border-radius: 14px; }
+.caderno { background: #FBF8F1; color: #1C2131; border-radius: 14px; padding: 22px 24px; font-family: Georgia, 'Times New Roman', serif; line-height: 1.6; }
+.cad-cab { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; border-bottom: 2px solid #1C2131; padding-bottom: 8px; margin-bottom: 8px; font-family: var(--f-txt, sans-serif); font-size: .85rem; }
+.cad-q { padding: 14px 0; border-bottom: 1px solid #D9D2C3; } .cad-q:last-child { border-bottom: 0; }
+.cad-q h3 { font-family: var(--f-txt, sans-serif); font-size: .95rem; letter-spacing: .06em; margin: 0 0 8px; color: #13284A; }
+.cad-q p { margin: 6px 0 0; } .cad-q .sub { color: #5A6178; font-size: .85em; }
+.folha-box { margin-bottom: 18px; scroll-margin-top: 60px; }
+.folha-cab { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+.folha { --lh: 28px; position: relative; display: grid; grid-template-columns: 38px 1fr; background: #FFFEFA; border: 1px solid #CFC6B2; border-radius: 6px; overflow: hidden; }
+.fl-num { display: flex; flex-direction: column; background: #F1ECE0; border-right: 1px solid #CFC6B2; padding-top: 6px; }
+.fl-num span { height: var(--lh); line-height: var(--lh); font: 600 11px/var(--lh) var(--f-txt, sans-serif); color: #8A8170; text-align: center; }
+.folha textarea { display: block; width: 100%; height: calc(var(--n) * var(--lh) + 6px); padding: 6px 12px 0; border: 0; resize: none; overflow: hidden; outline: none; color: #1C2131; font: 16px/var(--lh) Georgia, 'Times New Roman', serif;
+  background: repeating-linear-gradient(transparent 0 calc(var(--lh) - 1px), #D9E2F0 calc(var(--lh) - 1px) var(--lh)); background-position: 0 6px; background-color: #FFFEFA; }
+.folha textarea:focus { box-shadow: inset 0 0 0 2px var(--ciano); }
+.fl-aviso { margin-top: 6px; color: var(--vermelho); font-weight: 700; font-size: .9rem; }
+.f2-parte h4 { margin: 18px 0 8px; }
+.f2-sua summary { cursor: pointer; color: var(--tinta2); } .f2-sua pre { white-space: pre-wrap; font: .95rem/1.6 Georgia, serif; background: rgba(255,255,255,.04); padding: 12px; border-radius: 10px; }
+.f2-modelo { white-space: pre-line; background: #FBF8F1; color: #1C2131; border-radius: 12px; padding: 16px 18px; font: .98rem/1.65 Georgia, serif; }
+.f2-ok { color: var(--verde); }
+@media (max-width: 900px) { .prova2 { grid-template-columns: 1fr; } .prova2-cad { position: static; max-height: none; } }

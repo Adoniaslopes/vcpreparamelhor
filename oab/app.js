@@ -930,16 +930,21 @@
       }).join('');
   };
 
-  // ---------- 2ª fase: peça profissional e questões discursivas ----------
+  // ---------- 2ª fase: prova simulada (caderno + folha de respostas; orientação só depois da entrega) ----------
   var F2 = OAB.F2 || {AREAS: [], ITENS: [], ESTRUTURA: [], PROVA: {}};
   var F2M = {}; (F2.ITENS || []).forEach(function (x) { F2M[x.id] = x; });
   var F2A = {}; (F2.AREAS || []).forEach(function (a) { F2A[a.id] = a; });
-  function f2() { S.f2 = S.f2 || {area: null, tent: {}, rasc: {}, peca: {}}; S.f2.tent = S.f2.tent || {}; S.f2.rasc = S.f2.rasc || {}; S.f2.peca = S.f2.peca || {}; return S.f2; }
+  var f2Rel = null;
+  function f2() { S.f2 = S.f2 || {}; S.f2.sim = S.f2.sim || {}; return S.f2; }
   function f2Liberada() { return !nuvem.ativo || nuvem.admin || nuvem.plano === '2fases' || nuvem.legado; }
   function num2(v) { return (Math.round(v * 100) / 100).toFixed(2).replace('.', ','); }
-  function linhasTexto(t) { return String(t || '').split('\n').reduce(function (n, l) { return n + Math.max(1, Math.ceil(l.length / 75)); }, 0); }
   function achou(txt, re) { try { return new RegExp(re, 'i').test(txt); } catch (e) { return false; } }
-  // correção automática prévia: procura no texto os fundamentos e as palavras-chave de cada tópico do espelho
+  function f2Itens(area) {
+    var l = F2.ITENS.filter(function (x) { return x.area === area; });
+    return {peca: l.filter(function (x) { return x.tipo === 'peca'; })[0], q: l.filter(function (x) { return x.tipo === 'questao'; }).slice(0, 4)};
+  }
+  function f2Sim(area) { var g = f2(); g.sim[area] = g.sim[area] || {resp: {}, ini: null, fim: null, seg: 0, hist: []}; return g.sim[area]; }
+  // correção automática: procura no texto os fundamentos e as palavras-chave de cada tópico do espelho
   function pontuaTopico(txt, t) {
     var hits = t.ch.filter(function (c) { return achou(txt, c); }).length, need = t.ch.length >= 4 ? 2 : 1;
     var fr = Math.min(1, hits / need); return {nota: Math.round(t.v * fr * 20) / 20, fr: fr};
@@ -953,121 +958,129 @@
       return {e: e, ok: ok};
     });
   }
-  function f2Corrigir(item, resp) {
-    if (item.tipo === 'peca') {
-      var tps = item.topicos.map(function (t) { var p = pontuaTopico(resp, t); return {t: t, nota: p.nota, fr: p.fr}; });
-      var nota = tps.reduce(function (a, x) { return a + x.nota; }, 0);
-      var est = estruturaPeca(resp, item), pecaOk = est.filter(function (x) { return x.e.id === 'peca'; })[0].ok;
-      return {nota: Math.min(5, nota), max: 5, tps: tps, est: est, pecaOk: pecaOk};
-    }
-    var its = item.itens.map(function (t, k) { var p = pontuaTopico(resp[k] || '', t); return {t: t, nota: p.nota, fr: p.fr}; });
+  function corrigirPeca(item, txt) {
+    var tps = item.topicos.map(function (t) { var p = pontuaTopico(txt, t); return {t: t, nota: p.nota, fr: p.fr}; });
+    var est = estruturaPeca(txt, item), pecaOk = est.filter(function (x) { return x.e.id === 'peca'; })[0].ok;
+    var nota = Math.min(5, tps.reduce(function (a, x) { return a + x.nota; }, 0));
+    return {nota: pecaOk ? nota : 0, notaSemPeca: nota, max: 5, tps: tps, est: est, pecaOk: pecaOk};
+  }
+  function corrigirQuestao(item, txt) {
+    var its = item.itens.map(function (t) { var p = pontuaTopico(txt, t); return {t: t, nota: p.nota, fr: p.fr}; });
     return {nota: its.reduce(function (a, x) { return a + x.nota; }, 0), max: 1.25, its: its};
   }
-  function areaCard(a) {
-    var n = F2.ITENS.filter(function (x) { return x.area === a.id; }).length, sel = f2().area === a.id;
-    return '<a class="disc-card' + (sel ? ' f2-sel' : '') + '" href="#segunda-fase/' + a.id + '" style="--c:' + a.cor + '"><span class="sub peq">' + (n ? n + ' itens de treino · ' : 'treino em preparação · ') + a.pecas.length + ' peças no roteiro</span><h3>' + esc(a.nome) + '</h3>' + (sel ? '<span class="dom-mark">★ sua área</span>' : '<span class="sub peq">Escolher esta área</span>') + '</a>';
+  function f2Resultado(area) {
+    var it = f2Itens(area), sm = f2Sim(area), r = sm.resp;
+    var qs = it.q.map(function (q, i) { return corrigirQuestao(q, r['q' + (i + 1)] || ''); });
+    var pc = it.peca ? corrigirPeca(it.peca, r.peca || '') : null;
+    var total = qs.reduce(function (a, x) { return a + x.nota; }, 0) + (pc ? pc.nota : 0);
+    return {qs: qs, pc: pc, total: total};
   }
   function f2Upsell() {
-    return cena({selo: '2ª fase', titulo: 'A preparação da 2ª fase está no plano completo', lead: 'Peça profissional e questões discursivas no formato da FGV, com correção por tópicos, roteiro de estrutura e o examinador. Disponível no plano "1ª e 2ª fase".',
+    return cena({selo: '2ª fase', titulo: 'A preparação da 2ª fase está no plano completo', lead: 'Prova simulada no formato da FGV — questões discursivas e peça profissional, com folha de respostas, correção por tópicos, modelo e orientação. Disponível no plano "1ª e 2ª fase".',
       extra: '<p style="margin-top:16px"><a class="btn pri" href="vendas/#planos">Conhecer o plano completo</a></p>'});
   }
   function f2Inicio() {
-    var P = F2.PROVA, a = f2().area;
-    return cena({selo: '2ª fase · prova prático-profissional', titulo: 'A peça e as 4 questões, no formato da FGV',
-      lead: 'Escolha a sua área, aprenda a estrutura de cada peça e treine escrevendo. Ao entregar, você vê o que pontuou, o que faltou e o roteiro de como responder para tirar nota máxima.',
-      extra: '<div class="cena-nums"><div><span class="num">5,00</span><small>a peça</small></div><div><span class="num">4 × 1,25</span><small>as questões</small></div><div><span class="num" style="color:var(--dourado)">6,00</span><small>para passar</small></div></div>' +
-        (a ? '<p style="margin-top:16px"><a class="btn pri" href="#segunda-fase/' + a + '">Continuar em ' + esc(F2A[a].nome) + '</a></p>' : '')}) +
-      '<div class="grade g2"><div class="bloco"><h2>Como é a prova</h2><ul style="padding-left:1.2rem;margin:0">' + P.regras.map(function (r) { return '<li>' + esc(r) + '</li>'; }).join('') + '</ul></div>' +
-      '<div class="bloco"><h2>A ordem de toda peça</h2><ol class="passos-lista">' + F2.ESTRUTURA.map(function (e, i) { return '<li><span class="n">' + (i + 1) + '</span><div><b>' + esc(e.t) + '.</b> <span class="sub">' + esc(e.como) + '</span></div></li>'; }).join('') + '</ol></div></div>' +
-      '<h2 style="margin-top:24px">Escolha a sua área</h2><div class="grade g3">' + F2.AREAS.map(areaCard).join('') + '</div>';
+    var cards = F2.AREAS.map(function (a) {
+      var it = f2Itens(a.id), tem = it.peca && it.q.length === 4, sm = f2().sim[a.id], st = !tem ? 'em preparação' : sm && sm.fim ? 'última nota: ' + num2(sm.hist.length ? sm.hist[sm.hist.length - 1].nota : 0) + ' de 10,00' : sm && sm.ini ? 'prova em andamento' : 'prova simulada disponível';
+      return '<a class="disc-card" href="#segunda-fase/' + a.id + '" style="--c:' + a.cor + '"><span class="sub peq">' + st + '</span><h3>' + esc(a.nome) + '</h3><span class="sub peq">' + (tem ? '4 questões + peça profissional' : 'roteiro de peças disponível') + '</span></a>';
+    }).join('');
+    return cena({selo: '2ª fase · prova prático-profissional', titulo: 'Treine como no dia da prova',
+      lead: 'Escolha a sua área. Você recebe o caderno de prova com as 4 questões discursivas e a peça profissional, e a folha de respostas pautada e numerada. Responda sem consulta a modelos. Só depois de entregar aparecem a checagem, o espelho, o modelo e a orientação.',
+      extra: '<div class="cena-nums"><div><span class="num">4 × 1,25</span><small>as questões</small></div><div><span class="num">5,00</span><small>a peça</small></div><div><span class="num" style="color:var(--dourado)">6,00</span><small>para passar</small></div></div>'}) +
+      '<div class="bloco"><h2>Como é a prova</h2><ul style="padding-left:1.2rem;margin:0">' + F2.PROVA.regras.map(function (r) { return '<li>' + esc(r) + '</li>'; }).join('') + '</ul></div>' +
+      '<h2 style="margin-top:24px">Escolha a sua área</h2><div class="grade g3">' + cards + '</div>';
   }
-  function f2Area(id) {
-    var a = F2A[id]; if (!a) return f2Inicio();
-    if (f2().area !== id) { f2().area = id; salvar(); }
-    var itens = F2.ITENS.filter(function (x) { return x.area === id; });
-    var lin = function (x) {
-      var t = (f2().tent[x.id] || []), u = t[t.length - 1];
-      return '<a class="f2-item" href="#segunda-fase/item/' + x.id + '"><span class="f2-tipo ' + x.tipo + '">' + (x.tipo === 'peca' ? 'Peça · 5,00' : 'Questão · 1,25') + '</span><b>' + esc(x.titulo) + '</b>' +
-        '<span class="sub peq">' + (u ? 'última nota estimada: ' + num2(u.nota) + ' de ' + (x.tipo === 'peca' ? '5,00' : '1,25') + ' · ' + t.length + ' tentativa(s)' : (f2().rasc[x.id] ? 'rascunho salvo' : 'ainda não feito')) + '</span></a>';
-    };
-    return '<p class="noprint"><a href="#segunda-fase" class="link">2ª fase</a> · <a href="#segunda-fase" class="link">trocar de área</a></p>' +
-      '<div class="cab"><div><h1 style="color:' + a.cor + '">' + esc(a.nome) + '</h1><p class="sub">Roteiro das peças mais cobradas e treino no formato da prova.</p></div></div>' +
-      '<div class="bloco"><h2>Roteiro das peças: qual usar e quando</h2><p class="sub peq">Na prova, o primeiro passo é identificar a peça. Peça errada costuma zerar a peça inteira.</p><div style="overflow-x:auto"><table class="t"><thead><tr><th>Peça</th><th>Quando usar</th><th>Fundamento</th></tr></thead><tbody>' +
-      a.pecas.map(function (p) { return '<tr><td><b>' + esc(p.n) + '</b></td><td>' + esc(p.q) + '</td><td>' + esc(p.f) + '</td></tr>'; }).join('') + '</tbody></table></div></div>' +
-      (itens.length ? '<h2 style="margin-top:22px">Treino</h2><div class="f2-lista">' + itens.map(lin).join('') + '</div>'
-        : '<div class="bloco" style="margin-top:18px"><h2>Treino desta área</h2><p>As peças e questões de ' + esc(a.nome) + ' estão em preparação. Enquanto isso, use o roteiro acima e treine a estrutura com as peças de Civil, Penal ou Trabalho.</p></div>');
+  function f2Area(area) {
+    var a = F2A[area], it = f2Itens(area), sm = f2Sim(area);
+    var voltar = '<p class="noprint"><a href="#segunda-fase" class="link">2ª fase · trocar de área</a></p>';
+    if (!it.peca || it.q.length < 4) return voltar + '<div class="cab"><div><h1 style="color:' + a.cor + '">' + esc(a.nome) + '</h1><p class="sub">A prova simulada desta área está em preparação.</p></div></div>' + roteiroPecas(a);
+    if (sm.fim) return f2TelaResultado(area);
+    return voltar + '<div class="cab"><div><h1 style="color:' + a.cor + '">' + esc(a.nome) + ' · prova simulada</h1><p class="sub">4 questões discursivas e 1 peça profissional, no formato da FGV.</p></div></div>' +
+      '<div class="bloco"><h2>Instruções</h2><ul style="padding-left:1.2rem;margin:0"><li>Leia o caderno de prova: primeiro as questões, depois a peça.</li><li>Escreva na folha de respostas. Cada questão tem 30 linhas (responda os itens A e B na mesma folha); a peça tem 150 linhas.</li><li>Não há dicas durante a prova. A checagem, o espelho, o modelo e a orientação aparecem depois que você entregar.</li><li>Tempo de referência: 5 horas. Você pode pausar e continuar depois; o que escreveu fica salvo.</li></ul>' +
+      '<p style="margin:16px 0 0"><a class="btn pri" href="#segunda-fase/' + area + '/prova" data-f2ini="' + area + '">' + (sm.ini ? 'Continuar a prova' : 'Começar a prova') + '</a></p></div>' +
+      (sm.hist.length ? '<div class="bloco"><h2>Suas provas anteriores</h2><p>' + sm.hist.map(function (h, i) { return (i + 1) + 'ª: <b>' + num2(h.nota) + '</b>'; }).join(' · ') + '</p></div>' : '');
   }
-  function editor(id, k, valor, max) {
-    var n = linhasTexto(valor);
-    return '<div class="f2-ed"><textarea data-f2ed="' + id + '" data-k="' + k + '" rows="' + (max > 40 ? 22 : 9) + '" spellcheck="true" placeholder="Escreva aqui como escreveria na folha de respostas…">' + esc(valor || '') + '</textarea>' +
-      '<div class="f2-lin" data-lin="' + id + ':' + k + '"><span>' + n + '</span> de ' + max + ' linhas (aprox.)</div></div>';
+  function folha(area, k, n, valor, titulo) {
+    var nums = ''; for (var i = 1; i <= n; i++) nums += '<span>' + i + '</span>';
+    return '<div class="folha-box" id="fl-' + k + '"><div class="folha-cab"><b>' + titulo + '</b><span class="sub peq">' + n + ' linhas</span></div><div class="folha" style="--n:' + n + '"><div class="fl-num" aria-hidden="true">' + nums + '</div>' +
+      '<textarea data-f2s="' + area + '" data-k="' + k + '" spellcheck="true" aria-label="' + esc(titulo) + '">' + esc(valor || '') + '</textarea></div><div class="fl-aviso" data-flav="' + k + '" hidden>O texto passou da última linha. Na prova, o que passa do limite não é lido.</div></div>';
   }
-  var f2Res = {}; // última correção mostrada, por item
-  function f2Item(id) {
-    var x = F2M[id]; if (!x) return f2Inicio();
-    var a = F2A[x.area], g = f2(), rasc = g.rasc[id], res = f2Res[id];
-    var h = '<p class="noprint"><a href="#segunda-fase/' + x.area + '" class="link">' + esc(a.nome) + '</a></p>' +
-      '<div class="cab"><div><span class="f2-tipo ' + x.tipo + '">' + (x.tipo === 'peca' ? 'Peça profissional · 5,00 pontos' : 'Questão discursiva · 1,25 ponto') + '</span><h1 style="font-size:1.6rem;margin-top:8px">' + esc(x.titulo) + '</h1></div></div>' +
-      '<div class="bloco questao"><div class="enun">' + esc(x.enunciado) + '</div>' + (x.comando ? '<p style="margin-top:12px"><b>' + esc(x.comando) + '</b></p>' : '') + '</div>';
-    if (x.tipo === 'peca') {
-      var esc1 = g.peca[id];
-      if (esc1 == null) {
-        var op = x.opcoesPeca.map(function (o, i) { return i; }), r = rng(hash(id + ':' + MIX));
-        for (var i = op.length - 1; i > 0; i--) { var j = Math.floor(r() * (i + 1)), t = op[i]; op[i] = op[j]; op[j] = t; }
-        return h + '<div class="bloco"><h2>Passo 1 · Qual é a peça cabível?</h2><p class="sub peq">Antes de escrever, decida a peça. Na prova, a peça errada zera a nota da peça.</p><div class="alts">' +
-          op.map(function (oi, k) { return '<button class="alt" data-f2peca="' + id + '" data-o="' + oi + '"><span class="lt">' + 'ABCDE'[k] + '</span><span>' + esc(x.opcoesPeca[oi]) + '</span></button>'; }).join('') + '</div></div>';
-      }
-      var certa = x.opcoesPeca[esc1] === x.pecaCorreta;
-      h += '<div class="retorno ' + (certa ? 'r-ok' : 'r-er') + '" role="status"><div><b>' + (certa ? 'Peça certa: ' : 'Atenção: a peça cabível é ') + esc(x.pecaCorreta) + '.</b> ' +
-        (certa ? 'Agora estruture a peça na ordem do roteiro.' : 'Você escolheu "' + esc(x.opcoesPeca[esc1]) + '". Na prova, isso zeraria a peça. ' + esc(x.roteiro[0].como)) + '</div></div>';
-      h += '<details class="bloco"><summary><b>Ver a ordem que o examinador espera</b></summary><ol class="passos-lista" style="margin-top:10px">' + F2.ESTRUTURA.filter(function (e) { return !e.so || e.so.indexOf(x.pecaTipo) > -1; }).map(function (e, i) { return '<li><span class="n">' + (i + 1) + '</span><div><b>' + esc(e.t) + '.</b> <span class="sub">' + esc(e.como) + '</span></div></li>'; }).join('') + '</ol></details>';
-      h += '<div class="bloco"><h2>Passo 2 · Escreva a peça</h2>' + editor(id, 0, rasc, F2.PROVA.linhasPeca) + '<p class="chips" style="margin-top:12px"><button class="btn pri" data-f2corr="' + id + '">Entregar e corrigir</button><button class="btn mini" data-f2reset="' + id + '">Recomeçar</button></p></div>';
-    } else {
-      var rs = Array.isArray(rasc) ? rasc : [];
-      h += x.itens.map(function (it, k) { return '<div class="bloco"><h3>' + it.letra + ') ' + esc(it.p) + ' <span class="sub peq">(' + num2(it.v) + ')</span></h3>' + editor(id, k, rs[k], F2.PROVA.linhasQuestao) + '</div>'; }).join('') +
-        '<p class="chips"><button class="btn pri" data-f2corr="' + id + '">Entregar e corrigir</button><button class="btn mini" data-f2reset="' + id + '">Recomeçar</button></p>';
-    }
-    if (res) h += f2Feedback(x, res);
+  function relF2(s) { return Math.floor(s / 3600) + 'h' + String(Math.floor(s / 60) % 60).padStart(2, '0') + ' de 5h00'; }
+  function f2Prova(area) {
+    var a = F2A[area], it = f2Itens(area), sm = f2Sim(area);
+    if (sm.fim) return f2TelaResultado(area);
+    if (!sm.ini) { sm.ini = Date.now(); salvar(); }
+    var cad = '<div class="caderno"><div class="cad-cab"><b>CADERNO DE PROVA</b><span>' + esc(a.nome) + ' · Prova prático-profissional</span></div>' +
+      it.q.map(function (q, i) {
+        return '<section class="cad-q"><h3>QUESTÃO ' + (i + 1) + '</h3><p>' + esc(q.enunciado) + '</p>' + q.itens.map(function (x) { return '<p><b>' + x.letra + ')</b> ' + esc(x.p) + ' <span class="sub">(Valor: ' + num2(x.v) + ')</span></p>'; }).join('') + '</section>';
+      }).join('') +
+      '<section class="cad-q"><h3>PEÇA PRÁTICO-PROFISSIONAL</h3><p>' + esc(it.peca.enunciado) + '</p><p><b>' + esc(it.peca.comando) + '</b> <span class="sub">(Valor: 5,00)</span></p></section></div>';
+    var fl = it.q.map(function (q, i) { return folha(area, 'q' + (i + 1), F2.PROVA.linhasQuestao, sm.resp['q' + (i + 1)], 'Folha de respostas · Questão ' + (i + 1)); }).join('') +
+      folha(area, 'peca', F2.PROVA.linhasPeca, sm.resp.peca, 'Folha de respostas · Peça prático-profissional');
+    setTimeout(function () {
+      if (f2Rel) clearInterval(f2Rel);
+      f2Rel = setInterval(function () { sm.seg = (sm.seg || 0) + 1; var e = $('#f2-rel'); if (e) e.textContent = relF2(sm.seg); if (sm.seg % 30 === 0) salvar(); }, 1000);
+      $$('.folha textarea').forEach(ajustaFolha);
+    }, 0);
+    return '<div class="cab"><div><h1 style="font-size:1.6rem">' + esc(a.nome) + ' · prova simulada</h1><p class="sub">Responda na folha. As orientações aparecem depois da entrega.</p></div>' +
+      '<div class="chips"><span class="sub" id="f2-rel">' + relF2(sm.seg || 0) + '</span><a class="btn mini" href="#segunda-fase/' + area + '">Pausar e continuar depois</a><button class="btn ouro mini" data-f2ent="' + area + '">Entregar a prova</button></div></div>' +
+      '<nav class="f2-nav chips">' + it.q.map(function (q, i) { return '<a class="chip" href="javascript:void 0" data-ir="fl-q' + (i + 1) + '">Questão ' + (i + 1) + '</a>'; }).join('') + '<a class="chip" href="javascript:void 0" data-ir="fl-peca">Peça</a></nav>' +
+      '<div class="prova2"><div class="prova2-cad">' + cad + '</div><div class="prova2-fl">' + fl + '<p style="margin-top:16px"><button class="btn ouro" data-f2ent="' + area + '">Entregar a prova</button></p></div></div>';
+  }
+  function ajustaFolha(t) {
+    var av = $('[data-flav="' + t.dataset.k + '"]'); if (av) av.hidden = t.scrollHeight <= t.clientHeight + 2;
+  }
+  function roteiroPecas(a) {
+    return '<div class="bloco"><h2>Roteiro das peças de ' + esc(a.nome) + '</h2><p class="sub peq">Na prova, o primeiro passo é identificar a peça. Peça errada costuma zerar a peça inteira.</p><div style="overflow-x:auto"><table class="t"><thead><tr><th>Peça</th><th>Quando usar</th><th>Fundamento</th></tr></thead><tbody>' +
+      a.pecas.map(function (p) { return '<tr><td><b>' + esc(p.n) + '</b></td><td>' + esc(p.q) + '</td><td>' + esc(p.f) + '</td></tr>'; }).join('') + '</tbody></table></div></div>';
+  }
+  function orientacao(x) {
+    return '<h4>Orientação: como responder para nota máxima</h4><ol class="passos-lista">' + x.roteiro.map(function (r, i) { return '<li><span class="n">' + (i + 1) + '</span><div><b>' + esc(r.passo) + '.</b> <span class="sub">' + esc(r.como) + (r.fundamento ? ' <b>' + esc(r.fundamento) + '</b>' : '') + '</span></div></li>'; }).join('') + '</ol>';
+  }
+  function suaResposta(txt) { return '<details class="f2-sua"><summary>Ver a sua resposta</summary><pre>' + esc(txt || '(em branco)') + '</pre></details>'; }
+  function f2TelaResultado(area) {
+    var a = F2A[area], it = f2Itens(area), sm = f2Sim(area), R2 = f2Resultado(area), aprov = R2.total >= F2.PROVA.corte, cor = corMeta(R2.total / 10 * 40);
+    var h = '<p class="noprint"><a href="#segunda-fase" class="link">2ª fase · trocar de área</a></p>' +
+      '<div class="cab"><div><h1 style="color:' + a.cor + '">' + esc(a.nome) + ' · resultado da prova</h1><p class="sub">Agora sim: checagem, espelho, modelo e orientação de cada resposta.</p></div><div class="chips"><button class="btn mini" data-f2ref="' + area + '">Fazer a prova de novo</button></div></div>' +
+      '<div class="bloco f2-fb"><div class="f2-nota"><b style="color:' + cor + '">' + num2(R2.total) + '</b><span>de 10,00 · ' + (aprov ? 'acima da nota de aprovação (6,00)' : 'faltam ' + num2(F2.PROVA.corte - R2.total) + ' para os 6,00') + '</span></div><div class="prog"><i style="width:' + Math.round(R2.total * 10) + '%;background:' + cor + '"></i></div>' +
+      '<p class="peq sub" style="margin-top:10px">Questões: ' + num2(R2.qs.reduce(function (s, x) { return s + x.nota; }, 0)) + ' de 5,00 · Peça: ' + num2(R2.pc.nota) + ' de 5,00. Nota estimada pela correção automática, que procura no seu texto os fundamentos de cada tópico do espelho.</p></div>';
+    h += it.q.map(function (q, i) {
+      var c = R2.qs[i];
+      return '<div class="bloco f2-parte"><h2>Questão ' + (i + 1) + ' · ' + num2(c.nota) + ' de 1,25</h2>' + suaResposta(sm.resp['q' + (i + 1)]) +
+        '<h4>Checagem</h4>' + c.its.map(function (p) { var k = p.fr >= 1 ? 'ok' : p.fr > 0 ? 'meio' : 'er'; return '<div class="f2-qfb ' + k + '"><b>' + p.t.letra + ') ' + num2(p.nota) + ' de ' + num2(p.t.v) + ' — ' + (k === 'ok' ? 'fundamento encontrado' : k === 'meio' ? 'resposta incompleta' : 'faltou o fundamento esperado') + '</b><p><b>Modelo de resposta:</b> ' + esc(p.t.esp) + '</p></div>'; }).join('') +
+        orientacao(q) + (nuvem.ativo ? '<p class="chips"><button class="btn mini ouro" data-f2ia="' + q.id + '" data-area="' + area + '" data-k="q' + (i + 1) + '">Correção detalhada do examinador</button></p><div data-iabox="' + q.id + '"></div>' : '') + '</div>';
+    }).join('');
+    var p = it.peca, c = R2.pc;
+    h += '<div class="bloco f2-parte"><h2>Peça prático-profissional · ' + num2(c.nota) + ' de 5,00</h2>' + suaResposta(sm.resp.peca) +
+      '<h4>1. A peça está certa?</h4>' + (c.pecaOk ? '<p class="f2-ok">✓ Você identificou a peça cabível: <b>' + esc(p.pecaCorreta) + '</b>.</p>'
+        : '<p class="aviso"><b>Peça não identificada.</b> A peça cabível é <b>' + esc(p.pecaCorreta) + '</b>. Na prova, peça inadequada zera a peça. Se você tivesse acertado a peça, o conteúdo valeria cerca de ' + num2(c.notaSemPeca) + '.</p>') +
+      '<h4>2. Checagem da estrutura</h4><ul class="f2-est">' + c.est.map(function (s) { return '<li class="' + (s.ok ? 'ok' : 'er') + '"><b>' + (s.ok ? '✓ ' : '✗ ') + esc(s.e.t) + '</b>' + (s.ok ? '' : '<span>' + esc(s.e.como) + '</span>') + '</li>'; }).join('') + '</ul>' +
+      '<h4>3. Espelho de correção</h4><ul class="f2-esp">' + c.tps.map(function (t) { var k = t.fr >= 1 ? 'ok' : t.fr > 0 ? 'meio' : 'er'; return '<li class="' + k + '"><span class="pt">' + num2(t.nota) + ' / ' + num2(t.t.v) + '</span><span>' + esc(t.t.t) + (k !== 'ok' && t.t.dica ? ' <i>' + esc(t.t.dica) + '</i>' : '') + '</span></li>'; }).join('') + '</ul>' +
+      '<h4>4. Modelo que você deve seguir</h4><div class="f2-modelo">' + esc(p.modelo) + '</div>' + orientacao(p) +
+      (nuvem.ativo ? '<p class="chips"><button class="btn mini ouro" data-f2ia="' + p.id + '" data-area="' + area + '" data-k="peca">Correção detalhada do examinador</button></p><div data-iabox="' + p.id + '"></div>' : '') + '</div>' +
+      roteiroPecas(a);
     return h;
   }
-  function f2Feedback(x, res) {
-    var pct = res.nota / res.max, cor = corMeta(pct * 40);
-    var h = '<div class="bloco f2-fb" id="f2-fb"><h2>Correção</h2><div class="f2-nota"><b style="color:' + cor + '">' + num2(res.nota) + '</b><span>de ' + num2(res.max) + ' · nota estimada pela correção automática</span></div>' +
-      '<div class="prog"><i style="width:' + Math.round(pct * 100) + '%;background:' + cor + '"></i></div>';
-    if (x.tipo === 'peca') {
-      if (!res.pecaOk) h += '<p class="aviso"><b>Peça não identificada no texto.</b> Escreva o nome da peça e o fundamento logo depois da qualificação: "' + esc(x.pecaCorreta) + '". Sem isso, a FGV pode considerar a peça inadequada e zerar.</p>';
-      h += '<h3 style="margin-top:16px">Estrutura da peça</h3><ul class="f2-est">' + res.est.map(function (s) { return '<li class="' + (s.ok ? 'ok' : 'er') + '"><b>' + (s.ok ? '✓ ' : '✗ ') + esc(s.e.t) + '</b>' + (s.ok ? '' : '<span>' + esc(s.e.como) + '</span>') + '</li>'; }).join('') + '</ul>' +
-        '<h3 style="margin-top:16px">Espelho de correção</h3><ul class="f2-esp">' + res.tps.map(function (p) { var c = p.fr >= 1 ? 'ok' : p.fr > 0 ? 'meio' : 'er'; return '<li class="' + c + '"><span class="pt">' + num2(p.nota) + ' / ' + num2(p.t.v) + '</span><span>' + esc(p.t.t) + (c !== 'ok' && p.t.dica ? ' <i>' + esc(p.t.dica) + '</i>' : '') + '</span></li>'; }).join('') + '</ul>';
-    } else {
-      h += res.its.map(function (p) { var c = p.fr >= 1 ? 'ok' : p.fr > 0 ? 'meio' : 'er'; return '<div class="f2-qfb ' + c + '"><h3>' + p.t.letra + ') ' + num2(p.nota) + ' de ' + num2(p.t.v) + '</h3><p><b>Resposta esperada:</b> ' + esc(p.t.esp) + '</p></div>'; }).join('');
-    }
-    h += '<h3 style="margin-top:18px">Roteiro para responder com nota máxima</h3><ol class="passos-lista">' + x.roteiro.map(function (r, i) { return '<li><span class="n">' + (i + 1) + '</span><div><b>' + esc(r.passo) + '.</b> <span class="sub">' + esc(r.como) + (r.fundamento ? ' <b>' + esc(r.fundamento) + '</b>' : '') + '</span></div></li>'; }).join('') + '</ol>' +
-      (x.modelo ? '<details style="margin-top:14px"><summary><b>Ver a estrutura da resposta-modelo</b></summary><p class="peq" style="white-space:pre-line;margin-top:8px">' + esc(x.modelo) + '</p></details>' : '') +
-      '<p class="peq sub" style="margin-top:14px">A nota acima é uma estimativa: ela procura no seu texto os fundamentos e as palavras-chave do espelho. A correção do examinador analisa o raciocínio e a redação.</p>' +
-      (nuvem.ativo ? '<p class="chips"><button class="btn ouro" data-f2ia="' + x.id + '">Correção detalhada do examinador</button></p><div id="f2-ia"></div>' : '') + '</div>';
-    return h;
-  }
-  async function f2Examinador(id) {
-    var x = F2M[id], box = $('#f2-ia'), rasc = f2().rasc[id];
-    var resposta = x.tipo === 'peca' ? String(rasc || '') : (Array.isArray(rasc) ? rasc : []).map(function (t, k) { return x.itens[k].letra + ') ' + (t || ''); }).join('\n\n');
+  async function f2Examinador(id, area, k) {
+    var x = F2M[id], box = $('[data-iabox="' + id + '"]'), resposta = String(f2Sim(area).resp[k] || '');
+    if (resposta.trim().length < 80) { box.innerHTML = '<p class="aviso">A resposta é curta demais para a correção do examinador.</p>'; return; }
     box.innerHTML = '<p class="sub">O examinador está corrigindo… isso leva cerca de 30 segundos.</p>';
     try {
       var s = await nuvem.sb.auth.getSession(), tk = s.data.session && s.data.session.access_token;
       var r = await fetch(cfg.url + '/functions/v1/examinador', {method: 'POST', headers: {'Content-Type': 'application/json', Authorization: 'Bearer ' + tk, apikey: cfg.anonKey},
         body: JSON.stringify({tipo: 'discursiva', pasta: 'oab-2fase', id: id, resposta: resposta, banca: 'FGV · Exame de Ordem · 2ª fase'})});
       var d = await r.json(); if (!r.ok || d.erro) throw new Error(d.erro || ('erro ' + r.status));
-      var tot = d.topicos.reduce(function (a, t) { return a + t.nota; }, 0);
+      var tot = d.topicos.reduce(function (a2, t) { return a2 + t.nota; }, 0);
       box.innerHTML = '<div class="f2-ia"><h3>Examinador: ' + num2(tot) + ' de ' + num2(x.tipo === 'peca' ? 5 : 1.25) + '</h3><p>' + esc(d.comentario_geral) + '</p>' +
         d.topicos.map(function (t, i) { var nm = x.tipo === 'peca' ? x.topicos[i].t : x.itens[i].letra + ') ' + x.itens[i].p;
           return '<div class="f2-qfb"><h4>' + esc(nm) + ' · ' + num2(t.nota) + '</h4>' + (t.errado.length ? '<p><b>Erros:</b> ' + t.errado.map(esc).join(' · ') + '</p>' : '') + (t.faltou.length ? '<p><b>Faltou:</b> ' + t.faltou.map(esc).join(' · ') + '</p>' : '') + (t.melhorar.length ? '<p><b>Como melhorar:</b> ' + t.melhorar.map(esc).join(' · ') + '</p>' : '') + '</div>'; }).join('') +
-        (d.roteiro && d.roteiro.length ? '<h4>Roteiro do examinador</h4><ol>' + d.roteiro.map(function (p) { return '<li><b>' + esc(p.passo) + ':</b> ' + esc(p.como) + (p.fundamento ? ' (' + esc(p.fundamento) + ')' : '') + '</li>'; }).join('') + '</ol>' : '') +
         (d.paragrafo_exemplo ? '<p><b>Trecho reescrito:</b> ' + esc(d.paragrafo_exemplo) + '</p>' : '') + '</div>';
     } catch (e) { box.innerHTML = '<p class="aviso">O examinador não respondeu: ' + esc(e.message || e) + '. A correção automática acima continua valendo.</p>'; }
   }
   R['segunda-fase'] = function (arg) {
     if (!f2Liberada()) return f2Upsell();
     var h = (location.hash || '').split('/');
-    if (arg === 'item' && h[2]) return f2Item(h[2]);
+    if (arg && F2A[arg] && h[2] === 'prova') return f2Prova(arg);
     if (arg && F2A[arg]) return f2Area(arg);
     return f2Inicio();
   };
@@ -1091,26 +1104,23 @@
   }
   var f2Timer = null;
   document.addEventListener('input', function (ev) {
-    var t = ev.target; if (!t.dataset || !t.dataset.f2ed) return;
-    var id = t.dataset.f2ed, k = +t.dataset.k, g = f2(), x = F2M[id];
-    if (x.tipo === 'peca') g.rasc[id] = t.value; else { if (!Array.isArray(g.rasc[id])) g.rasc[id] = []; g.rasc[id][k] = t.value; }
-    var c = $('[data-lin="' + id + ':' + k + '"] span'); if (c) { var n = linhasTexto(t.value); c.textContent = n; c.parentNode.classList.toggle('acima', n > (x.tipo === 'peca' ? F2.PROVA.linhasPeca : F2.PROVA.linhasQuestao)); }
+    var t = ev.target; if (!t.dataset || !t.dataset.f2s) return;
+    f2Sim(t.dataset.f2s).resp[t.dataset.k] = t.value; ajustaFolha(t);
     clearTimeout(f2Timer); f2Timer = setTimeout(salvar, 800);
   });
   document.addEventListener('click', function (ev) {
-    var b = ev.target.closest('[data-f2peca],[data-f2corr],[data-f2reset],[data-f2ia],[data-act="f2-publicar"]'); if (!b) return;
-    var ds = b.dataset, g = f2();
+    var b = ev.target.closest('[data-f2ent],[data-f2ref],[data-f2ia],[data-ir],[data-act="f2-publicar"]'); if (!b) return;
+    var ds = b.dataset;
     if (ds.act === 'f2-publicar') { f2Publicar(); return; }
-    if (ds.f2peca) { g.peca[ds.f2peca] = +ds.o; salvar(); render(); return; }
-    if (ds.f2reset) { confirmar('Apagar o texto e começar este item de novo?', 'Recomeçar', function () { delete g.rasc[ds.f2reset]; delete g.peca[ds.f2reset]; delete f2Res[ds.f2reset]; salvar(); render(); }); return; }
-    if (ds.f2ia) { f2Examinador(ds.f2ia); return; }
-    if (ds.f2corr) {
-      var id = ds.f2corr, x = F2M[id], resp = g.rasc[id];
-      var vazio = x.tipo === 'peca' ? String(resp || '').trim().length < 80 : !(Array.isArray(resp) && resp.some(function (t) { return String(t || '').trim().length > 10; }));
-      if (vazio) { toast('Escreva a resposta antes de entregar.'); return; }
-      var res = f2Corrigir(x, x.tipo === 'peca' ? String(resp) : resp);
-      f2Res[id] = res; (g.tent[id] = g.tent[id] || []).push({em: Date.now(), nota: res.nota});
-      salvar(); render(); var fb = $('#f2-fb'); if (fb) fb.scrollIntoView({behavior: 'smooth', block: 'start'});
+    if (ds.ir) { var el = document.getElementById(ds.ir); if (el) el.scrollIntoView({behavior: 'smooth', block: 'start'}); return; }
+    if (ds.f2ia) { f2Examinador(ds.f2ia, ds.area, ds.k); return; }
+    if (ds.f2ref) { confirmar('Começar uma nova prova? A nota desta fica no seu histórico.', 'Nova prova', function () { var sm = f2Sim(ds.f2ref); sm.resp = {}; sm.ini = null; sm.fim = null; sm.seg = 0; salvar(); location.hash = '#segunda-fase/' + ds.f2ref; render(); }); return; }
+    if (ds.f2ent) {
+      var area = ds.f2ent, sm = f2Sim(area), vazias = ['q1', 'q2', 'q3', 'q4', 'peca'].filter(function (k) { return !String(sm.resp[k] || '').trim(); }).length;
+      confirmar((vazias ? 'Há ' + vazias + ' folha(s) em branco. ' : '') + 'Entregar a prova? Depois da entrega você vê a checagem, o modelo e a orientação.', 'Entregar', function () {
+        sm.fim = Date.now(); if (f2Rel) { clearInterval(f2Rel); f2Rel = null; }
+        sm.hist.push({em: sm.fim, nota: f2Resultado(area).total}); salvar(); location.hash = '#segunda-fase/' + area; render();
+      });
     }
   });
 
@@ -1355,6 +1365,7 @@
     if (!R[r]) r = 'painel';
     if (r !== 'diagnostico') pararRelogio();
     if (cronOf) { clearInterval(cronOf); cronOf = null; }
+    if (f2Rel) { clearInterval(f2Rel); f2Rel = null; }
     if (r !== 'relatorio') escolha = null;
     if (r !== 'exercicios' || (sess && sess.modo !== arg)) { if (r !== 'exercicios') sess = null; }
     if ((r === 'diagnostico' || r === 'exercicios') && rotaBase !== r) novaMistura();
