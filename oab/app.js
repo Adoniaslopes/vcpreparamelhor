@@ -3,6 +3,7 @@
    de domínio → cronograma pelos 5 passos → painel, sinopses, exercícios, provas anteriores e estúdio de áudio. */
 (function () {
   'use strict';
+  OAB.Q = OAB.Q || [];
   var D = OAB.DISC, DM = {};
   D.forEach(function (d) { DM[d.id] = d; });
   var QM = {};
@@ -1000,9 +1001,13 @@
   }
 
   // ---------- 2ª fase: prova simulada (caderno + folha de respostas; orientação só depois da entrega) ----------
-  var F2 = OAB.F2 || {AREAS: [], ITENS: [], ESTRUTURA: [], PROVA: {}};
-  var F2M = {}; (F2.ITENS || []).forEach(function (x) { F2M[x.id] = x; });
-  var F2A = {}; (F2.AREAS || []).forEach(function (a) { F2A[a.id] = a; });
+  var F2, F2M, F2A;
+  function prepararF2() {
+    F2 = OAB.F2 || {AREAS: [], ITENS: [], ESTRUTURA: [], PROVA: {}};
+    F2M = {}; (F2.ITENS || []).forEach(function (x) { F2M[x.id] = x; });
+    F2A = {}; (F2.AREAS || []).forEach(function (a) { F2A[a.id] = a; });
+  }
+  prepararF2();
   var f2Rel = null;
   function f2() { S.f2 = S.f2 || {}; S.f2.sim = S.f2.sim || {}; return S.f2; }
   function f2Liberada() { return !nuvem.ativo || nuvem.admin || nuvem.plano === '2fases' || nuvem.legado; }
@@ -1673,6 +1678,18 @@
       indexarQ();
     } catch (e) { /* sem provas importadas */ }
   }
+  // conteúdo protegido: só é entregue (pela função do servidor) a quem está logado e com acesso ativo
+  var PRIVADOS = ['q1', 'q2', 'q3', 'q4', 'sinopses', 'sinopses-ext1', 'sinopses-ext2', 'provas', 'fase2'], conteudoOk = false;
+  async function carregarConteudo(token) {
+    if (conteudoOk) return;
+    var textos = await Promise.all(PRIVADOS.map(async function (n) {
+      var r = await fetch((token ? 'conteudo/' : 'privado/') + n + '.js', {headers: token ? {Authorization: 'Bearer ' + token} : {}, cache: 'no-store'});
+      if (!r.ok) throw new Error('conteudo ' + n + ' ' + r.status);
+      return r.text();
+    }));
+    textos.forEach(function (t) { (0, eval)(t); });
+    indexarQ(); montarDiag(); prepararF2(); conteudoOk = true;
+  }
   function iniciarApp() { $('#acesso').hidden = true; $('#app').hidden = false; render(); }
   function acView(n) { $$('[data-ac]').forEach(function (s) { s.hidden = s.dataset.ac !== n; }); }
   function msg(id, t, ok) { var e = $('#' + id); e.textContent = t || ''; e.className = 'msg' + (t ? (ok ? ' ok' : ' bad') : ''); }
@@ -1688,7 +1705,7 @@
   }
   function contato() { return cfg.contato ? ' Dúvidas: ' + cfg.contato + '.' : ''; }
 
-  if (!cfg.url || !cfg.anonKey || !window.supabase) { iniciarApp(); return; }
+  if (!cfg.url || !cfg.anonKey || !window.supabase) { carregarConteudo(null).then(iniciarApp); return; }
 
   // login obrigatório a cada acesso: a sessão fica só nesta aba (fechou o navegador ou a aba, pede login de novo)
   var armazemSessao = {getItem: function (k) { try { return sessionStorage.getItem(k); } catch (e) { return null; } },
@@ -1748,6 +1765,8 @@
       if (!cancelado) setTimeout(function () { entrar(session); }, 15000);
       return;
     }
+    try { await carregarConteudo(session.access_token); }
+    catch (e) { $('#e-tit').textContent = 'Não foi possível carregar o conteúdo'; $('#e-txt').innerHTML = 'Verifique a sua internet e recarregue a página.<br><br>' + esc(contato()); acView('espera'); entrando = false; return; }
     nuvem.ativo = true; nuvem.uid = uid; nuvem.admin = !!p.admin; nuvem.nome = p.nome || ''; nuvem.plano = comprou ? ac.data.plano : null; nuvem.legado = !!liberadoManual;
     KEY = 'ontop-oab-v1-' + uid; S = carregar();
     try {
