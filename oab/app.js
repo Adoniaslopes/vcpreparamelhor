@@ -933,14 +933,14 @@
     if (arg && DM[arg]) {
       var d = DM[arg], s = OAB.SIN[arg];
       return '<p class="noprint"><a href="#sinopses" class="link">Todas as sinopses</a></p><div class="cab"><div><h1 style="color:' + d.cor + '">' + esc(d.nome) + '</h1><p class="sub">' + d.q + ' questões na prova · ' + esc(OAB.GRUPOS[d.g].nome) + (S.dominio && S.dominio.indexOf(d.id) > -1 ? ' · <span class="dom-mark">★ disciplina de domínio</span>' : '') + '</p></div>' +
-        '<div class="chips noprint"><a class="btn pri" href="#exercicios/' + arg + '">Praticar ' + esc(d.curto) + '</a><a class="btn" href="#estudio">Gravar explicação</a></div></div>' +
+        '<div class="chips noprint"><a class="btn pri" href="#exercicios/' + arg + '">Praticar ' + esc(d.curto) + '</a><a class="btn" href="#estudio/' + arg + '">Ler e gravar no estúdio</a></div></div>' +
         '<div class="grade" style="grid-template-columns:minmax(0,1.6fr) minmax(240px,1fr);align-items:start" id="sin-grid"><div class="bloco" style="border-top:5px solid ' + d.cor + '"><h2>O que mais cai</h2>' +
-        s.tm.map(function (t) { return '<div class="tema"><h3>' + esc(t.t) + '</h3><ul>' + t.p.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>'; }).join('') +
+        s.tm.map(function (t, i) { return '<div class="tema"><h3>' + esc(t.t) + '</h3>' + (t.x ? '<p class="entenda"><b>Entenda.</b> ' + esc(t.x) + '</p>' : '') + '<ul>' + t.p.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul><a class="link peq noprint au-link" href="#estudio/' + arg + '.' + i + '">🎙 Ler em voz alta e gravar este tema</a></div>'; }).join('') +
         '</div><div class="pilha"><div class="peg"><h3>Pegadinhas da banca</h3><ul>' + s.pg.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>' +
-        '<div class="bloco"><h3>Lei seca obrigatória</h3><ul style="padding-left:1.2rem;margin:0">' + s.lei.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>' +
+        '<div class="bloco"><h3>Lei seca obrigatória</h3><ul style="padding-left:1.2rem;margin:0">' + s.lei.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' + leisLinks(s) + '<a class="link peq noprint" href="#estudio/' + arg + '.lei">🎙 Ler a lei seca em voz alta</a></div>' +
         blocoCaiu(arg) + '<div class="bloco"><h3>Passo 4 · seu resumo</h3><p class="peq">Depois de ler, escreva à mão uma página com o que você lembra. O que não veio à memória é o que você revisa amanhã.</p></div></div></div>';
     }
-    return cena({selo: 'Passo 4 · Sinopses', titulo: 'Uma página vale mais que um livro', lead: 'Para cada disciplina: os temas que a FGV mais cobra, as pegadinhas da banca, a lei seca obrigatória e o que caiu nas últimas 10 provas. Ordenadas pelo peso na prova.'}) +
+    return cena({selo: 'Passo 4 · Sinopses', titulo: 'O essencial, explicado', lead: 'Para cada disciplina: os temas que a FGV mais cobra, as pegadinhas da banca, a lei seca obrigatória e o que caiu nas últimas 10 provas. Cada tema traz uma explicação para você entender antes de decorar.'}) +
       ['A', 'B', 'C'].map(function (g) {
         return '<h2 style="margin-top:22px">' + esc(OAB.GRUPOS[g].nome) + '</h2><div class="grade g3">' + D.filter(function (d) { return d.g === g; }).map(function (d) {
           var x = dominio(d.id);
@@ -1391,38 +1391,110 @@
     });
   }
   function idbTx(modo, fn) { return idb().then(function (db) { return new Promise(function (ok, er) { var t = db.transaction('a', modo), s = t.objectStore('a'), r = fn(s); t.oncomplete = function () { ok(r && r.result); }; t.onerror = function () { er(t.error); }; }); }); }
-  R.estudio = function () {
-    setTimeout(listarAudios, 0);
-    return cena({selo: 'Passo 5 · Estúdio', titulo: 'Explique para aprender', lead: 'Gravar o que estudou, com as suas palavras, revela o que você ainda não entendeu. E vira material para ouvir no trânsito, na fila, antes de dormir.'}) +
-      '<div class="grade g2"><div class="bloco"><h2>Nova gravação</h2><label>Disciplina<select id="au-d">' + D.map(function (d) { return '<option value="' + d.id + '">' + esc(d.nome) + '</option>'; }).join('') + '</select></label>' +
-      '<label>Tema<input id="au-t" placeholder="Ex.: prescrição disciplinar"></label>' +
-      '<div style="display:flex;gap:16px;align-items:center"><button class="rec" id="au-rec" aria-label="Gravar"><svg width="28" height="28" viewBox="0 0 24 24" fill="#fff"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3m5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.9V21h2v-3.1a7 7 0 0 0 6-6.9z"/></svg></button><span id="au-st" class="sub">Toque para gravar. Fale por 2 a 3 minutos.</span></div>' +
-      '<p class="peq sub" style="margin-top:14px">Roteiro: 1) o que é; 2) o artigo de lei; 3) a pegadinha que a banca usa; 4) um exemplo.</p></div>' +
-      '<div class="bloco"><h2>Suas gravações</h2><div id="au-lista" class="pilha"><p class="sub">Carregando…</p></div><p class="peq sub" style="margin-top:12px">Os áudios ficam guardados neste aparelho.</p></div></div>';
+  // leitura em voz alta: o texto da sinopse ou da lei fica na tela enquanto o aluno grava
+  var auEstado = {d: null, k: '0', fs: 1.06}, auRel = null, auSeg = 0, auInfo = null;
+  function liTxt(x) { return '<li>' + esc(x) + '</li>'; }
+  function leisLinks(s) {
+    return s.leis && s.leis.length ? '<div class="leis-links"><span class="sub peq">Texto oficial da lei:</span>' + s.leis.map(function (l) { return '<a class="btn mini" target="_blank" rel="noopener" href="' + l[1] + '">' + esc(l[0]) + ' ↗</a>'; }).join('') + '</div>' : '';
+  }
+  function auRotulo(d, k) {
+    var s = OAB.SIN[d];
+    if (k === 'pg') return 'Pegadinhas da banca';
+    if (k === 'lei') return 'Lei seca obrigatória';
+    return (s.tm[+k] || s.tm[0]).t;
+  }
+  function auTexto(d, k) {
+    var s = OAB.SIN[d];
+    if (k === 'pg') return '<h3>Pegadinhas da banca</h3><ul>' + s.pg.map(liTxt).join('') + '</ul>';
+    if (k === 'lei') return '<h3>Lei seca obrigatória</h3><p class="entenda">Abra o texto oficial no botão abaixo e leia em voz alta os artigos desta lista. A letra da lei, lida e ouvida várias vezes, é o que faz você reconhecer a alternativa certa na prova.</p><ul>' + s.lei.map(liTxt).join('') + '</ul>';
+    var t = s.tm[+k] || s.tm[0];
+    return '<h3>' + esc(t.t) + '</h3>' + (t.x ? '<p class="entenda"><b>Entenda.</b> ' + esc(t.x) + '</p>' : '') + '<ul>' + t.p.map(liTxt).join('') + '</ul>';
+  }
+  function auOpcoes(d, k) {
+    return OAB.SIN[d].tm.map(function (t, i) { return '<option value="' + i + '"' + (String(i) === k ? ' selected' : '') + '>Tema ' + (i + 1) + ' · ' + esc(t.t) + '</option>'; }).join('') +
+      '<option value="pg"' + (k === 'pg' ? ' selected' : '') + '>Pegadinhas da banca</option><option value="lei"' + (k === 'lei' ? ' selected' : '') + '>Lei seca obrigatória</option>';
+  }
+  function auChaves(d) { return OAB.SIN[d].tm.map(function (t, i) { return String(i); }).concat(['pg', 'lei']); }
+  function auMostrar() {
+    var d = auEstado.d, k = auEstado.k, e = $('#au-txt');
+    if (!e) return;
+    e.innerHTML = auTexto(d, k); e.style.fontSize = auEstado.fs + 'rem'; e.scrollTop = 0;
+    $('#au-tm').innerHTML = auOpcoes(d, k);
+    $('#au-leis').innerHTML = leisLinks(OAB.SIN[d]);
+  }
+  function mmss(n) { return String(Math.floor(n / 60)).padStart(2, '0') + ':' + String(n % 60).padStart(2, '0'); }
+  var IC = {
+    mic: '<svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3m5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.9V21h2v-3.1a7 7 0 0 0 6-6.9z"/></svg>',
+    pausa: '<svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>',
+    play: '<svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4v16l13-8z"/></svg>',
+    parar: '<svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h12v12H6z"/></svg>'
+  };
+  R.estudio = function (arg) {
+    if (arg) { var a = arg.split('.'); if (DM[a[0]] && OAB.SIN[a[0]]) { auEstado.d = a[0]; auEstado.k = a[1] != null && auChaves(a[0]).indexOf(a[1]) > -1 ? a[1] : '0'; } }
+    if (!auEstado.d || !OAB.SIN[auEstado.d]) { auEstado.d = D[0].id; auEstado.k = '0'; }
+    var d = auEstado.d, s = OAB.SIN[d];
+    setTimeout(function () { listarAudios(); auBotoes(); }, 0);
+    return cena({selo: 'Passo 5 · Estúdio', titulo: 'Leia, grave e ouça', lead: 'Ler em voz alta, ouvir a própria voz e depois explicar sem olhar ativa a memória por três caminhos ao mesmo tempo. E a gravação vira material para revisar no trânsito, na fila, antes de dormir.'}) +
+      '<div class="estudio"><div class="bloco au-leitura"><div class="au-cab"><span class="passo-n">1</span><h2>Leia em voz alta</h2></div>' +
+      '<div class="au-sel"><label>Disciplina<select id="au-d">' + D.filter(function (x) { return OAB.SIN[x.id]; }).map(function (x) { return '<option value="' + x.id + '"' + (x.id === d ? ' selected' : '') + '>' + esc(x.nome) + '</option>'; }).join('') + '</select></label>' +
+      '<label>O que vai ler<select id="au-tm">' + auOpcoes(d, auEstado.k) + '</select></label></div>' +
+      '<div class="au-tools"><button class="btn mini" data-au-nav="-1">‹ Anterior</button><button class="btn mini" data-au-nav="1">Próximo ›</button><span class="au-esp"></span><button class="btn mini" data-au-fs="-1" aria-label="Diminuir a letra">A−</button><button class="btn mini" data-au-fs="1" aria-label="Aumentar a letra">A+</button></div>' +
+      '<div class="au-texto" id="au-txt" tabindex="0" style="font-size:' + auEstado.fs + 'rem">' + auTexto(d, auEstado.k) + '</div><div id="au-leis">' + leisLinks(s) + '</div></div>' +
+      '<div class="pilha"><div class="bloco au-grav"><div class="au-cab"><span class="passo-n">2</span><h2>Grave e ouça</h2></div>' +
+      '<div class="au-painel"><div class="au-tempo" id="au-tempo">' + mmss(auSeg) + '</div><div class="sub" id="au-st" role="status">Escolha o texto, toque em Gravar e leia em voz alta.</div></div>' +
+      '<div class="au-botoes"><button class="au-b au-rec" id="au-rec">' + IC.mic + '<span>Gravar</span></button><button class="au-b" id="au-pausa" disabled>' + IC.pausa + '<span>Pausar</span></button><button class="au-b" id="au-parar" disabled>' + IC.parar + '<span>Parar e salvar</span></button></div>' +
+      '<div id="au-ultimo"></div>' +
+      '<ol class="au-passos peq"><li><b>Leia</b> o texto em voz alta, gravando.</li><li><b>Ouça</b> a gravação acompanhando o texto.</li><li><b>Explique</b> sem olhar: grave de novo com as suas palavras. O que não sair é o que você revisa amanhã.</li></ol></div>' +
+      '<div class="bloco"><h2>Suas gravações</h2><div id="au-lista" class="pilha"><p class="sub">Carregando…</p></div><p class="peq sub" style="margin-top:12px">Os áudios ficam guardados neste aparelho.</p></div></div></div>';
   };
   function listarAudios() {
     var el = $('#au-lista'); if (!el) return;
     idbTx('readonly', function (s) { return s.getAll(); }).then(function (l) {
       l = (l || []).sort(function (a, b) { return b.id - a.id; });
-      if (!l.length) { el.innerHTML = '<p class="sub">Nenhuma gravação ainda.</p>'; return; }
-      el.innerHTML = l.map(function (a) { return '<div><div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><span>' + tagDisc(a.d) + ' ' + esc(a.t || 'Sem tema') + ' <span class="sub peq">' + new Date(a.id).toLocaleDateString('pt-BR') + '</span></span><button class="link" data-au-del="' + a.id + '">Apagar</button></div><audio controls preload="none" style="width:100%;margin-top:6px" src="' + URL.createObjectURL(a.blob) + '"></audio></div>'; }).join('');
+      if (!l.length) { el.innerHTML = '<p class="sub">Nenhuma gravação ainda. A primeira leva 2 minutos.</p>'; return; }
+      el.innerHTML = l.map(function (a) { return '<div class="au-item"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><span>' + tagDisc(a.d) + ' ' + esc(a.t || 'Sem tema') + ' <span class="sub peq">' + new Date(a.id).toLocaleDateString('pt-BR') + (a.seg ? ' · ' + mmss(a.seg) : '') + '</span></span><button class="link" data-au-del="' + a.id + '">Apagar</button></div><audio controls preload="none" style="width:100%;margin-top:6px" src="' + URL.createObjectURL(a.blob) + '"></audio></div>'; }).join('');
     }).catch(function () { el.innerHTML = '<p class="sub">Este navegador não permite guardar áudios.</p>'; });
   }
-  function alternarGravacao() {
-    var st = $('#au-st'), bt = $('#au-rec');
-    if (gravador && gravador.state === 'recording') { gravador.stop(); return; }
+  function auBotoes() {
+    var st = gravador ? gravador.state : 'inactive', r = $('#au-rec'), p = $('#au-pausa'), f = $('#au-parar'), m = $('#au-st');
+    if (!r) return;
+    r.disabled = st !== 'inactive'; p.disabled = st === 'inactive'; f.disabled = st === 'inactive';
+    p.innerHTML = st === 'paused' ? IC.play + '<span>Continuar</span>' : IC.pausa + '<span>Pausar</span>';
+    r.classList.toggle('on', st === 'recording'); p.classList.toggle('on', st === 'paused');
+    if (st === 'recording') m.textContent = 'Gravando: leia em voz alta, com calma.';
+    else if (st === 'paused') m.textContent = 'Pausado. Toque em Continuar quando quiser.';
+    var t = $('#au-tempo'); if (t) t.textContent = mmss(auSeg);
+  }
+  function auRelogio(on) {
+    if (auRel) { clearInterval(auRel); auRel = null; }
+    if (on) auRel = setInterval(function () { if (gravador && gravador.state === 'recording') { auSeg++; var e = $('#au-tempo'); if (e) e.textContent = mmss(auSeg); } }, 1000);
+  }
+  function auGravar() {
+    var st = $('#au-st');
     if (!navigator.mediaDevices || !window.MediaRecorder) { st.textContent = 'Este navegador não permite gravar áudio. Use o gravador do celular.'; return; }
     navigator.mediaDevices.getUserMedia({audio: true}).then(function (stream) {
-      pedacos = []; gravador = new MediaRecorder(stream);
-      gravador.ondataavailable = function (e) { if (e.data.size) pedacos.push(e.data); };
-      gravador.onstop = function () {
-        stream.getTracks().forEach(function (t) { t.stop(); }); bt.classList.remove('on'); st.textContent = 'Gravação salva.';
-        var a = {id: Date.now(), d: $('#au-d').value, t: $('#au-t').value.trim(), blob: new Blob(pedacos, {type: gravador.mimeType || 'audio/webm'})};
-        idbTx('readwrite', function (s) { return s.put(a); }).then(listarAudios).catch(function () { st.textContent = 'Não foi possível guardar a gravação.'; });
+      pedacos = []; auSeg = 0; auInfo = {d: auEstado.d, t: auRotulo(auEstado.d, auEstado.k)};
+      var g = gravador = new MediaRecorder(stream);
+      g.ondataavailable = function (e) { if (e.data.size) pedacos.push(e.data); };
+      g.onstop = function () {
+        stream.getTracks().forEach(function (t) { t.stop(); });
+        auRelogio(false);
+        var a = {id: Date.now(), d: auInfo.d, t: auInfo.t, seg: auSeg, blob: new Blob(pedacos, {type: g.mimeType || 'audio/webm'})};
+        gravador = null; auBotoes();
+        var m = $('#au-st'); if (m) m.textContent = 'Gravação salva. Ouça agora, acompanhando o texto.';
+        var u = $('#au-ultimo'); if (u) u.innerHTML = '<div class="au-ok"><b>Ouça a sua gravação</b><audio controls style="width:100%;margin-top:6px" src="' + URL.createObjectURL(a.blob) + '"></audio></div>';
+        idbTx('readwrite', function (s) { return s.put(a); }).then(listarAudios).catch(function () { if (m) m.textContent = 'Não foi possível guardar a gravação neste aparelho.'; });
       };
-      gravador.start(); bt.classList.add('on'); st.textContent = 'Gravando… toque de novo para parar.';
-    }).catch(function () { st.textContent = 'Permita o uso do microfone para gravar.'; });
+      g.start(1000); auRelogio(true); auBotoes();
+      var u = $('#au-ultimo'); if (u) u.innerHTML = '';
+    }).catch(function () { st.textContent = 'Permita o uso do microfone para gravar (ícone do cadeado, ao lado do endereço do site).'; });
   }
+  function auPausar() {
+    if (!gravador) return;
+    if (gravador.state === 'recording') gravador.pause(); else if (gravador.state === 'paused') gravador.resume();
+    auBotoes();
+  }
+  function auParar() { if (gravador && gravador.state !== 'inactive') gravador.stop(); }
 
   // ---------- roteador ----------
   var rota = '';
@@ -1434,6 +1506,7 @@
     if (r !== 'cronograma') escolhaCr = null;
     if (!R[r]) r = 'painel';
     if (r !== 'diagnostico') pararRelogio();
+    if (r !== 'estudio' && gravador && gravador.state !== 'inactive') gravador.stop();
     if (cronOf) { clearInterval(cronOf); cronOf = null; }
     if (f2Rel) { clearInterval(f2Rel); f2Rel = null; }
     if (r !== 'relatorio') escolha = null;
@@ -1488,7 +1561,11 @@
       salvar(); render(); return;
     }
     if (ds.auDel) { idbTx('readwrite', function (s) { return s.delete(+ds.auDel); }).then(listarAudios); return; }
-    if (t.id === 'au-rec') { alternarGravacao(); return; }
+    if (t.id === 'au-rec') { auGravar(); return; }
+    if (t.id === 'au-pausa') { auPausar(); return; }
+    if (t.id === 'au-parar') { auParar(); return; }
+    if (ds.auFs) { auEstado.fs = Math.max(0.9, Math.min(1.6, +(auEstado.fs + 0.1 * ds.auFs).toFixed(2))); var tx = $('#au-txt'); if (tx) tx.style.fontSize = auEstado.fs + 'rem'; return; }
+    if (ds.auNav) { var ch = auChaves(auEstado.d), ix = ch.indexOf(auEstado.k) + (+ds.auNav); if (ix >= 0 && ix < ch.length) { auEstado.k = ch[ix]; auMostrar(); } return; }
     var a = ds.act; if (!a) return;
     if (a === 'ir-form') { var fm = $('#f-perfil'); if (fm) { fm.scrollIntoView({behavior: 'smooth', block: 'start'}); setTimeout(function () { var i = $('#p-nome'); if (i) i.focus({preventScroll: true}); }, 400); } return; }
     if (a === 'pausar') { salvar(); toast('Pausado. Seu progresso está salvo: continue quando quiser.'); location.hash = '#painel'; return; }
@@ -1541,6 +1618,8 @@
       return;
     }
     if (t.id === 'imp-provas' && t.files[0]) { nuvem.importar(t.files[0]); }
+    if (t.id === 'au-d') { auEstado.d = t.value; auEstado.k = '0'; auMostrar(); return; }
+    if (t.id === 'au-tm') { auEstado.k = t.value; auMostrar(); return; }
   });
   // guarda o que o aluno já mexeu no formulário do plano antes de redesenhar a tela
   function guardarPlano() {
