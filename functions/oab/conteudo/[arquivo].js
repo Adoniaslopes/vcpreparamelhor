@@ -3,7 +3,8 @@
 const SB_URL = 'https://nzzgfxctuulmudztfdab.supabase.co';
 const ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56emdmeGN0dXVsbXVkenRmZGFiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE4Mjk2NzUsImV4cCI6MjEwNzQwNTY3NX0.fMTVwtQNLWvwPwg6bvN0WNq8uQnGKhRhWD4fcknX7Sw';
 const PERMITIDOS = new Set(['q1', 'q2', 'q3', 'q4', 'sinopses', 'sinopses-ext1', 'sinopses-ext2', 'provas', 'fase2']);
-const permitido = (n) => PERMITIDOS.has(n) || /^cad\d{2}$/.test(n);
+const permitido = (n) => n === 'diag' || PERMITIDOS.has(n) || /^cad\d{2}$/.test(n);
+// O diagnóstico gratuito (só as 80 questões do diagnóstico) é liberado para qualquer pessoa cadastrada e logada.
 
 const nega = (status) => new Response(status === 401 ? 'Faça login para acessar.' : 'Acesso não liberado para este e-mail.', {
   status, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' }
@@ -27,6 +28,7 @@ async function entregar({ request, params, env }) {
   if (!u.ok) return nega(401);
   const user = await u.json();
   const email = String(user.email || '').toLowerCase();
+  if (nome === 'diag') return arquivo(env, request, nome);
 
   const [pr, ac] = await Promise.all([
     fetch(`${SB_URL}/rest/v1/perfis?select=status,admin,expira_em&id=eq.${user.id}`, { headers: h }),
@@ -46,6 +48,10 @@ async function entregar({ request, params, env }) {
   }
   if (!ok) return nega(403);
 
+  return arquivo(env, request, nome);
+}
+
+async function arquivo(env, request, nome) {
   const r = await env.ASSETS.fetch(new URL('/oab/privado/' + nome + '.js', request.url));
   if (!r.ok) return new Response('Conteúdo indisponível', { status: 502 });
   return new Response(r.body, {
