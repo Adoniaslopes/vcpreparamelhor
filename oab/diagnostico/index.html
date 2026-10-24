@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diagnóstico gratuito · Método Aprovação OAB</title>
+<meta name="description" content="Responda a 80 questões on-line, na distribuição da FGV, e receba na hora o seu raio-X nas 20 disciplinas da 1ª fase da OAB.">
+<meta name="theme-color" content="#04091A">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2313284A'/%3E%3Ccircle cx='22' cy='32' r='8' fill='%23F5C542'/%3E%3Ccircle cx='42' cy='32' r='8' fill='none' stroke='%23F5F7FB' stroke-width='3'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=IBM+Plex+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+<style>
+:root{--noite:#04091A;--noite2:#0A1430;--card:#0F1D38;--linha:rgba(157,176,211,.18);--luz:#EEF2FA;--nevoa:#A9B7D0;--ouro:#F5C542;--folha:#3DDC97;--brasa:#FF4D5E;--vinho:#A3172B;--azul:#13284A}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:#04091A}
+body{background:radial-gradient(70% 40% at 80% 0%,rgba(245,197,66,.08),transparent 70%),linear-gradient(180deg,var(--noite2),var(--noite) 60%);background-attachment:fixed;color:var(--luz);font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:17px;line-height:1.55;min-height:100vh;-webkit-font-smoothing:antialiased}
+a{color:var(--ouro)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;max-width:1080px;margin:0 auto;padding:18px 20px;font-size:14px;color:var(--nevoa)}
+.top b{font-family:'Barlow Condensed',sans-serif;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--ouro);font-size:15px}
+.top a{color:var(--nevoa)}
+.wrap{max-width:1080px;margin:0 auto;padding:10px 20px 80px}
+h1,h2{font-family:'Newsreader',Georgia,serif;font-weight:500;letter-spacing:-.01em;line-height:1.1}
+h1{font-size:clamp(34px,5vw,54px);margin-bottom:18px}
+h1 em,h2 em{color:var(--ouro);font-style:italic}
+h2{font-size:clamp(26px,3.4vw,34px);margin-bottom:12px}
+p+p{margin-top:12px}
+.sub{color:var(--nevoa)}
+.chip{display:inline-block;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;letter-spacing:.18em;text-transform:uppercase;color:var(--ouro);background:rgba(245,197,66,.12);border:1px solid rgba(245,197,66,.45);padding:6px 12px;border-radius:8px;margin-bottom:18px}
+.card{background:var(--card);border:1px solid var(--linha);border-radius:22px;padding:28px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font:700 17px 'IBM Plex Sans',sans-serif;padding:15px 26px;border-radius:999px;border:1px solid var(--linha);background:rgba(255,255,255,.04);color:var(--luz);cursor:pointer;text-decoration:none;transition:transform .12s}
+.btn:hover{transform:translateY(-1px)}
+.btn.pri{background:var(--ouro);color:#1A1404;border:0;box-shadow:0 14px 34px rgba(245,197,66,.28)}
+.btn:disabled{opacity:.5;cursor:default;transform:none}
+.btn:focus-visible,input:focus-visible,.alt:focus-visible{outline:3px solid #3EC5FF;outline-offset:2px}
+/* cadastro */
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:start;margin-top:20px}
+.lista{list-style:none;margin:22px 0}
+.lista li{padding:10px 0 10px 32px;position:relative;border-top:1px solid var(--linha);color:#D7DDEA}
+.lista li:before{content:'✓';position:absolute;left:4px;color:var(--folha);font-weight:700}
+form label{display:block;font-size:14.5px;color:var(--nevoa);margin-top:14px}
+form input[type=text],form input[type=email],form input[type=tel],form input[type=password]{display:block;width:100%;margin-top:6px;font:500 17px 'IBM Plex Sans',sans-serif;color:var(--luz);background:#081226;border:1px solid #34507F;border-radius:12px;padding:12px 14px}
+.aceite{display:flex!important;gap:10px;align-items:flex-start;font-size:14px!important;line-height:1.45}
+.aceite input{margin-top:3px;width:18px;height:18px;flex:none}
+form .btn{width:100%;margin-top:20px}
+.msg{min-height:1.4em;margin-top:12px;font-size:14.5px}
+.msg.bad{color:#FF8A95}.msg.ok{color:var(--folha)}
+.troca{margin-top:16px;font-size:14.5px;text-align:center;color:var(--nevoa)}
+.mini{font-size:13px;color:#7685A3;margin-top:12px}
+/* questão */
+.cab{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:12px}
+.prog{height:8px;border-radius:8px;background:rgba(255,255,255,.08);overflow:hidden;margin-bottom:22px}
+.prog i{display:block;height:100%;background:linear-gradient(90deg,var(--ouro),var(--folha));transition:width .3s}
+.qgrid{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:22px;align-items:start}
+.tag{display:inline-block;font-size:13px;font-weight:600;padding:4px 10px;border-radius:999px;border:1px solid var(--linha);margin-bottom:14px}
+.enun{font-family:'Newsreader',serif;font-size:21px;line-height:1.5;white-space:pre-line}
+.alts{display:flex;flex-direction:column;gap:10px;margin-top:20px}
+.alt{display:flex;gap:14px;align-items:flex-start;text-align:left;font:16.5px/1.5 'IBM Plex Sans',sans-serif;color:var(--luz);background:rgba(255,255,255,.03);border:1.5px solid var(--linha);border-radius:14px;padding:14px 16px;cursor:pointer}
+.alt:hover:not(:disabled){border-color:rgba(245,197,66,.6)}
+.alt .lt{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:700;border:1.5px solid var(--nevoa);font-size:14px}
+.alt.cert{border-color:var(--folha);background:rgba(61,220,151,.1)}.alt.cert .lt{background:var(--folha);border-color:var(--folha);color:#062216}
+.alt.errd{border-color:var(--brasa);background:rgba(255,77,94,.08)}.alt.errd .lt{background:var(--brasa);border-color:var(--brasa);color:#fff}
+.alt:disabled{cursor:default}
+.ret{margin-top:18px;padding:16px 18px;border-radius:14px;font-size:15.5px}
+.ret b{display:block;font-size:17px;margin-bottom:4px}
+.ret.ok{background:rgba(61,220,151,.1);border:1px solid rgba(61,220,151,.45)}
+.ret.er{background:rgba(255,77,94,.08);border:1px solid rgba(255,77,94,.4)}
+.ret.ns{background:rgba(62,197,255,.08);border:1px solid rgba(62,197,255,.4)}
+.ret .x{margin-top:8px;color:#D7DDEA}
+.barra{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:22px}
+.cartao{display:grid;grid-template-columns:repeat(8,1fr);gap:5px;margin-top:12px}
+.cartao button{font:600 12px 'IBM Plex Sans',sans-serif;aspect-ratio:1;border-radius:7px;border:1px solid var(--linha);background:rgba(255,255,255,.03);color:var(--nevoa);cursor:pointer;padding:0}
+.cartao .ok{background:rgba(61,220,151,.25);border-color:var(--folha);color:#fff}
+.cartao .er{background:rgba(255,77,94,.2);border-color:var(--brasa);color:#fff}
+.cartao .ns{background:rgba(62,197,255,.15);border-color:#3EC5FF;color:#fff}
+.cartao .atual{outline:2px solid var(--ouro);outline-offset:1px}
+.placar{display:flex;justify-content:space-between;align-items:baseline}
+.placar b{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:44px;line-height:1;color:var(--folha)}
+/* resultado */
+.nota{display:grid;grid-template-columns:auto 1fr;gap:30px;align-items:center}
+.medidor{width:210px;height:210px;border-radius:50%;display:grid;place-items:center;text-align:center}
+.medidor div{width:166px;height:166px;border-radius:50%;background:var(--noite2);display:grid;place-items:center}
+.medidor b{display:block;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:72px;line-height:.9}
+.medidor span{font-size:14px;color:var(--nevoa)}
+.discs{display:grid;grid-template-columns:1fr 1fr;gap:6px 30px;margin-top:10px}
+.dl{display:grid;grid-template-columns:140px 1fr 46px;gap:10px;align-items:center;font-size:14.5px;padding:4px 0}
+.dl .bar{height:10px;border-radius:6px;background:rgba(255,255,255,.08);overflow:hidden}
+.dl .bar i{display:block;height:100%;border-radius:6px}
+.dl .v{text-align:right;font-weight:600}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:18px}
+.pill{display:inline-block;font-size:14px;font-weight:600;padding:6px 12px;border-radius:999px;margin:4px 6px 0 0;background:rgba(255,255,255,.06);border:1px solid var(--linha)}
+.cta{margin-top:26px;padding:30px;border-radius:26px;border:2.5px solid var(--ouro);background:linear-gradient(160deg,rgba(245,197,66,.14),rgba(245,197,66,.02) 60%),var(--card)}
+.cta .preco{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:64px;line-height:1;color:var(--ouro)}
+.oculto{display:none!important}
+.carregando{text-align:center;padding:80px 20px;color:var(--nevoa)}
+@media (max-width:860px){.hero,.qgrid,.nota{grid-template-columns:1fr}.discs,.g3{grid-template-columns:1fr}.medidor{margin:0 auto}.qgrid aside{order:-1}.cartao{grid-template-columns:repeat(10,1fr)}}
+@media (max-width:480px){.card{padding:20px}.enun{font-size:19px}.dl{grid-template-columns:110px 1fr 40px}}
+</style>
+</head>
+<body>
+<header class="top"><b>Método Aprovação OAB</b><span><a href="../vendas/">Conhecer o método</a> · <a href="../">Já sou aluno: entrar</a></span></header>
+<main class="wrap" id="tela"><div class="carregando">Carregando…</div></main>
+
+<script src="../config.js"></script>
+<script src="../vendor/supabase.js"></script>
+<script src="../data/disciplinas.js"></script>
+<script>
+(function () {
+  'use strict';
+  var cfg = window.ONTOP_CONFIG || {}, CARGO = 'oab-1fase', VENDAS = '../vendas/?utm_source=diagnostico&utm_medium=resultado';
+  var tela = document.getElementById('tela');
+  var D = (window.OAB && OAB.DISC) || [], DM = {}; D.forEach(function (d) { DM[d.id] = d; });
+  var Q = [], sb = null, user = null, S = null, KEY = '', syncT = null, MIX = Math.floor(Math.random() * 1e9), entrando = false;
+
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]; }); }
+  function $(s) { return document.querySelector(s); }
+  function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* sem armazenamento */ } }
+  function hash(s) { var h = 2166136261; for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+  function rng(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; var t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  function ordemAlt(q) { var r = rng(hash(q.id + ':' + S.seed + ':' + MIX)), o = [0, 1, 2, 3]; for (var i = 3; i > 0; i--) { var j = Math.floor(r() * (i + 1)); var t = o[i]; o[i] = o[j]; o[j] = t; } return o; }
+  function primeiroNome() { var n = (user && user.user_metadata && user.user_metadata.nome) || ''; return n.split(' ')[0]; }
+  function traduz(e) {
+    var m = String((e && (e.message || e.error_description)) || e || '');
+    if (/Invalid login credentials/i.test(m)) return 'E-mail ou senha incorretos.';
+    if (/Email not confirmed/i.test(m)) return 'Confirme o seu e-mail pelo link que enviamos e tente de novo.';
+    if (/already registered|already exists/i.test(m)) return 'Este e-mail já tem cadastro. Use "Já tenho cadastro".';
+    if (/Password should be at least|weak/i.test(m)) return 'A senha precisa ter pelo menos 8 caracteres.';
+    if (/rate limit|too many/i.test(m)) return 'Muitas tentativas agora. Aguarde alguns minutos e tente de novo.';
+    if (/Failed to fetch|NetworkError/i.test(m)) return 'Sem conexão com o servidor. Verifique a sua internet.';
+    return 'Não foi possível concluir: ' + m;
+  }
+  function msg(id, t, ok) { var e = document.getElementById(id); if (!e) return; e.textContent = t || ''; e.className = 'msg' + (t ? (ok ? ' ok' : ' bad') : ''); }
+  function soDigitos(s) { return String(s || '').replace(/\D/g, ''); }
+
+  // ---------- estado (mesmo formato da plataforma: quem comprar depois já entra com o diagnóstico feito) ----------
+  function novoEstado() { return {v: 1, seed: Math.floor(Math.random() * 1e9), perfil: null, diag: {resp: {}, atual: 0, ini: null, fim: null, seg: 0}, dominio: null, crono: null, hist: [], feito: {}, provas: {}, at: Date.now()}; }
+  function salvar() {
+    S.at = Date.now(); lsSet(KEY, JSON.stringify(S));
+    clearTimeout(syncT); syncT = setTimeout(enviar, 1200);
+  }
+  async function enviar() {
+    try {
+      var r = await sb.from('progresso').select('estado').eq('user_id', user.id).maybeSingle();
+      var e = (r.data && r.data.estado) || {}; if (!e.cargos) e = {cargos: {}};
+      var rem = e.cargos[CARGO];
+      if (rem && rem.v === 1) { rem.diag = S.diag; rem.seed = rem.seed || S.seed; rem.at = S.at; e.cargos[CARGO] = rem; } else e.cargos[CARGO] = S;
+      await sb.from('progresso').upsert({user_id: user.id, estado: e, atualizado_em: new Date().toISOString()});
+    } catch (err) { /* segue só com o salvo no aparelho */ }
+    lead({respondidas: Object.keys(S.diag.resp).length, nota: S.diag.fim ? nota() : null, concluido_em: S.diag.fim ? new Date(S.diag.fim).toISOString() : null});
+  }
+  async function lead(extra) {
+    try {
+      var m = user.user_metadata || {};
+      var l = Object.assign({id: user.id, nome: m.nome || null, email: user.email, whatsapp: m.whatsapp || null, aceite_contato: !!m.aceite_contato, origem: m.origem || null, atualizado_em: new Date().toISOString()}, extra || {});
+      await sb.from('leads_diagnostico').upsert(l);
+    } catch (e) { /* tabela ainda não criada: o cadastro continua valendo */ }
+  }
+
+  // ---------- telas: cadastro e login ----------
+  function telaCadastro(modo) {
+    var origem = new URLSearchParams(location.search).get('utm_source') || '';
+    tela.innerHTML =
+      '<div class="hero"><div><span class="chip">Diagnóstico gratuito</span>' +
+      '<h1>Antes de estudar mais, <em>descubra o que você já sabe.</em></h1>' +
+      '<p class="sub" style="font-size:19px">Responda a 80 questões on-line, na mesma distribuição da prova da FGV, e receba na hora o seu raio-X da 1ª fase da OAB.</p>' +
+      '<ul class="lista"><li>A sua nota de hoje, comparada com os 40 acertos que aprovam</li><li>O seu desempenho em cada uma das 20 disciplinas</li><li>Onde estão os pontos mais fáceis de conquistar</li><li>A combinação de Ética + 5 disciplinas sugerida para você</li></ul>' +
+      '<p class="sub" style="font-size:15px">Pode parar e continuar depois: as suas respostas ficam salvas na sua conta.</p></div>' +
+      '<div class="card">' +
+      (modo === 'login' ?
+        '<h2>Continuar o meu diagnóstico</h2><form id="f-login"><label>E-mail<input type="email" id="l-email" required autocomplete="email"></label><label>Senha<input type="password" id="l-senha" required autocomplete="current-password"></label><button class="btn pri" type="submit">Entrar</button><p class="msg" id="l-msg" role="status"></p></form>' +
+        '<p class="troca">Ainda não tem cadastro? <a href="#" data-ir="cad">Cadastre-se grátis</a></p><p class="troca"><a href="#" data-ir="rec">Esqueci a minha senha</a></p>'
+      : modo === 'rec' ?
+        '<h2>Recuperar a senha</h2><form id="f-rec"><label>E-mail<input type="email" id="r-email" required autocomplete="email"></label><button class="btn pri" type="submit">Enviar link</button><p class="msg" id="r-msg" role="status"></p></form><p class="troca"><a href="#" data-ir="login">Voltar</a></p>'
+      :
+        '<h2>Faça o seu cadastro grátis</h2><form id="f-cad">' +
+        '<label>Nome completo<input type="text" id="c-nome" required autocomplete="name"></label>' +
+        '<label>E-mail<input type="email" id="c-email" required autocomplete="email"></label>' +
+        '<label>WhatsApp com DDD<input type="tel" id="c-zap" required inputmode="tel" autocomplete="tel" placeholder="(62) 90000-0000"></label>' +
+        '<label>Crie uma senha (mínimo 8 caracteres)<input type="password" id="c-senha" required minlength="8" autocomplete="new-password"></label>' +
+        '<label class="aceite"><input type="checkbox" id="c-aceite" checked><span>Aceito receber o meu resultado e conteúdos do Método Aprovação pelo WhatsApp e por e-mail. Posso cancelar quando quiser.</span></label>' +
+        '<button class="btn pri" type="submit">Quero fazer o meu diagnóstico</button><p class="msg" id="c-msg" role="status"></p></form>' +
+        '<p class="troca">Já começou o diagnóstico? <a href="#" data-ir="login">Entrar</a></p>' +
+        '<p class="mini">Os seus dados são usados só para liberar o diagnóstico e falar com você sobre o Método Aprovação. Não compartilhamos com terceiros.</p>') +
+      '</div></div>';
+    tela.querySelectorAll('[data-ir]').forEach(function (a) { a.addEventListener('click', function (e) { e.preventDefault(); telaCadastro(a.dataset.ir); }); });
+    var fc = $('#f-cad');
+    if (fc) fc.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      var zap = soDigitos($('#c-zap').value);
+      if (zap.length < 10 || zap.length > 13) { msg('c-msg', 'Confira o WhatsApp: informe o DDD e o número.'); return; }
+      msg('c-msg', 'Criando o seu cadastro…', true); fc.querySelector('button').disabled = true;
+      var r = await sb.auth.signUp({email: $('#c-email').value.trim(), password: $('#c-senha').value,
+        options: {data: {nome: $('#c-nome').value.trim(), whatsapp: zap, aceite_contato: $('#c-aceite').checked, origem: 'diagnostico-gratis' + (origem ? ':' + origem : '')}, emailRedirectTo: location.origin + location.pathname}});
+      fc.querySelector('button').disabled = false;
+      if (r.error) { msg('c-msg', traduz(r.error)); return; }
+      if (r.data && r.data.user && Array.isArray(r.data.user.identities) && !r.data.user.identities.length) { msg('c-msg', 'Este e-mail já tem cadastro. Use "Entrar".'); return; }
+      if (!r.data.session) { telaConfirmar($('#c-email').value.trim()); return; }
+      entrar(r.data.session);
+    });
+    var fl = $('#f-login');
+    if (fl) fl.addEventListener('submit', async function (e) {
+      e.preventDefault(); msg('l-msg', 'Entrando…', true);
+      var r = await sb.auth.signInWithPassword({email: $('#l-email').value.trim(), password: $('#l-senha').value});
+      if (r.error) { msg('l-msg', traduz(r.error)); return; }
+      entrar(r.data.session);
+    });
+    var fr = $('#f-rec');
+    if (fr) fr.addEventListener('submit', async function (e) {
+      e.preventDefault(); msg('r-msg', 'Enviando…', true);
+      var r = await sb.auth.resetPasswordForEmail($('#r-email').value.trim(), {redirectTo: location.origin + '/oab/'});
+      msg('r-msg', r.error ? traduz(r.error) : 'Se o e-mail estiver cadastrado, você vai receber um link para criar uma nova senha.', !r.error);
+    });
+  }
+  function telaConfirmar(email) {
+    tela.innerHTML = '<div class="card" style="max-width:640px;margin:40px auto;text-align:center"><span class="chip">Quase lá</span><h2>Confirme o seu e-mail</h2>' +
+      '<p class="sub">Enviamos um link para <b style="color:#fff">' + esc(email) + '</b>. Clique nele e o seu diagnóstico abre na hora. Não achou? Olhe também a caixa de spam e as promoções.</p>' +
+      '<p style="margin-top:20px"><a class="btn" href="#" id="ja-conf">Já confirmei: entrar</a></p></div>';
+    $('#ja-conf').addEventListener('click', function (e) { e.preventDefault(); telaCadastro('login'); });
+  }
+
+  // ---------- entrada ----------
+  async function entrar(session) {
+    if (!session || entrando) return; entrando = true; user = session.user;
+    tela.innerHTML = '<div class="carregando">Preparando o seu diagnóstico…</div>';
+    try {
+      var r = await fetch('../conteudo/diag.js', {headers: {Authorization: 'Bearer ' + session.access_token}, cache: 'no-store'});
+      if (!r.ok) throw new Error(r.status);
+      (0, eval)(await r.text()); Q = OAB.DIAGQ || [];
+      if (Q.length !== 80) throw new Error('questões');
+    } catch (e) {
+      tela.innerHTML = '<div class="card" style="max-width:640px;margin:40px auto;text-align:center"><h2>Não foi possível carregar as questões</h2><p class="sub">Verifique a sua internet e recarregue a página.' + (cfg.contato ? ' Dúvidas: ' + esc(cfg.contato) + '.' : '') + '</p></div>';
+      entrando = false; return;
+    }
+    KEY = 'oab-diag-gratis-' + user.id;
+    try { S = JSON.parse(lsGet(KEY)); } catch (e) { S = null; }
+    if (!S || S.v !== 1) S = novoEstado();
+    try {
+      var g = await sb.from('progresso').select('estado').eq('user_id', user.id).maybeSingle();
+      var rem = g.data && g.data.estado && g.data.estado.cargos && g.data.estado.cargos[CARGO];
+      if (rem && rem.v === 1 && rem.diag && (rem.at || 0) > (S.at || 0)) { S = rem; lsSet(KEY, JSON.stringify(S)); }
+    } catch (e) { /* segue com o local */ }
+    lead();
+    entrando = false;
+    if (S.diag.fim) telaResultado(); else if (S.diag.ini) telaQuestao(); else telaIntro();
+  }
+
+  // ---------- diagnóstico ----------
+  function nota() { var n = 0; Q.forEach(function (q) { if (S.diag.resp[q.id] === q.c) n++; }); return n; }
+  function porDisc() { var r = {}; D.forEach(function (d) { r[d.id] = {n: 0, ok: 0}; }); Q.forEach(function (q) { if (!r[q.d]) r[q.d] = {n: 0, ok: 0}; r[q.d].n++; if (S.diag.resp[q.id] === q.c) r[q.d].ok++; }); return r; }
+  function telaIntro() {
+    var nm = primeiroNome();
+    tela.innerHTML = '<div class="card" style="max-width:760px;margin:20px auto"><span class="chip">Diagnóstico gratuito</span>' +
+      '<h1 style="font-size:clamp(30px,4.4vw,44px)">' + (nm ? esc(nm) + ', vamos' : 'Vamos') + ' <em>medir onde você está.</em></h1>' +
+      '<p class="sub">São 80 questões, na mesma distribuição e na mesma ordem de disciplinas da prova da FGV. No fim, você recebe a sua nota e o seu raio-X.</p>' +
+      '<ul class="lista"><li>Responda como no dia da prova, sem consultar nada.</li><li>Se não fizer ideia da resposta, use <b>Não sei</b> em vez de chutar. O raio-X fica mais fiel.</li><li>Depois de cada resposta, você vê se acertou e o porquê.</li><li>Pode parar e continuar depois: as respostas ficam salvas.</li></ul>' +
+      '<button class="btn pri" id="comecar">Começar o diagnóstico</button></div>';
+    $('#comecar').addEventListener('click', function () { S.diag.ini = Date.now(); S.diag.atual = 0; salvar(); telaQuestao(); });
+  }
+  function telaQuestao() {
+    var g = S.diag, i = Math.min(Math.max(g.atual || 0, 0), 79), q = Q[i], d = DM[q.d] || {curto: q.d, cor: '#A9B7D0'}, o = ordemAlt(q), r = g.resp[q.id];
+    var resp = Object.keys(g.resp).length, acertos = nota();
+    var ret = '';
+    if (r != null) {
+      var ok = r === q.c, ns = r === -1;
+      ret = '<div class="ret ' + (ok ? 'ok' : ns ? 'ns' : 'er') + '" role="status"><b>' + (ok ? 'Acertou! A banca não te pegou.' : ns ? 'Tudo bem não saber. Agora você sabe.' : 'Essa a banca pegou.') + '</b>' +
+        (ok ? '' : 'A resposta certa é a letra <b style="display:inline">' + 'ABCD'[o.indexOf(q.c)] + '</b>.') + (q.x ? '<div class="x">' + esc(q.x) + '</div>' : '') + '</div>';
+    }
+    tela.innerHTML = '<div class="cab"><div><h2 style="margin:0">Diagnóstico</h2><p class="sub">Questão ' + (i + 1) + ' de 80 · ' + resp + ' respondidas</p></div><button class="btn" id="pausar">Pausar e continuar depois</button></div>' +
+      '<div class="prog"><i style="width:' + (resp / 80 * 100) + '%"></i></div>' +
+      '<div class="qgrid"><div class="card"><span class="tag" style="border-color:' + d.cor + ';color:' + d.cor + '">' + esc(d.nome || d.curto) + '</span>' +
+      '<div class="enun">' + esc(q.e) + '</div><div class="alts">' +
+      o.map(function (oi, k) { var cls = r == null ? '' : oi === q.c ? ' cert' : oi === r ? ' errd' : ''; return '<button class="alt' + cls + '" data-alt="' + oi + '"' + (r != null ? ' disabled' : '') + '><span class="lt">' + 'ABCD'[k] + '</span><span>' + esc(q.a[oi]) + '</span></button>'; }).join('') +
+      '</div>' + ret +
+      '<div class="barra"><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" id="ant"' + (i === 0 ? ' disabled' : '') + '>Anterior</button>' + (r == null ? '<button class="btn" data-alt="-1">Não sei</button>' : '') + '</div>' +
+      (i < 79 ? '<button class="btn pri" id="prox">' + (r == null ? 'Pular' : 'Próxima questão') + '</button>' : '<button class="btn pri" id="fim">Entregar e ver o meu resultado</button>') + '</div></div>' +
+      '<aside class="card"><div class="placar"><span class="sub">Acertos até aqui</span><b>' + acertos + '</b></div><p class="sub" style="font-size:14px;margin-top:4px">Meta: 40 de 80</p>' +
+      '<div class="cartao">' + Q.map(function (qq, k) { var rr = g.resp[qq.id], c = rr == null ? '' : rr === qq.c ? 'ok' : rr === -1 ? 'ns' : 'er'; if (k === i) c += ' atual'; return '<button class="' + c + '" data-ir-q="' + k + '" aria-label="Questão ' + (k + 1) + '">' + (k + 1) + '</button>'; }).join('') + '</div>' +
+      '<button class="btn" id="fim2" style="width:100%;margin-top:16px">Entregar a prova</button></aside></div>';
+    tela.querySelectorAll('[data-alt]').forEach(function (b) { b.addEventListener('click', function () { if (S.diag.resp[q.id] != null) return; S.diag.resp[q.id] = +b.dataset.alt; salvar(); telaQuestao(); }); });
+    tela.querySelectorAll('[data-ir-q]').forEach(function (b) { b.addEventListener('click', function () { S.diag.atual = +b.dataset.irQ; salvar(); telaQuestao(); window.scrollTo(0, 0); }); });
+    var ir = function (k) { S.diag.atual = k; salvar(); telaQuestao(); window.scrollTo(0, 0); };
+    if ($('#ant')) $('#ant').addEventListener('click', function () { ir(i - 1); });
+    if ($('#prox')) $('#prox').addEventListener('click', function () { ir(i + 1); });
+    var entregar = function () {
+      var falta = 80 - Object.keys(S.diag.resp).length;
+      if (falta && !confirm('Ainda faltam ' + falta + ' questões. As que ficarem em branco contam como erro. Entregar mesmo assim?')) return;
+      S.diag.fim = Date.now(); salvar(); telaResultado(); window.scrollTo(0, 0);
+    };
+    if ($('#fim')) $('#fim').addEventListener('click', entregar);
+    $('#fim2').addEventListener('click', entregar);
+    $('#pausar').addEventListener('click', function () {
+      salvar();
+      tela.innerHTML = '<div class="card" style="max-width:640px;margin:40px auto;text-align:center"><h2>As suas respostas estão salvas.</h2><p class="sub">Volte quando quiser por este mesmo endereço e entre com o seu e-mail e a sua senha. Você continua da questão ' + (i + 1) + '.</p><p style="margin-top:20px"><button class="btn pri" id="voltar">Continuar agora</button></p></div>';
+      $('#voltar').addEventListener('click', telaQuestao);
+    });
+  }
+
+  // ---------- resultado ----------
+  function corPct(p) { return p >= 0.7 ? 'var(--folha)' : p >= 0.4 ? 'var(--ouro)' : 'var(--brasa)'; }
+  function telaResultado() {
+    var n = nota(), pd = porDisc(), passa = n >= 40, nm = primeiroNome();
+    var lista = D.map(function (d) { var x = pd[d.id] || {n: 0, ok: 0}; return {d: d, p: x.n ? x.ok / x.n : 0, ok: x.ok, n: x.n}; });
+    var fortes = lista.filter(function (x) { return x.p >= 0.7; }).sort(function (a, b) { return b.p - a.p; });
+    var reforcar = lista.filter(function (x) { return x.p < 0.4; }).sort(function (a, b) { return b.d.q - a.d.q; });
+    var combo = lista.filter(function (x) { return x.d.g !== 'C' && x.d.id !== 'etica'; })
+      .map(function (x) { return {x: x, s: x.d.q * (0.7 * x.p + 0.3)}; }).sort(function (a, b) { return b.s - a.s; }).slice(0, 5).map(function (y) { return y.x.d; });
+    var qCombo = 8 + combo.reduce(function (t, d) { return t + d.q; }, 0);
+    var ang = Math.round(n / 80 * 360);
+    tela.innerHTML =
+      '<div class="card"><div class="nota"><div class="medidor" style="background:conic-gradient(' + (passa ? 'var(--folha)' : 'var(--ouro)') + ' ' + ang + 'deg,rgba(255,255,255,.08) 0)"><div><div><b>' + n + '</b><span>de 80 acertos</span></div></div></div>' +
+      '<div><span class="chip">O seu raio-X</span><h1 style="font-size:clamp(30px,4.4vw,46px)">' + (passa ? (nm ? esc(nm) + ', hoje' : 'Hoje') + ' você <em>já passaria na 1ª fase.</em>' : (nm ? esc(nm) + ', faltam' : 'Faltam') + ' <em>' + (40 - n) + ' acertos</em> para os 40.') + '</h1>' +
+      '<p class="sub">' + (passa ? 'Agora o trabalho é proteger essa nota e abrir margem de segurança, sem deixar o resto zerado.' : 'Não é preciso dominar as 20 disciplinas. O raio-X abaixo mostra onde estão os pontos mais fáceis de conquistar.') + '</p></div></div></div>' +
+      '<div class="card" style="margin-top:18px"><h2>Desempenho por disciplina</h2><p class="sub" style="font-size:14.5px">Verde: ponto forte (70% ou mais). Amarelo: em construção. Vermelho: o que reforçar.</p><div class="discs">' +
+      lista.map(function (x) { return '<div class="dl"><span>' + esc(x.d.curto) + '</span><span class="bar"><i style="width:' + Math.max(4, x.p * 100) + '%;background:' + corPct(x.p) + '"></i></span><span class="v">' + x.ok + '/' + x.n + '</span></div>'; }).join('') + '</div></div>' +
+      '<div class="g3"><div class="card"><h2 style="font-size:24px">O que já é seu</h2>' + (fortes.length ? fortes.map(function (x) { return '<span class="pill" style="border-color:var(--folha)">' + esc(x.d.curto) + '</span>'; }).join('') : '<p class="sub">Nenhuma disciplina acima de 70% ainda. É normal no começo.</p>') + '</div>' +
+      '<div class="card"><h2 style="font-size:24px">O que reforçar</h2>' + (reforcar.length ? reforcar.slice(0, 8).map(function (x) { return '<span class="pill" style="border-color:var(--brasa)">' + esc(x.d.curto) + '</span>'; }).join('') + '<p class="sub" style="font-size:14px;margin-top:10px">Em ordem de peso na prova: as primeiras devolvem mais pontos.</p>' : '<p class="sub">Nenhuma disciplina abaixo de 40%.</p>') + '</div>' +
+      '<div class="card" style="border-color:rgba(245,197,66,.5)"><h2 style="font-size:24px">Sua combinação sugerida</h2><span class="pill" style="border-color:var(--ouro)">Ética</span>' + combo.map(function (d) { return '<span class="pill" style="border-color:var(--ouro)">' + esc(d.curto) + '</span>'; }).join('') +
+      '<p class="sub" style="font-size:14px;margin-top:10px">Ética + 5 disciplinas: ' + qCombo + ' das 80 questões. Acertando 3 de cada 4 nelas, você soma ' + Math.round(qCombo * 0.75) + ' pontos.</p></div></div>' +
+      '<div class="cta"><span class="chip">O próximo passo</span><h2>O diagnóstico mostrou <em>onde você está.</em> A plataforma leva você até os 40.</h2>' +
+      '<p>No acesso completo, este resultado vira o seu plano: cronograma dia a dia com Ética + 5 disciplinas, sinopses de uma página, as 10 últimas provas oficiais da FGV com correção na hora, estúdio de áudio e a 2ª fase incluída, até você passar.</p>' +
+      '<p style="margin-top:16px"><span class="sub">12x de</span> <span class="preco">R$ 59,90</span></p><p class="sub" style="margin-top:4px">Menos do que uma pizza por mês · 7 dias de garantia</p>' +
+      '<p style="margin-top:18px"><a class="btn pri" href="' + VENDAS + '">Quero o acesso completo →</a></p>' +
+      '<p class="sub" style="font-size:14.5px;margin-top:14px">Compre com o mesmo e-mail (<b style="color:#fff">' + esc(user.email) + '</b>): o seu diagnóstico já vai estar lá.</p></div>' +
+      '<p class="sub" style="text-align:center;margin-top:24px;font-size:14px"><a href="#" id="rever">Rever as minhas respostas</a></p>';
+    $('#rever').addEventListener('click', function (e) { e.preventDefault(); S.diag.atual = 0; telaQuestao(); window.scrollTo(0, 0); });
+    lead({respondidas: Object.keys(S.diag.resp).length, nota: n, concluido_em: new Date(S.diag.fim).toISOString()});
+  }
+
+  // ---------- início ----------
+  if (!cfg.url || !cfg.anonKey || !window.supabase) { tela.innerHTML = '<div class="carregando">Diagnóstico indisponível no momento.</div>'; return; }
+  sb = window.supabase.createClient(cfg.url, cfg.anonKey, {auth: {persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, storageKey: 'oab-diag-sessao'}});
+  sb.auth.getSession().then(function (s) { if (s.data.session) entrar(s.data.session); else telaCadastro(/[?&]entrar/.test(location.search) ? 'login' : 'cad'); });
+  sb.auth.onAuthStateChange(function (ev, s) { if (ev === 'SIGNED_IN' && s && !user) entrar(s); });
+})();
+</script>
+</body>
+</html>
