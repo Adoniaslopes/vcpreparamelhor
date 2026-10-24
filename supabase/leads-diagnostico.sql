@@ -39,3 +39,48 @@ create policy "admin le leads" on public.leads_diagnostico
   );
 
 -- Para ver os leads: Table Editor > leads_diagnostico (ordene por criado_em).
+
+-- ============================================================
+-- Garantia: todo cadastro do diagnóstico vira lead automaticamente,
+-- mesmo que a pessoa feche a página logo depois de se cadastrar.
+-- ============================================================
+create or replace function public.novo_lead_diagnostico() returns trigger
+language plpgsql security definer set search_path = public as $$
+begin
+  if coalesce(new.raw_user_meta_data ->> 'origem', '') like 'diagnostico-gratis%' then
+    insert into public.leads_diagnostico (id, nome, email, whatsapp, aceite_contato, origem, criado_em)
+    values (new.id, new.raw_user_meta_data ->> 'nome', lower(new.email), new.raw_user_meta_data ->> 'whatsapp',
+            coalesce((new.raw_user_meta_data ->> 'aceite_contato')::boolean, false), new.raw_user_meta_data ->> 'origem', new.created_at)
+    on conflict (id) do nothing;
+  end if;
+  return new;
+end $$;
+
+drop trigger if exists ao_cadastrar_lead_diagnostico on auth.users;
+create trigger ao_cadastrar_lead_diagnostico after insert on auth.users
+  for each row execute function public.novo_lead_diagnostico();
+
+-- Recupera quem se cadastrou antes de esta tabela existir
+insert into public.leads_diagnostico (id, nome, email, whatsapp, aceite_contato, origem, criado_em)
+select id, raw_user_meta_data ->> 'nome', lower(email), raw_user_meta_data ->> 'whatsapp',
+       coalesce((raw_user_meta_data ->> 'aceite_contato')::boolean, false), raw_user_meta_data ->> 'origem', created_at
+from auth.users where coalesce(raw_user_meta_data ->> 'origem', '') like 'diagnostico-gratis%'
+on conflict (id) do nothing;
+
+-- ============================================================
+-- Lista pronta para contato (campanhas, WhatsApp, remarketing).
+-- Mostra só quem aceitou contato e marca quem já tem acesso liberado (perfis.status = aprovado).
+-- Para baixar: Table Editor > leads_para_contato > Export > CSV.
+-- ============================================================
+create or replace view public.leads_para_contato with (security_invoker = true) as
+select l.nome, l.whatsapp, l.email, l.origem,
+       l.respondidas, l.nota,
+       case when l.concluido_em is not null then 'terminou'
+            when coalesce(l.respondidas, 0) > 0 then 'parou no meio'
+            else 'só se cadastrou' end as situacao,
+       coalesce(p.status = 'aprovado' or p.admin, false) as comprou,
+       l.criado_em, l.concluido_em
+from public.leads_diagnostico l
+left join public.perfis p on p.id = l.id
+where l.aceite_contato
+order by l.criado_em desc;
