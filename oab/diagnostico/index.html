@@ -92,6 +92,37 @@ form .btn{width:100%;margin-top:20px}
 .pill{display:inline-block;font-size:14px;font-weight:600;padding:6px 12px;border-radius:999px;margin:4px 6px 0 0;background:rgba(255,255,255,.06);border:1px solid var(--linha)}
 .cta{margin-top:26px;padding:30px;border-radius:26px;border:2.5px solid var(--ouro);background:linear-gradient(160deg,rgba(245,197,66,.14),rgba(245,197,66,.02) 60%),var(--card)}
 .cta .preco{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:64px;line-height:1;color:var(--ouro)}
+/* ganchos para a plataforma */
+.bloco{display:inline-block;margin:0 0 14px 8px;font-size:13px;color:var(--nevoa)}
+.rumo{margin-top:12px}
+.rumo .trilho{position:relative;height:12px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}
+.rumo .trilho i{position:absolute;left:0;top:0;bottom:0;border-radius:999px;background:linear-gradient(90deg,var(--ouro),var(--folha));transition:width .4s}
+.rumo small{display:block;margin-top:6px;font-size:13.5px;color:var(--nevoa)}
+.tranca{display:flex;gap:12px;align-items:flex-start;margin-top:14px;padding:14px 16px;border-radius:14px;border:1.5px dashed rgba(245,197,66,.55);background:rgba(245,197,66,.05);font-size:14.5px;line-height:1.5;color:#D7DDEA}
+.tranca svg{flex:none;width:22px;height:22px;margin-top:1px}
+.tranca b{color:var(--ouro);font-weight:600}
+.tranca a{font-weight:600}
+.parcial{margin-top:14px;padding:16px 18px;border-radius:14px;background:rgba(62,197,255,.07);border:1px solid rgba(62,197,255,.35);font-size:15px}
+.parcial b{color:#fff}
+.festa{margin-top:14px;padding:18px;border-radius:14px;background:linear-gradient(135deg,rgba(61,220,151,.18),rgba(245,197,66,.12));border:1.5px solid var(--folha);font-size:15.5px}
+.festa b{display:block;font-size:19px;color:#fff;margin-bottom:4px}
+.vitrine{margin-top:16px}
+.vitrine h3{font:700 15px 'IBM Plex Sans',sans-serif;color:var(--ouro);margin-bottom:6px}
+.vitrine li{list-style:none;display:flex;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--linha);font-size:14px;color:#C9D3E5}
+.vitrine li svg{flex:none;width:16px;height:16px}
+.vitrine a{display:block;margin-top:10px;font-size:14px;font-weight:600}
+.plano{position:relative;margin-top:14px;border-radius:16px;overflow:hidden;border:1px solid var(--linha)}
+.plano table{width:100%;border-collapse:collapse;font-size:14.5px}
+.plano td,.plano th{padding:11px 14px;border-top:1px solid var(--linha);text-align:left}
+.plano th{font-family:'Barlow Condensed',sans-serif;font-weight:800;letter-spacing:.12em;font-size:13px;color:var(--nevoa);text-transform:uppercase;border-top:0;background:rgba(255,255,255,.03)}
+.plano .borra td{filter:blur(4px);user-select:none}
+.plano .veu{position:absolute;left:0;right:0;bottom:0;height:62%;display:grid;place-items:center;background:linear-gradient(180deg,transparent,rgba(10,20,48,.92) 45%);text-align:center;padding:16px}
+.plano .veu b{display:block;color:#fff;font-size:17px;margin-bottom:8px}
+.nums{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+.nums div{padding:16px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid var(--linha)}
+.nums b{display:block;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:40px;line-height:1;color:var(--ouro)}
+.nums span{display:block;font-size:14px;color:var(--nevoa);margin-top:6px;line-height:1.4}
+@media (max-width:860px){.nums{grid-template-columns:1fr}}
 .oculto{display:none!important}
 .carregando{text-align:center;padding:80px 20px;color:var(--nevoa)}
 @media (max-width:860px){.hero,.qgrid,.nota{grid-template-columns:1fr}.discs,.g3{grid-template-columns:1fr}.medidor{margin:0 auto}.qgrid aside{order:-1}.cartao{grid-template-columns:repeat(10,1fr)}}
@@ -133,6 +164,12 @@ form .btn{width:100%;margin-top:20px}
   }
   function msg(id, t, ok) { var e = document.getElementById(id); if (!e) return; e.textContent = t || ''; e.className = 'msg' + (t ? (ok ? ' ok' : ' bad') : ''); }
   function soDigitos(s) { return String(s || '').replace(/\D/g, ''); }
+  var LOCK = '<svg viewBox="0 0 24 24" fill="none" stroke="#F5C542" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
+  function vendas(m) { return '../vendas/?utm_source=diagnostico&utm_medium=' + m; }
+  var GRUPO = {A: 'Grupo A · decide a prova', B: 'Grupo B · meio-campo', C: 'Grupo C · pontos rápidos'};
+  var BL = [];
+  function blocos() { BL = []; var ini = 0; for (var k = 0; k <= Q.length; k++) { if (k === Q.length || (k > 0 && Q[k].d !== Q[k - 1].d)) { for (var m = ini; m < k; m++) BL[m] = {ini: ini, fim: k - 1, pos: m - ini + 1, tot: k - ini}; ini = k; } } }
+  function diasProva() { var e = (window.OAB && OAB.EXAME) || {}, d = new Date((e.data || '2027-01-10') + 'T13:00:00-03:00'); return Math.max(0, Math.ceil((d - new Date()) / 864e5)); }
 
   // ---------- estado (mesmo formato da plataforma: quem comprar depois já entra com o diagnóstico feito) ----------
   function novoEstado() { return {v: 1, seed: Math.floor(Math.random() * 1e9), perfil: null, diag: {resp: {}, atual: 0, ini: null, fim: null, seg: 0}, dominio: null, crono: null, hist: [], feito: {}, provas: {}, at: Date.now()}; }
@@ -229,6 +266,7 @@ form .btn{width:100%;margin-top:20px}
       if (!r.ok) throw new Error(r.status);
       (0, eval)(await r.text()); Q = OAB.DIAGQ || [];
       if (Q.length !== 80) throw new Error('questões');
+      blocos();
     } catch (e) {
       tela.innerHTML = '<div class="card" style="max-width:640px;margin:40px auto;text-align:center"><h2>Não foi possível carregar as questões</h2><p class="sub">Verifique a sua internet e recarregue a página.' + (cfg.contato ? ' Dúvidas: ' + esc(cfg.contato) + '.' : '') + '</p></div>';
       entrando = false; return;
@@ -266,19 +304,24 @@ form .btn{width:100%;margin-top:20px}
       var ok = r === q.c, ns = r === -1;
       ret = '<div class="ret ' + (ok ? 'ok' : ns ? 'ns' : 'er') + '" role="status"><b>' + (ok ? 'Acertou! A banca não te pegou.' : ns ? 'Tudo bem não saber. Agora você sabe.' : 'Essa a banca pegou.') + '</b>' +
         (ok ? '' : 'A resposta certa é a letra <b style="display:inline">' + 'ABCD'[o.indexOf(q.c)] + '</b>.') + (q.x ? '<div class="x">' + esc(q.x) + '</div>' : '') + '</div>';
+      var ult = g.ult === q.id;
+      if (!ok && ult) ret += '<div class="tranca">' + LOCK + '<span>Na plataforma, <b>a sinopse de ' + esc(d.curto) + '</b> mostra em uma página o que mais cai, a lei e as pegadinhas da banca, e esta questão vira revisão no seu cronograma. <a href="' + vendas('erro') + '" target="_blank" rel="noopener">Ver o acesso completo</a></span></div>';
+      if (ult && ok && acertos === 40) ret += '<div class="festa"><b>Você chegou aos 40 acertos!</b>Essa é a nota que aprova na 1ª fase. Continue: cada acerto a mais é margem de segurança para o dia da prova.</div>';
+      else if (ult && resp % 20 === 0 && resp < 80) ret += '<div class="parcial"><b>Parcial: ' + resp + ' respondidas, ' + acertos + ' acertos.</b> No ritmo de agora, a sua nota projetada é <b>' + Math.round(acertos / resp * 80) + ' de 80</b>. O raio-X completo sai quando você entregar a prova.</div>';
     }
     tela.innerHTML = '<div class="cab"><div><h2 style="margin:0">Diagnóstico</h2><p class="sub">Questão ' + (i + 1) + ' de 80 · ' + resp + ' respondidas</p></div><button class="btn" id="pausar">Pausar e continuar depois</button></div>' +
       '<div class="prog"><i style="width:' + (resp / 80 * 100) + '%"></i></div>' +
-      '<div class="qgrid"><div class="card"><span class="tag" style="border-color:' + d.cor + ';color:' + d.cor + '">' + esc(d.nome || d.curto) + '</span>' +
+      '<div class="qgrid"><div class="card"><span class="tag" style="border-color:' + d.cor + ';color:' + d.cor + '">' + esc(d.nome || d.curto) + '</span><span class="bloco">Questão ' + BL[i].pos + ' de ' + BL[i].tot + ' do bloco (' + (BL[i].ini + 1) + '–' + (BL[i].fim + 1) + ') · ' + (GRUPO[d.g] || '') + '</span>' +
       '<div class="enun">' + esc(q.e) + '</div><div class="alts">' +
       o.map(function (oi, k) { var cls = r == null ? '' : oi === q.c ? ' cert' : oi === r ? ' errd' : ''; return '<button class="alt' + cls + '" data-alt="' + oi + '"' + (r != null ? ' disabled' : '') + '><span class="lt">' + 'ABCD'[k] + '</span><span>' + esc(q.a[oi]) + '</span></button>'; }).join('') +
       '</div>' + ret +
       '<div class="barra"><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" id="ant"' + (i === 0 ? ' disabled' : '') + '>Anterior</button>' + (r == null ? '<button class="btn" data-alt="-1">Não sei</button>' : '') + '</div>' +
       (i < 79 ? '<button class="btn pri" id="prox">' + (r == null ? 'Pular' : 'Próxima questão') + '</button>' : '<button class="btn pri" id="fim">Entregar e ver o meu resultado</button>') + '</div></div>' +
-      '<aside class="card"><div class="placar"><span class="sub">Acertos até aqui</span><b>' + acertos + '</b></div><p class="sub" style="font-size:14px;margin-top:4px">Meta: 40 de 80</p>' +
+      '<aside class="card"><div class="placar"><span class="sub">Acertos até aqui</span><b>' + acertos + '</b></div><div class="rumo"><div class="trilho"><i style="width:' + Math.min(100, acertos / 40 * 100) + '%"></i></div><small>' + (acertos >= 40 ? 'Você já passou dos 40 que aprovam!' : 'Faltam ' + (40 - acertos) + ' para os 40 que aprovam') + '</small></div>' +
       '<div class="cartao">' + Q.map(function (qq, k) { var rr = g.resp[qq.id], c = rr == null ? '' : rr === qq.c ? 'ok' : rr === -1 ? 'ns' : 'er'; if (k === i) c += ' atual'; return '<button class="' + c + '" data-ir-q="' + k + '" aria-label="Questão ' + (k + 1) + '">' + (k + 1) + '</button>'; }).join('') + '</div>' +
-      '<button class="btn" id="fim2" style="width:100%;margin-top:16px">Entregar a prova</button></aside></div>';
-    tela.querySelectorAll('[data-alt]').forEach(function (b) { b.addEventListener('click', function () { if (S.diag.resp[q.id] != null) return; S.diag.resp[q.id] = +b.dataset.alt; salvar(); telaQuestao(); }); });
+      '<button class="btn" id="fim2" style="width:100%;margin-top:16px">Entregar a prova</button>' +
+      '<div class="vitrine"><h3>No acesso completo</h3><ul>' + ['Cronograma dia a dia com o seu resultado', 'Sinopses de 1 página das 20 disciplinas', '10 provas oficiais com correção na hora', 'Estúdio de áudio e a 2ª fase incluída'].map(function (t) { return '<li>' + LOCK + t + '</li>'; }).join('') + '</ul><a href="' + vendas('lateral') + '" target="_blank" rel="noopener">Conhecer o acesso completo →</a></div></aside></div>';
+    tela.querySelectorAll('[data-alt]').forEach(function (b) { b.addEventListener('click', function () { if (S.diag.resp[q.id] != null) return; S.diag.resp[q.id] = +b.dataset.alt; S.diag.ult = q.id; salvar(); telaQuestao(); }); });
     tela.querySelectorAll('[data-ir-q]').forEach(function (b) { b.addEventListener('click', function () { S.diag.atual = +b.dataset.irQ; salvar(); telaQuestao(); window.scrollTo(0, 0); }); });
     var ir = function (k) { S.diag.atual = k; salvar(); telaQuestao(); window.scrollTo(0, 0); };
     if ($('#ant')) $('#ant').addEventListener('click', function () { ir(i - 1); });
@@ -292,7 +335,7 @@ form .btn{width:100%;margin-top:20px}
     $('#fim2').addEventListener('click', entregar);
     $('#pausar').addEventListener('click', function () {
       salvar();
-      tela.innerHTML = '<div class="card" style="max-width:640px;margin:40px auto;text-align:center"><h2>As suas respostas estão salvas.</h2><p class="sub">Volte quando quiser por este mesmo endereço e entre com o seu e-mail e a sua senha. Você continua da questão ' + (i + 1) + '.</p><p style="margin-top:20px"><button class="btn pri" id="voltar">Continuar agora</button></p></div>';
+      tela.innerHTML = '<div class="card" style="max-width:640px;margin:40px auto;text-align:center"><h2>As suas respostas estão salvas.</h2><p class="sub">Volte quando quiser por este mesmo endereço e entre com o seu e-mail e a sua senha. Você continua da questão ' + (i + 1) + '.</p><p class="sub" style="margin-top:14px;font-size:15px">Enquanto isso, veja <a href="' + vendas('pausa') + '">como a plataforma transforma este diagnóstico num plano até os 40</a>.</p><p style="margin-top:20px"><button class="btn pri" id="voltar">Continuar agora</button></p></div>';
       $('#voltar').addEventListener('click', telaQuestao);
     });
   }
@@ -318,6 +361,14 @@ form .btn{width:100%;margin-top:20px}
       '<div class="card"><h2 style="font-size:24px">O que reforçar</h2>' + (reforcar.length ? reforcar.slice(0, 8).map(function (x) { return '<span class="pill" style="border-color:var(--brasa)">' + esc(x.d.curto) + '</span>'; }).join('') + '<p class="sub" style="font-size:14px;margin-top:10px">Em ordem de peso na prova: as primeiras devolvem mais pontos.</p>' : '<p class="sub">Nenhuma disciplina abaixo de 40%.</p>') + '</div>' +
       '<div class="card" style="border-color:rgba(245,197,66,.5)"><h2 style="font-size:24px">Sua combinação sugerida</h2><span class="pill" style="border-color:var(--ouro)">Ética</span>' + combo.map(function (d) { return '<span class="pill" style="border-color:var(--ouro)">' + esc(d.curto) + '</span>'; }).join('') +
       '<p class="sub" style="font-size:14px;margin-top:10px">Ética + 5 disciplinas: ' + qCombo + ' das 80 questões. Acertando 3 de cada 4 nelas, você soma ' + Math.round(qCombo * 0.75) + ' pontos.</p></div></div>' +
+      (function () {
+        var errosDom = Q.filter(function (q) { return (q.d === 'etica' || combo.some(function (c) { return c.id === q.d; })) && S.diag.resp[q.id] !== q.c; }).length;
+        var dias = diasProva(), sem = Math.max(1, Math.floor(dias / 7));
+        var linhas = [1, 2, 3, 4, 5].map(function (k) { var c = combo[k - 1] || {curto: '—'}; return '<tr' + (k > 2 ? ' class="borra"' : '') + '><td>Dia ' + k + '</td><td>' + esc(c.curto) + '</td><td>Resumo → doutrina → videoaula → lei seca</td><td>Ética · 15 min</td></tr>'; }).join('');
+        return '<div class="card" style="margin-top:18px"><span class="chip">O seu plano já está montado</span><h2>Com este resultado, <em>a plataforma monta o seu cronograma.</em></h2>' +
+          '<div class="nums"><div><b>' + dias + '</b><span>dias até a 1ª fase do ' + esc(((window.OAB && OAB.EXAME) || {}).nome || 'próximo Exame') + '</span></div><div><b>' + sem + '</b><span>ciclos semanais de Ética + 5 disciplinas até a prova</span></div><div><b>' + errosDom + '</b><span>questões que você errou nas suas disciplinas de domínio: cada uma vira revisão</span></div></div>' +
+          '<div class="plano"><table><tr><th>Semana 1</th><th>Disciplina do dia</th><th>Sequência</th><th>Todo dia</th></tr>' + linhas + '</table><div class="veu"><div><b>O cronograma completo está no acesso completo</b><a class="btn pri" href="' + vendas('plano') + '">Liberar o meu plano →</a></div></div></div></div>';
+      })() +
       '<div class="cta"><span class="chip">O próximo passo</span><h2>O diagnóstico mostrou <em>onde você está.</em> A plataforma leva você até os 40.</h2>' +
       '<p>No acesso completo, este resultado vira o seu plano: cronograma dia a dia com Ética + 5 disciplinas, sinopses de uma página, as 10 últimas provas oficiais da FGV com correção na hora, estúdio de áudio e a 2ª fase incluída, até você passar.</p>' +
       '<p style="margin-top:16px"><span class="sub">12x de</span> <span class="preco">R$ 59,90</span></p><p class="sub" style="margin-top:4px">Menos do que uma pizza por mês · 7 dias de garantia</p>' +
