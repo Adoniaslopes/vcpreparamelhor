@@ -1889,7 +1889,7 @@
       $('#e-tit').textContent = cancelado ? 'Acesso encerrado' : 'Falta ativar seu acesso';
       $('#e-txt').innerHTML = (cancelado ? 'O acesso deste e-mail foi encerrado (reembolso ou cancelamento da compra).'
         : 'Ainda não encontramos uma compra para <b>' + esc(email) + '</b>. Se você acabou de comprar, aguarde alguns minutos: esta página abre sozinha. Use o mesmo e-mail informado no pagamento.') +
-        '<br><br><a class="btn pri" href="' + vendas + '">Conhecer os planos</a><br><br>' + esc(contato());
+        '<br><br><a class="btn pri" href="' + vendas + '">Conhecer os planos</a>' + (cancelado ? '' : ' <a class="btn" href="' + vendas.replace(/vendas\/$/, 'diagnostico/') + '">Fazer o diagnóstico gratuito</a>') + '<br><br>' + esc(contato());
       acView('espera'); entrando = false;
       if (!cancelado) setTimeout(function () { entrar(session); }, 15000);
       return;
