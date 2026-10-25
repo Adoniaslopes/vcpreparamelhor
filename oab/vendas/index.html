@@ -227,6 +227,12 @@ footer b{color:var(--nevoa)}
 .eb-form .btn{width:100%;margin-top:4px}
 .eb-hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
 .eb-msg{min-height:1px;font-size:16px;color:var(--folha) !important}.eb-msg.erro{color:#FF8A95 !important}.eb-msg a{color:var(--ouro)}
+.eb-ok{text-align:center;padding:10px 0}
+.eb-ok-ic{display:inline-grid;place-items:center;width:56px;height:56px;border-radius:50%;background:var(--folha);color:#04221A;font-size:30px;font-weight:700;margin-bottom:14px}
+.eb-ok h3{font-family:'Newsreader',serif;font-weight:500;font-size:26px;line-height:1.25;color:var(--luz);margin-bottom:20px}
+.eb-ok .eb-baixar{width:100%;font-size:21px;padding:22px 24px;animation:pulso 2.6s ease-in-out infinite}
+.eb-ok p{margin-top:14px;font-size:15px;color:#D7DDEA !important}
+.eb-ok .eb-ok-diag a{color:var(--ouro);font-weight:600}
 .eb-lgpd{font-size:13px !important;color:var(--nevoa) !important}
 @media (max-width:900px){.fm3{grid-template-columns:1fr}.eb{grid-template-columns:1fr;padding:28px 22px}}
 .diag .intro-c p{color:#C9D3E5;font-size:20px;margin-top:18px}
@@ -377,7 +383,7 @@ footer b{color:var(--nevoa)}
     <p class="sub">O problema nunca foi você: era a fórmula. Fui aprovado na OAB quando mudei a forma de estudar. Dez anos depois, sem revisar uma linha, refiz duas provas e teria passado nas duas. Agora esse método está numa plataforma que conduz você pelas duas fases do Exame, passo a passo, até a sua carteira.</p>
     <p class="mec">Diagnóstico grátis para começar <i>·</i> treinamento completo para a 1ª e a 2ª fase <i>·</i> acesso até você passar</p>
     <div class="cta-abre"><a class="btn pri" href="../diagnostico/?utm_source=vendas&amp;utm_medium=topo">Faça o diagnóstico grátis e veja o seu resultado →</a><span class="miudo">80 questões on-line · resultado na hora · sem pagar nada</span><span class="segundo">Quer o treinamento completo? <a data-checkout="1" href="#">1ª e 2ª fase, até você passar · 12x R$&nbsp;59,90 →</a></span></div>
-    <a class="eb-chamada" href="#ebook"><span class="eb-tag">Grátis</span><span class="eb-ch-txt"><b>E-book Chega de Reprovar</b>Prepare-se para um dos exames que mais reprovam no Brasil. Receba no seu e-mail.</span><span class="eb-seta" aria-hidden="true">↓</span></a>
+    <a class="eb-chamada" href="#ebook"><span class="eb-tag">Grátis</span><span class="eb-ch-txt"><b>E-book Chega de Reprovar</b>Prepare-se para um dos exames que mais reprovam no Brasil. Baixe grátis agora.</span><span class="eb-seta" aria-hidden="true">↓</span></a>
     <div class="autor-mini"><span class="av">AL</span><span><b>Adonias Lopes de Araújo</b><br>Advogado há mais de 10 anos · OAB/GO 50.607</span></div>
     <div class="desce">continue lendo<span>↓</span></div>
   </div>
@@ -749,15 +755,15 @@ footer b{color:var(--nevoa)}
       <div class="eb-txt">
         <span class="kicker">E-book gratuito</span>
         <h2 class="serif-t">Chega de Reprovar</h2>
-        <p>Ainda não está pronto para decidir? Comece pelo e-book e veja o método por dentro. Preencha o seu nome e e-mail e ele chega na sua caixa de entrada na hora.</p>
+        <p>Ainda não está pronto para decidir? Comece pelo e-book e veja o método por dentro. Preencha o seu nome e e-mail e baixe na hora, no celular ou no computador.</p>
       </div>
       <form class="eb-form" id="eb-form" novalidate>
         <label>Seu nome<input name="nome" type="text" autocomplete="name" required maxlength="80"></label>
         <label>Seu melhor e-mail<input name="email" type="email" autocomplete="email" required maxlength="120"></label>
         <input name="site" type="text" tabindex="-1" autocomplete="off" class="eb-hp" aria-hidden="true">
-        <button class="btn pri" type="submit">Quero receber o e-book →</button>
+        <button class="btn pri" type="submit">Quero baixar o e-book grátis →</button>
         <p class="eb-msg" id="eb-msg" role="status" aria-live="polite"></p>
-        <p class="eb-lgpd">Usamos o seu e-mail só para enviar o e-book e conteúdos do Método Aprovação. Você pode cancelar quando quiser.</p>
+        <p class="eb-lgpd">Seus dados não são compartilhados com terceiros.</p>
       </form>
     </div>
   </div>
@@ -781,7 +787,7 @@ footer b{color:var(--nevoa)}
   </div>
   <div class="ps">
     <p><b>P.S.</b> A aprovação não exige saber tudo. Exige 40 acertos no dia da prova. Você não precisa ser outra pessoa para passar. Precisa de outra fórmula.</p>
-    <p><b>P.P.S.</b> Ainda não está pronto para decidir? <a href="../diagnostico/?utm_source=vendas&amp;utm_medium=pps">Faça o diagnóstico gratuito</a> e descubra hoje quanto falta para os 40. Ou comece pelo e-book gratuito <em>Chega de Reprovar</em> e veja o método por dentro. <a href="#ebook">Receber o e-book no meu e-mail →</a></p>
+    <p><b>P.P.S.</b> Ainda não está pronto para decidir? <a href="../diagnostico/?utm_source=vendas&amp;utm_medium=pps">Faça o diagnóstico gratuito</a> e descubra hoje quanto falta para os 40. Ou comece pelo e-book gratuito <em>Chega de Reprovar</em> e veja o método por dentro. <a href="#ebook">Baixar o e-book grátis →</a></p>
   </div>
 </section>
 </main>
@@ -845,10 +851,14 @@ footer b{color:var(--nevoa)}
       .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { j.status = r.status; return j; }); })
       .then(function (j) {
         if (j.ok && j.enviado) { msg.innerHTML = 'Pronto! Enviamos o e-book para <b>' + email.replace(/</g, '') + '</b>. Se não aparecer em alguns minutos, olhe o spam ou as promoções. Se preferir, <a href="' + j.link + '" target="_blank" rel="noopener">baixe agora</a>.'; bt.textContent = 'E-book enviado ✓'; }
-        else if (j.ok) { msg.innerHTML = 'Pronto! <a href="' + j.link + '" target="_blank" rel="noopener">Clique aqui para baixar o seu e-book</a>.'; bt.textContent = 'E-book liberado ✓'; }
+        else if (j.ok) {
+          var pn = nome.split(/\s+/)[0].replace(/[<>&"]/g, '');
+          ebf.innerHTML = '<div class="eb-ok"><span class="eb-ok-ic">✓</span><h3>Pronto, ' + pn + '! O seu e-book está liberado.</h3><a class="btn pri eb-baixar" href="' + j.link + '" download target="_blank" rel="noopener">Baixar o e-book agora (PDF) ↓</a><p>Salve no celular ou no computador para ler quando quiser.</p><p class="eb-ok-diag">Depois da leitura, descubra quanto falta para os 40: <a href="../diagnostico/?utm_source=vendas&amp;utm_medium=ebook">faça o diagnóstico gratuito →</a></p></div>';
+          var bx = ebf.querySelector('.eb-baixar'); if (bx) bx.focus();
+        }
         else { var er = new Error(j.erro || ''); er.servidor = true; throw er; }
       })
-      .catch(function (e) { msg.className = 'eb-msg erro'; msg.textContent = (e && e.servidor && e.message) ? e.message : 'Não foi possível enviar agora. Tente de novo em instantes.'; bt.disabled = false; bt.textContent = 'Quero receber o e-book →'; });
+      .catch(function (e) { msg.className = 'eb-msg erro'; msg.textContent = (e && e.servidor && e.message) ? e.message : 'Não foi possível enviar agora. Tente de novo em instantes.'; bt.disabled = false; bt.textContent = 'Quero baixar o e-book grátis →'; });
   });
   // botão fixo só aparece depois da abertura
   var fixo = document.querySelector('.fixo');
