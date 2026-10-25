@@ -106,11 +106,15 @@ form .btn{width:100%;margin-top:20px}
 .parcial b{color:#fff}
 .festa{margin-top:14px;padding:18px;border-radius:14px;background:linear-gradient(135deg,rgba(61,220,151,.18),rgba(245,197,66,.12));border:1.5px solid var(--folha);font-size:15.5px}
 .festa b{display:block;font-size:19px;color:#fff;margin-bottom:4px}
-.vitrine{margin-top:16px}
-.vitrine h3{font:700 15px 'IBM Plex Sans',sans-serif;color:var(--ouro);margin-bottom:6px}
-.vitrine li{list-style:none;display:flex;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--linha);font-size:14px;color:#C9D3E5}
-.vitrine li svg{flex:none;width:16px;height:16px}
-.vitrine a{display:block;margin-top:10px;font-size:14px;font-weight:600}
+.vitrine{margin-top:20px;padding:20px 18px;border-radius:18px;background:linear-gradient(160deg,#1B3363,#0F1D38);border:1.5px solid rgba(245,197,66,.7);box-shadow:0 14px 34px rgba(0,0,0,.35)}
+.vt-tag{display:inline-block;white-space:nowrap;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:#1A1404;background:var(--ouro);padding:4px 10px;border-radius:999px;margin-bottom:10px}
+.vitrine h3{font:700 19px 'IBM Plex Sans',sans-serif;color:#fff;margin-bottom:8px}
+.vitrine li{list-style:none;display:flex;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--linha);font-size:15px;color:#E3E8F2}
+.vitrine li svg{flex:none;width:18px;height:18px;color:var(--ouro)}
+.vt-preco{margin-top:12px;font-size:14px;color:var(--nevoa);line-height:1.5}.vt-preco b{color:var(--ouro);font-size:22px}
+.vitrine .vt-btn{display:block;width:100%;margin-top:14px;text-align:center;font-size:16.5px;line-height:1.3;padding:16px 14px;animation:pulsa 2.6s ease-in-out infinite}
+@keyframes pulsa{0%,100%{box-shadow:0 10px 26px rgba(245,197,66,.25)}50%{box-shadow:0 10px 38px rgba(245,197,66,.55)}}
+@media (max-width:860px){.vitrine ul{display:none}}
 .plano{position:relative;margin-top:14px;border-radius:16px;overflow:hidden;border:1px solid var(--linha)}
 .plano table{width:100%;border-collapse:collapse;font-size:14.5px}
 .plano td,.plano th{padding:11px 14px;border-top:1px solid var(--linha);text-align:left}
@@ -139,6 +143,8 @@ form .btn{width:100%;margin-top:20px}
 .intro .lista{margin-bottom:24px}
 .intro #comecar{width:100%;font-size:19px}
 @media (max-width:700px){.bus{grid-template-columns:1fr}}
+.cta-grande{display:inline-block;font-size:clamp(18px,2.2vw,22px);padding:22px 38px;animation:pulsa 2.6s ease-in-out infinite}
+@media (max-width:600px){.cta-grande{width:100%;padding:20px 18px}}
 </style>
 </head>
 <body>
@@ -293,7 +299,7 @@ form .btn{width:100%;margin-top:20px}
     } catch (e) { /* segue com o local */ }
     lead();
     entrando = false;
-    if (S.diag.fim) telaResultado(); else if (S.diag.ini) telaQuestao(); else telaIntro();
+    if (S.diag.fim) telaResultado(); else if (S.diag.ini && Object.keys(S.diag.resp || {}).length) telaQuestao(); else telaIntro();
   }
 
   // ---------- diagnóstico ----------
@@ -344,7 +350,7 @@ form .btn{width:100%;margin-top:20px}
       '<aside class="card"><div class="placar"><span class="sub">Acertos até aqui</span><b>' + acertos + '</b></div><div class="rumo"><div class="trilho"><i style="width:' + Math.min(100, acertos / 40 * 100) + '%"></i></div><small>' + (acertos >= 40 ? 'Você já passou dos 40 que aprovam!' : 'Faltam ' + (40 - acertos) + ' para os 40 que aprovam') + '</small></div>' +
       '<div class="cartao">' + Q.map(function (qq, k) { var rr = g.resp[qq.id], c = rr == null ? '' : rr === qq.c ? 'ok' : rr === -1 ? 'ns' : 'er'; if (k === i) c += ' atual'; return '<button class="' + c + '" data-ir-q="' + k + '" aria-label="Questão ' + (k + 1) + '">' + (k + 1) + '</button>'; }).join('') + '</div>' +
       '<button class="btn" id="fim2" style="width:100%;margin-top:16px">Entregar a prova</button>' +
-      '<div class="vitrine"><h3>No acesso completo</h3><ul>' + ['Cronograma dia a dia com o seu resultado', 'Sinopses de 1 página das 20 disciplinas', '10 provas oficiais com correção na hora', 'Estúdio de áudio e a 2ª fase incluída'].map(function (t) { return '<li>' + LOCK + t + '</li>'; }).join('') + '</ul><a href="' + vendas('lateral') + '" target="_blank" rel="noopener">Conhecer o acesso completo →</a></div></aside></div>';
+      '<div class="vitrine"><span class="vt-tag">Treinamento completo</span><h3>No acesso completo você tem</h3><ul>' + ['Cronograma dia a dia com o seu resultado', 'Sinopses de 1 página das 20 disciplinas', '10 provas oficiais com correção na hora', 'Estúdio de áudio e a 2ª fase incluída'].map(function (t) { return '<li>' + LOCK + t + '</li>'; }).join('') + '</ul><p class="vt-preco">1ª e 2ª fase · até você passar<br><b>12x R$ 59,90</b></p><a class="btn pri vt-btn" href="' + vendas('lateral') + '" target="_blank" rel="noopener">Quero ter acesso completo ao treinamento →</a></div></aside></div>';
     tela.querySelectorAll('[data-alt]').forEach(function (b) { b.addEventListener('click', function () { if (S.diag.resp[q.id] != null) return; S.diag.resp[q.id] = +b.dataset.alt; S.diag.ult = q.id; salvar(); telaQuestao(); }); });
     tela.querySelectorAll('[data-ir-q]').forEach(function (b) { b.addEventListener('click', function () { S.diag.atual = +b.dataset.irQ; salvar(); telaQuestao(); window.scrollTo(0, 0); }); });
     var ir = function (k) { S.diag.atual = k; salvar(); telaQuestao(); window.scrollTo(0, 0); };
@@ -396,7 +402,7 @@ form .btn{width:100%;margin-top:20px}
       '<div class="cta"><span class="chip">O próximo passo</span><h2>O diagnóstico mostrou <em>onde você está.</em> A plataforma leva você até os 40.</h2>' +
       '<p>No acesso completo, este resultado vira o seu plano: cronograma dia a dia com Ética + 5 disciplinas, sinopses de uma página, as 10 últimas provas oficiais da FGV com correção na hora, estúdio de áudio e a 2ª fase incluída, até você passar.</p>' +
       '<p style="margin-top:16px"><span class="sub">12x de</span> <span class="preco">R$ 59,90</span></p><p class="sub" style="margin-top:4px">Menos do que uma pizza por mês · 7 dias de garantia</p>' +
-      '<p style="margin-top:18px"><a class="btn pri" href="' + VENDAS + '">Quero o acesso completo →</a></p>' +
+      '<p style="margin-top:22px"><a class="btn pri cta-grande" href="' + VENDAS + '">Quero ter acesso completo ao treinamento →</a></p><p class="sub" style="margin-top:8px;font-size:14.5px">1ª e 2ª fase · acesso até você passar</p>' +
       '<p class="sub" style="font-size:14.5px;margin-top:14px">Compre com o mesmo e-mail (<b style="color:#fff">' + esc(user.email) + '</b>): o seu diagnóstico já vai estar lá.</p></div>' +
       '<p class="sub" style="text-align:center;margin-top:24px;font-size:14px"><a href="#" id="rever">Rever as minhas respostas</a></p>';
     $('#rever').addEventListener('click', function (e) { e.preventDefault(); S.diag.atual = 0; telaQuestao(); window.scrollTo(0, 0); });
