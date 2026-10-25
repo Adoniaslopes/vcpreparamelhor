@@ -127,6 +127,18 @@ form .btn{width:100%;margin-top:20px}
 .carregando{text-align:center;padding:80px 20px;color:var(--nevoa)}
 @media (max-width:860px){.hero,.qgrid,.nota{grid-template-columns:1fr}.discs,.g3{grid-template-columns:1fr}.medidor{margin:0 auto}.qgrid aside{order:-1}.cartao{grid-template-columns:repeat(10,1fr)}}
 @media (max-width:480px){.card{padding:20px}.enun{font-size:19px}.dl{grid-template-columns:110px 1fr 40px}}
+.intro .lead{font-size:clamp(18px,2vw,21px);color:var(--luz);margin-top:14px}
+.intro .lead b{color:var(--ouro)}
+.intro h2.it{font-size:clamp(22px,2.6vw,27px);margin:30px 0 10px;color:var(--luz)}
+.intro p{color:#C9D3E5;margin-top:10px}.intro p b{color:#fff}
+.bus{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0 6px}
+.bus div{padding:18px 16px;border-radius:16px;background:rgba(245,197,66,.07);border:1px solid rgba(245,197,66,.45)}
+.bus b{display:block;color:var(--ouro);font-size:17px;margin-bottom:6px}
+.bus span{display:block;color:#D7DDEA;font-size:15px;line-height:1.45}
+.intro .sonho{margin-top:18px;font-size:18px;color:var(--luz)}.intro .sonho em{color:var(--ouro)}
+.intro .lista{margin-bottom:24px}
+.intro #comecar{width:100%;font-size:19px}
+@media (max-width:700px){.bus{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -289,12 +301,24 @@ form .btn{width:100%;margin-top:20px}
   function porDisc() { var r = {}; D.forEach(function (d) { r[d.id] = {n: 0, ok: 0}; }); Q.forEach(function (q) { if (!r[q.d]) r[q.d] = {n: 0, ok: 0}; r[q.d].n++; if (S.diag.resp[q.id] === q.c) r[q.d].ok++; }); return r; }
   function telaIntro() {
     var nm = primeiroNome();
-    tela.innerHTML = '<div class="card" style="max-width:760px;margin:20px auto"><span class="chip">Diagnóstico gratuito</span>' +
-      '<h1 style="font-size:clamp(30px,4.4vw,44px)">' + (nm ? esc(nm) + ', vamos' : 'Vamos') + ' <em>medir onde você está.</em></h1>' +
-      '<p class="sub">São 80 questões, na mesma distribuição e na mesma ordem de disciplinas da prova da FGV. No fim, você recebe a sua nota e o seu raio-X.</p>' +
-      '<ul class="lista"><li>Responda como no dia da prova, sem consultar nada.</li><li>Se não fizer ideia da resposta, use <b>Não sei</b> em vez de chutar. O raio-X fica mais fiel.</li><li>Depois de cada resposta, você vê se acertou e o porquê.</li><li>Pode parar e continuar depois: as respostas ficam salvas.</li></ul>' +
-      '<button class="btn pri" id="comecar">Começar o diagnóstico</button></div>';
-    $('#comecar').addEventListener('click', function () { S.diag.ini = Date.now(); S.diag.atual = 0; salvar(); telaQuestao(); });
+    tela.innerHTML = '<div class="card intro" style="max-width:820px;margin:20px auto"><span class="chip">Diagnóstico gratuito</span>' +
+      '<h1 style="font-size:clamp(30px,4.4vw,46px)">' + (nm ? 'Parabéns, ' + esc(nm) + ', por dar este passo.' : 'Parabéns por dar este passo.') + ' <em>A sua carteira da OAB começa aqui.</em></h1>' +
+      '<p class="lead">Decidir buscar a aprovação já diz muito sobre você. Muita gente adia, desiste ou estuda anos sem rumo. Você escolheu começar do jeito certo: <b>descobrindo onde está</b>.</p>' +
+      '<h2 class="it">O que é este diagnóstico</h2>' +
+      '<p>É uma prova de <b>80 questões</b>, na mesma distribuição e na mesma ordem de disciplinas da 1ª fase da FGV. Por isso ela começa por <b>Ética</b>, exatamente como no dia do Exame.</p>' +
+      '<p>Ele não serve para te reprovar. Serve para mostrar, com honestidade, o que você já sabe e o que ainda falta para chegar aos 40 acertos.</p>' +
+      '<h2 class="it">A sua bússola até a aprovação</h2>' +
+      '<p>Sem uma medida, a gente estuda no escuro. Com ela, cada hora de estudo ganha direção. Ao terminar, você recebe na hora:</p>' +
+      '<div class="bus">' +
+        '<div><b>Onde você está</b><span>A sua nota de hoje, comparada com os 40 acertos que aprovam.</span></div>' +
+        '<div><b>O que já é seu</b><span>As disciplinas em que você já pontua e pode aproveitar.</span></div>' +
+        '<div><b>Para onde ir</b><span>O que reforçar primeiro e a combinação de Ética + 5 disciplinas que mais aproxima você dos 40.</span></div>' +
+      '</div>' +
+      '<p class="sonho">É esse mapa que vai guiar você, passo a passo, até a aprovação e até o dia em que vai ouvir: <em>"bom dia, doutor(a)"</em>.</p>' +
+      '<h2 class="it">Como fazer</h2>' +
+      '<ul class="lista"><li>Responda como no dia da prova, sem consultar nada.</li><li>Se não fizer ideia da resposta, use <b>Não sei</b> em vez de chutar. O raio-X fica mais fiel.</li><li>Depois de cada resposta, você vê se acertou e o porquê.</li><li>Faça no seu ritmo: pode parar e continuar depois, as respostas ficam salvas.</li></ul>' +
+      '<button class="btn pri" id="comecar">Estou pronto(a): começar o diagnóstico</button></div>';
+    $('#comecar').addEventListener('click', function () { S.diag.ini = Date.now(); S.diag.atual = 0; salvar(); telaQuestao(); window.scrollTo(0, 0); });
   }
   function telaQuestao() {
     var g = S.diag, i = Math.min(Math.max(g.atual || 0, 0), 79), q = Q[i], d = DM[q.d] || {curto: q.d, cor: '#A9B7D0'}, o = ordemAlt(q), r = g.resp[q.id];
