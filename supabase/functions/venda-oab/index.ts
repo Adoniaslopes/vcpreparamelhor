@@ -30,8 +30,18 @@ Deno.serve(async (req) => {
   if (req.method !== 'POST') return json({ ok: true, info: 'venda-oab ativa' });
 
   // 1) segurança: só aceita quem conhece a chave
-  const chave = Deno.env.get('VENDA_CHAVE');
-  if (!chave || url.searchParams.get('chave') !== chave) return json({ erro: 'não autorizado' }, 401);
+  const chave = (Deno.env.get('VENDA_CHAVE') || '').trim();
+  // A Kiwify acrescenta "?signature=..." ao fim do endereço; por isso a chave é procurada no endereço inteiro.
+  let bruto = url.search || ''; try { bruto = decodeURIComponent(bruto); } catch (_) { /* mantém como veio */ }
+  const esc = chave.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const autorizado = !!chave && new RegExp('[?&]chave=\\s*' + esc + '(?![A-Za-z0-9_-])').test(bruto);
+  if (!autorizado) {
+    try {
+      await admin.from('vendas_log').insert({ origem: 'desconhecida', evento: 'recusado', email: null,
+        resultado: 'chave não confere (parâmetros recebidos: ' + bruto.replace(/chave=[^&?]*/g, 'chave=***').slice(0, 200) + ')', corpo: null });
+    } catch (_) { /* registro opcional */ }
+    return json({ erro: 'não autorizado' }, 401);
+  }
 
   let corpo: any = {};
   try { corpo = await req.json(); } catch { return json({ erro: 'corpo inválido' }, 400); }
