@@ -145,6 +145,7 @@ form .btn{width:100%;margin-top:20px}
 @media (max-width:700px){.bus{grid-template-columns:1fr}}
 .cta-grande{display:inline-block;font-size:clamp(18px,2.2vw,22px);padding:22px 38px;animation:pulsa 2.6s ease-in-out infinite}
 @media (max-width:600px){.cta-grande{width:100%;padding:20px 18px}}
+.juros{display:block;font-size:13px !important;line-height:1.45;color:var(--nevoa)}
 </style>
 </head>
 <body>
@@ -234,7 +235,7 @@ form .btn{width:100%;margin-top:20px}
         '<label>E-mail<input type="email" id="c-email" required autocomplete="email"></label>' +
         '<label>WhatsApp com DDD<input type="tel" id="c-zap" required inputmode="tel" autocomplete="tel" placeholder="(62) 90000-0000"></label>' +
         '<label>Crie uma senha (mínimo 8 caracteres)<input type="password" id="c-senha" required minlength="8" autocomplete="new-password"></label>' +
-        '<label class="aceite"><input type="checkbox" id="c-aceite" checked><span>Aceito receber o meu resultado e conteúdos do Método Aprovação pelo WhatsApp e por e-mail. Posso cancelar quando quiser.</span></label>' +
+        '<label class="aceite"><input type="checkbox" id="c-aceite"><span>Aceito receber o meu resultado e conteúdos do Método Aprovação pelo WhatsApp e por e-mail. Posso cancelar quando quiser.</span></label>' +
         '<button class="btn pri" type="submit">Quero fazer o meu diagnóstico</button><p class="msg" id="c-msg" role="status"></p></form>' +
         '<p class="troca">Já começou o diagnóstico? <a href="#" data-ir="login">Entrar</a></p>' +
         '<p class="mini">Os seus dados são usados só para liberar o diagnóstico e falar com você sobre o Método Aprovação. Não compartilhamos com terceiros.</p>') +
@@ -350,7 +351,7 @@ form .btn{width:100%;margin-top:20px}
       '<aside class="card"><div class="placar"><span class="sub">Acertos até aqui</span><b>' + acertos + '</b></div><div class="rumo"><div class="trilho"><i style="width:' + Math.min(100, acertos / 40 * 100) + '%"></i></div><small>' + (acertos >= 40 ? 'Você já passou dos 40 que aprovam!' : 'Faltam ' + (40 - acertos) + ' para os 40 que aprovam') + '</small></div>' +
       '<div class="cartao">' + Q.map(function (qq, k) { var rr = g.resp[qq.id], c = rr == null ? '' : rr === qq.c ? 'ok' : rr === -1 ? 'ns' : 'er'; if (k === i) c += ' atual'; return '<button class="' + c + '" data-ir-q="' + k + '" aria-label="Questão ' + (k + 1) + '">' + (k + 1) + '</button>'; }).join('') + '</div>' +
       '<button class="btn" id="fim2" style="width:100%;margin-top:16px">Entregar a prova</button>' +
-      '<div class="vitrine"><span class="vt-tag">Treinamento completo</span><h3>No acesso completo você tem</h3><ul>' + ['Cronograma dia a dia com o seu resultado', 'Sinopses de 1 página das 20 disciplinas', '10 provas oficiais com correção na hora', 'Estúdio de áudio e a 2ª fase incluída'].map(function (t) { return '<li>' + LOCK + t + '</li>'; }).join('') + '</ul><p class="vt-preco">1ª e 2ª fase · até você passar<br><b>12x R$ 59,90</b></p><a class="btn pri vt-btn" href="' + vendas('lateral') + '" target="_blank" rel="noopener">Quero ter acesso completo ao treinamento →</a></div></aside></div>';
+      '<div class="vitrine"><span class="vt-tag">Treinamento completo</span><h3>No acesso completo você tem</h3><ul>' + ['Cronograma dia a dia com o seu resultado', 'Sinopses de 1 página das 20 disciplinas', '10 provas oficiais com correção na hora', 'Estúdio de áudio e a 2ª fase incluída'].map(function (t) { return '<li>' + LOCK + t + '</li>'; }).join('') + '</ul><p class="vt-preco">1ª e 2ª fase · até você passar<br><b>12x R$ 59,90*</b><br><small class="juros">*Total de R$ 718,80. No cartão parcelado, a Kiwify acrescenta juros: 12x de R$ 74,34.</small></p><a class="btn pri vt-btn" href="' + vendas('lateral') + '" target="_blank" rel="noopener">Quero ter acesso completo ao treinamento →</a></div></aside></div>';
     tela.querySelectorAll('[data-alt]').forEach(function (b) { b.addEventListener('click', function () { if (S.diag.resp[q.id] != null) return; S.diag.resp[q.id] = +b.dataset.alt; S.diag.ult = q.id; salvar(); telaQuestao(); }); });
     tela.querySelectorAll('[data-ir-q]').forEach(function (b) { b.addEventListener('click', function () { S.diag.atual = +b.dataset.irQ; salvar(); telaQuestao(); window.scrollTo(0, 0); }); });
     var ir = function (k) { S.diag.atual = k; salvar(); telaQuestao(); window.scrollTo(0, 0); };
@@ -401,7 +402,7 @@ form .btn{width:100%;margin-top:20px}
       })() +
       '<div class="cta"><span class="chip">O próximo passo</span><h2>O diagnóstico mostrou <em>onde você está.</em> A plataforma leva você até os 40.</h2>' +
       '<p>No acesso completo, este resultado vira o seu plano: cronograma dia a dia com Ética + 5 disciplinas, sinopses de uma página, as 10 últimas provas oficiais da FGV com correção na hora, estúdio de áudio e a 2ª fase incluída, até você passar.</p>' +
-      '<p style="margin-top:16px"><span class="sub">12x de</span> <span class="preco">R$ 59,90</span></p><p class="sub" style="margin-top:4px">Menos do que uma pizza por mês · 7 dias de garantia</p>' +
+      '<p style="margin-top:16px"><span class="sub">12x de</span> <span class="preco">R$ 59,90*</span></p><p class="sub" style="margin-top:4px">Menos do que uma pizza por mês · 7 dias de garantia</p><p class="sub juros" style="margin-top:8px">*Valor total do curso: R$ 718,80. No cartão parcelado, a Kiwify acrescenta os juros do parcelamento e a parcela fica em 12x de R$ 74,34. O valor final aparece na página de pagamento antes da compra.</p>' +
       '<p style="margin-top:22px"><a class="btn pri cta-grande" href="' + VENDAS + '">Quero ter acesso completo ao treinamento →</a></p><p class="sub" style="margin-top:8px;font-size:14.5px">1ª e 2ª fase · acesso até você passar</p>' +
       '<p class="sub" style="font-size:14.5px;margin-top:14px">Compre com o mesmo e-mail (<b style="color:#fff">' + esc(user.email) + '</b>): o seu diagnóstico já vai estar lá.</p></div>' +
       '<p class="sub" style="text-align:center;margin-top:24px;font-size:14px"><a href="#" id="rever">Rever as minhas respostas</a></p>';
