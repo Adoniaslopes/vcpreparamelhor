@@ -3,7 +3,7 @@
 const SB_URL = 'https://nzzgfxctuulmudztfdab.supabase.co';
 const ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56emdmeGN0dXVsbXVkenRmZGFiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE4Mjk2NzUsImV4cCI6MjEwNzQwNTY3NX0.fMTVwtQNLWvwPwg6bvN0WNq8uQnGKhRhWD4fcknX7Sw';
 const PERMITIDOS = new Set(['q1', 'q2', 'q3', 'q4', 'sinopses', 'sinopses-ext1', 'sinopses-ext2', 'provas', 'fase2']);
-const permitido = (n) => n === 'diag' || PERMITIDOS.has(n) || /^cad\d{2}$/.test(n);
+const permitido = (n) => n === 'diag' || PERMITIDOS.has(n) || /^(cad|f2ex)\d{2}$/.test(n);
 // O diagnóstico gratuito (só as 80 questões do diagnóstico) é liberado para qualquer pessoa cadastrada e logada.
 
 const nega = (status) => new Response(status === 401 ? 'Faça login para acessar.' : 'Acesso não liberado para este e-mail.', {

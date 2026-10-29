@@ -1059,11 +1059,23 @@
   }
 
   // ---------- 2ª fase: prova simulada (caderno + folha de respostas; orientação só depois da entrega) ----------
-  var F2, F2M, F2A;
+  var F2, F2M, F2A, F2L = [], F2EX = [];
   function prepararF2() {
     F2 = OAB.F2 || {AREAS: [], ITENS: [], ESTRUTURA: [], PROVA: {}};
-    F2M = {}; (F2.ITENS || []).forEach(function (x) { F2M[x.id] = x; });
     F2A = {}; (F2.AREAS || []).forEach(function (a) { F2A[a.id] = a; });
+    // provas oficiais da FGV: cada área de cada exame vira uma "área" própria (ex.: civil-45)
+    F2L = (F2.ITENS || []).slice(); F2EX = [];
+    var ex = OAB.F2EX || {};
+    Object.keys(ex).map(Number).sort(function (a, b) { return b - a; }).forEach(function (n) {
+      F2EX.push(n);
+      ex[n].itens.forEach(function (x) {
+        var base = F2A[x.area]; if (!base) return;
+        var k = x.area + '-' + n;
+        if (!F2A[k]) F2A[k] = Object.assign({}, base, {id: k, base: x.area, exame: n, data: ex[n].data, nome: base.nome + ' · ' + n + 'º Exame'});
+        F2L.push(Object.assign({}, x, {area: k}));
+      });
+    });
+    F2M = {}; F2L.forEach(function (x) { F2M[x.id] = x; });
   }
   prepararF2();
   var f2Rel = null;
@@ -1072,7 +1084,7 @@
   function num2(v) { return (Math.round(v * 100) / 100).toFixed(2).replace('.', ','); }
   function achou(txt, re) { try { return new RegExp(re, 'i').test(txt); } catch (e) { return false; } }
   function f2Itens(area) {
-    var l = F2.ITENS.filter(function (x) { return x.area === area; });
+    var l = F2L.filter(function (x) { return x.area === area; });
     return {peca: l.filter(function (x) { return x.tipo === 'peca'; })[0], q: l.filter(function (x) { return x.tipo === 'questao'; }).slice(0, 4)};
   }
   function f2Sim(area) { var g = f2(); g.sim[area] = g.sim[area] || {resp: {}, ini: null, fim: null, seg: 0, hist: []}; return g.sim[area]; }
@@ -1098,7 +1110,7 @@
     return {nota: pecaOk ? nota : 0, notaSemPeca: nota, max: 5, tps: tps, est: est, pecaOk: pecaOk};
   }
   function corrigirQuestao(item, txt) {
-    var its = item.itens.map(function (t) { var p = pontuaTopico(txt, t); return {t: t, nota: p.nota, fr: p.fr}; });
+    var its = item.itens.map(function (t) { if (t.anulada) return {t: t, nota: t.v, fr: 1, anulada: true}; var p = pontuaTopico(txt, t); return {t: t, nota: p.nota, fr: p.fr}; });
     return {nota: its.reduce(function (a, x) { return a + x.nota; }, 0), max: 1.25, its: its};
   }
   function f2Resultado(area) {
@@ -1112,6 +1124,23 @@
     return cena({selo: '2ª fase', titulo: 'A preparação da 2ª fase está no plano completo', lead: 'Prova simulada no formato da FGV — questões discursivas e peça profissional, com folha de respostas, correção por tópicos, modelo e orientação. Disponível no plano "1ª e 2ª fase".',
       extra: '<p style="margin-top:16px"><a class="btn pri" href="vendas/#planos">Conhecer o plano completo</a></p>'});
   }
+  function f2Par(t) { return esc(t).replace(/\n\n+/g, '</p><p>'); }
+  function f2StatusSim(k) {
+    var sm = f2().sim[k];
+    return sm && sm.fim ? 'última nota: ' + num2(sm.hist.length ? sm.hist[sm.hist.length - 1].nota : 0) + ' de 10,00' : sm && sm.ini ? 'prova em andamento' : 'não iniciada';
+  }
+  function f2Oficiais(base) {
+    if (!F2EX.length) return '';
+    var linhas = F2EX.map(function (n) {
+      var ks = base ? [base + '-' + n] : F2.AREAS.map(function (a) { return a.id + '-' + n; });
+      ks = ks.filter(function (k) { return F2A[k]; }); if (!ks.length) return '';
+      return '<h3 style="margin:18px 0 8px">' + n + 'º Exame · prova aplicada em ' + esc(F2A[ks[0]].data) + '</h3><div class="grade g3">' + ks.map(function (k) {
+        var a = F2A[k];
+        return '<a class="disc-card" href="#segunda-fase/' + k + '" style="--c:' + a.cor + '"><span class="sub peq">' + f2StatusSim(k) + '</span><h3>' + esc(F2A[a.base].nome) + '</h3><span class="sub peq">prova oficial da FGV · 4 questões + peça</span></a>';
+      }).join('') + '</div>';
+    }).join('');
+    return '<div class="bloco" style="margin-top:24px"><h2>Provas oficiais da FGV</h2><p class="sub">A prova real de cada área, com o mesmo enunciado do dia do exame. Depois de entregar, você vê o espelho com a distribuição oficial dos pontos e o gabarito comentado da FGV.</p>' + linhas + '</div>';
+  }
   function f2Inicio() {
     var cards = F2.AREAS.map(function (a) {
       var it = f2Itens(a.id), tem = it.peca && it.q.length === 4, sm = f2().sim[a.id], st = !tem ? 'em preparação' : sm && sm.fim ? 'última nota: ' + num2(sm.hist.length ? sm.hist[sm.hist.length - 1].nota : 0) + ' de 10,00' : sm && sm.ini ? 'prova em andamento' : 'prova simulada disponível';
@@ -1121,17 +1150,18 @@
       lead: 'Escolha a sua área. Você recebe o caderno de prova com as 4 questões discursivas e a peça profissional, e a folha de respostas pautada e numerada. Responda sem consulta a modelos. Só depois de entregar aparecem a checagem, o espelho, o modelo e a orientação.',
       extra: '<div class="cena-nums"><div><span class="num">4 × 1,25</span><small>as questões</small></div><div><span class="num">5,00</span><small>a peça</small></div><div><span class="num" style="color:var(--dourado)">6,00</span><small>para passar</small></div></div>'}) +
       '<div class="bloco"><h2>Como é a prova</h2><ul style="padding-left:1.2rem;margin:0">' + F2.PROVA.regras.map(function (r) { return '<li>' + esc(r) + '</li>'; }).join('') + '</ul></div>' +
-      '<h2 style="margin-top:24px">Escolha a sua área</h2><div class="grade g3">' + cards + '</div>';
+      '<h2 style="margin-top:24px">Escolha a sua área</h2><p class="sub">Prova simulada com casos inéditos no formato da FGV.</p><div class="grade g3">' + cards + '</div>' + f2Oficiais();
   }
   function f2Area(area) {
     var a = F2A[area], it = f2Itens(area), sm = f2Sim(area);
     var voltar = '<p class="noprint"><a href="#segunda-fase" class="link">2ª fase · trocar de área</a></p>';
-    if (!it.peca || it.q.length < 4) return voltar + '<div class="cab"><div><h1 style="color:' + a.cor + '">' + esc(a.nome) + '</h1><p class="sub">A prova simulada desta área está em preparação.</p></div></div>' + roteiroPecas(a);
-    if (sm.fim) return f2TelaResultado(area);
-    return voltar + '<div class="cab"><div><h1 style="color:' + a.cor + '">' + esc(a.nome) + ' · prova simulada</h1><p class="sub">4 questões discursivas e 1 peça profissional, no formato da FGV.</p></div></div>' +
+    var ofic = a.exame ? '' : f2Oficiais(area);
+    if (!it.peca || it.q.length < 4) return voltar + '<div class="cab"><div><h1 style="color:' + a.cor + '">' + esc(a.nome) + '</h1><p class="sub">A prova simulada desta área está em preparação.</p></div></div>' + ofic + roteiroPecas(a);
+    if (sm.fim) return f2TelaResultado(area) + ofic;
+    return voltar + '<div class="cab"><div><h1 style="color:' + a.cor + '">' + esc(a.nome) + (a.exame ? ' · prova oficial da FGV' : ' · prova simulada') + '</h1><p class="sub">' + (a.exame ? 'As 4 questões discursivas e a peça profissional aplicadas pela FGV em ' + esc(a.data) + ', com o texto integral do caderno.' : '4 questões discursivas e 1 peça profissional, no formato da FGV.') + '</p></div></div>' +
       '<div class="bloco"><h2>Instruções</h2><ul style="padding-left:1.2rem;margin:0"><li>Leia o caderno de prova: primeiro as questões, depois a peça.</li><li>Escreva na folha de respostas. Cada questão tem 30 linhas (responda os itens A e B na mesma folha); a peça tem 150 linhas.</li><li>Não há dicas durante a prova. A checagem, o espelho, o modelo e a orientação aparecem depois que você entregar.</li><li>Tempo de referência: 5 horas. Você pode pausar e continuar depois; o que escreveu fica salvo.</li></ul>' +
       '<p style="margin:16px 0 0"><a class="btn pri" href="#segunda-fase/' + area + '/prova" data-f2ini="' + area + '">' + (sm.ini ? 'Continuar a prova' : 'Começar a prova') + '</a></p></div>' +
-      (sm.hist.length ? '<div class="bloco"><h2>Suas provas anteriores</h2><p>' + sm.hist.map(function (h, i) { return (i + 1) + 'ª: <b>' + num2(h.nota) + '</b>'; }).join(' · ') + '</p></div>' : '');
+      (sm.hist.length ? '<div class="bloco"><h2>Suas provas anteriores</h2><p>' + sm.hist.map(function (h, i) { return (i + 1) + 'ª: <b>' + num2(h.nota) + '</b>'; }).join(' · ') + '</p></div>' : '') + ofic;
   }
   function folha(area, k, n, valor, titulo) {
     var nums = ''; for (var i = 1; i <= n; i++) nums += '<span>' + i + '</span>';
@@ -1145,9 +1175,9 @@
     if (!sm.ini) { sm.ini = Date.now(); salvar(); }
     var cad = '<div class="caderno"><div class="cad-cab"><b>CADERNO DE PROVA</b><span>' + esc(a.nome) + ' · Prova prático-profissional</span></div>' +
       it.q.map(function (q, i) {
-        return '<section class="cad-q"><h3>QUESTÃO ' + (i + 1) + '</h3><p>' + esc(q.enunciado) + '</p>' + q.itens.map(function (x) { return '<p><b>' + x.letra + ')</b> ' + esc(x.p) + ' <span class="sub">(Valor: ' + num2(x.v) + ')</span></p>'; }).join('') + '</section>';
+        return '<section class="cad-q"><h3>QUESTÃO ' + (i + 1) + '</h3><p>' + f2Par(q.enunciado) + '</p>' + q.itens.map(function (x) { return '<p><b>' + x.letra + ')</b> ' + esc(x.p) + ' <span class="sub">(Valor: ' + num2(x.v) + ')</span></p>'; }).join('') + '</section>';
       }).join('') +
-      '<section class="cad-q"><h3>PEÇA PRÁTICO-PROFISSIONAL</h3><p>' + esc(it.peca.enunciado) + '</p><p><b>' + esc(it.peca.comando) + '</b> <span class="sub">(Valor: 5,00)</span></p></section></div>';
+      '<section class="cad-q"><h3>PEÇA PRÁTICO-PROFISSIONAL</h3><p>' + f2Par(it.peca.enunciado) + '</p><p><b>' + esc(it.peca.comando) + '</b> <span class="sub">(Valor: 5,00)</span></p></section></div>';
     var fl = it.q.map(function (q, i) { return folha(area, 'q' + (i + 1), F2.PROVA.linhasQuestao, sm.resp['q' + (i + 1)], 'Folha de respostas · Questão ' + (i + 1)); }).join('') +
       folha(area, 'peca', F2.PROVA.linhasPeca, sm.resp.peca, 'Folha de respostas · Peça prático-profissional');
     setTimeout(function () {
@@ -1168,6 +1198,7 @@
       a.pecas.map(function (p) { return '<tr><td><b>' + esc(p.n) + '</b></td><td>' + esc(p.q) + '</td><td>' + esc(p.f) + '</td></tr>'; }).join('') + '</tbody></table></div></div>';
   }
   function orientacao(x) {
+    if (!x.roteiro) return x.gc ? '<h4>Gabarito comentado da FGV</h4><div class="f2-modelo">' + esc(x.gc) + '</div>' : '';
     return '<h4>Orientação: como responder para nota máxima</h4><ol class="passos-lista">' + x.roteiro.map(function (r, i) { return '<li><span class="n">' + (i + 1) + '</span><div><b>' + esc(r.passo) + '.</b> <span class="sub">' + esc(r.como) + (r.fundamento ? ' <b>' + esc(r.fundamento) + '</b>' : '') + '</span></div></li>'; }).join('') + '</ol>';
   }
   function suaResposta(txt) { return '<details class="f2-sua"><summary>Ver a sua resposta</summary><pre>' + esc(txt || '(em branco)') + '</pre></details>'; }
@@ -1180,7 +1211,7 @@
     h += it.q.map(function (q, i) {
       var c = R2.qs[i];
       return '<div class="bloco f2-parte"><h2>Questão ' + (i + 1) + ' · ' + num2(c.nota) + ' de 1,25</h2>' + suaResposta(sm.resp['q' + (i + 1)]) +
-        '<h4>Checagem</h4>' + c.its.map(function (p) { var k = p.fr >= 1 ? 'ok' : p.fr > 0 ? 'meio' : 'er'; return '<div class="f2-qfb ' + k + '"><b>' + p.t.letra + ') ' + num2(p.nota) + ' de ' + num2(p.t.v) + ' — ' + (k === 'ok' ? 'fundamento encontrado' : k === 'meio' ? 'resposta incompleta' : 'faltou o fundamento esperado') + '</b><p><b>Modelo de resposta:</b> ' + esc(p.t.esp) + '</p></div>'; }).join('') +
+        '<h4>Checagem</h4>' + c.its.map(function (p) { var k = p.fr >= 1 ? 'ok' : p.fr > 0 ? 'meio' : 'er'; return '<div class="f2-qfb ' + k + '"><b>' + p.t.letra + ') ' + num2(p.nota) + ' de ' + num2(p.t.v) + ' — ' + (p.anulada ? 'item anulado pela FGV: ponto para todos' : k === 'ok' ? 'fundamento encontrado' : k === 'meio' ? 'resposta incompleta' : 'faltou o fundamento esperado') + '</b><p><b>' + (q.exame ? 'Espelho da FGV' : 'Modelo de resposta') + ':</b> ' + esc(p.t.esp) + '</p></div>'; }).join('') +
         orientacao(q) + (nuvem.ativo ? '<p class="chips"><button class="btn mini ouro" data-f2ia="' + q.id + '" data-area="' + area + '" data-k="q' + (i + 1) + '">Correção detalhada do examinador</button></p><div data-iabox="' + q.id + '"></div>' : '') + '</div>';
     }).join('');
     var p = it.peca, c = R2.pc;
@@ -1189,7 +1220,7 @@
         : '<p class="aviso"><b>Peça não identificada.</b> A peça cabível é <b>' + esc(p.pecaCorreta) + '</b>. Na prova, peça inadequada zera a peça. Se você tivesse acertado a peça, o conteúdo valeria cerca de ' + num2(c.notaSemPeca) + '.</p>') +
       '<h4>2. Checagem da estrutura</h4><ul class="f2-est">' + c.est.map(function (s) { return '<li class="' + (s.ok ? 'ok' : 'er') + '"><b>' + (s.ok ? '✓ ' : '✗ ') + esc(s.e.t) + '</b>' + (s.ok ? '' : '<span>' + esc(s.e.como) + '</span>') + '</li>'; }).join('') + '</ul>' +
       '<h4>3. Espelho de correção</h4><ul class="f2-esp">' + c.tps.map(function (t) { var k = t.fr >= 1 ? 'ok' : t.fr > 0 ? 'meio' : 'er'; return '<li class="' + k + '"><span class="pt">' + num2(t.nota) + ' / ' + num2(t.t.v) + '</span><span>' + esc(t.t.t) + (k !== 'ok' && t.t.dica ? ' <i>' + esc(t.t.dica) + '</i>' : '') + '</span></li>'; }).join('') + '</ul>' +
-      '<h4>4. Modelo que você deve seguir</h4><div class="f2-modelo">' + esc(p.modelo) + '</div>' + orientacao(p) +
+      '<h4>4. ' + (p.exame ? 'Gabarito comentado da FGV' : 'Modelo que você deve seguir') + '</h4><div class="f2-modelo"><p>' + f2Par(p.modelo) + '</p></div>' + orientacao(p) +
       (nuvem.ativo ? '<p class="chips"><button class="btn mini ouro" data-f2ia="' + p.id + '" data-area="' + area + '" data-k="peca">Correção detalhada do examinador</button></p><div data-iabox="' + p.id + '"></div>' : '') + '</div>' +
       roteiroPecas(a);
     return h;
@@ -1221,7 +1252,7 @@
   async function f2Publicar() {
     var m = $('#f2-pub-msg');
     try {
-      var l = F2.ITENS.map(function (x) {
+      var l = F2L.map(function (x) {
         var peca = x.tipo === 'peca';
         return {id: x.id, titulo: x.titulo, caso: x.enunciado, comando: x.comando || 'Responda aos itens a seguir, fundamentando.', pontos: peca ? 0.5 : 0.625,
           topicos: peca ? x.topicos.map(function (t) { return t.t; }) : x.itens.map(function (t) { return t.letra + ') ' + t.p; }),
@@ -1808,7 +1839,8 @@
   }
   // conteúdo protegido: só é entregue (pela função do servidor) a quem está logado e com acesso ativo
   var CADS = [47, 46, 45];
-  var PRIVADOS = ['q1', 'q2', 'q3', 'q4', 'sinopses', 'sinopses-ext1', 'sinopses-ext2', 'provas', 'fase2'].concat(CADS.map(function (n) { return 'cad' + n; })), conteudoOk = false;
+  var F2EXS = [45];
+  var PRIVADOS = ['q1', 'q2', 'q3', 'q4', 'sinopses', 'sinopses-ext1', 'sinopses-ext2', 'provas', 'fase2'].concat(CADS.map(function (n) { return 'cad' + n; }), F2EXS.map(function (n) { return 'f2ex' + n; })), conteudoOk = false;
   async function carregarConteudo(token) {
     if (conteudoOk) return;
     var textos = await Promise.all(PRIVADOS.map(async function (n) {
