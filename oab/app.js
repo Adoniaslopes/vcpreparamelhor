@@ -1443,11 +1443,11 @@
       '<li><span class="n">2</span><div>Resolva em até 5 horas e marque suas respostas no cartão-resposta da plataforma.</div></li>' +
       '<li><span class="n">3</span><div>Toque em <b>Corrigir</b>. Questões anuladas valem ponto para todos, como na prova real.</div></li>' +
       '<li><span class="n">4</span><div>Veja o boletim por disciplina e os assuntos que você errou. Eles entram no seu relatório e no cronograma.</div></li></ol></div>' +
-      '<div class="grade g2"><div class="bloco"><table class="t"><thead><tr><th>Exame</th><th>Data</th><th>Situação</th><th></th></tr></thead><tbody>' +
+      '<div class="grade g2"><div class="bloco"><div style="overflow-x:auto"><table class="t"><thead><tr><th>Exame</th><th>Data</th><th>Situação</th><th></th></tr></thead><tbody>' +
       EXAMES.map(function (e) {
         var o = oficial(e.n), st = !o ? '<span class="sub">não iniciada</span>' : o.fim ? '<b>' + corrigirOficial(e.n).nota + '</b>/80' : '<span class="tag">em andamento · ' + Object.keys(o.resp).length + '/80</span>';
         return '<tr><td><b>' + e.n + 'º</b>' + (caderno(e.n) ? ' <span class="tag sim-tag">simulado completo</span>' : '') + '</td><td>' + fmtData(OAB.PROVAS[e.n].data, true) + '</td><td>' + st + '</td><td><a class="btn mini' + (caderno(e.n) && !o ? ' pri' : '') + '" href="#provas/' + e.n + '">' + (!o ? (caderno(e.n) ? 'Fazer o simulado' : 'Resolver') : o.fim ? 'Ver resultado' : 'Continuar') + '</a></td></tr>';
-      }).join('') + '</tbody></table></div><div class="bloco"><h2>Sua evolução</h2>' + (graf || '<p class="sub">Corrija a primeira prova para ver o gráfico.</p>') +
+      }).join('') + '</tbody></table></div></div><div class="bloco"><h2>Sua evolução</h2>' + (graf || '<p class="sub">Corrija a primeira prova para ver o gráfico.</p>') +
       (nuvem.admin ? '<div style="margin-top:20px;border-top:1px solid var(--linha);padding-top:14px"><h3>Administração · importar questões</h3><p class="peq sub">Envie um arquivo questoes-provas.json (formato do banco, com o campo "ex" = número do exame).</p><input type="file" id="imp-provas" accept=".json"><p class="msg" id="imp-msg"></p><h3 style="margin-top:16px">Administração · 2ª fase</h3><p class="peq sub">Envia as peças e questões da 2ª fase para o examinador corrigir.</p><button class="btn mini" data-act="f2-publicar">Publicar 2ª fase no examinador</button><p class="msg" id="f2-pub-msg"></p></div>' : '') +
       '</div></div>';
   };

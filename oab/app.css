@@ -89,7 +89,7 @@ input, select { display: block; width: 100%; margin-top: .3rem; font: 1rem var(-
 .cab p { margin: 0; }
 .bloco { background: var(--vidro), var(--papel2); border: 1px solid var(--linha); border-radius: var(--r-m); padding: 20px; box-shadow: var(--sombra); }
 .grade { display: grid; gap: 16px; }
-.g2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); align-items: start; }
+.g2 { grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); align-items: start; }
 .g3 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
 .pilha > * + * { margin-top: 16px; }
 .tag { display: inline-flex; align-items: center; gap: 6px; font-size: .78rem; font-weight: 600; padding: 2px 10px; border-radius: 999px; border: 1px solid var(--linha); color: var(--tinta2); white-space: nowrap; }
