@@ -364,6 +364,7 @@
   var cmbSel = null;
   var CMB_PRONTOS = [
     {n: 'Só o Grupo A', l: ['civil', 'pcivil', 'const', 'penal']},
+    {n: 'Grupo A + 1 do Grupo C', l: ['civil', 'pcivil', 'const', 'penal', 'ppenal', 'dh']},
     {n: 'Mesclando A e B', l: ['const', 'civil', 'adm', 'trab']},
     {n: 'Direito Público + Civil', l: ['const', 'adm', 'trib', 'civil']},
     {n: 'Quem gosta de Trabalho', l: ['trab', 'ptrab', 'const', 'civil']}
@@ -379,11 +380,11 @@
     if (!l.length) return '<p class="peq sub" style="margin-top:8px">Escolha pelo menos uma disciplina além de Ética.</p>';
     var c = cmbCalc(l);
     return '<div class="cr-conta ' + (c.ok ? 'ok' : 'no') + '"><span>Núcleo (Ética + ' + l.length + '): <b>' + c.foco + ' questões</b> · 3 de 4 = <b>' + c.pn + '</b></span><span>+ restante: ' + c.resto + ' questões · 1 de 3 = <b>' + c.pr + '</b></span><span class="t">= ' + c.tot + ' pontos ' + (c.ok ? '✓ a conta fecha' : '· faltam ' + (40 - c.tot) + ' para os 40') + '</span></div>' +
-      (c.ok ? (l.length > 5 ? '<p class="peq sub" style="margin-top:6px">Você escolheu ' + l.length + ' disciplinas. Fecha a conta, mas o método sugere até 5 para você estudar menos.</p>' : '') :
+      (c.ok ? (l.length > 6 ? '<p class="peq sub" style="margin-top:6px">Você escolheu ' + l.length + ' disciplinas. Fecha a conta, mas o método sugere até 6 para você estudar menos.</p>' : '') :
         '<p class="peq" style="margin-top:6px;color:var(--vermelho)">Assim a conta não fecha. Acrescente uma disciplina ou troque uma de 2 questões por uma de 5 ou 6.</p>');
   }
   function combinaGrupos() {
-    if (!cmbSel) cmbSel = (S.dominio && S.dominio.length >= 4) ? S.dominio.slice(0, 5) : CMB_PRONTOS[2].l.slice();
+    if (!cmbSel) cmbSel = (S.dominio && S.dominio.length >= 4) ? S.dominio.slice(0, 5) : CMB_PRONTOS[3].l.slice();
     return '<section class="bloco cmb" id="cmb" style="margin:16px 0">' + cmbMiolo() + '</section>';
   }
   function cmbMiolo() {
@@ -406,9 +407,9 @@
     if (n < 4) ver = 'Escolha pelo menos ' + (4 - n) + ' disciplina' + (4 - n === 1 ? '' : 's') + ' a mais para montar o seu núcleo.';
     else if (c.ok) ver = '<b class="cmb-ok">✓ A conta fecha: ' + c.tot + ' pontos, aprovado.</b> Dominando o seu núcleo e acertando 1 em cada 3 no resto, que é pouco mais do que um chute, você passa.';
     else ver = '<b class="cmb-no">' + (40 - c.tot === 1 ? 'Falta 1 ponto' : 'Faltam ' + (40 - c.tot) + ' pontos') + ' para fechar.</b> ' + 'Acrescente mais uma disciplina ou troque uma de 2 questões por uma de 5 ou 6.';
-    if (n > 5) ver += '<span class="cmb-aviso">Você escolheu ' + n + ' disciplinas além de Ética. O método sugere até 5, para você estudar menos, mas a escolha é sua: mais disciplinas significam mais conteúdo para estudar.</span>';
+    if (n > 6) ver += '<span class="cmb-aviso">Você escolheu ' + n + ' disciplinas além de Ética. O método sugere até 6, para você estudar menos, mas a escolha é sua: mais disciplinas significam mais conteúdo para estudar.</span>';
     return '<div class="cmb-topo"><div><h2 style="margin:0">Monte a sua combinação</h2>' +
-      '<p class="sub">Você não precisa ficar preso ao Grupo A. Pegue um núcleo duro, com as disciplinas que mais valem, e misture com as que você tem mais afinidade, de qualquer grupo. Ética entra sempre: são 8 questões. O método sugere de 4 a 5 disciplinas, mas a escolha é livre: marque quantas quiser e veja a conta fechar nos 40.</p></div></div>' +
+      '<p class="sub">Você não precisa ficar preso ao Grupo A. Pegue um núcleo duro, com as disciplinas que mais valem, e misture com as que você tem mais afinidade, de qualquer grupo. Ética entra sempre: são 8 questões. O método trabalha com 6 ou 7 disciplinas no total: Ética e mais 5 ou 6, mas a escolha é livre: marque quantas quiser e veja a conta fechar nos 40.</p></div></div>' +
       '<div class="cmb-corpo"><div class="cmb-esq"><div class="cmb-fixa"><b>Ética Profissional · 8</b><span>sempre no seu núcleo</span></div>' + chips +
       '<div class="cmb-prontos"><span class="sub peq">Exemplos:</span>' + CMB_PRONTOS.map(function (p, i) { return '<button class="btn mini" data-cmbp="' + i + '">' + esc(p.n) + '</button>'; }).join('') + '</div></div>' +
       '<div class="cmb-dir"><div class="cmb-num"><b>' + c.foco + '</b><span>questões no seu núcleo<br>(Ética + ' + n + ' disciplina' + (n === 1 ? '' : 's') + ')</span></div>' + conta + barra +
@@ -507,7 +508,7 @@
       '<div style="margin-bottom:1rem"><div class="rot">Dias em que você estuda</div><div class="chips">' +
       SEMANA.map(function (s, i) { return '<button type="button" class="chip" data-dia="' + i + '" aria-pressed="' + (p.dias.indexOf(i) > -1) + '">' + s + '</button>'; }).join('') + '</div></div>' +
       '<div style="margin-bottom:1rem"><div class="rot">Suas disciplinas de domínio</div><p class="peq sub" style="margin:.1rem 0 .5rem">' +
-      (dg ? 'A sugestão (★) vem do seu diagnóstico e do peso de cada disciplina.' : 'Sem o diagnóstico, a sugestão (★) usa só o peso de cada disciplina. Fazer o diagnóstico antes deixa a escolha mais certeira.') + ' O método sugere de 4 a 5 disciplinas além de Ética, mas a escolha é livre: combine as de mais peso com as que você tem mais afinidade, de qualquer grupo.</p>' +
+      (dg ? 'A sugestão (★) vem do seu diagnóstico e do peso de cada disciplina.' : 'Sem o diagnóstico, a sugestão (★) usa só o peso de cada disciplina. Fazer o diagnóstico antes deixa a escolha mais certeira.') + ' O método trabalha com 6 ou 7 disciplinas no total: Ética e mais 5 ou 6 além de Ética, mas a escolha é livre: combine as de mais peso com as que você tem mais afinidade, de qualquer grupo.</p>' +
       '<div class="cmb-fixa cr-fixa"><b><span class="pt" style="background:' + DM.etica.cor + '"></span> Ética Profissional · 8q</b><span>fixa, todos os dias</span></div><div class="chips">' +
       cand.map(function (d) { return '<button type="button" class="chip" data-domc="' + d.id + '" aria-pressed="' + (escolhaCr.indexOf(d.id) > -1) + '"><span class="pt" style="background:' + d.cor + '"></span>' + esc(d.curto) + ' · ' + d.q + 'q' + (dg ? ' · ' + pct(dg[d.id].ok / dg[d.id].n) : '') + (rec.indexOf(d.id) > -1 ? ' ★' : '') + '</button>'; }).join('') +
       '</div>' + contaCrono(escolhaCr) + '</div>' +
@@ -926,7 +927,7 @@
       '<div class="pilha"><div class="bloco"><h3>Onde você já pontua</h3>' + (fortes.length ? '<div class="chips">' + fortes.map(function (d) { return tagDisc(d.id); }).join('') + '</div>' : '<p class="sub">Nenhuma disciplina acima de 70% ainda. É normal no começo.</p>') + '</div>' +
       '<div class="bloco"><h3>Onde está perdendo mais pontos</h3>' + (fracos.length ? '<p class="peq sub">Ordenadas pelo peso na prova.</p><div class="chips">' + fracos.map(function (d) { return tagDisc(d.id); }).join('') + '</div>' : '<p class="sub">Nenhuma disciplina abaixo de 40%.</p>') + '</div>' +
       '<div class="bloco"><h3>Ética: ' + dg.etica.ok + ' de 8</h3><p class="peq">' + (dg.etica.ok >= 6 ? 'Ótimo começo na disciplina mais previsível da prova. O Passo 2 mantém isso todos os dias.' : 'Ética vale 8 questões e é a mais previsível da prova. O Passo 2 coloca o Estatuto na sua rotina diária.') + '</p></div></div></div>' +
-      '<div class="bloco" style="margin-top:16px"><h2>Suas disciplinas de domínio</h2><p>Ética entra sempre. Escolha as disciplinas em que você vai se tornar forte: o método sugere de 4 a 5, mas a escolha é livre, de qualquer grupo. A sugestão (★) combina o seu desempenho no diagnóstico e o número de questões de cada uma.</p><div class="chips" id="dom-chips">' +
+      '<div class="bloco" style="margin-top:16px"><h2>Suas disciplinas de domínio</h2><p>Ética entra sempre. Escolha as disciplinas em que você vai se tornar forte: o método trabalha com 6 ou 7 no total, Ética e mais 5 ou 6, mas a escolha é livre, de qualquer grupo. A sugestão (★) combina o seu desempenho no diagnóstico e o número de questões de cada uma.</p><div class="chips" id="dom-chips">' +
       cand.map(function (d) { return '<button class="chip" data-dom="' + d.id + '" aria-pressed="' + (escolha.indexOf(d.id) > -1) + '"><span class="pt" style="background:' + d.cor + '"></span>' + esc(d.curto) + ' · ' + d.q + 'q · ' + pct(dg[d.id].ok / dg[d.id].n) + (rec.indexOf(d.id) > -1 ? ' ★' : '') + '</button>'; }).join('') +
       '</div><p class="peq sub" style="margin-top:8px">★ sugestão da plataforma · Ética + ' + escolha.length + ' disciplina' + (escolha.length === 1 ? '' : 's') + '</p>' + contaCrono(escolha) +
       '<h3 style="margin-top:20px">A fórmula da aprovação</h3><div class="formula">' +
