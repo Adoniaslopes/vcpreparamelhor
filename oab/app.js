@@ -717,7 +717,7 @@
   function proximaProvaDiag() {
     var em = EXAMES.filter(function (e) { var o = (S.oficiais || {})[e.n]; return o && o.diag && !o.fim; })[0];
     if (em) return em.n;
-    var livre = EXAMES.filter(function (e) { return !(S.oficiais || {})[e.n]; })[0];
+    var livre = EXAMES.filter(function (e) { return caderno(e.n) && OAB.PROVAS[e.n] && !(S.oficiais || {})[e.n]; })[0];
     return livre ? livre.n : null;
   }
   function rodadasDiag() {
@@ -729,13 +729,23 @@
     });
     return l.sort(function (a, b) { return a.fim - b.fim; });
   }
+  function provasDiagDisp() { return EXAMES.filter(function (e) { return caderno(e.n) && OAB.PROVAS[e.n]; }).map(function (e) { return e.n; }); }
+  function chamadaNovoDiag() {
+    var nx = proximaProvaDiag(), o = nx && (S.oficiais || {})[nx], and = o && !o.fim, disp = provasDiagDisp(), feitos = rodadasDiag().length;
+    if (!nx) return '<div class="bloco proximo"><div><h2>Você já fez o diagnóstico com todas as provas disponíveis</h2><p class="sub" style="margin:0">Já estão na plataforma as provas do ' + disp.join('º, ') + 'º Exame. Cada nova prova que entrar libera um novo diagnóstico para você comparar a sua evolução.</p></div></div>';
+    return '<div class="bloco proximo"><div><h2>' + (and ? 'Seu próximo diagnóstico está em andamento' : 'Faça um novo diagnóstico') + '</h2><p class="sub" style="margin:0">' +
+      (and ? 'Você começou o diagnóstico com a prova oficial do ' + nx + 'º Exame e já respondeu ' + Object.keys(o.resp).length + ' de 80 questões.'
+        : 'O próximo usa a prova oficial do ' + nx + 'º Exame: 80 questões que você ainda não viu. A nota desta rodada fica guardada para comparar.') + '</p></div>' +
+      '<button class="btn pri" data-act="diag-novo">' + (and ? 'Continuar o diagnóstico do ' + nx + 'º Exame' : 'Começar o diagnóstico com o ' + nx + 'º Exame') + '</button></div>';
+  }
   function blocoRodadas() {
     var l = rodadasDiag(), nx = proximaProvaDiag(), emAndamento = nx && S.oficiais && S.oficiais[nx] && !S.oficiais[nx].fim;
     return '<div class="bloco"><h2>Seus diagnósticos</h2><p class="sub peq">Cada novo diagnóstico usa uma prova oficial diferente, sem repetir questões.</p>' +
       '<table class="t"><thead><tr><th>Rodada</th><th>Prova</th><th>Nota</th><th>Data</th><th></th></tr></thead><tbody>' +
       l.map(function (x, i) { return '<tr><td><b>' + (i + 1) + 'ª</b></td><td>' + esc(x.nome) + '</td><td><b style="color:' + (x.nota >= 40 ? 'var(--verde)' : 'var(--vermelho)') + '">' + x.nota + '</b>/80</td><td>' + fmtData(iso(new Date(x.fim))) + '</td><td><a class="btn mini" href="' + x.link + '">Ver</a></td></tr>'; }).join('') +
-      '</tbody></table><p style="margin:14px 0 0">' + (nx ? '<button class="btn pri" data-act="diag-novo">' + (emAndamento ? 'Continuar o diagnóstico do ' + nx + 'º Exame' : 'Fazer novo diagnóstico com o ' + nx + 'º Exame') + '</button>' : '<span class="sub">Você já usou as 10 provas oficiais.</span>') + '</p>' +
-      '<p class="peq sub" style="margin:10px 0 0">Nas rodadas com prova oficial, você abre o caderno Tipo 1 e marca no cartão-resposta. A correção aparece na hora, questão por questão.</p></div>';
+      '</tbody></table>' + (l.length > 1 ? '<p class="peq" style="margin:12px 0 0">Evolução: <b>' + l[0].nota + '</b> → <b style="color:' + (l[l.length - 1].nota >= l[0].nota ? 'var(--verde)' : 'var(--vermelho)') + '">' + l[l.length - 1].nota + '</b> acertos (' + (l[l.length - 1].nota - l[0].nota >= 0 ? '+' : '') + (l[l.length - 1].nota - l[0].nota) + ' desde o primeiro).</p>' : '') +
+      '<p style="margin:14px 0 0">' + (nx ? '<button class="btn pri" data-act="diag-novo">' + (emAndamento ? 'Continuar o diagnóstico do ' + nx + 'º Exame' : 'Fazer novo diagnóstico com o ' + nx + 'º Exame') + '</button>' : '<span class="sub">Você já usou todas as provas disponíveis. Novas provas liberam novos diagnósticos.</span>') + '</p>' +
+      '<p class="peq sub" style="margin:10px 0 0">Nas rodadas com prova oficial, você responde aqui mesmo, questão por questão, com o texto integral do caderno da FGV, e vê na hora se acertou.</p></div>';
   }
 
   // ---------- telas ----------
@@ -831,7 +841,7 @@
         lead: (n >= 40 ? 'Hoje você já passaria na 1ª fase. Agora o trabalho é proteger essa nota e abrir margem de segurança.' : 'Faltam ' + (40 - n) + ' acertos para a aprovação. Não é preciso dominar as 20 disciplinas: o radar mostra exatamente onde estão os pontos mais baratos de conquistar.') +
           ' Verde é ponto forte; vermelho é o que reforçar; a linha dourada é a sua meta.',
         extra: '<div class="chips" style="margin-top:14px"><a class="btn pri" href="#relatorio">Ver meu relatório</a><a class="btn" href="#cronograma">Montar meu plano</a></div>',
-        arte: radar(vals, metaVet())}) +
+        arte: radar(vals, metaVet())}) + chamadaNovoDiag() +
         '<div class="grade g2"><div class="bloco forte"><h2>O que já é seu</h2>' + (fortes.length ? '<div class="chips">' + fortes.map(function (d) { return tagDisc(d.id); }).join('') + '</div><p class="peq sub" style="margin:10px 0 0">Mantenha essas disciplinas com revisões curtas e não gaste aqui o seu tempo principal.</p>' : '<p class="sub">Nenhuma disciplina acima de 70% ainda. É normal no começo.</p>') + '</div>' +
         '<div class="bloco reforco"><h2>O que reforçar</h2>' + (fracos.length ? '<div class="chips">' + fracos.map(function (d) { return tagDisc(d.id); }).join('') + '</div><p class="peq sub" style="margin:10px 0 0">Ordenadas pelo peso na prova: as primeiras devolvem mais pontos.</p>' : '<p class="sub">Nenhuma disciplina abaixo de 40%.</p>') + '</div></div>' +
         (ult.ex ? boletimOficial(ult.ex, corrigirOficial(ult.ex)) : boletimDiag()) +
@@ -1465,15 +1475,15 @@
       return '<button class="' + cls + '" data-sim-ir="' + k + '" aria-label="Questão ' + k + '">' + k + '</button>';
     }).join('') + '</div>';
     return '<p class="noprint"><a href="#provas" class="link">Simulados</a></p>' +
-      '<div class="cab"><div><h1 style="font-size:1.6rem">Simulado · ' + n + 'º Exame de Ordem</h1><p class="sub">Questão ' + q + ' de 80 · ' + resp + ' respondidas · <b style="color:var(--verde)">' + acertos + ' acertos</b> até aqui · prova oficial da FGV</p></div>' +
+      '<div class="cab"><div><h1 style="font-size:1.6rem">' + (o.diag ? 'Diagnóstico' : 'Simulado') + ' · ' + n + 'º Exame de Ordem</h1><p class="sub">Questão ' + q + ' de 80 · ' + resp + ' respondidas · <b style="color:var(--verde)">' + acertos + ' acertos</b> até aqui · prova oficial da FGV</p></div>' +
       '<div class="chips"><span class="sub" id="relogio-of">' + relogioOf(o) + '</span><button class="btn mini" data-act="pausar">Pausar e continuar depois</button></div></div>' +
       '<div class="prog"><i style="width:' + (resp / 80 * 100) + '%"></i></div>' +
       '<div class="grade" style="grid-template-columns:minmax(0,1fr) minmax(220px,300px);align-items:start" id="diag-grid"><div class="questao">' +
       '<p>' + tagDisc(d.id) + ' <span class="sub peq">Questão ' + q + ' do caderno oficial</span></p><div class="enun">' + paragrafos(it.e) + '</div><div class="alts">' + alts + '</div>' + fb +
       '<div class="barra-q"><div class="chips"><button class="btn" data-act="sim-ant"' + (q === 1 ? ' disabled' : '') + '>Anterior</button></div>' +
-      (q < 80 ? '<button class="btn pri" data-act="sim-prox">' + (mr ? 'Próxima questão' : 'Pular') + '</button>' : '<button class="btn ouro" data-act="of-corrigir" data-ex="' + n + '">Entregar o simulado</button>') + '</div></div>' +
+      (q < 80 ? '<button class="btn pri" data-act="sim-prox">' + (mr ? 'Próxima questão' : 'Pular') + '</button>' : '<button class="btn ouro" data-act="of-corrigir" data-ex="' + n + '">' + (o.diag ? 'Entregar o diagnóstico' : 'Entregar o simulado') + '</button>') + '</div></div>' +
       '<div class="pilha"><div class="bloco medidor-box">' + medidor(acertos, {rot: 'acertos até aqui', sub: resp + ' de 80 respondidas', chave: 'sim' + n, mini: true}) + '</div>' +
-      '<div class="bloco"><h3>Cartão-resposta</h3>' + mapa + '<p style="margin:14px 0 0"><button class="btn mini" data-act="of-corrigir" data-ex="' + n + '">Entregar o simulado</button></p></div></div></div>';
+      '<div class="bloco"><h3>Cartão-resposta</h3>' + mapa + '<p style="margin:14px 0 0"><button class="btn mini" data-act="of-corrigir" data-ex="' + n + '">' + (o.diag ? 'Entregar o diagnóstico' : 'Entregar o simulado') + '</button></p></div></div></div>';
   }
   function errosSimulado(n, res) {
     var cad = caderno(n);
@@ -1741,7 +1751,7 @@
     if (a === 'of-iniciar') { S.oficiais = S.oficiais || {}; S.oficiais[ds.ex] = {resp: {}, ini: Date.now(), fim: null, seg: 0}; salvar(); render(); return; }
     if (a === 'of-corrigir') {
       var ofo = oficial(ds.ex), fz = 80 - Object.keys(ofo.resp).length;
-      var fecha = function () { ofo.fim = Date.now(); S.provas[ds.ex] = {nota: corrigirOficial(ds.ex).nota, t: Date.now()}; salvar(); window.scrollTo(0, 0); render(); };
+      var fecha = function () { ofo.fim = Date.now(); S.provas[ds.ex] = {nota: corrigirOficial(ds.ex).nota, t: Date.now()}; salvar(); window.scrollTo(0, 0); if (ofo.diag) { location.hash = '#diagnostico'; } render(); };
       if (fz) confirmar('Faltam ' + fz + ' questões sem marcação. Elas contam como erro (salvo as anuladas).', 'Corrigir mesmo assim', fecha); else fecha();
       return;
     }
