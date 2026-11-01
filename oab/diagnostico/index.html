@@ -153,6 +153,7 @@ form .btn{width:100%;margin-top:20px}
 <main class="wrap" id="tela"><div class="carregando">Carregando…</div></main>
 
 <script src="../config.js"></script>
+<script src="../rastreio.js"></script>
 <script src="../vendor/supabase.js"></script>
 <script src="../data/disciplinas.js"></script>
 <script>
@@ -216,7 +217,9 @@ form .btn{width:100%;margin-top:20px}
 
   // ---------- telas: cadastro e login ----------
   function telaCadastro(modo) {
-    var origem = new URLSearchParams(location.search).get('utm_source') || '';
+    var interna = new URLSearchParams(location.search).get('utm_source') || '';
+    var externa = (window.Rastreio && Rastreio.origem()) || '';
+    var origem = [externa, interna].filter(Boolean).join('>');
     tela.innerHTML =
       '<div class="hero"><div><span class="chip">Diagnóstico gratuito</span>' +
       '<h1>Antes de estudar mais, <em>descubra o que você já sabe.</em></h1>' +
@@ -252,6 +255,7 @@ form .btn{width:100%;margin-top:20px}
       fc.querySelector('button').disabled = false;
       if (r.error) { msg('c-msg', traduz(r.error)); return; }
       if (r.data && r.data.user && Array.isArray(r.data.user.identities) && !r.data.user.identities.length) { msg('c-msg', 'Este e-mail já tem cadastro. Use "Entrar".'); return; }
+      if (window.Rastreio) Rastreio.evento('CompleteRegistration', {content_name: 'diagnostico-gratis'}, 'cad-' + r.data.user.id);
       if (!r.data.session) { telaConfirmar($('#c-email').value.trim()); return; }
       entrar(r.data.session);
     });
@@ -408,6 +412,7 @@ form .btn{width:100%;margin-top:20px}
       '<p class="sub" style="text-align:center;margin-top:24px;font-size:14px"><a href="#" id="rever">Rever as minhas respostas</a></p>';
     $('#rever').addEventListener('click', function (e) { e.preventDefault(); S.diag.atual = 0; telaQuestao(); window.scrollTo(0, 0); });
     lead({respondidas: Object.keys(S.diag.resp).length, nota: n, concluido_em: new Date(S.diag.fim).toISOString()});
+    if (window.Rastreio) Rastreio.evento('Lead', {content_name: 'diagnostico-concluido', value: n}, 'diag-' + user.id);
   }
 
   // ---------- início ----------
