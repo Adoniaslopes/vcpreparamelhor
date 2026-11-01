@@ -6,5 +6,5 @@ window.ONTOP_CONFIG = {
   anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56emdmeGN0dXVsbXVkenRmZGFiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE4Mjk2NzUsImV4cCI6MjEwNzQwNTY3NX0.fMTVwtQNLWvwPwg6bvN0WNq8uQnGKhRhWD4fcknX7Sw',
   contato: 'WhatsApp (62) 98271-2108',
   // ID do Pixel da Meta (Gerenciador de Eventos > Fontes de dados). Deixe '' para desligar.
-  metaPixelId: ''
+  metaPixelId: '1477090424299070'
 };
