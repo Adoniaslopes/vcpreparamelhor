@@ -13,6 +13,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=IBM+Plex+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+<script src="../config.js"></script>
+<script src="../rastreio.js"></script>
 <script>
 /* ===== CONFIGURAÇÃO DE VENDAS — checkout da Kiwify ===== */
 window.VENDAS = {
@@ -839,7 +841,7 @@ footer b{color:var(--nevoa)}
   var nomes = {1: 'acesso completo, 1ª e 2ª fase até passar (12x R$ 59,90)'};
   document.querySelectorAll('[data-checkout]').forEach(function (a) {
     var n = a.getAttribute('data-checkout'), url = V['checkout' + n];
-    if (url) { a.href = url; a.rel = 'noopener'; }
+    if (url) { a.href = window.Rastreio ? Rastreio.comOrigem(url) : url; a.rel = 'noopener'; a.addEventListener('click', function () { if (window.Rastreio) Rastreio.evento('InitiateCheckout', {value: 579.16, currency: 'BRL'}); }); }
     else { a.href = 'https://wa.me/' + V.whatsapp + '?text=' + encodeURIComponent('Olá! Quero o plano ' + nomes[n] + ' do Método Aprovação OAB.'); a.target = '_blank'; a.rel = 'noopener'; }
   });
   // e-book: envia nome e e-mail para /oab/ebook, que manda o e-book por e-mail
@@ -848,6 +850,7 @@ footer b{color:var(--nevoa)}
     ev.preventDefault();
     var msg = document.getElementById('eb-msg'), bt = ebf.querySelector('button');
     var nome = ebf.nome.value.trim(), email = ebf.email.value.trim();
+    if (window.Rastreio) Rastreio.evento('Lead', {content_name: 'ebook-chega-de-reprovar'}, 'ebook');
     msg.className = 'eb-msg';
     if (nome.length < 2 || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { msg.className = 'eb-msg erro'; msg.textContent = 'Preencha o seu nome e um e-mail válido.'; return; }
     bt.disabled = true; bt.textContent = 'Enviando…';
