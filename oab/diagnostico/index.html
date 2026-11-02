@@ -168,6 +168,12 @@ form .btn{width:100%;margin-top:20px}
   function $(s) { return document.querySelector(s); }
   function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
   function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* sem armazenamento */ } }
+  function senhaAleatoria() {
+    var a = new Uint8Array(24), c = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789', out = '';
+    (window.crypto || window.msCrypto).getRandomValues(a);
+    for (var i = 0; i < a.length; i++) out += c.charAt(a[i] % c.length);
+    return out + '!9a';
+  }
   function hash(s) { var h = 2166136261; for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
   function rng(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; var t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
   function ordemAlt(q) { var r = rng(hash(q.id + ':' + S.seed + ':' + MIX)), o = [0, 1, 2, 3]; for (var i = 3; i > 0; i--) { var j = Math.floor(r() * (i + 1)); var t = o[i]; o[i] = o[j]; o[j] = t; } return o; }
@@ -228,16 +234,15 @@ form .btn{width:100%;margin-top:20px}
       '<p class="sub" style="font-size:15px">Pode parar e continuar depois: as suas respostas ficam salvas na sua conta.</p></div>' +
       '<div class="card">' +
       (modo === 'login' ?
-        '<h2>Continuar o meu diagnóstico</h2><form id="f-login"><label>E-mail<input type="email" id="l-email" required autocomplete="email"></label><label>Senha<input type="password" id="l-senha" required autocomplete="current-password"></label><button class="btn pri" type="submit">Entrar</button><p class="msg" id="l-msg" role="status"></p></form>' +
-        '<p class="troca">Ainda não tem cadastro? <a href="#" data-ir="cad">Cadastre-se grátis</a></p><p class="troca"><a href="#" data-ir="rec">Esqueci a minha senha</a></p>'
+        '<h2>Continuar o meu diagnóstico</h2><p class="sub" style="font-size:15px">Informe o e-mail do cadastro. Enviamos um link de acesso: é só clicar e o seu diagnóstico abre de onde você parou.</p><form id="f-login"><label>E-mail<input type="email" id="l-email" required autocomplete="email"></label><button class="btn pri" type="submit">Receber link de acesso</button><p class="msg" id="l-msg" role="status"></p></form>' +
+        '<p class="troca">Ainda não tem cadastro? <a href="#" data-ir="cad">Cadastre-se grátis</a></p><p class="troca"><a href="#" data-ir="rec">Prefiro entrar com senha</a></p>'
       : modo === 'rec' ?
-        '<h2>Recuperar a senha</h2><form id="f-rec"><label>E-mail<input type="email" id="r-email" required autocomplete="email"></label><button class="btn pri" type="submit">Enviar link</button><p class="msg" id="r-msg" role="status"></p></form><p class="troca"><a href="#" data-ir="login">Voltar</a></p>'
+        '<h2>Entrar com senha</h2><form id="f-senha"><label>E-mail<input type="email" id="s-email" required autocomplete="email"></label><label>Senha<input type="password" id="s-senha" required autocomplete="current-password"></label><button class="btn pri" type="submit">Entrar</button><p class="msg" id="s-msg" role="status"></p></form><p class="troca"><a href="#" data-ir="login">Voltar</a></p>'
       :
         '<h2>Faça o seu cadastro grátis</h2><form id="f-cad">' +
         '<label>Nome completo<input type="text" id="c-nome" required autocomplete="name"></label>' +
         '<label>E-mail<input type="email" id="c-email" required autocomplete="email"></label>' +
         '<label>WhatsApp com DDD<input type="tel" id="c-zap" required inputmode="tel" autocomplete="tel" placeholder="(62) 90000-0000"></label>' +
-        '<label>Crie uma senha (mínimo 8 caracteres)<input type="password" id="c-senha" required minlength="8" autocomplete="new-password"></label>' +
         '<label class="aceite"><input type="checkbox" id="c-aceite"><span>Aceito receber o meu resultado e conteúdos do Método Aprovação pelo WhatsApp e por e-mail. Posso cancelar quando quiser.</span></label>' +
         '<button class="btn pri" type="submit">Quero fazer o meu diagnóstico</button><p class="msg" id="c-msg" role="status"></p></form>' +
         '<p class="troca">Já começou o diagnóstico? <a href="#" data-ir="login">Entrar</a></p>' +
@@ -250,7 +255,7 @@ form .btn{width:100%;margin-top:20px}
       var zap = soDigitos($('#c-zap').value);
       if (zap.length < 10 || zap.length > 13) { msg('c-msg', 'Confira o WhatsApp: informe o DDD e o número.'); return; }
       msg('c-msg', 'Criando o seu cadastro…', true); fc.querySelector('button').disabled = true;
-      var r = await sb.auth.signUp({email: $('#c-email').value.trim(), password: $('#c-senha').value,
+      var r = await sb.auth.signUp({email: $('#c-email').value.trim(), password: senhaAleatoria(),
         options: {data: {nome: $('#c-nome').value.trim(), whatsapp: zap, aceite_contato: $('#c-aceite').checked, origem: 'diagnostico-gratis' + (origem ? ':' + origem : '')}, emailRedirectTo: location.origin + location.pathname}});
       fc.querySelector('button').disabled = false;
       if (r.error) { msg('c-msg', traduz(r.error)); return; }
@@ -261,16 +266,16 @@ form .btn{width:100%;margin-top:20px}
     });
     var fl = $('#f-login');
     if (fl) fl.addEventListener('submit', async function (e) {
-      e.preventDefault(); msg('l-msg', 'Entrando…', true);
-      var r = await sb.auth.signInWithPassword({email: $('#l-email').value.trim(), password: $('#l-senha').value});
-      if (r.error) { msg('l-msg', traduz(r.error)); return; }
-      entrar(r.data.session);
+      e.preventDefault(); msg('l-msg', 'Enviando…', true);
+      var r = await sb.auth.signInWithOtp({email: $('#l-email').value.trim(), options: {shouldCreateUser: false, emailRedirectTo: location.origin + location.pathname}});
+      msg('l-msg', r.error ? traduz(r.error) : 'Pronto! Abra o seu e-mail e clique no link de acesso. Não achou? Olhe o spam e as promoções.', !r.error);
     });
-    var fr = $('#f-rec');
-    if (fr) fr.addEventListener('submit', async function (e) {
-      e.preventDefault(); msg('r-msg', 'Enviando…', true);
-      var r = await sb.auth.resetPasswordForEmail($('#r-email').value.trim(), {redirectTo: location.origin + '/oab/'});
-      msg('r-msg', r.error ? traduz(r.error) : 'Se o e-mail estiver cadastrado, você vai receber um link para criar uma nova senha.', !r.error);
+    var fs = $('#f-senha');
+    if (fs) fs.addEventListener('submit', async function (e) {
+      e.preventDefault(); msg('s-msg', 'Entrando…', true);
+      var r = await sb.auth.signInWithPassword({email: $('#s-email').value.trim(), password: $('#s-senha').value});
+      if (r.error) { msg('s-msg', traduz(r.error)); return; }
+      entrar(r.data.session);
     });
   }
   function telaConfirmar(email) {
