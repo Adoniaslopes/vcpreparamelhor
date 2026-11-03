@@ -384,7 +384,7 @@
         '<p class="peq" style="margin-top:6px;color:var(--vermelho)">Assim a conta não fecha. Acrescente uma disciplina ou troque uma de 2 questões por uma de 5 ou 6.</p>');
   }
   function combinaGrupos() {
-    if (!cmbSel) cmbSel = (S.dominio && S.dominio.length >= 4) ? S.dominio.slice(0, 5) : CMB_PRONTOS[3].l.slice();
+    if (!cmbSel) cmbSel = S.dominio ? S.dominio.slice() : [];
     return '<section class="bloco cmb" id="cmb" style="margin:16px 0">' + cmbMiolo() + '</section>';
   }
   function cmbMiolo() {
@@ -393,7 +393,7 @@
       return '<div class="cmb-g"><span class="cmb-gt" style="--c:' + cor[g] + '">Grupo ' + g + '</span><div class="cmb-chips">' +
         D.filter(function (d) { return d.g === g && d.id !== 'etica'; }).sort(function (a, b) { return b.q - a.q; }).map(function (d) {
           var on = cmbSel.indexOf(d.id) > -1;
-          return '<button class="cmb-chip ' + g.toLowerCase() + (on ? ' on' : '') + '" style="--c:' + cor[g] + '" data-cmb="' + d.id + '" aria-pressed="' + on + '">' + esc(d.curto) + ' <b>' + d.q + '</b></button>';
+          return '<button type="button" class="cmb-chip ' + g.toLowerCase() + (on ? ' on' : '') + '" style="--c:' + cor[g] + '" data-cmb="' + d.id + '" aria-pressed="' + on + '">' + esc(d.curto) + ' <b>' + d.q + '</b></button>';
         }).join('') + '</div></div>';
     }).join('');
     var w = function (x) { return (Math.min(x, 80) / 80 * 100).toFixed(2) + '%'; };
@@ -411,10 +411,10 @@
     return '<div class="cmb-topo"><div><h2 style="margin:0">Monte a sua combinação</h2>' +
       '<p class="sub">Você não precisa ficar preso ao Grupo A. Pegue um núcleo duro, com as disciplinas que mais valem, e misture com as que você tem mais afinidade, de qualquer grupo. Ética entra sempre: são 8 questões. O método trabalha com 6 ou 7 disciplinas no total: Ética e mais 5 ou 6, mas a escolha é livre: marque quantas quiser e veja a conta fechar nos 40.</p></div></div>' +
       '<div class="cmb-corpo"><div class="cmb-esq"><div class="cmb-fixa"><b>Ética Profissional · 8</b><span>sempre no seu núcleo</span></div>' + chips +
-      '<div class="cmb-prontos"><span class="sub peq">Exemplos:</span>' + CMB_PRONTOS.map(function (p, i) { return '<button class="btn mini" data-cmbp="' + i + '">' + esc(p.n) + '</button>'; }).join('') + '</div></div>' +
+      '<div class="cmb-prontos"><span class="sub peq">Exemplos:</span>' + CMB_PRONTOS.map(function (p, i) { return '<button type="button" class="btn mini" data-cmbp="' + i + '">' + esc(p.n) + '</button>'; }).join('') + '</div></div>' +
       '<div class="cmb-dir"><div class="cmb-num"><b>' + c.foco + '</b><span>questões no seu núcleo<br>(Ética + ' + n + ' disciplina' + (n === 1 ? '' : 's') + ')</span></div>' + conta + barra +
       '<p class="cmb-ver">' + ver + '</p>' +
-      '<p class="sub peq">O segredo não é saber tudo: é dominar o núcleo que você escolheu e pegar o resto com estratégia. Depois do diagnóstico, o relatório sugere a melhor combinação para você.</p></div></div>';
+      '<p class="sub peq">O segredo não é saber tudo: é dominar o núcleo que você escolheu e pegar o resto com estratégia. A escolha é sua: o cronograma é montado com as disciplinas que você marcar aqui.</p></div></div>';
   }
   function pesoProva() {
     var pc = function (x) { return (Math.round(x * 1000) / 10).toString().replace('.', ',') + '%'; };
@@ -507,12 +507,8 @@
       '<p class="peq sub" style="margin:-.4rem 0 .8rem">Padrão: 1ª fase do ' + OAB.EXAME.nome + ', ' + fmtData(OAB.EXAME.data, true) + '.</p>' +
       '<div style="margin-bottom:1rem"><div class="rot">Dias em que você estuda</div><div class="chips">' +
       SEMANA.map(function (s, i) { return '<button type="button" class="chip" data-dia="' + i + '" aria-pressed="' + (p.dias.indexOf(i) > -1) + '">' + s + '</button>'; }).join('') + '</div></div>' +
-      '<div style="margin-bottom:1rem"><div class="rot">Suas disciplinas de domínio</div><p class="peq sub" style="margin:.1rem 0 .5rem">' +
-      (dg ? 'A sugestão (★) vem do seu diagnóstico e do peso de cada disciplina.' : 'Sem o diagnóstico, a sugestão (★) usa só o peso de cada disciplina. Fazer o diagnóstico antes deixa a escolha mais certeira.') + ' O método trabalha com 6 ou 7 disciplinas no total: Ética e mais 5 ou 6 além de Ética, mas a escolha é livre: combine as de mais peso com as que você tem mais afinidade, de qualquer grupo.</p>' +
-      '<div class="cmb-fixa cr-fixa"><b><span class="pt" style="background:' + DM.etica.cor + '"></span> Ética Profissional · 8q</b><span>fixa, todos os dias</span></div><div class="chips">' +
-      cand.map(function (d) { return '<button type="button" class="chip" data-domc="' + d.id + '" aria-pressed="' + (escolhaCr.indexOf(d.id) > -1) + '"><span class="pt" style="background:' + d.cor + '"></span>' + esc(d.curto) + ' · ' + d.q + 'q' + (dg ? ' · ' + pct(dg[d.id].ok / dg[d.id].n) : '') + (rec.indexOf(d.id) > -1 ? ' ★' : '') + '</button>'; }).join('') +
-      '</div>' + contaCrono(escolhaCr) + '</div>' +
-      '<button class="btn pri" type="submit"' + (!escolhaCr.length ? ' disabled' : '') + '>' + (S.dominio ? 'Atualizar cronograma' : 'Gerar cronograma') + '</button><p class="msg" id="p-msg"></p></form>';
+      combinaGrupos() +
+      '<button class="btn pri" type="submit">' + (S.dominio ? 'Atualizar cronograma' : 'Gerar cronograma') + '</button><p class="msg" id="p-msg"></p></form>';
   }
 
   // ---------- relatório: desempenho do aluno, de todas as fontes ----------
@@ -911,10 +907,6 @@
     var fracos = ord.filter(function (d) { return dg[d.id].ok / dg[d.id].n < 0.4; }).sort(function (a, b) { return b.q - a.q; });
     var rec = recomendar();
     var cand = D.filter(function (d) { return d.id !== 'etica'; });
-    // fórmula da aprovação
-    var tEt = 8 * META.etica, tDom = 0, tOut = 0, qDom = 0, qOut = 0;
-    D.forEach(function (d) { if (d.id === 'etica') return; if (escolha.indexOf(d.id) > -1) { tDom += d.q * META.dom; qDom += d.q; } else { tOut += d.q * META[d.g]; qOut += d.q; } });
-    var tot = tEt + tDom + tOut;
     return '<div class="cab"><div><h1>Seu relatório</h1><p class="sub">Diagnóstico de ' + fmtData(iso(new Date(S.diag.fim)), true) + '</p></div>' + (ARTEFATO ? '' : '<button class="btn mini noprint" data-act="imprimir">Imprimir ou salvar em PDF</button>') + '</div>' +
       '<section class="hero" style="grid-template-columns:auto 1fr"><div><div class="num" style="font-size:4.2rem;color:' + (passa ? '#7BE3A8' : '#FF8A98') + '">' + n + '</div><div class="sub">de 80 questões</div></div>' +
       '<div><h2 style="color:#fff">' + (passa ? 'Hoje você já seria aprovado na 1ª fase.' : 'Faltam ' + (40 - n) + ' acertos para a aprovação.') + '</h2><p class="sub">' +
@@ -927,16 +919,8 @@
       '<div class="pilha"><div class="bloco"><h3>Onde você já pontua</h3>' + (fortes.length ? '<div class="chips">' + fortes.map(function (d) { return tagDisc(d.id); }).join('') + '</div>' : '<p class="sub">Nenhuma disciplina acima de 70% ainda. É normal no começo.</p>') + '</div>' +
       '<div class="bloco"><h3>Onde está perdendo mais pontos</h3>' + (fracos.length ? '<p class="peq sub">Ordenadas pelo peso na prova.</p><div class="chips">' + fracos.map(function (d) { return tagDisc(d.id); }).join('') + '</div>' : '<p class="sub">Nenhuma disciplina abaixo de 40%.</p>') + '</div>' +
       '<div class="bloco"><h3>Ética: ' + dg.etica.ok + ' de 8</h3><p class="peq">' + (dg.etica.ok >= 6 ? 'Ótimo começo na disciplina mais previsível da prova. O Passo 2 mantém isso todos os dias.' : 'Ética vale 8 questões e é a mais previsível da prova. O Passo 2 coloca o Estatuto na sua rotina diária.') + '</p></div></div></div>' +
-      '<div class="bloco" style="margin-top:16px"><h2>Suas disciplinas de domínio</h2><p>Ética entra sempre. Escolha as disciplinas em que você vai se tornar forte: o método trabalha com 6 ou 7 no total, Ética e mais 5 ou 6, mas a escolha é livre, de qualquer grupo. A sugestão (★) combina o seu desempenho no diagnóstico e o número de questões de cada uma.</p><div class="chips" id="dom-chips">' +
-      cand.map(function (d) { return '<button class="chip" data-dom="' + d.id + '" aria-pressed="' + (escolha.indexOf(d.id) > -1) + '"><span class="pt" style="background:' + d.cor + '"></span>' + esc(d.curto) + ' · ' + d.q + 'q · ' + pct(dg[d.id].ok / dg[d.id].n) + (rec.indexOf(d.id) > -1 ? ' ★' : '') + '</button>'; }).join('') +
-      '</div><p class="peq sub" style="margin-top:8px">★ sugestão da plataforma · Ética + ' + escolha.length + ' disciplina' + (escolha.length === 1 ? '' : 's') + '</p>' + contaCrono(escolha) +
-      '<h3 style="margin-top:20px">A fórmula da aprovação</h3><div class="formula">' +
-      '<div class="termo"><small>Ética · 8 questões a 75%</small><span class="num">' + tEt.toFixed(0) + '</span></div><span class="op">+</span>' +
-      '<div class="termo"><small>Domínio · ' + qDom + ' questões a 75%</small><span class="num">' + tDom.toFixed(1).replace('.', ',') + '</span></div><span class="op">+</span>' +
-      '<div class="termo"><small>Demais · ' + qOut + ' questões a 45–50%</small><span class="num">' + tOut.toFixed(1).replace('.', ',') + '</span></div><span class="op">=</span>' +
-      '<div class="termo total"><small>Nota-meta</small><span class="num">' + Math.round(tot) + '</span></div></div>' +
-      '<p class="peq sub" style="margin-top:10px">Com 40 acertos você passa. A meta deixa margem de segurança sem exigir que você domine tudo.</p>' +
-      '<p style="margin-top:16px" class="noprint"><button class="btn pri" data-act="gerar-crono"' + (!escolha.length ? ' disabled' : '') + '>' + (S.dominio ? 'Atualizar meu cronograma' : 'Gerar meu cronograma') + '</button></p></div>';
+      combinaGrupos() +
+      '<p class="noprint" style="margin:0 0 16px"><button class="btn pri" data-act="gerar-crono">' + (S.dominio ? 'Atualizar meu cronograma' : 'Gerar meu cronograma') + '</button></p>';
   }
 
   // ---------- cronograma ----------
@@ -1775,7 +1759,8 @@
       });
     }
     else if (a === 'gerar-crono') {
-      S.dominio = escolha.slice(); S.crono = {ini: hojeISO(), at: Date.now()}; invalidarCrono(); salvar(); toast('Cronograma gerado.'); location.hash = '#cronograma';
+      if (!cmbSel || cmbSel.length < 4) { toast('Marque pelo menos 4 disciplinas além de Ética na sua combinação.'); return; }
+      S.dominio = cmbSel.slice(); S.crono = {ini: hojeISO(), at: Date.now()}; invalidarCrono(); salvar(); toast('Cronograma gerado com a sua combinação.'); location.hash = '#cronograma';
     }
     else if (a === 'ver-tudo') { verTudo = !verTudo; render(); }
     else if (a === 'imprimir') { window.print(); }
@@ -1813,9 +1798,9 @@
     var prova = $('#p-prova').value, m = $('#p-msg');
     if (!dias.length) { m.className = 'msg bad'; m.textContent = 'Escolha pelo menos um dia de estudo.'; return; }
     if (!prova || diasAte(prova) < 1) { m.className = 'msg bad'; m.textContent = 'A data da prova precisa ser depois de hoje.'; return; }
-    if (!escolhaCr.length) { m.className = 'msg bad'; m.textContent = 'Escolha pelo menos uma disciplina de domínio além de Ética.'; return; }
+    if (!cmbSel || cmbSel.length < 4) { m.className = 'msg bad'; m.textContent = 'Marque pelo menos 4 disciplinas além de Ética na sua combinação.'; return; }
     var p = garantirPerfil(); p.prova = prova; p.dias = dias; p.horas = +$('#p-horas').value;
-    S.dominio = escolhaCr.slice(); S.crono = {ini: hojeISO(), at: Date.now()}; escolhaCr = null;
+    S.dominio = cmbSel.slice(); S.crono = {ini: hojeISO(), at: Date.now()}; escolhaCr = null;
     invalidarCrono(); salvar(); toast('Cronograma gerado.'); window.scrollTo(0, 0); render();
   });
 
