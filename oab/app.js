@@ -710,7 +710,7 @@
     var sub = ok ? '' : 'A resposta certa é a letra <b>' + 'ABCD'[o.indexOf(q.c)] + '</b>.';
     return '<div class="retorno ' + (ok ? 'r-ok' : ns ? 'r-ns' : 'r-er') + '" role="status">' + (ok ? '<span class="confete" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>' : '') +
       '<span class="r-arte">' + arte + '</span><div><b>' + tit + '</b>' + (sub ? '<span>' + sub + '</span>' : '') + '</div></div>' + (extra || '') +
-      '<div class="coment">' + esc(q.x) + '</div>';
+      (q.x ? '<div class="coment">' + esc(q.x) + '</div>' : '');
   }
 
 
@@ -1468,8 +1468,9 @@
       return '<button class="alt' + cls + '" data-sim="' + n + ':' + q + ':' + L + '"' + (mr ? ' disabled' : '') + '><span class="lt">' + 'ABCD'[k] + '</span><span>' + esc(it.a[oi]) + '</span></button>';
     }).join('');
     var certo = mr && (gb === 'X' || mr === gb), kCorreta = ord.indexOf(LETRAS.indexOf(gb));
-    var fb = !mr ? '' : '<div class="retorno ' + (certo ? 'ok' : 'er') + '"><b>' + (gb === 'X' ? 'Questão anulada pela FGV: o ponto vale para todos.' : certo ? 'Acertou!' : 'Não foi dessa vez. A resposta certa é a alternativa ' + 'ABCD'[kCorreta] + '.') + '</b>' +
-      (gb !== 'X' && !certo ? '<p style="margin:.4rem 0 0">' + esc(it.a[LETRAS.indexOf(gb)]) + '</p>' : '') + '</div>';
+    var cm = (OAB.COMENT && OAB.COMENT[n] && OAB.COMENT[n][q]) || '';
+    var fb = !mr ? '' : gb === 'X' ? '<div class="retorno r-ok" role="status"><div><b>Questão anulada pela FGV: o ponto vale para todos.</b></div></div>' + (cm ? '<div class="coment">' + esc(cm) + '</div>' : '') :
+      retorno({id: 'of' + n + ':' + q, c: LETRAS.indexOf(gb), x: cm || ('Gabarito oficial da FGV: ' + it.a[LETRAS.indexOf(gb)])}, LETRAS.indexOf(mr), ord);
     var mapa = '<div class="cartao">' + cad.map(function (x, i) {
       var k = i + 1, r = o.resp[k], cls = r ? ((p.gab[i] === 'X' || r === p.gab[i]) ? 'ok' : 'er') : '';
       if (k === q) cls += ' atual';
