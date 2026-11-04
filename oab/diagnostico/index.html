@@ -212,7 +212,7 @@ form .btn{width:100%;margin-top:20px}
       if (rem && rem.v === 1) { rem.diag = S.diag; rem.seed = rem.seed || S.seed; rem.at = S.at; e.cargos[CARGO] = rem; } else e.cargos[CARGO] = S;
       await sb.from('progresso').upsert({user_id: user.id, estado: e, atualizado_em: new Date().toISOString()});
     } catch (err) { /* segue só com o salvo no aparelho */ }
-    lead({respondidas: Object.keys(S.diag.resp).length, nota: S.diag.fim ? nota() : null, concluido_em: S.diag.fim ? new Date(S.diag.fim).toISOString() : null});
+    lead({respondidas: Object.keys(S.diag.resp).length, acertos: nota(), nota: S.diag.fim ? nota() : null, concluido_em: S.diag.fim ? new Date(S.diag.fim).toISOString() : null});
   }
   async function lead(extra) {
     try {
@@ -419,7 +419,7 @@ form .btn{width:100%;margin-top:20px}
       '<p class="sub" style="font-size:14.5px;margin-top:14px">Use sempre o mesmo e-mail (<b style="color:#fff">' + esc(user.email) + '</b>): o seu diagnóstico já vai estar lá.</p></div>' +
       '<p class="sub" style="text-align:center;margin-top:24px;font-size:14px"><a href="#" id="rever">Rever as minhas respostas</a></p>';
     $('#rever').addEventListener('click', function (e) { e.preventDefault(); S.diag.atual = 0; telaQuestao(); window.scrollTo(0, 0); });
-    lead({respondidas: Object.keys(S.diag.resp).length, nota: n, concluido_em: new Date(S.diag.fim).toISOString()});
+    lead({respondidas: Object.keys(S.diag.resp).length, acertos: n, nota: n, concluido_em: new Date(S.diag.fim).toISOString()});
     if (window.Rastreio) Rastreio.evento('Lead', {content_name: 'diagnostico-concluido', value: n}, 'diag-' + user.id);
   }
 
