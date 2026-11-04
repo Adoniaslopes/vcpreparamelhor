@@ -46,6 +46,11 @@ async function entregar({ request, params, env }) {
       ok = !!(perfil && perfil.status === 'aprovado' && !(perfil.expira_em && perfil.expira_em < hoje));
     }
   }
+  if (!ok) {
+    // teste grátis de 7 dias: vale enquanto a data de fim não passar
+    const t = await fetch(`${SB_URL}/rest/v1/testes_oab?select=fim&email=eq.${encodeURIComponent(email)}`, { headers: h });
+    if (t.ok) { const x = (await t.json())[0]; ok = !!(x && new Date(x.fim).getTime() > Date.now()); }
+  }
   if (!ok) return nega(403);
 
   return arquivo(env, request, nome);

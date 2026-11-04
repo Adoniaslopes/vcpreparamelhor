@@ -404,16 +404,18 @@ form .btn{width:100%;margin-top:20px}
       (function () {
         var errosDom = Q.filter(function (q) { return (q.d === 'etica' || combo.some(function (c) { return c.id === q.d; })) && S.diag.resp[q.id] !== q.c; }).length;
         var dias = diasProva(), sem = Math.max(1, Math.floor(dias / 7));
-        var linhas = [1, 2, 3, 4, 5].map(function (k) { var c = combo[k - 1] || {curto: '—'}; return '<tr' + (k > 2 ? ' class="borra"' : '') + '><td>Dia ' + k + '</td><td>' + esc(c.curto) + '</td><td>Resumo → doutrina → videoaula → lei seca</td><td>Ética · 15 min</td></tr>'; }).join('');
+        var linhas = [1, 2, 3, 4, 5].map(function (k) { var c = combo[k - 1] || {curto: '—'}; return '<tr' + (k > 2 ? ' class="borra"' : '') + '><td>Dia ' + k + '</td><td>' + esc(c.curto) + '</td><td>Sinopse → exercícios de fixação</td><td>Ética · 15 min</td></tr>'; }).join('');
         return '<div class="card" style="margin-top:18px"><span class="chip">O seu plano já está montado</span><h2>Com este resultado, <em>a plataforma monta o seu cronograma.</em></h2>' +
           '<div class="nums"><div><b>' + dias + '</b><span>dias até a 1ª fase do ' + esc(((window.OAB && OAB.EXAME) || {}).nome || 'próximo Exame') + '</span></div><div><b>' + sem + '</b><span>ciclos semanais de Ética + 5 disciplinas até a prova</span></div><div><b>' + errosDom + '</b><span>questões que você errou nas suas disciplinas de domínio: cada uma vira revisão</span></div></div>' +
-          '<div class="plano"><table><tr><th>Semana 1</th><th>Disciplina do dia</th><th>Sequência</th><th>Todo dia</th></tr>' + linhas + '</table><div class="veu"><div><b>O cronograma completo está no acesso completo</b><a class="btn pri" href="' + vendas('plano') + '">Liberar o meu plano →</a></div></div></div></div>';
+          '<div class="plano"><table><tr><th>Semana 1</th><th>Disciplina do dia</th><th>Sequência</th><th>Todo dia</th></tr>' + linhas + '</table><div class="veu"><div><b>O cronograma completo está na plataforma</b><a class="btn pri" href="../?utm_source=diagnostico&amp;utm_medium=plano">Montar meu plano no teste grátis →</a></div></div></div></div>';
       })() +
       '<div class="cta"><span class="chip">O próximo passo</span><h2>O diagnóstico mostrou <em>onde você está.</em> A plataforma leva você até os 40.</h2>' +
-      '<p>No acesso completo, este resultado vira o seu plano: cronograma dia a dia com Ética + 5 disciplinas, sinopses de uma página, as 10 últimas provas oficiais da FGV com correção na hora, estúdio de áudio e a 2ª fase incluída, até você passar.</p>' +
+      '<p>Na plataforma, este resultado vira o seu plano: cronograma com duas disciplinas por dia (Ética e mais uma) e exercícios de fixação, sinopses, simulados com as provas oficiais da FGV e correção na hora, e estúdio de áudio. <b style="color:#fff">Teste tudo por 7 dias, sem pagar nada.</b></p>' +
+      '<p style="margin-top:22px"><a class="btn pri cta-grande" href="../?utm_source=diagnostico&amp;utm_medium=resultado">Começar meu teste grátis de 7 dias →</a></p><p class="sub" style="margin-top:8px;font-size:14.5px">Sem cartão · entra com este mesmo cadastro · o seu diagnóstico já vai estar lá</p>' +
+      '<p class="sub" style="margin-top:26px">Depois do teste, se quiser continuar:</p>' +
       '<p style="margin-top:16px"><span class="sub">12x de</span> <span class="preco">R$ 59,90</span></p><p class="sub" style="margin-top:4px">Menos do que uma pizza por mês · 7 dias de garantia</p><p class="sub juros" style="margin-top:8px">Ou R$ 579,16 à vista no Pix. No cartão, 12x de R$ 59,90 já com os juros do parcelamento.</p>' +
-      '<p style="margin-top:22px"><a class="btn pri cta-grande" href="' + VENDAS + '">Quero ter acesso completo ao treinamento →</a></p><p class="sub" style="margin-top:8px;font-size:14.5px">1ª e 2ª fase · acesso até você passar</p>' +
-      '<p class="sub" style="font-size:14.5px;margin-top:14px">Compre com o mesmo e-mail (<b style="color:#fff">' + esc(user.email) + '</b>): o seu diagnóstico já vai estar lá.</p></div>' +
+      '<p style="margin-top:14px"><a class="btn cta-grande" href="' + VENDAS + '">Ver o acesso completo: 1ª e 2ª fase, até você passar</a></p>' +
+      '<p class="sub" style="font-size:14.5px;margin-top:14px">Use sempre o mesmo e-mail (<b style="color:#fff">' + esc(user.email) + '</b>): o seu diagnóstico já vai estar lá.</p></div>' +
       '<p class="sub" style="text-align:center;margin-top:24px;font-size:14px"><a href="#" id="rever">Rever as minhas respostas</a></p>';
     $('#rever').addEventListener('click', function (e) { e.preventDefault(); S.diag.atual = 0; telaQuestao(); window.scrollTo(0, 0); });
     lead({respondidas: Object.keys(S.diag.resp).length, nota: n, concluido_em: new Date(S.diag.fim).toISOString()});

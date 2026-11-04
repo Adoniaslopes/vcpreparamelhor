@@ -1648,6 +1648,13 @@
   // ---------- roteador ----------
   var rota = '';
   var rotaBase = null, cronoDia = null;
+  // barra do teste grátis: dias restantes e botão de assinar
+  function barraTeste() {
+    if (!nuvem.teste) return '';
+    var ms = new Date(nuvem.teste.fim).getTime() - Date.now(), d = Math.max(0, Math.ceil(ms / 864e5));
+    var txt = d <= 1 ? (ms > 0 && ms < 864e5 ? 'Último dia do seu teste grátis' : 'Seu teste grátis termina hoje') : 'Teste grátis: faltam <b>' + d + ' dias</b>';
+    return '<div class="teste-barra noprint" role="status"><span>' + txt + ' · seu progresso fica guardado</span><a class="btn ouro" href="' + (cfg.checkout || 'https://pay.kiwify.com.br/PBkoTUO') + '">Assinar agora</a></div>';
+  }
   function render() {
     var h = (location.hash || '#painel').slice(1).split('/'), r = h[0] || 'painel', arg = h[1];
     pedido = null; garantirPerfil();
@@ -1664,7 +1671,7 @@
     rotaBase = r;
     if (cronoDia !== hojeISO()) { cronoDia = hojeISO(); invalidarCrono(); }
     var main = $('#main');
-    main.innerHTML = R[r](arg);
+    main.innerHTML = barraTeste() + R[r](arg);
     $$('#menu a').forEach(function (a) { a.classList.toggle('on', a.dataset.r === (pedido || r)); });
     if (r === 'diagnostico' && S.diag.ini && !S.diag.fim) ligarRelogio();
     if (r === 'provas' && arg && oficial(arg) && !oficial(arg).fim) ligarRelogioOf(arg);
@@ -1915,7 +1922,26 @@
     var cancelado = !ac.error && ac.data && ac.data.status === 'cancelado';
     var vencido = p.expira_em && p.expira_em < hojeISO();
     var liberadoManual = semTabela && r.data && p.status === 'aprovado' && !vencido;
-    if (!p.admin && !comprou && !liberadoManual) {
+    // teste grátis de 7 dias: começa no primeiro acesso, uma vez por e-mail
+    var teste = null;
+    if (!p.admin && !comprou && !liberadoManual && !cancelado) {
+      var tt = await sb.rpc('iniciar_teste_oab');
+      if (!tt.error && tt.data && tt.data.fim) teste = tt.data;
+    }
+    var emTeste = !!(teste && new Date(teste.fim).getTime() > Date.now());
+    if (!p.admin && !comprou && !liberadoManual && teste && !emTeste) {
+      var nd = await sb.from('leads_diagnostico').select('nota, concluido_em').eq('id', uid).maybeSingle();
+      var nota = nd.data && nd.data.concluido_em && nd.data.nota != null ? nd.data.nota : null;
+      $('#e-tit').textContent = 'Seu teste de 7 dias terminou';
+      $('#e-txt').innerHTML = (nota != null ? 'Seu raio-X: <b>' + nota + ' de 80</b>. ' : '') +
+        'Tudo o que você fez está guardado: diagnóstico, relatório, combinação de disciplinas e cronograma. Assine para continuar exatamente de onde parou.' +
+        '<br><br><a class="btn pri" href="' + (cfg.checkout || 'https://pay.kiwify.com.br/PBkoTUO') + '">Assinar e continuar</a> <a class="btn" href="' + location.pathname.replace(/[^/]*$/, '') + 'vendas/">Ver o que está incluído</a>' +
+        '<br><br>Já assinou? Aguarde alguns minutos: esta página abre sozinha. Use o mesmo e-mail do pagamento.' + esc(contato());
+      acView('espera'); entrando = false;
+      setTimeout(function () { entrar(session); }, 15000);
+      return;
+    }
+    if (!p.admin && !comprou && !liberadoManual && !emTeste) {
       var vendas = location.pathname.replace(/[^/]*$/, '') + 'vendas/';
       $('#e-tit').textContent = cancelado ? 'Acesso encerrado' : 'Falta ativar seu acesso';
       $('#e-txt').innerHTML = (cancelado ? 'O acesso deste e-mail foi encerrado (reembolso ou cancelamento da compra).'
@@ -1927,7 +1953,7 @@
     }
     try { await carregarConteudo(session.access_token); }
     catch (e) { $('#e-tit').textContent = 'Não foi possível carregar o conteúdo'; $('#e-txt').innerHTML = 'Verifique a sua internet e recarregue a página.<br><br>' + esc(contato()); acView('espera'); entrando = false; return; }
-    nuvem.ativo = true; nuvem.uid = uid; nuvem.admin = !!p.admin; nuvem.nome = p.nome || ''; nuvem.plano = comprou ? ac.data.plano : null; nuvem.legado = !!liberadoManual;
+    nuvem.ativo = true; nuvem.uid = uid; nuvem.admin = !!p.admin; nuvem.nome = p.nome || ''; nuvem.plano = comprou ? ac.data.plano : null; nuvem.legado = !!liberadoManual; nuvem.teste = emTeste && !comprou && !liberadoManual && !p.admin ? teste : null;
     KEY = 'ontop-oab-v1-' + uid; S = carregar();
     try {
       var g = await sb.from('progresso').select('estado').eq('user_id', uid).maybeSingle();
