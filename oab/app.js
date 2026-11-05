@@ -49,7 +49,7 @@
   function novoEstado() {
     return {v: 1, seed: Math.floor(Math.random() * 1e9), perfil: null,
       diag: {resp: {}, atual: 0, ini: null, fim: null, seg: 0}, dominio: null, crono: null,
-      hist: [], feito: {}, provas: {}, at: Date.now()};
+      hist: [], feito: {}, provas: {}, at: 0};
   }
   var S = carregar();
   function carregar() {
@@ -1757,7 +1757,7 @@
     else if (a === 'd-ant') { S.diag.atual = Math.max(0, S.diag.atual - 1); salvar(); render(); }
     else if (a === 'd-fim') {
       var faltam = 80 - Object.keys(S.diag.resp).length;
-      var entregar = function () { S.diag.fim = Date.now(); pararRelogio(); invalidarCrono(); salvar(); location.hash = '#relatorio'; };
+      var entregar = function () { S.diag.fim = Date.now(); pararRelogio(); invalidarCrono(); salvar(); if (window.Rastreio && nuvem.uid) Rastreio.evento('Lead', {content_name: 'diagnostico-concluido', value: notaDiag()}, 'diag-' + nuvem.uid); location.hash = '#relatorio'; };
       if (faltam) confirmar('Você deixou ' + faltam + ' questões em branco. Elas contam como erro.', 'Entregar mesmo assim', entregar); else entregar();
     }
     else if (a === 'refazer-diag') {
@@ -1823,6 +1823,9 @@
       var e = (r.data && r.data.estado) || {}; if (!e.cargos) { var leg = {}; if (e.state) leg['advogado-transpetro'] = e; e = {cargos: leg}; }
       e.cargos[CARGO] = S;
       await nuvem.sb.from('progresso').upsert({user_id: nuvem.uid, estado: e, atualizado_em: new Date().toISOString()});
+      var nr = Object.keys(S.diag.resp || {}).length;
+      if (nr && conteudoOk) await nuvem.sb.from('leads_diagnostico').update({respondidas: nr, acertos: notaDiag(), nota: S.diag.fim ? notaDiag() : null,
+        concluido_em: S.diag.fim ? new Date(S.diag.fim).toISOString() : null, atualizado_em: new Date().toISOString()}).eq('id', nuvem.uid);
     } catch (err) { console.warn('sincronização falhou', err); }
   };
   nuvem.importar = async function (f) {
@@ -1894,8 +1897,14 @@
     var r = await sb.auth.signUp({email: $('#c-email').value.trim(), password: $('#c-senha').value, options: {data: {nome: $('#c-nome').value.trim()}, emailRedirectTo: location.origin + location.pathname}});
     if (r.error) { msg('c-msg', traduz(r.error)); return; }
     if (r.data && r.data.user && Array.isArray(r.data.user.identities) && !r.data.user.identities.length) { msg('c-msg', 'Este e-mail já tem cadastro. Use "Entrar".'); return; }
-    if (!r.data.session) { msg('c-msg', 'Cadastro recebido. Confirme pelo link enviado ao seu e-mail e aguarde a liberação do acesso.', true); return; }
+    if (!r.data.session) { msg('c-msg', 'Cadastro recebido. Abra o seu e-mail e clique no link de confirmação: o seu teste grátis de 7 dias começa na hora.', true); return; }
     entrar(r.data.session);
+  });
+  var fLink = $('#f-link');
+  if (fLink) fLink.addEventListener('submit', async function (e) {
+    e.preventDefault(); msg('k-msg', 'Enviando…', true);
+    var r = await sb.auth.signInWithOtp({email: $('#k-email').value.trim(), options: {shouldCreateUser: false, emailRedirectTo: location.origin + location.pathname}});
+    msg('k-msg', r.error ? traduz(r.error) : 'Pronto! Abra o seu e-mail e clique no link de acesso. Não achou? Olhe o spam e as promoções.', !r.error);
   });
   $('#f-rec').addEventListener('submit', async function (e) {
     e.preventDefault(); msg('r-msg', 'Enviando…', true);
@@ -1966,6 +1975,15 @@
     $('#btn-sair').hidden = false;
     iniciarApp();
   }
-  sb.auth.getSession().then(function (s) { if (s.data.session && !recuperando) entrar(s.data.session); });
+  (async function () {
+    // vindo do cadastro na página de entrada: a sessão chega pelo endereço e o aluno cai direto no diagnóstico
+    var m = /^#entrar=([^&]+)&r=([^&]+)/.exec(location.hash);
+    if (m) {
+      history.replaceState(null, '', location.pathname + '#diagnostico');
+      try { await sb.auth.setSession({access_token: decodeURIComponent(m[1]), refresh_token: decodeURIComponent(m[2])}); } catch (e) { /* segue para o login */ }
+    }
+    var s = await sb.auth.getSession();
+    if (s.data.session && !recuperando) entrar(s.data.session);
+  })();
   sb.auth.onAuthStateChange(function (ev, s) { if (ev === 'PASSWORD_RECOVERY') { recuperando = true; acView('nova'); } });
 })();

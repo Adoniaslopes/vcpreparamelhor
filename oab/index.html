@@ -26,7 +26,8 @@
           <button class="btn pri" type="submit">Entrar</button>
           <p class="msg" id="l-msg" role="status"></p>
         </form>
-        <p class="ac-links"><a href="#" data-ac-ir="cad">Criar cadastro</a><a href="#" data-ac-ir="rec">Esqueci minha senha</a></p>
+        <p class="ac-links"><a href="#" data-ac-ir="link">Entrar sem senha (link no e-mail)</a><a href="#" data-ac-ir="rec">Esqueci minha senha</a></p>
+        <p class="ac-links"><a href="diagnostico/">Ainda não tem cadastro? Comece o teste grátis</a></p>
       </section>
       <section data-ac="cad" hidden>
         <h1>Criar cadastro</h1>
@@ -38,6 +39,15 @@
           <p class="msg" id="c-msg" role="status"></p>
         </form>
         <p class="ac-links"><a href="#" data-ac-ir="login">Já tenho cadastro</a></p>
+      </section>
+      <section data-ac="link" hidden>
+        <h1>Entrar sem senha</h1>
+        <form id="f-link">
+          <label>E-mail do cadastro<input type="email" id="k-email" required autocomplete="email"></label>
+          <button class="btn pri" type="submit">Receber link de acesso</button>
+          <p class="msg" id="k-msg" role="status"></p>
+        </form>
+        <p class="ac-links"><a href="#" data-ac-ir="login">Voltar</a></p>
       </section>
       <section data-ac="rec" hidden>
         <h1>Recuperar senha</h1>
@@ -89,9 +99,10 @@
 </div>
 
 <script src="config.js?v=20261023183333"></script>
+<script src="rastreio.js"></script>
 <script src="vendor/supabase.js"></script>
 <script src="data/disciplinas.js?v=20261023183333"></script>
 <script src="data/carteira.js?v=20261023183333"></script>
-<script src="app.js?v=20261104120000"></script>
+<script src="app.js?v=20261105100000"></script>
 </body>
 </html>

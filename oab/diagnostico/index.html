@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="google" content="notranslate">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Diagnóstico gratuito · Método Aprovação OAB</title>
+<title>Teste grátis de 7 dias · Método Aprovação OAB</title>
 <meta name="description" content="Responda a 80 questões on-line, na distribuição da FGV, e receba na hora o seu raio-X nas 20 disciplinas da 1ª fase da OAB.">
 <meta name="theme-color" content="#04091A">
 <meta name="robots" content="noindex">
@@ -228,26 +228,26 @@ form .btn{width:100%;margin-top:20px}
     var externa = (window.Rastreio && Rastreio.origem()) || '';
     var origem = [externa, interna].filter(Boolean).join('>');
     tela.innerHTML =
-      '<div class="hero"><div><span class="chip">Diagnóstico gratuito</span>' +
-      '<h1>Antes de estudar mais, <em>descubra o que você já sabe.</em></h1>' +
-      '<p class="sub" style="font-size:19px">Responda a 80 questões on-line, na mesma distribuição da prova da FGV, e receba na hora o seu raio-X da 1ª fase da OAB.</p>' +
-      '<ul class="lista"><li>A sua nota de hoje, comparada com os 40 acertos que aprovam</li><li>O seu desempenho em cada uma das 20 disciplinas</li><li>Onde estão os pontos mais fáceis de conquistar</li><li>A combinação de Ética + 5 disciplinas sugerida para você</li></ul>' +
-      '<p class="sub" style="font-size:15px">Pode parar e continuar depois: as suas respostas ficam salvas na sua conta.</p></div>' +
+      '<div class="hero"><div><span class="chip">Teste grátis · 7 dias</span>' +
+      '<h1>Use a plataforma completa <em>por 7 dias, sem pagar nada.</em></h1>' +
+      '<p class="sub" style="font-size:19px">Você começa pelo diagnóstico de 80 questões, na mesma distribuição da prova da FGV, e a plataforma monta o seu plano até os 40 acertos.</p>' +
+      '<ul class="lista"><li>Diagnóstico com resultado na hora, disciplina por disciplina</li><li>Você escolhe as suas disciplinas e vê se a conta chega aos 40</li><li>Cronograma leve: duas disciplinas por dia, sempre com Ética</li><li>Sinopses, exercícios de fixação e simulados com provas oficiais da FGV</li></ul>' +
+      '<p class="sub" style="font-size:15px">Sem cartão. O seu progresso fica salvo na sua conta: entre de qualquer aparelho e continue de onde parou.</p></div>' +
       '<div class="card">' +
       (modo === 'login' ?
-        '<h2>Continuar o meu diagnóstico</h2><p class="sub" style="font-size:15px">Informe o e-mail do cadastro. Enviamos um link de acesso: é só clicar e o seu diagnóstico abre de onde você parou.</p><form id="f-login"><label>E-mail<input type="email" id="l-email" required autocomplete="email"></label><button class="btn pri" type="submit">Receber link de acesso</button><p class="msg" id="l-msg" role="status"></p></form>' +
+        '<h2>Entrar na plataforma</h2><p class="sub" style="font-size:15px">Informe o e-mail do cadastro. Enviamos um link de acesso: é só clicar e a plataforma abre de onde você parou.</p><form id="f-login"><label>E-mail<input type="email" id="l-email" required autocomplete="email"></label><button class="btn pri" type="submit">Receber link de acesso</button><p class="msg" id="l-msg" role="status"></p></form>' +
         '<p class="troca">Ainda não tem cadastro? <a href="#" data-ir="cad">Cadastre-se grátis</a></p><p class="troca"><a href="#" data-ir="rec">Prefiro entrar com senha</a></p>'
       : modo === 'rec' ?
         '<h2>Entrar com senha</h2><form id="f-senha"><label>E-mail<input type="email" id="s-email" required autocomplete="email"></label><label>Senha<input type="password" id="s-senha" required autocomplete="current-password"></label><button class="btn pri" type="submit">Entrar</button><p class="msg" id="s-msg" role="status"></p></form><p class="troca"><a href="#" data-ir="login">Voltar</a></p>'
       :
-        '<h2>Faça o seu cadastro grátis</h2><form id="f-cad">' +
+        '<h2>Comece o seu teste grátis</h2><form id="f-cad">' +
         '<label>Nome completo<input type="text" id="c-nome" required autocomplete="name"></label>' +
         '<label>E-mail<input type="email" id="c-email" required autocomplete="email"></label>' +
         '<label>WhatsApp com DDD<input type="tel" id="c-zap" required inputmode="tel" autocomplete="tel" placeholder="(62) 90000-0000"></label>' +
         '<label class="aceite"><input type="checkbox" id="c-aceite"><span>Aceito receber o meu resultado e conteúdos do Método Aprovação pelo WhatsApp e por e-mail. Posso cancelar quando quiser.</span></label>' +
-        '<button class="btn pri" type="submit">Quero fazer o meu diagnóstico</button><p class="msg" id="c-msg" role="status"></p></form>' +
-        '<p class="troca">Já começou o diagnóstico? <a href="#" data-ir="login">Entrar</a></p>' +
-        '<p class="mini">Os seus dados são usados só para liberar o diagnóstico e falar com você sobre o Método Aprovação. Não compartilhamos com terceiros.</p>') +
+        '<button class="btn pri" type="submit">Começar meu teste grátis de 7 dias</button><p class="msg" id="c-msg" role="status"></p></form>' +
+        '<p class="troca">Já tem cadastro? <a href="#" data-ir="login">Entrar</a></p>' +
+        '<p class="mini">Os seus dados são usados só para liberar o seu acesso e falar com você sobre o Método Aprovação. Não compartilhamos com terceiros.</p>') +
       '</div></div>';
     tela.querySelectorAll('[data-ir]').forEach(function (a) { a.addEventListener('click', function (e) { e.preventDefault(); telaCadastro(a.dataset.ir); }); });
     var fc = $('#f-cad');
@@ -281,7 +281,7 @@ form .btn{width:100%;margin-top:20px}
   }
   function telaConfirmar(email) {
     tela.innerHTML = '<div class="card" style="max-width:640px;margin:40px auto;text-align:center"><span class="chip">Quase lá</span><h2>Confirme o seu e-mail</h2>' +
-      '<p class="sub">Enviamos um link para <b style="color:#fff">' + esc(email) + '</b>. Clique nele e o seu diagnóstico abre na hora. Não achou? Olhe também a caixa de spam e as promoções.</p>' +
+      '<p class="sub">Enviamos um link para <b style="color:#fff">' + esc(email) + '</b>. Clique nele e a plataforma abre na hora, com os seus 7 dias grátis. Não achou? Olhe também a caixa de spam e as promoções.</p>' +
       '<p style="margin-top:20px"><a class="btn" href="#" id="ja-conf">Já confirmei: entrar</a></p></div>';
     $('#ja-conf').addEventListener('click', function (e) { e.preventDefault(); telaCadastro('login'); });
   }
@@ -289,7 +289,25 @@ form .btn{width:100%;margin-top:20px}
   // ---------- entrada ----------
   async function entrar(session) {
     if (!session || entrando) return; entrando = true; user = session.user;
-    tela.innerHTML = '<div class="carregando">Preparando o seu diagnóstico…</div>';
+    tela.innerHTML = '<div class="carregando">Liberando o seu teste grátis de 7 dias…</div>';
+    // a página de diagnóstico foi aposentada: o diagnóstico agora é feito dentro da plataforma, já no teste grátis.
+    // Quem respondeu questões aqui leva as respostas para a conta antes de seguir.
+    try {
+      var loc = null; try { loc = JSON.parse(lsGet('oab-diag-gratis-' + user.id)); } catch (e) { loc = null; }
+      if (loc && loc.v === 1 && loc.diag && Object.keys(loc.diag.resp || {}).length) {
+        var g0 = await sb.from('progresso').select('estado').eq('user_id', user.id).maybeSingle();
+        var e0 = (g0.data && g0.data.estado) || {}; if (!e0.cargos) e0 = {cargos: {}};
+        var r0 = e0.cargos[CARGO];
+        if (!r0 || !r0.diag || Object.keys(r0.diag.resp || {}).length < Object.keys(loc.diag.resp).length) {
+          if (r0 && r0.v === 1) { r0.diag = loc.diag; r0.at = Date.now(); e0.cargos[CARGO] = r0; } else { loc.at = Date.now(); e0.cargos[CARGO] = loc; }
+          await sb.from('progresso').upsert({user_id: user.id, estado: e0, atualizado_em: new Date().toISOString()});
+        }
+      }
+    } catch (e) { /* segue: o diagnóstico continua dentro da plataforma */ }
+    await lead();
+    var tk = session;
+    location.replace('../#entrar=' + encodeURIComponent(tk.access_token) + '&r=' + encodeURIComponent(tk.refresh_token));
+    return;
     try {
       var r = await fetch('../conteudo/diag.js', {headers: {Authorization: 'Bearer ' + session.access_token}, cache: 'no-store'});
       if (!r.ok) throw new Error(r.status);
