@@ -488,7 +488,7 @@
         'Uma prova completa de 80 questões, na distribuição da FGV. Ela mostra em quais disciplinas você já pontua e onde está perdendo pontos.';
       b = andamento ? 'Continuar o diagnóstico' : 'Fazer o diagnóstico'; l = '#diagnostico';
     } else if (!S.dominio) {
-      t = 'Monte o seu cronograma'; x = 'Seu diagnóstico está pronto. Confirme as 4 disciplinas de domínio e os seus dias de estudo para gerar o plano até a prova.'; b = 'Montar cronograma'; l = '#cronograma';
+      t = 'Monte o seu cronograma'; x = 'Seu diagnóstico está pronto. Escolha as suas 7 disciplinas (Ética e mais 6) e os seus dias de estudo para gerar o plano até a prova.'; b = 'Montar cronograma'; l = '#cronograma';
     } else return '';
     return '<div class="bloco proximo"><div><h2>' + t + '</h2><p class="sub" style="margin:0">' + x + '</p></div><a class="btn pri" href="' + l + '">' + b + '</a></div>';
   }
@@ -651,7 +651,8 @@
     var enrolado = '<svg viewBox="0 0 260 90" aria-hidden="true"><path d="M10 70 C40 10, 70 90, 90 40 S130 0, 120 60 S170 90, 160 30 S210 10, 200 70 S240 80, 250 20" fill="none" stroke="#FF4D5E" stroke-width="3" stroke-dasharray="6 6" stroke-linecap="round"/><circle cx="10" cy="70" r="6" fill="#9DB0D3"/><circle cx="250" cy="20" r="6" fill="#FF4D5E"/></svg>';
     var reto = '<svg viewBox="0 0 260 90" aria-hidden="true"><path d="M10 70 C80 70, 160 25, 250 20" fill="none" stroke="#3DDC97" stroke-width="4" stroke-linecap="round"/><circle cx="10" cy="70" r="6" fill="#9DB0D3"/><circle cx="250" cy="20" r="7" fill="#F5C542"/></svg>';
     return '<section class="caminhos"><div class="caminho ruim"><h3>Estudar tudo</h3>' + enrolado + '<ul><li>20 disciplinas tratadas como se valessem o mesmo.</li><li>Semanas em matérias de 2 questões enquanto as de 6 e 8 esperam.</li><li>Cansaço, sensação de nunca terminar e, no fim, frustração.</li></ul></div>' +
-      '<div class="caminho bom"><h3>Estudar o certo</h3>' + reto + '<ul><li>Ética e 4 disciplinas de domínio: cerca de 32 questões sob seu controle.</li><li>O restante vem dos pontos rápidos, com sinopses de uma página.</li><li>Uma prova oficial por semana para ver a nota subir.</li></ul></div></section>';
+      '<div class="caminho bom"><h3>Estudar o certo</h3>' + reto + '<ul><li><b>Apenas 7 disciplinas, não 20:</b> Ética e mais 6 que você escolhe, cerca de 41 questões sob seu controle.</li><li>Acertando 3 de cada 4 nelas, são 31 pontos. Nas outras 39 questões, 1 em cada 3 soma mais 13. <b>Total: 44 pontos, aprovado.</b></li><li>Uma prova oficial por semana para ver a nota subir.</li></ul></div></section>' +
+      '<div class="destaque7"><b>Você não precisa estudar as 20 disciplinas.</b> Com apenas 7 você já se prepara para chegar aos 40 acertos.<span>Exemplo: Ética, Civil, Processo Civil, Constitucional, Administrativo, Trabalho e Processo do Trabalho.</span></div>';
   }
   // radar do diagnóstico (20 disciplinas). Sem diagnóstico, mostra uma silhueta de exemplo.
   function radar(vals, meta) {
@@ -855,7 +856,7 @@
         '<li>Se não fizer ideia da resposta, use <b>Não sei</b> em vez de chutar. O raio-X fica mais fiel.</li>' +
         '<li>Pode parar e continuar depois: suas respostas ficam salvas.</li>' +
         '<li>As questões são inéditas, escritas sobre os temas que a FGV mais repete.</li></ul></div>' +
-        '<div class="bloco"><h2>O que você recebe</h2><ul style="padding-left:1.2rem;margin:0"><li>Sua nota de 0 a 80, comparada com o corte de 40.</li><li>O radar das 20 disciplinas: pontos fortes e o que reforçar.</li><li>A sugestão das 4 disciplinas de domínio.</li><li>A base do seu cronograma.</li></ul></div></div>' + combinaGrupos();
+        '<div class="bloco"><h2>O que você recebe</h2><ul style="padding-left:1.2rem;margin:0"><li>Sua nota de 0 a 80, comparada com o corte de 40.</li><li>O radar das 20 disciplinas: pontos fortes e o que reforçar.</li><li>A base para escolher as suas 7 disciplinas.</li><li>A base do seu cronograma.</li></ul></div></div>' + combinaGrupos();
     }
     var i = g.atual, q = QM[DIAG[i]], d = DM[q.d], o = ordemAlt(q), r = g.resp[q.id];
     var resp = Object.keys(g.resp).length;
@@ -891,7 +892,7 @@
     var extra = pontosPerdidos() + relProvas() + relTreinos();
     if (diagFeito()) return relDiag() + extra;
     return cena({selo: 'Relatório', titulo: 'Onde você está', lead: 'Cada questão que você resolve vira informação. Aqui o seu desempenho é desmontado por disciplina para mostrar o que já é seu e onde estão os pontos que ainda escapam.'}) +
-      '<div class="bloco proximo"><div><h2>Falta o diagnóstico</h2><p class="sub" style="margin:0">É ele que mostra sua nota de partida, o acerto por disciplina e as 4 disciplinas de domínio sugeridas.' + (extra ? ' Enquanto isso, veja abaixo o que você já fez.' : '') + '</p></div><a class="btn pri" href="#diagnostico">Fazer o diagnóstico</a></div>' +
+      '<div class="bloco proximo"><div><h2>Falta o diagnóstico</h2><p class="sub" style="margin:0">É ele que mostra sua nota de partida, o acerto por disciplina e a base para escolher as suas 7 disciplinas.' + (extra ? ' Enquanto isso, veja abaixo o que você já fez.' : '') + '</p></div><a class="btn pri" href="#diagnostico">Fazer o diagnóstico</a></div>' +
       (extra || '<div class="vazio" style="margin-top:16px"><p style="margin:0">Quando você resolver exercícios ou corrigir uma prova oficial, o resultado aparece aqui.</p></div>');
   };
   function relDiag() {
@@ -930,7 +931,7 @@
     var passos = [
       [!!S.perfil, 'Seu ponto de partida', 'Data da prova, horas por dia, dias de estudo e afinidades.', '#perfil', 'Preencher'],
       [diagFeito(), 'Diagnóstico', 'Uma prova completa de 80 questões, na distribuição da FGV.', '#diagnostico', S.diag.ini && !S.diag.fim ? 'Continuar' : 'Fazer'],
-      [!!S.dominio, 'Relatório e disciplinas de domínio', 'Veja onde você pontua e confirme as 4 disciplinas que vão sustentar sua aprovação.', '#relatorio', 'Abrir']
+      [!!S.dominio, 'Relatório e disciplinas de domínio', 'Veja onde você pontua e escolha as 7 disciplinas (Ética e mais 6) que vão sustentar sua aprovação.', '#relatorio', 'Abrir']
     ];
     var prox = passos.findIndex(function (x) { return !x[0]; });
     return '<div class="bloco" style="margin-bottom:16px"><h2>Sua largada</h2><p class="sub">Três etapas liberam seu cronograma personalizado.</p><ol class="passos-lista">' +
@@ -944,7 +945,7 @@
       {p: 3, min: 95, txt: 'Exercícios da mesma disciplina'}, {p: 5, min: 10, txt: 'Gravar 3 minutos explicando o tema'}];
     return cena({selo: 'Cronograma', titulo: 'Seu GPS até a prova', lead: 'Quem estuda sem rota se perde: um dia Civil, no outro Penal, e na semana seguinte não lembra de nada. O cronograma decide o que estudar em cada dia, na ordem que mais devolve pontos. O seu trabalho é só cumprir a missão.', arte: gpsArte()}) + planoForm() + '<div style="height:16px"></div>' +
       '<div class="grade g2"><div class="bloco"><h2>Como ele é montado</h2><ol class="passos-lista">' +
-      '<li><span class="n">1</span><div><b>Construção.</b> <span class="sub">Teoria e exercícios das suas 4 disciplinas de domínio, revezando as mais fracas com mais frequência.</span></div></li>' +
+      '<li><span class="n">1</span><div><b>Construção.</b> <span class="sub">Teoria e exercícios das suas disciplinas de domínio, revezando as mais fracas com mais frequência.</span></div></li>' +
       '<li><span class="n">2</span><div><b>Consolidação.</b> <span class="sub">Revisão das disciplinas de domínio e entrada dos pontos rápidos: o restante do Grupo B e o Grupo C.</span></div></li>' +
       '<li><span class="n">3</span><div><b>Revisão final.</b> <span class="sub">Últimas duas semanas: revisão de erros, sinopses e simulados.</span></div></li></ol>' +
       '<p class="peq sub" style="margin-top:12px">Uma vez por semana há um simulado com uma das 10 últimas provas oficiais, corrigido pelo gabarito da FGV.</p></div>' +

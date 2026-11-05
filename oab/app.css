@@ -633,3 +633,7 @@ details.ajuste form.bloco { box-shadow: none; border: 0; padding: 0; }
 .btn.acao-zero{background:transparent;border:2px solid var(--vermelho);color:var(--vermelho);font-size:1rem;padding:9px 18px;font-weight:700}
 .btn.acao-zero:hover{background:var(--vermelho);color:#fff}
 @media (max-width:600px){.acoes-prova{width:100%}.acoes-prova .btn{flex:1 1 100%;text-align:center}}
+
+.destaque7{margin:-6px 0 24px;padding:20px 24px;border-radius:16px;background:linear-gradient(135deg,rgba(61,220,151,.18),rgba(61,220,151,.06));border:2px solid #3DDC97;text-align:center;font:500 1.15rem var(--f-txt);line-height:1.5}
+.destaque7 b{display:block;font-size:1.5rem;color:#3DDC97;margin-bottom:4px}
+.destaque7 span{display:block;margin-top:8px;font-size:.98rem;opacity:.85}
