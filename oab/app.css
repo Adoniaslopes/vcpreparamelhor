@@ -627,3 +627,9 @@ details.ajuste form.bloco { box-shadow: none; border: 0; padding: 0; }
 .teste-card .chips{justify-content:center;gap:12px}
 .teste-card .btn{font-size:1.05rem;padding:12px 22px}
 .teste-lembrete{margin:-6px 0 18px;padding:12px 16px;border-radius:12px;background:rgba(230,194,78,.14);border:1px solid rgba(230,194,78,.45);font:500 .98rem var(--f-txt);text-align:center}
+
+.acoes-prova{align-items:center;gap:10px;padding:10px 12px;border-radius:14px;background:rgba(230,194,78,.12);border:1.5px solid rgba(230,194,78,.55)}
+.btn.acao-pausa{background:var(--dourado);border-color:var(--dourado);color:#13284A;font-size:1rem;padding:10px 18px;font-weight:700}
+.btn.acao-zero{background:transparent;border:2px solid var(--vermelho);color:var(--vermelho);font-size:1rem;padding:9px 18px;font-weight:700}
+.btn.acao-zero:hover{background:var(--vermelho);color:#fff}
+@media (max-width:600px){.acoes-prova{width:100%}.acoes-prova .btn{flex:1 1 100%;text-align:center}}

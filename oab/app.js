@@ -861,7 +861,7 @@
     var resp = Object.keys(g.resp).length;
     var parc = DIAG.filter(function (id) { return g.resp[id] === QM[id].c; }).length;
     return '<div class="cab"><div><h1 style="font-size:1.6rem">Diagnóstico</h1><p class="sub">Questão ' + (i + 1) + ' de 80 · ' + resp + ' respondidas · <b style="color:var(--verde)">' + parc + ' acertos</b> até aqui</p></div>' +
-      '<div class="chips"><span class="sub" id="relogio" aria-live="off">' + relogio() + '</span><button class="btn mini" data-act="pausar">Pausar e continuar depois</button><button class="btn mini" data-act="diag-recomecar">Recomeçar do zero</button></div></div>' +
+      '<div class="chips acoes-prova"><span class="sub" id="relogio" aria-live="off">' + relogio() + '</span><button class="btn acao-pausa" data-act="pausar">⏸ Pausar e continuar depois</button><button class="btn acao-zero" data-act="diag-recomecar">↺ Recomeçar do zero</button></div></div>' +
       '<div class="prog"><i style="width:' + (resp / 80 * 100) + '%"></i></div>' +
       '<div class="grade" style="grid-template-columns:minmax(0,1fr) minmax(220px,300px);align-items:start" id="diag-grid"><div class="questao">' +
       '<p>' + tagDisc(q.d) + '</p><div class="enun">' + esc(q.e) + '</div><div class="alts">' +
@@ -1487,7 +1487,7 @@
     }).join('') + '</div>';
     return '<p class="noprint"><a href="#provas" class="link">Simulados</a></p>' +
       '<div class="cab"><div><h1 style="font-size:1.6rem">' + (o.diag ? 'Diagnóstico' : 'Simulado') + ' · ' + n + 'º Exame de Ordem</h1><p class="sub">Questão ' + q + ' de 80 · ' + resp + ' respondidas · <b style="color:var(--verde)">' + acertos + ' acertos</b> até aqui · prova oficial da FGV</p></div>' +
-      '<div class="chips"><span class="sub" id="relogio-of">' + relogioOf(o) + '</span><button class="btn mini" data-act="pausar">Pausar e continuar depois</button><button class="btn mini" data-act="of-recomecar" data-ex="' + n + '">Recomeçar do zero</button></div></div>' +
+      '<div class="chips acoes-prova"><span class="sub" id="relogio-of">' + relogioOf(o) + '</span><button class="btn acao-pausa" data-act="pausar">⏸ Pausar e continuar depois</button><button class="btn acao-zero" data-act="of-recomecar" data-ex="' + n + '">↺ Recomeçar do zero</button></div></div>' +
       '<div class="prog"><i style="width:' + (resp / 80 * 100) + '%"></i></div>' +
       '<div class="grade" style="grid-template-columns:minmax(0,1fr) minmax(220px,300px);align-items:start" id="diag-grid"><div class="questao">' +
       '<p>' + tagDisc(d.id) + ' <span class="sub peq">Questão ' + q + ' do caderno oficial</span></p><div class="enun">' + paragrafos(it.e) + '</div><div class="alts">' + alts + '</div>' + fb +
@@ -1536,7 +1536,7 @@
     var resp = Object.keys(o.resp).length, acertos = Object.keys(o.resp).filter(function (q) { return p.gab[q - 1] === 'X' || o.resp[q] === p.gab[q - 1]; }).length;
     var temas = p.temas.split('|');
     return topo + '<div class="cab"><div><h1 style="font-size:1.6rem">' + (o.diag ? 'Diagnóstico · ' : '') + n + 'º Exame · cartão-resposta</h1><p class="sub">' + resp + ' de 80 marcadas · <b style="color:var(--verde)">' + acertos + ' acertos</b> até aqui · caderno Tipo 1</p></div>' +
-      '<div class="chips"><span class="sub" id="relogio-of">' + relogioOf(o) + '</span><button class="btn mini" data-act="pausar">Pausar e continuar depois</button><button class="btn mini" data-act="of-recomecar" data-ex="' + n + '">Recomeçar do zero</button></div></div>' +
+      '<div class="chips acoes-prova"><span class="sub" id="relogio-of">' + relogioOf(o) + '</span><button class="btn acao-pausa" data-act="pausar">⏸ Pausar e continuar depois</button><button class="btn acao-zero" data-act="of-recomecar" data-ex="' + n + '">↺ Recomeçar do zero</button></div></div>' +
       '<div class="prog"><i style="width:' + (resp / 80 * 100) + '%"></i></div><p class="chips noprint">' + links + '</p>' +
       '<div class="grade crg">' + OAB.FAIXAS.map(function (f) {
         var d = DM[f[0]], h = '<div class="bloco cr"><h3><span class="pt" style="background:' + d.cor + '"></span> ' + esc(d.nome) + '</h3>';
