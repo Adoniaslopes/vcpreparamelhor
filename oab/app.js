@@ -952,6 +952,7 @@
       '</div><p class="peq sub" style="margin-top:12px">O seu terá os dias da semana, as horas e as disciplinas que você escolher.</p></div></div>';
   }
   R.cronograma = function () {
+    if (nuvem.teste) return travaTeste('Cronograma', 'O seu cronograma até a prova está na assinatura', 'No teste grátis você faz o diagnóstico, vê o relatório, monta a sua combinação de disciplinas e treina com as questões. Na assinatura, a plataforma transforma tudo isso no seu plano diário: duas disciplinas por dia, sempre com Ética, com sinopse e exercícios de fixação.');
     if (!S.dominio) return cronoExplica();
     if (!S.dominio) return '<div class="vazio"><h1>Cronograma</h1><p>O cronograma é gerado a partir do relatório do diagnóstico.</p><a class="btn pri" href="' + (diagFeito() ? '#relatorio' : '#diagnostico') + '">' + (diagFeito() ? 'Ver relatório' : 'Fazer o diagnóstico') + '</a></div>';
     var c = crono();
@@ -984,6 +985,7 @@
 
   // ---------- sinopses ----------
   R.sinopses = function (arg) {
+    if (nuvem.teste) return travaTeste('Sinopses', 'As sinopses das 20 disciplinas estão na assinatura', 'O resumo do que mais cai em cada disciplina, com as pegadinhas da banca e a lei seca, em leitura de cerca de 50 minutos. No teste grátis, continue com o diagnóstico e as questões.');
     if (arg && DM[arg]) {
       var d = DM[arg], s = OAB.SIN[arg];
       return '<p class="noprint"><a href="#sinopses" class="link">Todas as sinopses</a></p><div class="cab"><div><h1 style="color:' + d.cor + '">' + esc(d.nome) + '</h1><p class="sub">' + d.q + ' questões na prova · ' + esc(OAB.GRUPOS[d.g].nome) + (S.dominio && S.dominio.indexOf(d.id) > -1 ? ' · <span class="dom-mark">★ disciplina de domínio</span>' : '') + '</p></div>' +
@@ -1404,6 +1406,10 @@
       l.map(function (x) { return '<li><span class="tag">' + x.ex + 'º · q' + x.q + '</span> ' + esc(x.t) + '</li>'; }).join('') + '</ul></div>';
   }
   // no teste grátis os simulados ficam trancados, como a 2ª fase: o teste é diagnóstico + questões
+  function travaTeste(selo, titulo, lead) {
+    return cena({selo: selo, titulo: titulo, lead: lead,
+      extra: '<p style="margin-top:16px"><a class="btn pri" href="' + (cfg.checkout || 'https://pay.kiwify.com.br/PBkoTUO') + '">Assinar e liberar tudo</a> <a class="btn" href="#exercicios">Continuar treinando questões</a></p>'});
+  }
   function simUpsell() {
     return cena({selo: 'Simulados', titulo: 'Os simulados com as provas oficiais da FGV estão na assinatura', lead: 'No teste grátis você faz o diagnóstico completo e treina com as questões. Na assinatura, libera os simulados com as provas oficiais da FGV, como no dia do Exame, com correção na hora e o dispositivo de lei de cada questão, além da 2ª fase.',
       extra: '<p style="margin-top:16px"><a class="btn pri" href="' + (cfg.checkout || 'https://pay.kiwify.com.br/PBkoTUO') + '">Assinar e liberar os simulados</a> <a class="btn" href="#exercicios">Continuar treinando questões</a></p>'});
@@ -1585,6 +1591,7 @@
     parar: '<svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h12v12H6z"/></svg>'
   };
   R.estudio = function (arg) {
+    if (nuvem.teste) return travaTeste('Estúdio de áudio', 'O estúdio de áudio está na assinatura', 'Leia a sinopse em voz alta, grave e ouça no trajeto. No teste grátis, continue com o diagnóstico e as questões.');
     if (arg) { var a = arg.split('.'); if (DM[a[0]] && OAB.SIN[a[0]]) { auEstado.d = a[0]; auEstado.k = a[1] != null && auChaves(a[0]).indexOf(a[1]) > -1 ? a[1] : '0'; } }
     if (!auEstado.d || !OAB.SIN[auEstado.d]) { auEstado.d = D[0].id; auEstado.k = '0'; }
     var d = auEstado.d, s = OAB.SIN[d];
@@ -1868,7 +1875,7 @@
   }
   function iniciarApp() {
     $('#acesso').hidden = true; $('#app').hidden = false;
-    if (nuvem.teste) ['provas', 'segunda-fase'].forEach(function (r) { var a = $('#menu a[data-r="' + r + '"]'); if (a && !a.querySelector('.cad')) a.insertAdjacentHTML('beforeend', ' <span class="cad" title="Liberado na assinatura" aria-label="trancado">🔒</span>'); });
+    if (nuvem.teste) ['cronograma', 'sinopses', 'provas', 'segunda-fase', 'estudio'].forEach(function (r) { var a = $('#menu a[data-r="' + r + '"]'); if (a && !a.querySelector('.cad')) a.insertAdjacentHTML('beforeend', ' <span class="cad" title="Liberado na assinatura" aria-label="trancado">🔒</span>'); });
     render();
   }
   function acView(n) { $$('[data-ac]').forEach(function (s) { s.hidden = s.dataset.ac !== n; }); }
