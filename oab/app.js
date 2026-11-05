@@ -1,5 +1,5 @@
 /* Método Aprovação OAB — plataforma de estudos para a 1ª fase do Exame de Ordem.
-   Fluxo: perfil → diagnóstico (prova completa de 80 questões) → relatório → escolha das 4 disciplinas
+   Fluxo: perfil → diagnóstico (prova completa de 80 questões) → relatório → escolha das 7 disciplinas (Ética + 6)
    de domínio → cronograma pelos 5 passos → painel, sinopses, exercícios, provas anteriores e estúdio de áudio. */
 (function () {
   'use strict';
@@ -363,11 +363,11 @@
   // ---------- simulador: combine os grupos (diagnóstico) ----------
   var cmbSel = null;
   var CMB_PRONTOS = [
-    {n: 'Só o Grupo A', l: ['civil', 'pcivil', 'const', 'penal']},
-    {n: 'Grupo A + 1 do Grupo C', l: ['civil', 'pcivil', 'const', 'penal', 'ppenal', 'dh']},
-    {n: 'Mesclando A e B', l: ['const', 'civil', 'adm', 'trab']},
-    {n: 'Direito Público + Civil', l: ['const', 'adm', 'trib', 'civil']},
-    {n: 'Quem gosta de Trabalho', l: ['trab', 'ptrab', 'const', 'civil']}
+    {n: 'Grupo A completo + Administrativo', l: ['civil', 'pcivil', 'const', 'penal', 'ppenal', 'adm']},
+    {n: 'Grupo A completo + 1 do Grupo C', l: ['civil', 'pcivil', 'const', 'penal', 'ppenal', 'dh']},
+    {n: 'Mesclando A e B', l: ['const', 'civil', 'pcivil', 'adm', 'trab', 'ptrab']},
+    {n: 'Direito Público + Civil', l: ['const', 'adm', 'trib', 'civil', 'pcivil', 'penal']},
+    {n: 'Quem gosta de Trabalho', l: ['trab', 'ptrab', 'const', 'civil', 'adm', 'emp']}
   ];
   // conta do método: núcleo (Ética + escolhidas) acertando 3 de 4, restante da prova acertando 1 de 3
   function cmbCalc(l) {
@@ -380,7 +380,7 @@
     if (!l.length) return '<p class="peq sub" style="margin-top:8px">Escolha pelo menos uma disciplina além de Ética.</p>';
     var c = cmbCalc(l);
     return '<div class="cr-conta ' + (c.ok ? 'ok' : 'no') + '"><span>Núcleo (Ética + ' + l.length + '): <b>' + c.foco + ' questões</b> · 3 de 4 = <b>' + c.pn + '</b></span><span>+ restante: ' + c.resto + ' questões · 1 de 3 = <b>' + c.pr + '</b></span><span class="t">= ' + c.tot + ' pontos ' + (c.ok ? '✓ a conta fecha' : '· faltam ' + (40 - c.tot) + ' para os 40') + '</span></div>' +
-      (c.ok ? (l.length > 6 ? '<p class="peq sub" style="margin-top:6px">Você escolheu ' + l.length + ' disciplinas. Fecha a conta, mas o método sugere até 6 para você estudar menos.</p>' : '') :
+      (c.ok ? (l.length > 6 ? '<p class="peq sub" style="margin-top:6px">Você escolheu ' + l.length + ' disciplinas. Fecha a conta, mas o método trabalha com 6 além de Ética, para você estudar menos.</p>' : '') :
         '<p class="peq" style="margin-top:6px;color:var(--vermelho)">Assim a conta não fecha. Acrescente uma disciplina ou troque uma de 2 questões por uma de 5 ou 6.</p>');
   }
   function combinaGrupos() {
@@ -404,12 +404,12 @@
       '<div><span>Restante: ' + c.resto + ' questões<br><small>acertando só 1 de cada 3</small></span><b>+ ' + c.pr + '</b></div>' +
       '<div class="tot' + (c.ok ? ' ok' : ' no') + '"><span>Total</span><b>= ' + c.tot + '</b></div></div>';
     var ver;
-    if (n < 4) ver = 'Escolha pelo menos ' + (4 - n) + ' disciplina' + (4 - n === 1 ? '' : 's') + ' a mais para montar o seu núcleo.';
+    if (n < 6) ver = 'Escolha mais ' + (6 - n) + ' disciplina' + (6 - n === 1 ? '' : 's') + ' para completar as suas 7 (Ética e mais 6).' + (n ? ' Até aqui: ' + c.tot + ' pontos.' : '');
     else if (c.ok) ver = '<b class="cmb-ok">✓ A conta fecha: ' + c.tot + ' pontos, aprovado.</b> Dominando o seu núcleo e acertando 1 em cada 3 no resto, que é pouco mais do que um chute, você passa.';
     else ver = '<b class="cmb-no">' + (40 - c.tot === 1 ? 'Falta 1 ponto' : 'Faltam ' + (40 - c.tot) + ' pontos') + ' para fechar.</b> ' + 'Acrescente mais uma disciplina ou troque uma de 2 questões por uma de 5 ou 6.';
-    if (n > 6) ver += '<span class="cmb-aviso">Você escolheu ' + n + ' disciplinas além de Ética. O método sugere até 6, para você estudar menos, mas a escolha é sua: mais disciplinas significam mais conteúdo para estudar.</span>';
+    if (n > 6) ver += '<span class="cmb-aviso">Você escolheu ' + n + ' disciplinas além de Ética. O método trabalha com 6, para você estudar menos, mas a escolha é sua: mais disciplinas significam mais conteúdo para estudar.</span>';
     return '<div class="cmb-topo"><div><h2 style="margin:0">Monte a sua combinação</h2>' +
-      '<p class="sub">Você não precisa ficar preso ao Grupo A. Pegue um núcleo duro, com as disciplinas que mais valem, e misture com as que você tem mais afinidade, de qualquer grupo. Ética entra sempre: são 8 questões. O método trabalha com 6 ou 7 disciplinas no total: Ética e mais 5 ou 6, mas a escolha é livre: marque quantas quiser e veja a conta fechar nos 40.</p></div></div>' +
+      '<p class="sub">Você não precisa ficar preso ao Grupo A. Pegue um núcleo duro, com as disciplinas que mais valem, e misture com as que você tem mais afinidade, de qualquer grupo. Ética entra sempre: são 8 questões. O método trabalha com <b>7 disciplinas no total: Ética e mais 6</b> que você escolhe. Marque as 6 e veja a conta fechar nos 40. Você não precisa estudar as 20.</p></div></div>' +
       '<div class="cmb-corpo"><div class="cmb-esq"><div class="cmb-fixa"><b>Ética Profissional · 8</b><span>sempre no seu núcleo</span></div>' + chips +
       '<div class="cmb-prontos"><span class="sub peq">Exemplos:</span>' + CMB_PRONTOS.map(function (p, i) { return '<button type="button" class="btn mini" data-cmbp="' + i + '">' + esc(p.n) + '</button>'; }).join('') + '</div></div>' +
       '<div class="cmb-dir"><div class="cmb-num"><b>' + c.foco + '</b><span>questões no seu núcleo<br>(Ética + ' + n + ' disciplina' + (n === 1 ? '' : 's') + ')</span></div>' + conta + barra +
@@ -1802,7 +1802,8 @@
       });
     }
     else if (a === 'gerar-crono') {
-      if (!cmbSel || cmbSel.length < 4) { toast('Marque pelo menos 4 disciplinas além de Ética na sua combinação.'); return; }
+      if (!cmbSel || cmbSel.length < 6) { toast('Marque 6 disciplinas além de Ética: são 7 no total.'); return; }
+      if (!cmbCalc(cmbSel).ok) { toast('Com essas disciplinas a conta ainda não chega aos 40. Troque uma de 2 questões por uma de 5 ou 6.'); return; }
       S.dominio = cmbSel.slice(); S.crono = {ini: hojeISO(), at: Date.now()}; invalidarCrono(); salvar(); toast('Cronograma gerado com a sua combinação.'); location.hash = '#cronograma';
     }
     else if (a === 'ver-tudo') { verTudo = !verTudo; render(); }
@@ -1841,7 +1842,8 @@
     var prova = $('#p-prova').value, m = $('#p-msg');
     if (!dias.length) { m.className = 'msg bad'; m.textContent = 'Escolha pelo menos um dia de estudo.'; return; }
     if (!prova || diasAte(prova) < 1) { m.className = 'msg bad'; m.textContent = 'A data da prova precisa ser depois de hoje.'; return; }
-    if (!cmbSel || cmbSel.length < 4) { m.className = 'msg bad'; m.textContent = 'Marque pelo menos 4 disciplinas além de Ética na sua combinação.'; return; }
+    if (!cmbSel || cmbSel.length < 6) { m.className = 'msg bad'; m.textContent = 'Marque 6 disciplinas além de Ética: são 7 no total.'; return; }
+    if (!cmbCalc(cmbSel).ok) { m.className = 'msg bad'; m.textContent = 'Com essas disciplinas a conta ainda não chega aos 40. Troque uma de 2 questões por uma de 5 ou 6.'; return; }
     var p = garantirPerfil(); p.prova = prova; p.dias = dias; p.horas = +$('#p-horas').value;
     S.dominio = cmbSel.slice(); S.crono = {ini: hojeISO(), at: Date.now()}; escolhaCr = null;
     invalidarCrono(); salvar(); toast('Cronograma gerado.'); window.scrollTo(0, 0); render();
