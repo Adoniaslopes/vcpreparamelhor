@@ -1313,8 +1313,8 @@
   function telaLimiteTeste() {
     var h = questoesHoje(), ok = h.filter(function (x) { return x.ok; }).length;
     var ms = new Date(nuvem.teste.fim).getTime() - Date.now(), d = Math.max(0, Math.ceil(ms / 864e5));
-    return cena({selo: 'Treino de hoje concluído', titulo: 'Você fez as ' + LIMITE_TESTE + ' questões de hoje. Amanhã tem mais.',
-      lead: 'Hoje você acertou <b>' + ok + ' de ' + h.length + '</b>. No teste grátis, a cada dia liberamos ' + LIMITE_TESTE + ' questões novas' + (d > 1 ? ': volte amanhã, ainda restam ' + d + ' dias do seu teste.' : '.') + ' Quer treinar sem limite, com cronograma, sinopses e simulados das provas oficiais da FGV?',
+    return cena({selo: 'Treino de hoje concluído', titulo: 'Por hoje é só. Amanhã tem questões novas para você.',
+      lead: 'Hoje você acertou <b>' + ok + ' de ' + h.length + '</b>.' + (d > 1 ? ' Volte amanhã para continuar: ainda restam ' + d + ' dias do seu teste.' : '') + ' Quer treinar sem limite, com cronograma, sinopses e simulados das provas oficiais da FGV?',
       extra: '<p style="margin-top:16px"><a class="btn pri" href="' + (cfg.checkout || 'https://pay.kiwify.com.br/PBkoTUO') + '">Assinar e treinar sem limite</a> <a class="btn" href="#relatorio">Ver meu relatório</a></p>'});
   }
   R.exercicios = function (arg) {
@@ -1344,7 +1344,7 @@
     }
     var er = errosAtuais().length;
     return cena({selo: 'Exercícios', titulo: 'Treino que vira ponto', lead: 'Questões no estilo da FGV, com comentário e fundamento legal. Cada resposta alimenta o seu radar, a sua nota projetada e os seus temas para revisar.'}) +
-      (nuvem.teste ? '<div class="aviso" role="status">Teste grátis: <b>' + Math.min(questoesHoje().length, LIMITE_TESTE) + ' de ' + LIMITE_TESTE + '</b> questões de hoje. Amanhã liberamos mais ' + LIMITE_TESTE + '.</div>' : '') + boletimSessao() +
+      boletimSessao() +
       '<div class="grade g3" style="margin-bottom:22px"><a class="disc-card" href="#exercicios/mix" style="--c:var(--dourado)"><h3>Treino do dia</h3><span class="sub peq">10 questões, com mais peso nas suas disciplinas de domínio e em Ética.</span></a>' +
       '<a class="disc-card" href="#exercicios/erros" style="--c:var(--vermelho)"><h3>Revisão de erros</h3><span class="sub peq">' + er + ' questões que você errou na última tentativa.</span></a></div>' +
       '<div class="bloco"><table class="t"><thead><tr><th>Disciplina</th><th>Na prova</th><th>Banco</th><th>Domínio</th><th></th></tr></thead><tbody>' +
@@ -1678,8 +1678,16 @@
   function barraTeste() {
     if (!nuvem.teste) return '';
     var ms = new Date(nuvem.teste.fim).getTime() - Date.now(), d = Math.max(0, Math.ceil(ms / 864e5));
-    var txt = d <= 1 ? (ms > 0 && ms < 864e5 ? 'Último dia do seu teste grátis' : 'Seu teste grátis termina hoje') : 'Teste grátis: faltam <b>' + d + ' dias</b>';
-    return '<div class="teste-barra noprint" role="status"><span>' + txt + ' · seu progresso fica guardado</span><a class="btn ouro" href="' + (cfg.checkout || 'https://pay.kiwify.com.br/PBkoTUO') + '">Assinar agora</a></div>';
+    var dias = d <= 1 ? (ms > 0 ? 'Último dia do seu teste grátis' : 'Seu teste grátis termina hoje') : 'Faltam <b>' + d + ' dias</b> do seu teste grátis';
+    var rota = (location.hash || '#painel').slice(1).split('/')[0] || 'painel', pend = !S.diag.fim, ck = cfg.checkout || 'https://pay.kiwify.com.br/PBkoTUO';
+    if (rota === 'painel' || rota === 'boasvindas') {
+      return '<section class="teste-card noprint" role="status"><span class="teste-selo">Teste grátis · 7 dias</span><h2>' + dias + '</h2>' +
+        '<p>' + (pend ? 'Aproveite estes dias para fazer o seu <b>diagnóstico completo</b>: 80 questões na mesma distribuição da prova da FGV, com o resultado na hora. Pode pausar e continuar quando quiser.' : 'O seu diagnóstico está feito. Veja o seu relatório e continue treinando com as questões.') + '</p>' +
+        '<div class="chips">' + (pend ? '<a class="btn pri" href="#diagnostico">' + (Object.keys(S.diag.resp || {}).length ? 'Continuar meu diagnóstico' : 'Começar meu diagnóstico') + '</a>' : '<a class="btn pri" href="#relatorio">Ver meu relatório</a>') +
+        '<a class="btn ouro" href="' + ck + '">Assinar agora</a></div></section>';
+    }
+    return '<div class="teste-barra noprint" role="status"><span>' + dias + '</span><a class="btn ouro" href="' + ck + '">Assinar agora</a></div>' +
+      (rota === 'diagnostico' && pend ? '<div class="teste-lembrete noprint">Pode pausar quando quiser: as suas respostas ficam salvas na sua conta e você continua de onde parou, de qualquer aparelho, durante os 7 dias do seu teste.</div>' : '');
   }
   function render() {
     var h = (location.hash || '#painel').slice(1).split('/'), r = h[0] || 'painel', arg = h[1];

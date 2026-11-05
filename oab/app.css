@@ -615,6 +615,15 @@ details.ajuste form.bloco { box-shadow: none; border: 0; padding: 0; }
 .cr-conta.ok .t { color: var(--verde); }
 .cr-conta.no .t { color: var(--vermelho); }
 
-.teste-barra{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 18px;padding:10px 14px;border-radius:12px;background:#13284A;color:#fff;font:500 .92rem var(--f-txt)}
+.teste-barra{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;margin:0 0 18px;padding:14px 18px;border-radius:14px;background:#13284A;color:#fff;font:500 1.08rem var(--f-txt);text-align:center}
 .teste-barra b{color:var(--dourado)}
 .teste-barra .btn{padding:6px 14px}
+
+.teste-card{max-width:760px;margin:0 auto 26px;padding:30px 28px;border-radius:20px;background:linear-gradient(160deg,#13284A,#0b1a33);color:#fff;text-align:center;border:2px solid var(--dourado);box-shadow:0 18px 50px rgba(0,0,0,.25)}
+.teste-card .teste-selo{display:inline-block;font:700 .85rem var(--f-txt);letter-spacing:.12em;text-transform:uppercase;color:#13284A;background:var(--dourado);padding:6px 14px;border-radius:999px}
+.teste-card h2{font-size:clamp(1.8rem,4.2vw,2.6rem);margin:16px 0 10px;color:#fff;line-height:1.15}
+.teste-card h2 b{color:var(--dourado)}
+.teste-card p{font-size:1.1rem;color:#d9e2f2;margin:0 auto 18px;max-width:600px}
+.teste-card .chips{justify-content:center;gap:12px}
+.teste-card .btn{font-size:1.05rem;padding:12px 22px}
+.teste-lembrete{margin:-6px 0 18px;padding:12px 16px;border-radius:12px;background:rgba(230,194,78,.14);border:1px solid rgba(230,194,78,.45);font:500 .98rem var(--f-txt);text-align:center}
