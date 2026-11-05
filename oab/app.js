@@ -1306,7 +1306,19 @@
     } else l = poolDisc(modo);
     sess = {modo: modo, l: l, i: 0, resp: {}, ok: 0};
   }
+  // teste grátis "a conta-gotas": diagnóstico livre, questões limitadas por dia
+  var LIMITE_TESTE = 7;
+  function questoesHoje() { var z = new Date(); z.setHours(0, 0, 0, 0); var t0 = z.getTime(); return (S.hist || []).filter(function (h) { return h.t >= t0; }); }
+  function limiteTesteAtingido() { return !!nuvem.teste && questoesHoje().length >= LIMITE_TESTE; }
+  function telaLimiteTeste() {
+    var h = questoesHoje(), ok = h.filter(function (x) { return x.ok; }).length;
+    var ms = new Date(nuvem.teste.fim).getTime() - Date.now(), d = Math.max(0, Math.ceil(ms / 864e5));
+    return cena({selo: 'Treino de hoje concluído', titulo: 'Você fez as ' + LIMITE_TESTE + ' questões de hoje. Amanhã tem mais.',
+      lead: 'Hoje você acertou <b>' + ok + ' de ' + h.length + '</b>. No teste grátis, a cada dia liberamos ' + LIMITE_TESTE + ' questões novas' + (d > 1 ? ': volte amanhã, ainda restam ' + d + ' dias do seu teste.' : '.') + ' Quer treinar sem limite, com cronograma, sinopses e simulados das provas oficiais da FGV?',
+      extra: '<p style="margin-top:16px"><a class="btn pri" href="' + (cfg.checkout || 'https://pay.kiwify.com.br/PBkoTUO') + '">Assinar e treinar sem limite</a> <a class="btn" href="#relatorio">Ver meu relatório</a></p>'});
+  }
   R.exercicios = function (arg) {
+    if (arg && nuvem.teste && limiteTesteAtingido() && !(sess && sess.modo === arg && sess.i < sess.l.length && sess.resp[sess.l[sess.i]] != null)) return telaLimiteTeste();
     if (arg) {
       if (!sess || sess.modo !== arg) novaSessao(arg);
       if (!sess.l.length) return '<p><a class="link" href="#exercicios">Voltar</a></p><div class="vazio"><h2>Nada por aqui</h2><p>' + (arg === 'erros' ? 'Você não tem questões erradas pendentes.' : 'Ainda não há questões nesta disciplina.') + '</p></div>';
@@ -1331,7 +1343,8 @@
         '<div class="barra-q">' + (r == null ? '<button class="btn" data-ex-alt="-1">Não sei</button><span></span>' : '<a class="btn mini" href="#sinopses/' + q.d + '">Ver sinopse</a><button class="btn pri" data-act="ex-prox">' + (sess.i + 1 < sess.l.length ? 'Próxima' : 'Ver resultado') + '</button>') + '</div></div>';
     }
     var er = errosAtuais().length;
-    return cena({selo: 'Exercícios', titulo: 'Treino que vira ponto', lead: 'Questões no estilo da FGV, com comentário e fundamento legal. Cada resposta alimenta o seu radar, a sua nota projetada e os seus temas para revisar.'}) + boletimSessao() +
+    return cena({selo: 'Exercícios', titulo: 'Treino que vira ponto', lead: 'Questões no estilo da FGV, com comentário e fundamento legal. Cada resposta alimenta o seu radar, a sua nota projetada e os seus temas para revisar.'}) +
+      (nuvem.teste ? '<div class="aviso" role="status">Teste grátis: <b>' + Math.min(questoesHoje().length, LIMITE_TESTE) + ' de ' + LIMITE_TESTE + '</b> questões de hoje. Amanhã liberamos mais ' + LIMITE_TESTE + '.</div>' : '') + boletimSessao() +
       '<div class="grade g3" style="margin-bottom:22px"><a class="disc-card" href="#exercicios/mix" style="--c:var(--dourado)"><h3>Treino do dia</h3><span class="sub peq">10 questões, com mais peso nas suas disciplinas de domínio e em Ética.</span></a>' +
       '<a class="disc-card" href="#exercicios/erros" style="--c:var(--vermelho)"><h3>Revisão de erros</h3><span class="sub peq">' + er + ' questões que você errou na última tentativa.</span></a></div>' +
       '<div class="bloco"><table class="t"><thead><tr><th>Disciplina</th><th>Na prova</th><th>Banco</th><th>Domínio</th><th></th></tr></thead><tbody>' +
@@ -1735,6 +1748,7 @@
     if (ds.diagAlt != null) { if (S.diag.resp[DIAG[S.diag.atual]] != null) return; S.diag.resp[DIAG[S.diag.atual]] = +ds.diagAlt; salvar(); render(); var rt = $('.retorno'); if (rt) rt.scrollIntoView({behavior: 'smooth', block: 'nearest'}); return; }
     if (ds.irQ != null) { S.diag.atual = +ds.irQ; salvar(); render(); return; }
     if (ds.exAlt != null) {
+      if (limiteTesteAtingido()) { render(); return; }
       var id = sess.l[sess.i], q = QM[id], r = +ds.exAlt; sess.resp[id] = r; if (r === q.c) sess.ok++;
       S.hist.push({q: id, ok: r === q.c, t: Date.now()}); if (S.hist.length > 4000) S.hist = S.hist.slice(-4000);
       salvar(); render(); return;
