@@ -1687,7 +1687,7 @@
         '<a class="btn ouro" href="' + ck + '">Assinar agora</a></div></section>';
     }
     return '<div class="teste-barra noprint" role="status"><span>' + dias + '</span><a class="btn ouro" href="' + ck + '">Assinar agora</a></div>' +
-      (rota === 'diagnostico' && pend ? '<div class="teste-lembrete noprint">Pode pausar quando quiser: as suas respostas ficam salvas na sua conta e você continua de onde parou, de qualquer aparelho, durante os 7 dias do seu teste.</div>' : '');
+      (rota === 'diagnostico' && pend ? '<div class="teste-lembrete noprint">Pode pausar quando quiser e as suas respostas ficam salvas. Você ainda tem ' + (d > 1 ? d + ' dias' : 'hoje') + ' para concluir o seu diagnóstico.</div>' : '');
   }
   function render() {
     var h = (location.hash || '#painel').slice(1).split('/'), r = h[0] || 'painel', arg = h[1];
