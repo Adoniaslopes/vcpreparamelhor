@@ -615,9 +615,9 @@ details.ajuste form.bloco { box-shadow: none; border: 0; padding: 0; }
 .cr-conta.ok .t { color: var(--verde); }
 .cr-conta.no .t { color: var(--vermelho); }
 
-.teste-barra{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;margin:0 0 18px;padding:14px 18px;border-radius:14px;background:#13284A;color:#fff;font:500 1.08rem var(--f-txt);text-align:center}
-.teste-barra b{color:var(--dourado)}
-.teste-barra .btn{padding:6px 14px}
+.teste-barra{display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;margin:0 0 20px;padding:22px 24px;border-radius:16px;background:linear-gradient(135deg,#1FA463,#137A47);color:#fff;font:600 1.35rem var(--f-txt);text-align:center;box-shadow:0 12px 30px rgba(19,122,71,.35)}
+.teste-barra b{color:#fff;font-weight:800;text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:5px}
+.teste-barra .btn{padding:12px 24px;font-size:1.1rem;background:#fff;border-color:#fff;color:#137A47;font-weight:800}
 
 .teste-card{max-width:760px;margin:0 auto 26px;padding:30px 28px;border-radius:20px;background:linear-gradient(160deg,#13284A,#0b1a33);color:#fff;text-align:center;border:2px solid var(--dourado);box-shadow:0 18px 50px rgba(0,0,0,.25)}
 .teste-card .teste-selo{display:inline-block;font:700 .85rem var(--f-txt);letter-spacing:.12em;text-transform:uppercase;color:#13284A;background:var(--dourado);padding:6px 14px;border-radius:999px}
