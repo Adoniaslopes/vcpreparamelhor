@@ -1403,7 +1403,13 @@
     return '<div class="bloco"><h3>O que caiu nas últimas 10 provas</h3><p class="peq sub">Assunto de cada questão, do 47º ao 38º Exame (resumo aproximado).</p><ul class="caiu">' +
       l.map(function (x) { return '<li><span class="tag">' + x.ex + 'º · q' + x.q + '</span> ' + esc(x.t) + '</li>'; }).join('') + '</ul></div>';
   }
+  // no teste grátis os simulados ficam trancados, como a 2ª fase: o teste é diagnóstico + questões
+  function simUpsell() {
+    return cena({selo: 'Simulados', titulo: 'Os simulados com as provas oficiais da FGV estão na assinatura', lead: 'No teste grátis você faz o diagnóstico completo e treina com as questões. Na assinatura, libera os simulados com as provas oficiais da FGV, como no dia do Exame, com correção na hora e o dispositivo de lei de cada questão, além da 2ª fase.',
+      extra: '<p style="margin-top:16px"><a class="btn pri" href="' + (cfg.checkout || 'https://pay.kiwify.com.br/PBkoTUO') + '">Assinar e liberar os simulados</a> <a class="btn" href="#exercicios">Continuar treinando questões</a></p>'});
+  }
   R.provas = function (arg) {
+    if (nuvem.teste) return simUpsell();
     var n = arg && OAB.PROVAS[arg] ? +arg : null;
     if (n) return telaProva(n);
     var feitas = EXAMES.filter(function (e) { var o = oficial(e.n); return o && o.fim; });
@@ -1860,7 +1866,11 @@
     textos.forEach(function (t) { (0, eval)(t); });
     indexarQ(); montarDiag(); prepararF2(); conteudoOk = true;
   }
-  function iniciarApp() { $('#acesso').hidden = true; $('#app').hidden = false; render(); }
+  function iniciarApp() {
+    $('#acesso').hidden = true; $('#app').hidden = false;
+    if (nuvem.teste) ['provas', 'segunda-fase'].forEach(function (r) { var a = $('#menu a[data-r="' + r + '"]'); if (a && !a.querySelector('.cad')) a.insertAdjacentHTML('beforeend', ' <span class="cad" title="Liberado na assinatura" aria-label="trancado">🔒</span>'); });
+    render();
+  }
   function acView(n) { $$('[data-ac]').forEach(function (s) { s.hidden = s.dataset.ac !== n; }); }
   function msg(id, t, ok) { var e = $('#' + id); e.textContent = t || ''; e.className = 'msg' + (t ? (ok ? ' ok' : ' bad') : ''); }
   function traduz(e) {
