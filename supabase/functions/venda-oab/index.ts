@@ -3,13 +3,13 @@
 // Segredos (Edge Functions > Secrets):
 //   VENDA_CHAVE         palavra secreta que vai no fim da URL do webhook (?chave=...)
 //   HOTMART_HOTTOK      (opcional) o "hottok" mostrado na Hotmart > Ferramentas > Webhook
-//   SITE_OAB            endereço da plataforma, ex.: https://adoniaslopes.github.io/vcpreparamelhor/oab/
+//   SITE_OAB            endereço da plataforma, ex.: https://metodo-aprovacao.pages.dev/oab/
 //   PRODUTOS_2FASES     (opcional) códigos de produto/oferta do plano 1ª + 2ª fase, separados por vírgula
 // URL para cadastrar no webhook: https://<projeto>.supabase.co/functions/v1/venda-oab?chave=<VENDA_CHAVE>
 import { createClient } from 'npm:@supabase/supabase-js@2.45.4';
 
 const admin = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!, { auth: { persistSession: false } });
-const SITE = Deno.env.get('SITE_OAB') || 'https://adoniaslopes.github.io/vcpreparamelhor/oab/';
+const SITE = Deno.env.get('SITE_OAB') || 'https://metodo-aprovacao.pages.dev/oab/';
 const json = (b: unknown, status = 200) => new Response(JSON.stringify(b), { status, headers: { 'Content-Type': 'application/json' } });
 
 // procura um valor em vários caminhos possíveis (Hotmart e Hubla mandam formatos diferentes)
