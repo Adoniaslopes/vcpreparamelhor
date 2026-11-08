@@ -985,7 +985,7 @@
   };
 
   // ---------- sinopses ----------
-  var SIN_PDF = {etica: 'Sinopse-Etica-Profissional.pdf', civil: 'Sinopse-Direito-Civil.pdf', pcivil: 'Sinopse-Processo-Civil.pdf', const: 'Sinopse-Direito-Constitucional.pdf', penal: 'Sinopse-Direito-Penal.pdf', ppenal: 'Sinopse-Processo-Penal.pdf', adm: 'Sinopse-Direito-Administrativo.pdf', trab: 'Sinopse-Direito-do-Trabalho.pdf', ptrab: 'Sinopse-Processo-do-Trabalho.pdf', trib: 'Sinopse-Direito-Tributario.pdf', emp: 'Sinopse-Direito-Empresarial.pdf'};
+  var SIN_PDF = {etica: 'Sinopse-Etica-Profissional.pdf', civil: 'Sinopse-Direito-Civil.pdf', pcivil: 'Sinopse-Processo-Civil.pdf', const: 'Sinopse-Direito-Constitucional.pdf', penal: 'Sinopse-Direito-Penal.pdf', ppenal: 'Sinopse-Processo-Penal.pdf', adm: 'Sinopse-Direito-Administrativo.pdf', trab: 'Sinopse-Direito-do-Trabalho.pdf', ptrab: 'Sinopse-Processo-do-Trabalho.pdf', trib: 'Sinopse-Direito-Tributario.pdf', emp: 'Sinopse-Direito-Empresarial.pdf', dh: 'Sinopse-Direitos-Humanos.pdf', cdc: 'Sinopse-Direito-do-Consumidor.pdf', eca: 'Sinopse-ECA.pdf', amb: 'Sinopse-Direito-Ambiental.pdf', intl: 'Sinopse-Direito-Internacional.pdf', filo: 'Sinopse-Filosofia-do-Direito.pdf', eleit: 'Sinopse-Direito-Eleitoral.pdf', fin: 'Sinopse-Direito-Financeiro.pdf', prev: 'Sinopse-Direito-Previdenciario.pdf'};
   async function baixarSinopsePdf(id, btn) {
     var txt = btn.textContent; btn.disabled = true; btn.textContent = 'Preparando o PDF…';
     try {
