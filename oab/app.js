@@ -985,7 +985,7 @@
   };
 
   // ---------- sinopses ----------
-  var SIN_PDF = {etica: 'Sinopse-Etica-Profissional.pdf'};
+  var SIN_PDF = {etica: 'Sinopse-Etica-Profissional.pdf', civil: 'Sinopse-Direito-Civil.pdf', pcivil: 'Sinopse-Processo-Civil.pdf', const: 'Sinopse-Direito-Constitucional.pdf', penal: 'Sinopse-Direito-Penal.pdf', ppenal: 'Sinopse-Processo-Penal.pdf'};
   async function baixarSinopsePdf(id, btn) {
     var txt = btn.textContent; btn.disabled = true; btn.textContent = 'Preparando o PDF…';
     try {
@@ -1001,7 +1001,7 @@
   document.addEventListener('click', function (ev) { var b = ev.target.closest('[data-sinpdf]'); if (b) baixarSinopsePdf(b.dataset.sinpdf, b); });
   function blocoPdf(id) {
     if (!SIN_PDF[id]) return '';
-    return '<div class="bloco sin-pdf noprint"><div><span class="selo-pdf">Sinopse completa · PDF</span><h2 style="margin:6px 0 4px">Leia a versão completa em PDF</h2><p class="sub" style="margin:0">Cerca de 20 páginas: explicação de cada tema, quadros comparativos, situações no formato da FGV, as 15 pegadinhas mais cobradas e a tabela de prazos.</p></div><button class="btn pri" data-sinpdf="' + id + '">Baixar a sinopse em PDF</button></div>';
+    return '<div class="bloco sin-pdf noprint"><div><span class="selo-pdf">Sinopse completa · PDF</span><h2 style="margin:6px 0 4px">Leia a versão completa em PDF</h2><p class="sub" style="margin:0">De 15 a 20 páginas: explicação de cada tema, quadros comparativos, situações no formato da FGV, as 15 pegadinhas mais cobradas e a tabela de prazos.</p></div><button class="btn pri" data-sinpdf="' + id + '">Baixar a sinopse em PDF</button></div>';
   }
   R.sinopses = function (arg) {
     if (nuvem.teste) return travaTeste('Sinopses', 'As sinopses das 20 disciplinas estão na assinatura', 'O resumo do que mais cai em cada disciplina, com as pegadinhas da banca e a lei seca, em leitura de cerca de 50 minutos. No teste grátis, continue com o diagnóstico e as questões.');
