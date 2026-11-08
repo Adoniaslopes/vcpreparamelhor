@@ -999,27 +999,62 @@
     btn.disabled = false; btn.textContent = txt;
   }
   document.addEventListener('click', function (ev) { var b = ev.target.closest('[data-sinpdf]'); if (b && !nuvem.teste) baixarSinopsePdf(b.dataset.sinpdf, b); });
+  // sinopse completa para ler na página (no teste grátis: só leitura, sem copiar, imprimir ou baixar)
+  async function carregarSinc(id) {
+    var box = $('#sinc'); if (!box) return;
+    try {
+      if (!(OAB.SINC && OAB.SINC[id])) {
+        var s = await nuvem.sb.auth.getSession(), tk = s.data.session && s.data.session.access_token;
+        var r = await fetch('conteudo/sc' + id + '.js', {headers: {Authorization: 'Bearer ' + tk}, cache: 'no-store'});
+        if (!r.ok) throw new Error(r.status);
+        (0, eval)(await r.text());
+      }
+      var c = OAB.SINC[id]; box = $('#sinc'); if (!box || box.dataset.id !== id) return;
+      box.innerHTML = '<p class="lead">' + c.lead + '</p><div class="sinc-sum"><b>Nesta sinopse</b> · leitura de ' + esc(c.lt) + '<ol>' + c.s.map(function (t) { return '<li>' + t + '</li>'; }).join('') + '</ol></div>' + c.h + '<p class="peq sub" style="margin-top:18px">' + c.f + ' Confira sempre a redação atualizada da lei.</p>';
+    } catch (e) { box.innerHTML = '<p class="sub">Não foi possível abrir a sinopse agora. Recarregue a página e tente de novo.</p>'; }
+  }
+  function marcaDagua() {
+    var t = String(nuvem.email || 'Método Aprovação OAB').replace(/[<>&"]/g, '');
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="340" height="200"><text x="20" y="120" transform="rotate(-24 170 100)" font-family="sans-serif" font-size="15" fill="rgba(128,140,170,0.16)">' + t + '</text></svg>';
+    return 'background-image:url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
+  }
+  ['copy', 'cut', 'contextmenu', 'dragstart', 'selectstart'].forEach(function (tp) {
+    document.addEventListener(tp, function (ev) { if (nuvem.teste && ev.target.closest && ev.target.closest('.sinc')) ev.preventDefault(); });
+  });
+  document.addEventListener('keydown', function (ev) {
+    if (nuvem.teste && (ev.ctrlKey || ev.metaKey) && /^[psc]$/i.test(ev.key) && $('#sinc')) ev.preventDefault();
+  });
   function blocoPdf(id) {
-    if (!SIN_PDF[id] || nuvem.teste) return '';
+    if (!SIN_PDF[id]) return '';
+    if (nuvem.teste) return '<div class="bloco sin-pdf noprint"><div><span class="selo-pdf">Sinopse completa · PDF</span><h2 style="margin:6px 0 4px">Baixe e estude offline na assinatura</h2><p class="sub" style="margin:0">No teste grátis você lê a sinopse completa aqui na plataforma. Assinantes também baixam o PDF de cada disciplina.</p></div><a class="btn ouro" href="' + (cfg.checkout || 'https://pay.kiwify.com.br/PBkoTUO') + '">Assinar e baixar</a></div>';
     return '<div class="bloco sin-pdf noprint"><div><span class="selo-pdf">Sinopse completa · PDF</span><h2 style="margin:6px 0 4px">Leia a versão completa em PDF</h2><p class="sub" style="margin:0">Explicação de cada tema, quadros comparativos, situações no formato da FGV, as 15 pegadinhas mais cobradas e a tabela de prazos.</p></div><button class="btn pri" data-sinpdf="' + id + '">Baixar a sinopse em PDF</button></div>';
   }
   R.sinopses = function (arg) {
-    if (nuvem.teste) return travaTeste('Sinopses', 'As sinopses das 20 disciplinas estão na assinatura', 'O resumo do que mais cai em cada disciplina, com as pegadinhas da banca e a lei seca, em leitura de cerca de 50 minutos. No teste grátis, continue com o diagnóstico e as questões.');
+    var vista = 'completa';
+    if (arg && arg.indexOf('.') > -1) { vista = arg.split('.')[1]; arg = arg.split('.')[0]; }
+    if (arg && DM[arg] && vista === 'completa' && SIN_PDF[arg]) {
+      var dd = DM[arg];
+      setTimeout(function () { carregarSinc(arg); }, 0);
+      return '<p class="noprint"><a href="#sinopses" class="link">Todas as sinopses</a></p><div class="cab"><div><h1 style="color:' + dd.cor + '">' + esc(dd.nome) + '</h1><p class="sub">' + dd.q + ' questões na prova · ' + esc(OAB.GRUPOS[dd.g].nome) + '</p></div>' +
+        '<div class="chips noprint"><a class="btn pri" href="#exercicios/' + arg + '">Praticar ' + esc(dd.curto) + '</a></div></div>' +
+        '<div class="chips noprint sinc-abas"><a class="btn mini on" href="#sinopses/' + arg + '" aria-current="page">Sinopse completa</a><a class="btn mini" href="#sinopses/' + arg + '.resumo">Resumo rápido e o que caiu</a></div>' +
+        blocoPdf(arg) + '<article class="bloco sinc' + (nuvem.teste ? ' protegido' : '') + '" id="sinc" data-id="' + arg + '" style="border-top:5px solid ' + dd.cor + (nuvem.teste ? ';' + marcaDagua() : '') + '"><p class="sub">Carregando a sinopse…</p></article>';
+    }
     if (arg && DM[arg]) {
       var d = DM[arg], s = OAB.SIN[arg];
       return '<p class="noprint"><a href="#sinopses" class="link">Todas as sinopses</a></p><div class="cab"><div><h1 style="color:' + d.cor + '">' + esc(d.nome) + '</h1><p class="sub">' + d.q + ' questões na prova · ' + esc(OAB.GRUPOS[d.g].nome) + (S.dominio && S.dominio.indexOf(d.id) > -1 ? ' · <span class="dom-mark">★ disciplina de domínio</span>' : '') + '</p></div>' +
-        '<div class="chips noprint"><a class="btn pri" href="#exercicios/' + arg + '">Praticar ' + esc(d.curto) + '</a><a class="btn" href="#estudio/' + arg + '">Ler e gravar no estúdio</a></div></div>' +
-        blocoPdf(arg) + '<div class="grade" style="grid-template-columns:minmax(0,1.6fr) minmax(240px,1fr);align-items:start" id="sin-grid"><div class="bloco" style="border-top:5px solid ' + d.cor + '"><h2>O que mais cai</h2>' +
-        s.tm.map(function (t, i) { return '<div class="tema"><h3>' + esc(t.t) + '</h3>' + (t.x ? '<p class="entenda"><b>Entenda.</b> ' + esc(t.x) + '</p>' : '') + '<ul>' + t.p.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul><a class="link peq noprint au-link" href="#estudio/' + arg + '.' + i + '">🎙 Ler em voz alta e gravar este tema</a></div>'; }).join('') +
+        '<div class="chips noprint"><a class="btn pri" href="#exercicios/' + arg + '">Praticar ' + esc(d.curto) + '</a>' + (nuvem.teste ? '' : '<a class="btn" href="#estudio/' + arg + '">Ler e gravar no estúdio</a>') + '</div></div>' +
+        (SIN_PDF[arg] ? '<div class="chips noprint sinc-abas"><a class="btn mini" href="#sinopses/' + arg + '">Sinopse completa</a><a class="btn mini on" href="#sinopses/' + arg + '.resumo" aria-current="page">Resumo rápido e o que caiu</a></div>' : '') + '<div class="grade" style="grid-template-columns:minmax(0,1.6fr) minmax(240px,1fr);align-items:start" id="sin-grid"><div class="bloco" style="border-top:5px solid ' + d.cor + '"><h2>O que mais cai</h2>' +
+        s.tm.map(function (t, i) { return '<div class="tema"><h3>' + esc(t.t) + '</h3>' + (t.x ? '<p class="entenda"><b>Entenda.</b> ' + esc(t.x) + '</p>' : '') + '<ul>' + t.p.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' + (nuvem.teste ? '' : '<a class="link peq noprint au-link" href="#estudio/' + arg + '.' + i + '">🎙 Ler em voz alta e gravar este tema</a>') + '</div>'; }).join('') +
         '</div><div class="pilha"><div class="peg"><h3>Pegadinhas da banca</h3><ul>' + s.pg.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>' +
-        '<div class="bloco"><h3>Lei seca obrigatória</h3><ul style="padding-left:1.2rem;margin:0">' + s.lei.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' + leisLinks(s) + '<a class="link peq noprint" href="#estudio/' + arg + '.lei">🎙 Ler a lei seca em voz alta</a></div>' +
+        '<div class="bloco"><h3>Lei seca obrigatória</h3><ul style="padding-left:1.2rem;margin:0">' + s.lei.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' + leisLinks(s) + (nuvem.teste ? '' : '<a class="link peq noprint" href="#estudio/' + arg + '.lei">🎙 Ler a lei seca em voz alta</a>') + '</div>' +
         blocoCaiu(arg) + '<div class="bloco"><h3>Passo 4 · seu resumo</h3><p class="peq">Depois de ler, escreva à mão uma página com o que você lembra. O que não veio à memória é o que você revisa amanhã.</p></div></div></div>';
     }
     return cena({selo: 'Passo 4 · Sinopses', titulo: 'O essencial, explicado', lead: 'Para cada disciplina: os temas que a FGV mais cobra, as pegadinhas da banca, a lei seca obrigatória e o que caiu nas últimas 10 provas. Cada tema traz uma explicação para você entender antes de decorar.'}) +
       ['A', 'B', 'C'].map(function (g) {
         return '<h2 style="margin-top:22px">' + esc(OAB.GRUPOS[g].nome) + '</h2><div class="grade g3">' + D.filter(function (d) { return d.g === g; }).map(function (d) {
           var x = dominio(d.id);
-          return '<a class="disc-card" href="#sinopses/' + d.id + '" style="--c:' + d.cor + '"><span class="sub peq">' + d.q + ' questões' + (S.dominio && S.dominio.indexOf(d.id) > -1 ? ' · <span class="dom-mark">★ domínio</span>' : '') + '</span><h3>' + esc(d.nome) + '</h3><span class="sub peq">' + OAB.SIN[d.id].tm.length + ' temas · domínio ' + pct(x) + (SIN_PDF[d.id] ? ' · <b>PDF completo</b>' : '') + '</span></a>';
+          return '<a class="disc-card" href="#sinopses/' + d.id + '" style="--c:' + d.cor + '"><span class="sub peq">' + d.q + ' questões' + (S.dominio && S.dominio.indexOf(d.id) > -1 ? ' · <span class="dom-mark">★ domínio</span>' : '') + '</span><h3>' + esc(d.nome) + '</h3><span class="sub peq">' + OAB.SIN[d.id].tm.length + ' temas · domínio ' + pct(x) + (SIN_PDF[d.id] ? ' · <b>sinopse completa</b>' : '') + '</span></a>';
         }).join('') + '</div>';
       }).join('');
   };
@@ -1918,7 +1953,7 @@
   }
   function iniciarApp() {
     $('#acesso').hidden = true; $('#app').hidden = false;
-    if (nuvem.teste) ['cronograma', 'sinopses', 'provas', 'segunda-fase', 'estudio'].forEach(function (r) { var a = $('#menu a[data-r="' + r + '"]'); if (a && !a.querySelector('.cad')) a.insertAdjacentHTML('beforeend', ' <span class="cad" title="Liberado na assinatura" aria-label="trancado">🔒</span>'); });
+    if (nuvem.teste) ['cronograma', 'provas', 'segunda-fase', 'estudio'].forEach(function (r) { var a = $('#menu a[data-r="' + r + '"]'); if (a && !a.querySelector('.cad')) a.insertAdjacentHTML('beforeend', ' <span class="cad" title="Liberado na assinatura" aria-label="trancado">🔒</span>'); });
     render();
   }
   function acView(n) { $$('[data-ac]').forEach(function (s) { s.hidden = s.dataset.ac !== n; }); }
@@ -2022,7 +2057,7 @@
     }
     try { await carregarConteudo(session.access_token); }
     catch (e) { $('#e-tit').textContent = 'Não foi possível carregar o conteúdo'; $('#e-txt').innerHTML = 'Verifique a sua internet e recarregue a página.<br><br>' + esc(contato()); acView('espera'); entrando = false; return; }
-    nuvem.ativo = true; nuvem.uid = uid; nuvem.admin = !!p.admin; nuvem.nome = p.nome || ''; nuvem.plano = comprou ? ac.data.plano : null; nuvem.legado = !!liberadoManual; nuvem.teste = emTeste && !comprou && !liberadoManual && !p.admin ? teste : null;
+    nuvem.ativo = true; nuvem.uid = uid; nuvem.email = email; nuvem.admin = !!p.admin; nuvem.nome = p.nome || ''; nuvem.plano = comprou ? ac.data.plano : null; nuvem.legado = !!liberadoManual; nuvem.teste = emTeste && !comprou && !liberadoManual && !p.admin ? teste : null;
     KEY = 'ontop-oab-v1-' + uid; S = carregar();
     try {
       var g = await sb.from('progresso').select('estado').eq('user_id', uid).maybeSingle();
