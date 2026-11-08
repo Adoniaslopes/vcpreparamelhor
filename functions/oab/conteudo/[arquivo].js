@@ -48,6 +48,8 @@ async function entregar({ request, params, env }) {
       ok = !!(perfil && perfil.status === 'aprovado' && !(perfil.expira_em && perfil.expira_em < hoje));
     }
   }
+  // o PDF completo das sinopses é só para assinantes: no teste grátis não há download
+  if (!ok && pdf) return new Response('O PDF das sinopses está disponível na assinatura.', { status: 403, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' } });
   if (!ok) {
     // teste grátis de 7 dias: vale enquanto a data de fim não passar
     const t = await fetch(`${SB_URL}/rest/v1/testes_oab?select=fim&email=eq.${encodeURIComponent(email)}`, { headers: h });

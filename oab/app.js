@@ -998,9 +998,9 @@
     } catch (e) { alert('Não foi possível baixar o PDF agora. Tente de novo em instantes.'); }
     btn.disabled = false; btn.textContent = txt;
   }
-  document.addEventListener('click', function (ev) { var b = ev.target.closest('[data-sinpdf]'); if (b) baixarSinopsePdf(b.dataset.sinpdf, b); });
+  document.addEventListener('click', function (ev) { var b = ev.target.closest('[data-sinpdf]'); if (b && !nuvem.teste) baixarSinopsePdf(b.dataset.sinpdf, b); });
   function blocoPdf(id) {
-    if (!SIN_PDF[id]) return '';
+    if (!SIN_PDF[id] || nuvem.teste) return '';
     return '<div class="bloco sin-pdf noprint"><div><span class="selo-pdf">Sinopse completa · PDF</span><h2 style="margin:6px 0 4px">Leia a versão completa em PDF</h2><p class="sub" style="margin:0">Explicação de cada tema, quadros comparativos, situações no formato da FGV, as 15 pegadinhas mais cobradas e a tabela de prazos.</p></div><button class="btn pri" data-sinpdf="' + id + '">Baixar a sinopse em PDF</button></div>';
   }
   R.sinopses = function (arg) {
