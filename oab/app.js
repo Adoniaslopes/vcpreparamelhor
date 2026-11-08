@@ -161,7 +161,9 @@
       .sort(function (a, b) { return (a.g === b.g ? 0 : a.g < b.g ? -1 : 1) || b.q * (1 - acc(b.id)) - a.q * (1 - acc(a.id)); })
       .map(function (d) { return d.id; });
     if (!sec.length) sec = dom.slice();
-    var M = p.horas * 60, et = Math.max(15, Math.min(30, Math.round(M * 0.15))), au = 10, R = Math.max(30, M - et - au);
+    var M = p.horas * 60, et = Math.max(15, Math.min(30, Math.round(M * 0.15))), au = 0, R0 = Math.max(30, M - et), R = R0;
+    // 2ª fase desde a 1ª: um treino por semana (peça ou questões discursivas), fora da revisão final e dos dias de simulado
+    var f2on = f2Liberada(), semF2 = {}, iF2 = 0, F2MIN = Math.min(60, Math.max(30, Math.round(M * 0.3)));
     var iDom = 0, iSec = 0, iEx = 0, out = [];
     function prox() { return seqDom[iDom++ % seqDom.length]; }
     function proxSec() { return sec[iSec++ % sec.length]; }
@@ -178,9 +180,11 @@
         it.push({p: 2, min: et, d: 'etica', txt: 'Ética do dia: leia 10 artigos do Estatuto e do Código de Ética', link: '#sinopses/etica'});
         it.push({p: 1, min: Math.min(M, 300), txt: (M >= 300 ? 'Resolva a prova do ' : 'Resolva metade (40 questões) da prova do ') + ex.n + 'º Exame (' + ex.ed + ') e marque no cartão-resposta', link: '#provas/' + ex.n});
         it.push({p: 4, min: Math.max(15, M - Math.min(M, 300) - au - et), txt: 'Corrija pelo gabarito oficial e anote no resumo os assuntos que errou', link: '#provas/' + ex.n});
-        it.push({p: 5, min: au, txt: 'Grave 3 minutos sobre o tema que mais errou no simulado', link: '#estudio'});
         out.push({data: dt, fase: fase, sim: true, it: it}); return;
       }
+      var dS = dataDe(dt); dS.setDate(dS.getDate() - dS.getDay()); var kS = iso(dS), t2 = null;
+      if (f2on && fase < 3 && !semF2[kS]) { semF2[kS] = 1; t2 = tarefaF2(iF2++, F2MIN); }
+      R = t2 ? Math.max(30, R0 - t2.min) : R0;
       it.push({p: 2, min: et, d: 'etica', txt: 'Estatuto e Código de Ética: leia 10 artigos e faça 5 questões de Ética', link: '#exercicios/etica'});
       var a = prox(), tema;
       if (fase === 1) {
@@ -206,10 +210,32 @@
         it.push({p: 4, min: R - Math.round(R * 0.3) - Math.round(R * 0.4), d: s2, txt: 'Sinopse relâmpago de ' + DM[s2].nome + ' (pegadinhas e lei seca)', link: '#sinopses/' + s2});
         tema = DM[a].nome;
       }
-      it.push({p: 5, min: au, txt: 'Grave 3 minutos explicando ' + tema + ' com suas palavras', link: '#estudio'});
+      if (t2) it.push(t2);
       out.push({data: dt, fase: fase, it: it});
     });
     return out;
+  }
+  // trilha semanal da 2ª fase na área escolhida: roteiro das peças, questões discursivas e peças, simuladas e oficiais
+  function trilhaF2(area) {
+    var A = F2A && F2A[area]; if (!A) return [];
+    var nm = A.nome, sim = f2Itens(area), n = F2EX[0], of = n ? f2Itens(area + '-' + n) : {q: []}, l = [];
+    var tr = function (k, ids, txt) { ids = ids.filter(Boolean).map(function (x) { return x.id; }); if (ids.length) l.push({link: '#segunda-fase/' + k + '/treino/' + ids.join(','), txt: txt}); };
+    l.push({link: '#segunda-fase/' + area + '/roteiro', txt: '2ª fase · Conheça as peças de ' + nm + ': quando usar cada uma e a estrutura que o examinador espera'});
+    tr(area, [sim.q[0], sim.q[1]], '2ª fase · Responda 2 questões discursivas de ' + nm + ' e confira a correção');
+    tr(area, [sim.peca], '2ª fase · Peça da semana: escreva a peça de ' + nm + ' e confira a correção');
+    tr(area, [sim.q[2], sim.q[3]], '2ª fase · Responda mais 2 questões discursivas de ' + nm);
+    if (n) {
+      tr(area + '-' + n, [of.q[0], of.q[1]], '2ª fase · 2 questões da prova oficial da FGV (' + n + 'º Exame) de ' + nm);
+      tr(area + '-' + n, [of.peca], '2ª fase · Peça da semana: a peça oficial da FGV (' + n + 'º Exame) de ' + nm);
+      tr(area + '-' + n, [of.q[2], of.q[3]], '2ª fase · Mais 2 questões da prova oficial da FGV (' + n + 'º Exame)');
+    }
+    return l;
+  }
+  function tarefaF2(i, min) {
+    var area = S.perfil && S.perfil.area2, l = area ? trilhaF2(area) : [];
+    if (!l.length) return {p: 5, min: min, txt: '2ª fase · Escolha a sua área da 2ª fase no topo do cronograma para começar o treino semanal', link: '#cronograma'};
+    var x = l[i % l.length], volta = i >= l.length;
+    return {p: 5, min: min, txt: volta ? x.txt.replace('2ª fase · ', '2ª fase · Refaça sem consultar: ') : x.txt, link: x.link};
   }
   var cronoCache = null;
   function crono() { if (!cronoCache) cronoCache = gerarCrono(); return cronoCache; }
@@ -942,7 +968,7 @@
   }
   function cronoExplica() {
     var ex = [{p: 2, min: 25, txt: 'Estatuto e Código de Ética: 10 artigos e 5 questões'}, {p: 4, min: 50, txt: 'Sinopse da disciplina de domínio do dia e resumo de 1 página'},
-      {p: 3, min: 95, txt: 'Exercícios da mesma disciplina'}, {p: 5, min: 10, txt: 'Gravar 3 minutos explicando o tema'}];
+      {p: 3, min: 95, txt: 'Exercícios da mesma disciplina'}, {p: 5, min: 60, txt: 'Uma vez por semana: peça ou questões da 2ª fase na sua área'}];
     return cena({selo: 'Cronograma', titulo: 'Seu GPS até a prova', lead: 'Quem estuda sem rota se perde: um dia Civil, no outro Penal, e na semana seguinte não lembra de nada. O cronograma decide o que estudar em cada dia, na ordem que mais devolve pontos. O seu trabalho é só cumprir a missão.', arte: gpsArte()}) + planoForm() + '<div style="height:16px"></div>' +
       '<div class="grade g2"><div class="bloco"><h2>Como ele é montado</h2><ol class="passos-lista">' +
       '<li><span class="n">1</span><div><b>Construção.</b> <span class="sub">Teoria e exercícios das suas disciplinas de domínio, revezando as mais fracas com mais frequência.</span></div></li>' +
@@ -952,6 +978,16 @@
       '<div class="bloco"><h2>Exemplo de um dia (3 horas)</h2><div class="tarefas">' + ex.map(function (t) { return '<div class="tarefa"><span></span><span class="tx">' + passoTag(t.p) + ' ' + esc(t.txt) + ' <span class="sub">· ' + t.min + ' min</span></span><span></span></div>'; }).join('') +
       '</div><p class="peq sub" style="margin-top:12px">O seu terá os dias da semana, as horas e as disciplinas que você escolher.</p></div></div>';
   }
+  function area2HTML() {
+    if (!f2Liberada() || !F2 || !F2.AREAS.length) return '';
+    var at = S.perfil && S.perfil.area2;
+    return '<div class="bloco noprint" style="margin-bottom:16px"><h3 style="margin:0 0 4px">Sua área da 2ª fase</h3><p class="sub peq" style="margin:0 0 10px">' + (at ? 'Uma vez por semana o cronograma traz um treino de 2ª fase nesta área: peça ou questões discursivas. Assim você não deixa a 2ª fase para a última hora.' : 'Escolha a área em que você vai fazer a 2ª fase. Uma vez por semana entra um treino de peça ou questões discursivas, sem pesar na preparação da 1ª fase.') + '</p><div class="chips">' +
+      F2.AREAS.map(function (a) { return '<button type="button" class="chip" data-area2="' + a.id + '" aria-pressed="' + (a.id === at) + '">' + esc(a.nome.replace('Direito ', '')) + '</button>'; }).join('') + '</div></div>';
+  }
+  document.addEventListener('click', function (ev) {
+    var b = ev.target.closest('[data-area2]'); if (!b) return;
+    garantirPerfil().area2 = b.dataset.area2; invalidarCrono(); salvar(); render();
+  });
   R.cronograma = function () {
     if (nuvem.teste) return travaTeste('Cronograma', 'O seu cronograma até a prova está na assinatura', 'No teste grátis você faz o diagnóstico, vê o relatório, monta a sua combinação de disciplinas e treina com as questões. Na assinatura, a plataforma transforma tudo isso no seu plano diário: duas disciplinas por dia, sempre com Ética, com sinopse e exercícios de fixação.');
     if (!S.dominio) return cronoExplica();
@@ -974,7 +1010,7 @@
     return '<div class="cab"><div><h1>Seu cronograma</h1><p class="sub">' + c.length + ' dias de estudo até ' + fmtData(S.perfil.prova, true) + ' · ' + S.perfil.horas + 'h por dia · ' + pct(tot ? fe / tot : 0) + ' concluído</p></div>' +
       '<div class="chips noprint"><button class="btn mini" data-act="ver-tudo">' + (verTudo ? 'Ver só as próximas semanas' : 'Ver o cronograma inteiro') + '</button>' + (ARTEFATO ? '' : '<button class="btn mini" data-act="imprimir">Imprimir</button>') + '</div></div>' +
       '<div class="bloco" style="margin-bottom:16px"><div class="chips">' + fases + '</div><p class="peq sub" style="margin:10px 0 0">Domínio: ' + S.dominio.map(tagDisc).join(' ') + ' · Legenda: ' + [1, 2, 3, 4, 5].map(function (n) { return passoTag(n) + ' ' + esc(OAB.PASSOS[n - 1].nome); }).join(' · ') + '</p></div>' +
-      hojeHTML +
+      area2HTML() + hojeHTML +
       '<details class="bloco ajuste noprint"><summary>Ajustar o plano (data da prova, horas, dias e disciplinas de domínio)</summary>' + planoForm() + '</details>' +
       ordem.map(function (k) {
         return '<div class="bloco semana"><h3><span>Semana de ' + fmtData(k) + '</span></h3>' + sem[k].map(function (x) {
@@ -1043,11 +1079,11 @@
     if (arg && DM[arg]) {
       var d = DM[arg], s = OAB.SIN[arg];
       return '<p class="noprint"><a href="#sinopses" class="link">Todas as sinopses</a></p><div class="cab"><div><h1 style="color:' + d.cor + '">' + esc(d.nome) + '</h1><p class="sub">' + d.q + ' questões na prova · ' + esc(OAB.GRUPOS[d.g].nome) + (S.dominio && S.dominio.indexOf(d.id) > -1 ? ' · <span class="dom-mark">★ disciplina de domínio</span>' : '') + '</p></div>' +
-        '<div class="chips noprint"><a class="btn pri" href="#exercicios/' + arg + '">Praticar ' + esc(d.curto) + '</a>' + (nuvem.teste ? '' : '<a class="btn" href="#estudio/' + arg + '">Ler e gravar no estúdio</a>') + '</div></div>' +
+        '<div class="chips noprint"><a class="btn pri" href="#exercicios/' + arg + '">Praticar ' + esc(d.curto) + '</a>' + '' + '</div></div>' +
         (SIN_PDF[arg] ? '<div class="chips noprint sinc-abas"><a class="btn mini" href="#sinopses/' + arg + '">Sinopse completa</a><a class="btn mini on" href="#sinopses/' + arg + '.resumo" aria-current="page">Resumo rápido e o que caiu</a></div>' : '') + '<div class="grade" style="grid-template-columns:minmax(0,1.6fr) minmax(240px,1fr);align-items:start" id="sin-grid"><div class="bloco" style="border-top:5px solid ' + d.cor + '"><h2>O que mais cai</h2>' +
-        s.tm.map(function (t, i) { return '<div class="tema"><h3>' + esc(t.t) + '</h3>' + (t.x ? '<p class="entenda"><b>Entenda.</b> ' + esc(t.x) + '</p>' : '') + '<ul>' + t.p.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' + (nuvem.teste ? '' : '<a class="link peq noprint au-link" href="#estudio/' + arg + '.' + i + '">🎙 Ler em voz alta e gravar este tema</a>') + '</div>'; }).join('') +
+        s.tm.map(function (t, i) { return '<div class="tema"><h3>' + esc(t.t) + '</h3>' + (t.x ? '<p class="entenda"><b>Entenda.</b> ' + esc(t.x) + '</p>' : '') + '<ul>' + t.p.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' + '' + '</div>'; }).join('') +
         '</div><div class="pilha"><div class="peg"><h3>Pegadinhas da banca</h3><ul>' + s.pg.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>' +
-        '<div class="bloco"><h3>Lei seca obrigatória</h3><ul style="padding-left:1.2rem;margin:0">' + s.lei.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' + leisLinks(s) + (nuvem.teste ? '' : '<a class="link peq noprint" href="#estudio/' + arg + '.lei">🎙 Ler a lei seca em voz alta</a>') + '</div>' +
+        '<div class="bloco"><h3>Lei seca obrigatória</h3><ul style="padding-left:1.2rem;margin:0">' + s.lei.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' + leisLinks(s) + '' + '</div>' +
         blocoCaiu(arg) + '<div class="bloco"><h3>Passo 4 · seu resumo</h3><p class="peq">Depois de ler, escreva à mão uma página com o que você lembra. O que não veio à memória é o que você revisa amanhã.</p></div></div></div>';
     }
     return cena({selo: 'Passo 4 · Sinopses', titulo: 'O essencial, explicado', lead: 'Para cada disciplina: os temas que a FGV mais cobra, as pegadinhas da banca, a lei seca obrigatória e o que caiu nas últimas 10 provas. Cada tema traz uma explicação para você entender antes de decorar.'}) +
@@ -1244,6 +1280,57 @@
   function ajustaFolha(t) {
     var av = $('[data-flav="' + t.dataset.k + '"]'); if (av) av.hidden = t.scrollHeight <= t.clientHeight + 2;
   }
+  function f2Roteiro(area) {
+    var a = F2A[area];
+    return '<p class="noprint"><a href="#cronograma" class="link">Voltar ao cronograma</a></p><div class="cab"><div><h1 style="color:' + a.cor + '">' + esc(a.nome) + ' · as peças da 2ª fase</h1><p class="sub">Antes de escrever, aprenda a reconhecer a peça. Peça errada costuma zerar a peça inteira.</p></div></div>' +
+      roteiroPecas(a) + '<div class="bloco"><h2>A estrutura que o examinador procura</h2><ol class="passos-lista">' + F2.ESTRUTURA.map(function (e, i) { return '<li><span class="n">' + (i + 1) + '</span><div><b>' + esc(e.t) + '.</b> <span class="sub">' + esc(e.como) + '</span></div></li>'; }).join('') + '</ol></div>' +
+      '<div class="bloco"><h2>Exercício da semana</h2><p>Escolha duas peças da tabela e escreva, à mão, só o esqueleto de cada uma: endereçamento, nome da peça com o fundamento, tópicos e pedidos. É o que você vai repetir na prova.</p></div>';
+  }
+  function f2Tr() { var g = f2(); g.tr = g.tr || {}; return g.tr; }
+  function f2Treino(area, ids) {
+    var a = F2A[area], tr = f2Tr(), its = ids.map(function (id) { return F2M[id]; }).filter(Boolean);
+    if (!its.length) return f2Area(area);
+    var feito = its.every(function (x) { return tr[x.id] && tr[x.id].fim; });
+    var cab = '<p class="noprint"><a href="#cronograma" class="link">Voltar ao cronograma</a></p><div class="cab"><div><h1 style="color:' + a.cor + ';font-size:1.6rem">' + esc(a.nome) + ' · treino da semana</h1><p class="sub">' + (a.exame ? 'Prova oficial da FGV aplicada em ' + esc(a.data) + '. ' : '') + (its[0].tipo === 'peca' ? 'Escreva a peça completa na folha, como no dia da prova.' : 'Responda na folha, em até 30 linhas cada.') + ' A correção aparece depois que você clicar em corrigir.</p></div></div>';
+    if (feito) {
+      return cab + its.map(function (x) {
+        var txt = tr[x.id].txt || '';
+        if (x.tipo === 'peca') {
+          var c = corrigirPeca(x, txt);
+          return '<div class="bloco f2-parte"><h2>Peça · ' + num2(c.nota) + ' de 5,00</h2>' + suaResposta(txt) +
+            (c.pecaOk ? '<p class="f2-ok">✓ Você identificou a peça cabível: <b>' + esc(x.pecaCorreta) + '</b>.</p>' : '<p class="aviso"><b>Peça não identificada.</b> A peça cabível é <b>' + esc(x.pecaCorreta) + '</b>. Na prova, peça inadequada zera a peça.</p>') +
+            '<h4>Estrutura</h4><ul class="f2-est">' + c.est.map(function (e) { return '<li class="' + (e.ok ? 'ok' : 'er') + '"><b>' + (e.ok ? '✓ ' : '✗ ') + esc(e.e.t) + '</b>' + (e.ok ? '' : '<span>' + esc(e.e.como) + '</span>') + '</li>'; }).join('') + '</ul>' +
+            '<h4>Espelho de correção</h4><ul class="f2-esp">' + c.tps.map(function (t) { var k = t.fr >= 1 ? 'ok' : t.fr > 0 ? 'meio' : 'er'; return '<li class="' + k + '"><span class="pt">' + num2(t.nota) + ' / ' + num2(t.t.v) + '</span><span>' + esc(t.t.t) + (k !== 'ok' && t.t.dica ? ' <i>' + esc(t.t.dica) + '</i>' : '') + '</span></li>'; }).join('') + '</ul>' +
+            '<h4>' + (x.exame ? 'Gabarito comentado da FGV' : 'Modelo que você deve seguir') + '</h4><div class="f2-modelo"><p>' + f2Par(x.modelo) + '</p></div>' + orientacao(x) + '</div>';
+        }
+        var q = corrigirQuestao(x, txt);
+        return '<div class="bloco f2-parte"><h2>Questão · ' + num2(q.nota) + ' de 1,25</h2>' + suaResposta(txt) + '<h4>Checagem</h4>' +
+          q.its.map(function (p) { var k = p.fr >= 1 ? 'ok' : p.fr > 0 ? 'meio' : 'er'; return '<div class="f2-qfb ' + k + '"><b>' + p.t.letra + ') ' + num2(p.nota) + ' de ' + num2(p.t.v) + ' — ' + (p.anulada ? 'item anulado pela FGV' : k === 'ok' ? 'fundamento encontrado' : k === 'meio' ? 'resposta incompleta' : 'faltou o fundamento esperado') + '</b><p>' + esc(p.t.p) + '</p></div>'; }).join('') +
+          orientacao(x) + '</div>';
+      }).join('') + '<p><button class="btn" data-f2trr="' + ids.join(',') + '">Refazer este treino</button> <a class="btn pri" href="#cronograma">Voltar ao cronograma</a></p>';
+    }
+    setTimeout(function () { $$('.folha textarea').forEach(ajustaFolha); }, 0);
+    return cab + its.map(function (x, i) {
+      var n = x.tipo === 'peca' ? F2.PROVA.linhasPeca : F2.PROVA.linhasQuestao, nums = '';
+      for (var k = 1; k <= n; k++) nums += '<span>' + k + '</span>';
+      var enun = x.tipo === 'peca' ? '<p>' + f2Par(x.enunciado) + '</p><p><b>' + esc(x.comando) + '</b> <span class="sub">(Valor: 5,00)</span></p>'
+        : '<p>' + f2Par(x.enunciado) + '</p>' + x.itens.map(function (y) { return '<p><b>' + y.letra + ')</b> ' + esc(y.p) + ' <span class="sub">(Valor: ' + num2(y.v) + ')</span></p>'; }).join('');
+      return '<div class="bloco"><h2>' + (x.tipo === 'peca' ? 'Peça prático-profissional' : 'Questão ' + (i + 1)) + '</h2>' + enun +
+        '<div class="folha-box"><div class="folha-cab"><b>Folha de respostas</b><span class="sub peq">' + n + ' linhas</span></div><div class="folha" style="--n:' + n + '"><div class="fl-num" aria-hidden="true">' + nums + '</div>' +
+        '<textarea data-f2t="' + x.id + '" data-k="' + x.id + '" spellcheck="true" aria-label="Folha de respostas">' + esc((tr[x.id] && tr[x.id].txt) || '') + '</textarea></div><div class="fl-aviso" data-flav="' + x.id + '" hidden>O texto passou da última linha. Na prova, o que passa do limite não é lido.</div></div></div>';
+    }).join('') + '<p><button class="btn ouro" data-f2tc="' + ids.join(',') + '">Corrigir</button></p>';
+  }
+  document.addEventListener('input', function (ev) {
+    var t = ev.target; if (!t.dataset || !t.dataset.f2t) return;
+    var tr = f2Tr(); tr[t.dataset.f2t] = {txt: t.value}; ajustaFolha(t);
+    clearTimeout(f2Timer); f2Timer = setTimeout(salvar, 800);
+  });
+  document.addEventListener('click', function (ev) {
+    var b = ev.target.closest('[data-f2tc],[data-f2trr]'); if (!b) return;
+    var tr = f2Tr();
+    if (b.dataset.f2tc) { b.dataset.f2tc.split(',').forEach(function (id) { tr[id] = {txt: (tr[id] && tr[id].txt) || '', fim: Date.now()}; }); salvar(); render(); window.scrollTo(0, 0); return; }
+    b.dataset.f2trr.split(',').forEach(function (id) { if (tr[id]) tr[id].fim = null; }); salvar(); render();
+  });
   function roteiroPecas(a) {
     return '<div class="bloco"><h2>Roteiro das peças de ' + esc(a.nome) + '</h2><p class="sub peq">Na prova, o primeiro passo é identificar a peça. Peça errada costuma zerar a peça inteira.</p><div style="overflow-x:auto"><table class="t"><thead><tr><th>Peça</th><th>Quando usar</th><th>Fundamento</th></tr></thead><tbody>' +
       a.pecas.map(function (p) { return '<tr><td><b>' + esc(p.n) + '</b></td><td>' + esc(p.q) + '</td><td>' + esc(p.f) + '</td></tr>'; }).join('') + '</tbody></table></div></div>';
@@ -1296,6 +1383,8 @@
     if (!f2Liberada()) return f2Upsell();
     var h = (location.hash || '').split('/');
     if (arg && F2A[arg] && h[2] === 'prova') return f2Prova(arg);
+    if (arg && F2A[arg] && h[2] === 'roteiro') return f2Roteiro(arg);
+    if (arg && F2A[arg] && h[2] === 'treino' && h[3]) return f2Treino(arg, h[3].split(','));
     if (arg && F2A[arg]) return f2Area(arg);
     return f2Inicio();
   };
@@ -1657,7 +1746,8 @@
     play: '<svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4v16l13-8z"/></svg>',
     parar: '<svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h12v12H6z"/></svg>'
   };
-  R.estudio = function (arg) {
+  R.estudio = function () { setTimeout(function () { location.replace('#cronograma'); }, 0); return ''; };
+  var estudioAntigo = function (arg) {
     if (nuvem.teste) return travaTeste('Estúdio de áudio', 'O estúdio de áudio está na assinatura', 'Leia a sinopse em voz alta, grave e ouça no trajeto. No teste grátis, continue com o diagnóstico e as questões.');
     if (arg) { var a = arg.split('.'); if (DM[a[0]] && OAB.SIN[a[0]]) { auEstado.d = a[0]; auEstado.k = a[1] != null && auChaves(a[0]).indexOf(a[1]) > -1 ? a[1] : '0'; } }
     if (!auEstado.d || !OAB.SIN[auEstado.d]) { auEstado.d = D[0].id; auEstado.k = '0'; }
@@ -1949,11 +2039,11 @@
       return r.text();
     }));
     textos.forEach(function (t) { (0, eval)(t); });
-    indexarQ(); montarDiag(); prepararF2(); conteudoOk = true;
+    indexarQ(); montarDiag(); prepararF2(); invalidarCrono(); conteudoOk = true;
   }
   function iniciarApp() {
     $('#acesso').hidden = true; $('#app').hidden = false;
-    if (nuvem.teste) ['cronograma', 'provas', 'segunda-fase', 'estudio'].forEach(function (r) { var a = $('#menu a[data-r="' + r + '"]'); if (a && !a.querySelector('.cad')) a.insertAdjacentHTML('beforeend', ' <span class="cad" title="Liberado na assinatura" aria-label="trancado">🔒</span>'); });
+    if (nuvem.teste) ['cronograma', 'provas', 'segunda-fase'].forEach(function (r) { var a = $('#menu a[data-r="' + r + '"]'); if (a && !a.querySelector('.cad')) a.insertAdjacentHTML('beforeend', ' <span class="cad" title="Liberado na assinatura" aria-label="trancado">🔒</span>'); });
     render();
   }
   function acView(n) { $$('[data-ac]').forEach(function (s) { s.hidden = s.dataset.ac !== n; }); }
