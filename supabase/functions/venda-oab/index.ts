@@ -38,7 +38,7 @@ Deno.serve(async (req) => {
   if (!autorizado) {
     try {
       await admin.from('vendas_log').insert({ origem: 'desconhecida', evento: 'recusado', email: null,
-        resultado: 'chave não confere (parâmetros recebidos: ' + bruto.replace(/chave=[^&?]*/g, 'chave=***').slice(0, 200) + ')', corpo: null });
+        resultado: 'chave não confere · recebida com ' + ((bruto.match(/chave=([^&?]*)/) || ['', ''])[1].trim().length) + ' caracteres · salva no Supabase com ' + chave.length + ' caracteres', corpo: null });
     } catch (_) { /* registro opcional */ }
     return json({ erro: 'não autorizado' }, 401);
   }
