@@ -985,13 +985,31 @@
   };
 
   // ---------- sinopses ----------
+  var SIN_PDF = {etica: 'Sinopse-Etica-Profissional.pdf'};
+  async function baixarSinopsePdf(id, btn) {
+    var txt = btn.textContent; btn.disabled = true; btn.textContent = 'Preparando o PDF…';
+    try {
+      var s = await nuvem.sb.auth.getSession(), tk = s.data.session && s.data.session.access_token;
+      var r = await fetch('conteudo/sinopse-' + id + '.pdf', {headers: {Authorization: 'Bearer ' + tk}, cache: 'no-store'});
+      if (!r.ok) throw new Error(await r.text());
+      var url = URL.createObjectURL(await r.blob()), a = document.createElement('a');
+      a.href = url; a.download = SIN_PDF[id]; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 60000);
+    } catch (e) { alert('Não foi possível baixar o PDF agora. Tente de novo em instantes.'); }
+    btn.disabled = false; btn.textContent = txt;
+  }
+  document.addEventListener('click', function (ev) { var b = ev.target.closest('[data-sinpdf]'); if (b) baixarSinopsePdf(b.dataset.sinpdf, b); });
+  function blocoPdf(id) {
+    if (!SIN_PDF[id]) return '';
+    return '<div class="bloco sin-pdf noprint"><div><span class="selo-pdf">Sinopse completa · PDF</span><h2 style="margin:6px 0 4px">Leia a versão completa em PDF</h2><p class="sub" style="margin:0">Cerca de 20 páginas: explicação de cada tema, quadros comparativos, situações no formato da FGV, as 15 pegadinhas mais cobradas e a tabela de prazos.</p></div><button class="btn pri" data-sinpdf="' + id + '">Baixar a sinopse em PDF</button></div>';
+  }
   R.sinopses = function (arg) {
     if (nuvem.teste) return travaTeste('Sinopses', 'As sinopses das 20 disciplinas estão na assinatura', 'O resumo do que mais cai em cada disciplina, com as pegadinhas da banca e a lei seca, em leitura de cerca de 50 minutos. No teste grátis, continue com o diagnóstico e as questões.');
     if (arg && DM[arg]) {
       var d = DM[arg], s = OAB.SIN[arg];
       return '<p class="noprint"><a href="#sinopses" class="link">Todas as sinopses</a></p><div class="cab"><div><h1 style="color:' + d.cor + '">' + esc(d.nome) + '</h1><p class="sub">' + d.q + ' questões na prova · ' + esc(OAB.GRUPOS[d.g].nome) + (S.dominio && S.dominio.indexOf(d.id) > -1 ? ' · <span class="dom-mark">★ disciplina de domínio</span>' : '') + '</p></div>' +
         '<div class="chips noprint"><a class="btn pri" href="#exercicios/' + arg + '">Praticar ' + esc(d.curto) + '</a><a class="btn" href="#estudio/' + arg + '">Ler e gravar no estúdio</a></div></div>' +
-        '<div class="grade" style="grid-template-columns:minmax(0,1.6fr) minmax(240px,1fr);align-items:start" id="sin-grid"><div class="bloco" style="border-top:5px solid ' + d.cor + '"><h2>O que mais cai</h2>' +
+        blocoPdf(arg) + '<div class="grade" style="grid-template-columns:minmax(0,1.6fr) minmax(240px,1fr);align-items:start" id="sin-grid"><div class="bloco" style="border-top:5px solid ' + d.cor + '"><h2>O que mais cai</h2>' +
         s.tm.map(function (t, i) { return '<div class="tema"><h3>' + esc(t.t) + '</h3>' + (t.x ? '<p class="entenda"><b>Entenda.</b> ' + esc(t.x) + '</p>' : '') + '<ul>' + t.p.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul><a class="link peq noprint au-link" href="#estudio/' + arg + '.' + i + '">🎙 Ler em voz alta e gravar este tema</a></div>'; }).join('') +
         '</div><div class="pilha"><div class="peg"><h3>Pegadinhas da banca</h3><ul>' + s.pg.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>' +
         '<div class="bloco"><h3>Lei seca obrigatória</h3><ul style="padding-left:1.2rem;margin:0">' + s.lei.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' + leisLinks(s) + '<a class="link peq noprint" href="#estudio/' + arg + '.lei">🎙 Ler a lei seca em voz alta</a></div>' +
@@ -1001,7 +1019,7 @@
       ['A', 'B', 'C'].map(function (g) {
         return '<h2 style="margin-top:22px">' + esc(OAB.GRUPOS[g].nome) + '</h2><div class="grade g3">' + D.filter(function (d) { return d.g === g; }).map(function (d) {
           var x = dominio(d.id);
-          return '<a class="disc-card" href="#sinopses/' + d.id + '" style="--c:' + d.cor + '"><span class="sub peq">' + d.q + ' questões' + (S.dominio && S.dominio.indexOf(d.id) > -1 ? ' · <span class="dom-mark">★ domínio</span>' : '') + '</span><h3>' + esc(d.nome) + '</h3><span class="sub peq">' + OAB.SIN[d.id].tm.length + ' temas · domínio ' + pct(x) + '</span></a>';
+          return '<a class="disc-card" href="#sinopses/' + d.id + '" style="--c:' + d.cor + '"><span class="sub peq">' + d.q + ' questões' + (S.dominio && S.dominio.indexOf(d.id) > -1 ? ' · <span class="dom-mark">★ domínio</span>' : '') + '</span><h3>' + esc(d.nome) + '</h3><span class="sub peq">' + OAB.SIN[d.id].tm.length + ' temas · domínio ' + pct(x) + (SIN_PDF[d.id] ? ' · <b>PDF completo</b>' : '') + '</span></a>';
         }).join('') + '</div>';
       }).join('');
   };

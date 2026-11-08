@@ -16,8 +16,10 @@ export async function onRequestGet(ctx) {
 }
 
 async function entregar({ request, params, env }) {
-  const nome = String(params.arquivo || '').replace(/\.js$/, '');
-  if (!permitido(nome)) return new Response('Não encontrado', { status: 404 });
+  const bruto = String(params.arquivo || '');
+  const pdf = /^sinopse-[a-z0-9]+\.pdf$/.test(bruto) ? bruto : null;
+  const nome = pdf || bruto.replace(/\.js$/, '');
+  if (!pdf && !permitido(nome)) return new Response('Não encontrado', { status: 404 });
 
   const auth = request.headers.get('Authorization') || '';
   const token = auth.startsWith('Bearer ') ? auth.slice(7) : '';
@@ -57,6 +59,11 @@ async function entregar({ request, params, env }) {
 }
 
 async function arquivo(env, request, nome) {
+  if (nome.endsWith('.pdf')) {
+    const p = await env.ASSETS.fetch(new URL('/oab/privado/pdf/' + nome, request.url));
+    if (!p.ok) return new Response('Conteúdo indisponível', { status: 404 });
+    return new Response(p.body, { headers: { 'Content-Type': 'application/pdf', 'Content-Disposition': 'inline; filename="' + nome + '"', 'Cache-Control': 'private, no-store' } });
+  }
   const r = await env.ASSETS.fetch(new URL('/oab/privado/' + nome + '.js', request.url));
   if (!r.ok) return new Response('Conteúdo indisponível', { status: 502 });
   return new Response(r.body, {

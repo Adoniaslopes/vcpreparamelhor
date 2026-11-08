@@ -637,3 +637,8 @@ details.ajuste form.bloco { box-shadow: none; border: 0; padding: 0; }
 .destaque7{margin:-6px 0 24px;padding:20px 24px;border-radius:16px;background:linear-gradient(135deg,rgba(61,220,151,.18),rgba(61,220,151,.06));border:2px solid #3DDC97;text-align:center;font:500 1.15rem var(--f-txt);line-height:1.5}
 .destaque7 b{display:block;font-size:1.5rem;color:#3DDC97;margin-bottom:4px}
 .destaque7 span{display:block;margin-top:8px;font-size:.98rem;opacity:.85}
+
+.sin-pdf{display:flex;gap:18px;align-items:center;justify-content:space-between;margin:0 0 18px;border-left:5px solid var(--dourado)}
+.sin-pdf .btn{flex:none}
+.selo-pdf{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--dourado)}
+@media (max-width:640px){.sin-pdf{flex-direction:column;align-items:flex-start}}
